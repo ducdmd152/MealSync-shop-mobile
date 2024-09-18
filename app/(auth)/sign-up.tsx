@@ -1,6 +1,7 @@
 import CustomButton from "@/components/custom/CustomButton";
 import FormFieldCustom from "@/components/custom/FormFieldCustom";
 import { images } from "@/constants";
+import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -15,7 +16,7 @@ import {
 
 const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -86,10 +87,17 @@ const SignUp = () => {
               <CustomButton
                 title="Tiếp tục"
                 handlePress={() => {
-                  onSubmit();
+                  setStep(1);
                 }}
-                iconRight={<Text className="text-primary">{" --->"}</Text>}
-                containerStyleClasses="w-full mt-5"
+                iconRight={
+                  <Ionicons
+                    name="arrow-forward-outline"
+                    size={22}
+                    color="white"
+                  />
+                }
+                containerStyleClasses="bg-primary w-full mt-5 "
+                textStyleClasses="text-white mr-2"
                 isLoading={isSubmitting}
               />
             </View>
@@ -132,11 +140,13 @@ const SignUp = () => {
               <CustomButton
                 title="Quay trở lại"
                 handlePress={() => {
-                  onSubmit();
+                  setStep(0);
                 }}
-                iconLeft={<Text className="text-gray">{"<---   "}</Text>}
-                containerStyleClasses="w-full mt-4 bg-white border-gray-600 border-2"
-                textStyleClasses="text-black"
+                iconLeft={
+                  <Ionicons name="arrow-back-outline" size={22} color="gray" />
+                }
+                containerStyleClasses="w-full mt-4 bg-white border-gray-500 border-2"
+                textStyleClasses="ml-2 text-gray-600"
                 isLoading={isSubmitting}
               />
             </View>
