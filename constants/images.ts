@@ -8,6 +8,9 @@ import path from "../assets/images/path.png";
 import logo from "../assets/images/logo.png";
 import logoSmall from "../assets/images/logo-small.png";
 import empty from "../assets/images/empty.png";
+import signInLogo1 from "../assets/images/sign-in/signin-logo-1.png";
+import signInLogo2 from "../assets/images/sign-in/signin-logo-2.png";
+import signInLogo3 from "../assets/images/sign-in/signin-logo-3.png";
 
 export default {
   splashBg,
@@ -20,4 +23,7 @@ export default {
   logo,
   logoSmall,
   empty,
+  signInLogo1,
+  signInLogo2,
+  signInLogo3,
 };
