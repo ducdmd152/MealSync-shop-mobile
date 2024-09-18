@@ -1,5 +1,6 @@
 import CustomButton from "@/components/custom/CustomButton";
 import FormFieldCustom from "@/components/custom/FormFieldCustom";
+import SignUpVerification from "@/components/sign-up/SignUpVerification";
 import { images } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
@@ -31,8 +32,8 @@ const SignUp = () => {
     try {
       // const result = await createUser(form.username, form.email, form.password);
       // set it to global state
-
-      router.replace("/home");
+      setStep(2);
+      // router.replace("/home");
     } catch (error: any) {
       Alert.alert("Error", error?.message || "Something went wrong!");
     }
@@ -50,7 +51,10 @@ const SignUp = () => {
           <Text className="text-2xl text-gray text-semibold mt-2 font-psemibold">
             Đăng ký
           </Text>
-          {step == 0 ? (
+
+          {step == 2 ? (
+            <SignUpVerification />
+          ) : step == 0 ? (
             <View className="w-full">
               <FormFieldCustom
                 title={"Chủ cửa hàng"}
@@ -138,6 +142,7 @@ const SignUp = () => {
                 title="Hoàn tất đăng ký"
                 handlePress={() => {
                   onSubmit();
+                  // setStep(2);
                 }}
                 iconRight={<Text className="text-primary">{" --->"}</Text>}
                 containerStyleClasses="w-full mt-5 bg-primary"
@@ -159,17 +164,19 @@ const SignUp = () => {
             </View>
           )}
 
-          <View className="justify-center pt-5 gap-2">
-            <Text className="text-lg text-gray-100 font-regular text-center">
-              Bạn đã có tài khoản?{" "}
-              <Link
-                href="/sign-in"
-                className="text-white text-primary font-psemibold"
-              >
-                Đăng nhập
-              </Link>
-            </Text>
-          </View>
+          {step != 2 && (
+            <View className="justify-center pt-5 gap-2">
+              <Text className="text-lg text-gray-100 font-regular text-center">
+                Bạn đã có tài khoản?{" "}
+                <Link
+                  href="/sign-in"
+                  className="text-white text-primary font-psemibold"
+                >
+                  Đăng nhập
+                </Link>
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
