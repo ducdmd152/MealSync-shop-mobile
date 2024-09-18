@@ -12,6 +12,7 @@ import {
   ScrollView,
   Image,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 
 const SignUp = () => {
@@ -123,9 +124,15 @@ const SignUp = () => {
               <FormFieldCustom
                 title={"Địa chỉ cửa hàng"}
                 value={form.password}
-                placeholder={"Nhập mật khẩu của bạn..."}
+                readOnly
+                placeholder={"Chọn địa chỉ cửa hàng..."}
                 handleChangeText={(e) => setForm({ ...form, password: e })}
                 otherStyleClasses="mt-5"
+                iconRight={
+                  <TouchableOpacity className="h-[40px] w-[40px] bg-primary rounded-md justify-center items-center relative">
+                    <Ionicons name="location-outline" size={28} color="white" />
+                  </TouchableOpacity>
+                }
               />
               <CustomButton
                 title="Hoàn tất đăng ký"

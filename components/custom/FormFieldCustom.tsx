@@ -1,5 +1,5 @@
 import { icons } from "@/constants";
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ interface FormFieldProps extends TextInputProps {
   otherStyleClasses?: string;
   isPassword?: boolean;
   isRequired?: boolean;
+  iconRight?: ReactNode;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -27,6 +28,7 @@ const FormField: React.FC<FormFieldProps> = ({
   otherStyleClasses: otherStyles = "",
   isPassword,
   isRequired,
+  iconRight,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -55,6 +57,7 @@ const FormField: React.FC<FormFieldProps> = ({
             />
           </TouchableOpacity>
         )}
+        {iconRight ? iconRight : ""}
       </View>
     </View>
   );
