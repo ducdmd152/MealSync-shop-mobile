@@ -15,13 +15,14 @@ import {
 
 const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [step, setStep] = useState(1);
   const [form, setForm] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
   });
   const onSubmit = async () => {
-    if (!form.username || !form.email || !form.password) {
+    if (!form.name || !form.email || !form.password) {
       Alert.alert("Error", "Please fill in all fields!");
     }
     setIsSubmitting(true);
@@ -36,59 +37,119 @@ const SignUp = () => {
     setIsSubmitting(false);
   };
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <ScrollView>
-        <View className="w-full h-full justify-center items-center px-4 mt-12">
+    <SafeAreaView className="bg-white h-full">
+      <ScrollView contentContainerStyle={{ height: "100%" }}>
+        <View className="w-full h-full justify-center items-center px-4">
           <Image
-            source={images.logo}
+            source={images.signInLogo1}
             resizeMode="contain"
-            className="w-[115px] h-[35px]"
+            className="h-[60px]"
           />
-          <Text className="text-2xl text-white text-semibold mt-10 font-psemibold">
-            Sign up to Aora
+          <Text className="text-2xl text-gray text-semibold mt-2 font-psemibold">
+            Đăng ký
           </Text>
-          <FormFieldCustom
-            title={"Username"}
-            value={form.username}
-            placeholder={"Enter your username..."}
-            handleChangeText={(e) => setForm({ ...form, username: e })}
-            keyboardType="default"
-            otherStyleClasses="mt-7"
-          />
-          <FormFieldCustom
-            title={"Email"}
-            value={form.email}
-            placeholder={"Enter your email..."}
-            handleChangeText={(e) => setForm({ ...form, email: e })}
-            keyboardType="email-address"
-            otherStyleClasses="mt-7"
-          />
+          {step == 0 ? (
+            <View className="w-full">
+              <FormFieldCustom
+                title={"Chủ cửa hàng"}
+                value={form.name}
+                placeholder={"Nhập tên chủ cửa hàng..."}
+                handleChangeText={(e) => setForm({ ...form, name: e })}
+                keyboardType="default"
+                otherStyleClasses="mt-5"
+              />
+              <FormFieldCustom
+                title={"Email"}
+                value={form.email}
+                placeholder={"Nhập email của bạn..."}
+                handleChangeText={(e) => setForm({ ...form, email: e })}
+                keyboardType="email-address"
+                otherStyleClasses="mt-5"
+              />
 
-          <FormFieldCustom
-            title={"Password"}
-            value={form.password}
-            placeholder={"Enter your password..."}
-            handleChangeText={(e) => setForm({ ...form, password: e })}
-            isPassword={true}
-            otherStyleClasses="mt-7"
-          />
-          <CustomButton
-            title="Sign Up"
-            handlePress={() => {
-              onSubmit();
-            }}
-            containerStyleClasses="w-full mt-7"
-            isLoading={isSubmitting}
-          />
+              <FormFieldCustom
+                title={"Mật khẩu"}
+                value={form.password}
+                placeholder={"Nhập mật khẩu..."}
+                handleChangeText={(e) => setForm({ ...form, password: e })}
+                isPassword={true}
+                otherStyleClasses="mt-5"
+              />
+              <FormFieldCustom
+                title={"Xác nhận mật khẩu"}
+                value={form.password}
+                placeholder={"Xác nhận mật khẩu..."}
+                handleChangeText={(e) => setForm({ ...form, password: e })}
+                isPassword={true}
+                otherStyleClasses="mt-5"
+              />
+              <CustomButton
+                title="Tiếp tục"
+                handlePress={() => {
+                  onSubmit();
+                }}
+                iconRight={<Text className="text-primary">{" --->"}</Text>}
+                containerStyleClasses="w-full mt-5"
+                isLoading={isSubmitting}
+              />
+            </View>
+          ) : (
+            <View className="w-full">
+              <FormFieldCustom
+                title={"Tên cửa hàng"}
+                value={form.name}
+                placeholder={"Nhập tên cửa hàng..."}
+                handleChangeText={(e) => setForm({ ...form, name: e })}
+                keyboardType="default"
+                otherStyleClasses="mt-5"
+              />
+              <FormFieldCustom
+                title={"Số điện thoại"}
+                value={form.email}
+                placeholder={"Nhập số điện thoại..."}
+                handleChangeText={(e) => setForm({ ...form, email: e })}
+                keyboardType="email-address"
+                otherStyleClasses="mt-5"
+              />
+
+              <FormFieldCustom
+                title={"Địa chỉ cửa hàng"}
+                value={form.password}
+                placeholder={"Nhập mật khẩu của bạn..."}
+                handleChangeText={(e) => setForm({ ...form, password: e })}
+                otherStyleClasses="mt-5"
+              />
+              <CustomButton
+                title="Hoàn tất đăng ký"
+                handlePress={() => {
+                  onSubmit();
+                }}
+                iconRight={<Text className="text-primary">{" --->"}</Text>}
+                containerStyleClasses="w-full mt-5 bg-primary"
+                textStyleClasses="text-white"
+                isLoading={isSubmitting}
+              />
+              <CustomButton
+                title="Quay trở lại"
+                handlePress={() => {
+                  onSubmit();
+                }}
+                iconLeft={<Text className="text-gray">{"<---   "}</Text>}
+                containerStyleClasses="w-full mt-4 bg-white border-gray-600 border-2"
+                textStyleClasses="text-black"
+                isLoading={isSubmitting}
+              />
+            </View>
+          )}
 
           <View className="justify-center pt-5 gap-2">
             <Text className="text-lg text-gray-100 font-regular text-center">
-              Already have account?{" "}
+              Bạn đã có tài khoản?{" "}
               <Link
                 href="/sign-in"
-                className="text-white text-secondary font-psemibold"
+                className="text-white text-primary font-psemibold"
               >
-                Sign In
+                Đăng nhập
               </Link>
             </Text>
           </View>
