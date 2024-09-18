@@ -21,26 +21,28 @@ export default function HomeScreen() {
           className="w-full h-full justify-center items-center"
         > */}
         <View className="w-full justify-center items-center h-full px-4">
-          <Image
-            source={images.welcomeLogo}
-            className="ml-2 w-[240px] h-[200px]"
-            resizeMode="contain"
-          />
-          {/* <Image
+          <View className="flex-1 w-full justify-center items-center mt-12">
+            <Image
+              source={images.welcomeLogo}
+              className="ml-2 w-[240px] h-[200px]"
+              resizeMode="contain"
+            />
+            {/* <Image
               source={images.cards}
               className="max-w-[380px] w-full h-[280px]"
               resizeMode="contain"
             /> */}
-          <Text className="text-[17px] text-gray-400 font-bold text-center">
-            Ứng dụng đặt đồ ăn theo giờ
-            {"\n"}
-            khu vực ký túc xá ĐHQG
-          </Text>
-          <Text className="text-gray-300 mt-7 text-center">
-            Phiên bản dành cho cửa hàng
-          </Text>
+            <Text className="text-[16px] text-gray-400 font-bold text-center">
+              Ứng dụng đặt đồ ăn theo giờ
+              {"\n"}
+              khu vực ký túc xá ĐHQG
+            </Text>
+          </View>
 
-          <View className="w-full justify-end items-center mt-3">
+          <View className="w-full justify-end items-center mt-2 mb-20">
+            <Text className="text-gray-300 mt-7 text-center ">
+              Phiên bản dành cho cửa hàng
+            </Text>
             <CustomButton
               title="Đăng nhập"
               handlePress={() => {
