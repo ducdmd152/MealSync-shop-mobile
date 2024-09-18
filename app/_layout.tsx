@@ -58,7 +58,7 @@ export default function RootLayout() {
   if (!loaded) {
     return (
       <Image
-        source={{ uri: images.splashBg }}
+        source={images.splashBg}
         resizeMode="cover"
         className="h-full w-full justify-center items-center"
       />
