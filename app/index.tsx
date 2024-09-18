@@ -23,7 +23,7 @@ export default function HomeScreen() {
           <View className="w-full justify-center items-center h-full px-4">
             <Image
               source={images.welcomeLogo}
-              className="w-[240px] h-[200px]"
+              className="ml-2 w-[240px] h-[200px]"
               resizeMode="contain"
             />
             {/* <Image
