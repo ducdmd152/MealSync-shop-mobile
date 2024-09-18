@@ -1,47 +1,65 @@
 import { StatusBar } from "expo-status-bar";
 import { Link, router } from "expo-router";
-import { Image, Text, View, SafeAreaView, ScrollView } from "react-native";
+import {
+  Image,
+  Text,
+  View,
+  SafeAreaView,
+  ScrollView,
+  ImageBackground,
+} from "react-native";
 import { images } from "@/constants";
 import CustomButton from "@/components/custom/CustomButton";
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView className="bg-primary text-white h-full">
+    <SafeAreaView className="bg-white text-white h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
-        <View className="w-full justify-center items-center h-full px-4">
-          <Image
-            source={images.logo}
-            className="w-[130px] h-[84px]"
-            resizeMode="contain"
-          />
-          <Image
-            source={images.cards}
-            className="max-w-[380px] w-full h-[280px]"
-            resizeMode="contain"
-          />
-          <View className="relative mt-5">
-            <Text className="text-3xl text-white font-bold text-center">
-              Discover Endless Possibilities{" "}
-              <Text className="text-secondary-200">Aora</Text>
-            </Text>
+        <ImageBackground
+          source={{ uri: images.welcomeBg }}
+          resizeMode="cover"
+          className="w-full h-full justify-center items-center"
+        >
+          <View className="w-full justify-center items-center h-full px-4">
             <Image
-              source={images.path}
-              className="absolute -bottom-2 -right-8 w-[132px] h-[15px]"
+              source={images.welcomeLogo}
+              className="w-[240px] h-[200px]"
               resizeMode="contain"
             />
-          </View>
-          <Text className="text-gray-100 mt-7 text-center">
-            Where creativity meets innovation: embark on a journey of limitless
-          </Text>
+            {/* <Image
+              source={images.cards}
+              className="max-w-[380px] w-full h-[280px]"
+              resizeMode="contain"
+            /> */}
+            <Text className="text-[17px] text-gray-400 font-bold text-center">
+              Ứng dụng đặt đồ ăn theo giờ
+              {"\n"}
+              khu vực ký túc xá ĐHQG
+            </Text>
+            <Text className="text-gray-300 mt-7 text-center">
+              Phiên bản dành cho cửa hàng
+            </Text>
 
-          <CustomButton
-            title="Continue with Email"
-            handlePress={() => {
-              router.push("/sign-in");
-            }}
-            containerStyleClasses="w-full mt-4"
-          />
-        </View>
+            <View className="w-full justify-end items-center mt-3">
+              <CustomButton
+                title="Đăng nhập"
+                handlePress={() => {
+                  router.push("/sign-in");
+                }}
+                containerStyleClasses="w-full mt-4 bg-primary"
+                textStyleClasses="text-white"
+              />
+              <CustomButton
+                title="Đăng ký"
+                handlePress={() => {
+                  router.push("/sign-up");
+                }}
+                containerStyleClasses="w-full mt-4 bg-white border-gray-600 border-2"
+                textStyleClasses="text-gray-600"
+              />
+            </View>
+          </View>
+        </ImageBackground>
       </ScrollView>
     </SafeAreaView>
   );
