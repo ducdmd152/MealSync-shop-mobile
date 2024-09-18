@@ -11,16 +11,21 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#FFA001",
-        tabBarInactiveTintColor: "#CDCDE0",
+        // header: () => <CustomHeader />
+        tabBarActiveTintColor: "#DF4830",
+        tabBarInactiveTintColor: "#686D76",
         // tabBarShowLabel: false,
         headerShown: false,
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 8,
+        },
       }}
     >
       <Tabs.Screen
         name="home"
         options={{
-          title: "Home",
+          title: "Trang chủ",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "home" : "home-outline"}
@@ -30,24 +35,24 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="bookmark"
+        name="order"
         options={{
-          title: "Bookmark",
+          title: "Đơn hàng",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "bookmark" : "bookmark-outline"}
+              name={focused ? "archive" : "archive-outline"}
               color={color}
             />
           ),
         }}
       />
       <Tabs.Screen
-        name="create"
+        name="product"
         options={{
-          title: "Create",
+          title: "Sản phẩm",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "add-circle" : "add-circle-outline"}
+              name={focused ? "fast-food" : "fast-food-outline"}
               color={color}
             />
           ),
@@ -56,7 +61,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: "Hồ sơ",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "person" : "person-outline"}
