@@ -1,4 +1,5 @@
 import splashBg from "../assets/images/mealsync/slash-bg.png";
+import logoText from "../assets/images/mealsync/logo-text.png";
 import welcomeLogo from "../assets/images/mealsync/welcome-logo.png";
 import welcomeBg from "../assets/images/mealsync/welcome-bg.png";
 import profile from "../assets/images/profile.png";
@@ -26,4 +27,5 @@ export default {
   signInLogo1,
   signInLogo2,
   signInLogo3,
+  logoText,
 };

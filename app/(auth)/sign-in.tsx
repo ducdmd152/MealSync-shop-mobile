@@ -1,7 +1,7 @@
 import CustomButton from "@/components/custom/CustomButton";
 import FormFieldCustom from "@/components/custom/FormFieldCustom";
 import { images } from "@/constants";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import React, { useState } from "react";
 import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 
@@ -42,7 +42,9 @@ const SignIn = () => {
           />
           <CustomButton
             title="Đăng nhập"
-            handlePress={() => {}}
+            handlePress={() => {
+              router.replace("/home");
+            }}
             containerStyleClasses="bg-primary w-full mt-7"
             textStyleClasses="text-white"
             isLoading={isSubmitting}
