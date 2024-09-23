@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image } from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import CustomButton from "@/components/custom/CustomButton";
 import { Searchbar } from "react-native-paper";
@@ -18,6 +18,13 @@ const Order = () => {
       <View className="w-full gap-2">
         <View className="w-full">
           <Searchbar
+            style={{
+              height: 50,
+              // backgroundColor: "white",
+              // borderColor: "lightgray",
+              // borderWidth: 2,
+            }}
+            inputStyle={{ minHeight: 0 }}
             placeholder="Nhập mã đơn hoặc số điện thoại..."
             onChangeText={setSearchQuery}
             value={searchQuery}
@@ -55,14 +62,25 @@ const Order = () => {
           </View>
         </ScrollView>
         <ScrollView style={{ width: "100%", flexGrow: 1 }}>
-          <View className="gap-y-2 pb-[200px]">
+          <View className="gap-y-2 pb-[154px]">
             {Array.from({ length: 10 }, (_, i) => (
-              <View className="p-4 bg-white border-2 border-gray-300 rounded-lg">
+              <View
+                key={i}
+                className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
+              >
                 <View className="flex-row items-center justify-between gap-2">
                   <Text className="text-md font-psemibold">MS-150</Text>
-                  <Text className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                    Status
-                  </Text>
+                  <View className="flex-row gap-2 items-start">
+                    {/* <TouchableOpacity
+                      onPress={() => {}}
+                      className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[4px] py-[2.2px]"
+                    >
+                      <Text className="text-[13.5px]">Chi tiết</Text>
+                    </TouchableOpacity> */}
+                    <Text className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                      Status
+                    </Text>
+                  </View>
                 </View>
                 <View className="mt-4 gap-1">
                   <View className="flex-row justify-start items-center gap-2">
@@ -90,6 +108,14 @@ const Order = () => {
                       120.000đ
                     </Text>
                   </View>
+                </View>
+                <View className="flex-row justify-end mt-2">
+                  <TouchableOpacity
+                    onPress={() => {}}
+                    className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                  >
+                    <Text className="text-[13.5px]">Chi tiết</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             ))}
