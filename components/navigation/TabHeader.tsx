@@ -6,7 +6,7 @@ import { router } from "expo-router";
 
 const TabHeader = () => {
   return (
-    <View className="w-full h-[64px] px-4 bg-white flex-row justify-between border-b-[0.2px] border-gray-200 overflow-hidden">
+    <View className="w-full h-[64px] px-4 bg-white flex-row justify-between border-b-[0.7px] border-gray-300 overflow-hidden">
       <View className="flex-row justify-center items-center">
         {/* <View className="flex-row justify-center items-center">
           <Ionicons name="menu-outline" size={36} color="#DF4830" />
