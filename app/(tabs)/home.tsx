@@ -60,7 +60,7 @@ export default function HomeScreen() {
             </Text>
           </View>
           <View className="w-full h-[80px] bg-gray-200 flex-col rounded-xl items-center justify-center mb-3">
-            <Text className="font-semibold">Doanh thu</Text>
+            <Text className="font-semibold">Doanh thu tháng</Text>
             <Text className="text-center">10.000.000 đ</Text>
           </View>
           <View className="w-full flex-row gap-2 items-between">

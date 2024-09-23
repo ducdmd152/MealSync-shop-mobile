@@ -27,7 +27,7 @@ const Product = () => {
               // borderWidth: 2,
             }}
             inputStyle={{ minHeight: 0 }}
-            placeholder="Nhập mã đơn hoặc số điện thoại..."
+            placeholder="Nhập tên sản phẩm..."
             onChangeText={setSearchQuery}
             value={searchQuery}
           />

@@ -19,6 +19,19 @@ const redirections = {
       textStyleClasses: "text-gray-800",
     },
     {
+      text: "Khuyến mãi",
+      icon: <Ionicons size={19.5} name="pricetags-outline" />,
+      handlePress: () => router.push("/shop/promotion"),
+      textStyleClasses: "text-gray-800",
+    },
+    {
+      text: "Lượt đánh giá",
+      icon: <Ionicons size={20} name="star-outline" />,
+      handlePress: () => router.push("/shop/review"),
+      textStyleClasses: "text-gray-800",
+    },
+
+    {
       text: "Hiệu suất bán hàng",
       icon: <Ionicons size={20} name="stats-chart-outline" />,
       handlePress: () => router.push("/shop/statistics"),
@@ -27,7 +40,21 @@ const redirections = {
     {
       text: "Cài đặt cửa hàng",
       icon: <Ionicons size={20} name="settings-outline" />,
-      handlePress: () => router.push("/shop/settings"),
+      handlePress: () => router.push("/shop/setting"),
+      textStyleClasses: "text-gray-800",
+    },
+  ] as LinkItem[],
+  balance: [
+    {
+      text: "Quản lí số dư",
+      icon: <Ionicons size={20} name="wallet-outline" />,
+      handlePress: () => router.push("/shop/balance"),
+      textStyleClasses: "text-gray-800",
+    },
+    {
+      text: "Yêu cầu rút tiền",
+      icon: <Ionicons size={20} name="documents-outline" />,
+      handlePress: () => router.push("/shop/withdrawal"),
       textStyleClasses: "text-gray-800",
     },
   ] as LinkItem[],
@@ -76,6 +103,11 @@ const Shop = () => {
         <LinkGroup
           title="CỬA HÀNG"
           data={redirections.shop}
+          containerStyleClasses="mt-4"
+        />
+        <LinkGroup
+          title="TÀI CHÍNH"
+          data={redirections.balance}
           containerStyleClasses="mt-4"
         />
         <LinkGroup
