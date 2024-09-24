@@ -14,10 +14,14 @@ import {
   Image,
   Alert,
   TouchableOpacity,
+  Platform,
 } from "react-native";
+import { CheckBox } from "react-native-elements";
+import { Checkbox } from "react-native-paper";
 
 const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAcceptedPolicy, setIsAcceptedPolicy] = useState(false);
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     name: "",
@@ -41,8 +45,8 @@ const SignUp = () => {
   };
   return (
     <SafeAreaView className="bg-white h-full">
-      <ScrollView contentContainerStyle={{ height: "100%" }}>
-        <View className="w-full h-full justify-center items-center px-4">
+      <ScrollView contentContainerStyle={{ height: "100%", flexShrink: 0 }}>
+        <View className="w-full min-h-full justify-start items-center px-4 shink-0">
           <Image
             source={images.signInLogo1}
             resizeMode="contain"
@@ -55,14 +59,14 @@ const SignUp = () => {
           {step == 2 ? (
             <SignUpVerification />
           ) : step == 0 ? (
-            <View className="w-full">
+            <View className="w-full justify-between">
               <FormFieldCustom
                 title={"Chủ cửa hàng"}
                 value={form.name}
                 placeholder={"Nhập tên chủ cửa hàng..."}
                 handleChangeText={(e) => setForm({ ...form, name: e })}
                 keyboardType="default"
-                otherStyleClasses="mt-5"
+                otherStyleClasses="mt-2"
               />
               <FormFieldCustom
                 title={"Email"}
@@ -70,7 +74,7 @@ const SignUp = () => {
                 placeholder={"Nhập email của bạn..."}
                 handleChangeText={(e) => setForm({ ...form, email: e })}
                 keyboardType="email-address"
-                otherStyleClasses="mt-5"
+                otherStyleClasses="mt-2"
               />
 
               <FormFieldCustom
@@ -79,7 +83,7 @@ const SignUp = () => {
                 placeholder={"Nhập mật khẩu..."}
                 handleChangeText={(e) => setForm({ ...form, password: e })}
                 isPassword={true}
-                otherStyleClasses="mt-5"
+                otherStyleClasses="mt-3"
               />
               <FormFieldCustom
                 title={"Xác nhận mật khẩu"}
@@ -87,7 +91,7 @@ const SignUp = () => {
                 placeholder={"Xác nhận mật khẩu..."}
                 handleChangeText={(e) => setForm({ ...form, password: e })}
                 isPassword={true}
-                otherStyleClasses="mt-5"
+                otherStyleClasses="mt-3"
               />
               <CustomButton
                 title="Tiếp tục"
@@ -138,6 +142,52 @@ const SignUp = () => {
                   </TouchableOpacity>
                 }
               />
+              <View className="flex-row items-center justify-start mt-4 mx-[0.2px]">
+                <View
+                  className={`${
+                    Platform.OS === "ios"
+                      ? "border-2 rounded h-[30px] w-[31px] ml-1"
+                      : ""
+                  } border-gray-300 justify-center items-center relative mr-2`}
+                >
+                  {Platform.OS === "ios" ? (
+                    <View
+                      className={`${
+                        Platform.OS === "ios" ? "mt-[-4px] ml-[-5px]" : ""
+                      }`}
+                    >
+                      <Checkbox.IOS
+                        status={isAcceptedPolicy ? "checked" : "unchecked"}
+                        onPress={() => setIsAcceptedPolicy(!isAcceptedPolicy)}
+                      />
+                    </View>
+                  ) : (
+                    <Checkbox.Android
+                      status={isAcceptedPolicy ? "checked" : "unchecked"}
+                      onPress={() => setIsAcceptedPolicy(!isAcceptedPolicy)}
+                    />
+                  )}
+
+                  {/* <CheckBox
+                    center
+                    title="Click Here"
+                    checked={isAcceptedPolicy}
+                    onPress={() => setIsAcceptedPolicy(!isAcceptedPolicy)}
+                  /> */}
+                </View>
+                <Text className="flex-1 font-semibold text-gray-600 text-[12px] italic">
+                  Đồng ý với{" "}
+                  <Text
+                    style={{
+                      color: "blue-200",
+                      textDecorationLine: "underline",
+                    }}
+                  >
+                    chính sách dành cho cửa hàng
+                  </Text>{" "}
+                  trên hệ thống MealSync
+                </Text>
+              </View>
               <CustomButton
                 title="Hoàn tất đăng ký"
                 handlePress={() => {
@@ -148,6 +198,7 @@ const SignUp = () => {
                 containerStyleClasses="w-full mt-5 bg-primary"
                 textStyleClasses="text-white"
                 isLoading={isSubmitting}
+                isDisabled={!isAcceptedPolicy}
               />
               <CustomButton
                 title="Quay trở lại"

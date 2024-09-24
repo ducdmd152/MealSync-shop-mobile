@@ -9,6 +9,7 @@ import {
 
 interface CustomButtonProps {
   title: string;
+
   handlePress: () => void;
   containerStyleClasses?: string;
   containerStyleObject?: StyleProp<ViewStyle>;
@@ -17,6 +18,7 @@ interface CustomButtonProps {
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
   isLoading?: boolean;
+  isDisabled?: boolean;
 }
 
 const CustomButton = ({
@@ -29,15 +31,17 @@ const CustomButton = ({
   iconLeft,
   iconRight,
   isLoading,
+  isDisabled,
 }: CustomButtonProps) => {
+  console.log(title + " isDisable: " + isDisabled);
   return (
     <TouchableOpacity
-      disabled={isLoading}
+      disabled={isDisabled || isLoading}
       onPress={handlePress}
       activeOpacity={0.7}
       className={`flex-row bg-secondary rounded-xl h-[52px] px-4 justify-center items-center ${
         containerStyleClasses || ""
-      } ${isLoading ? "opacity-70" : ""}`}
+      } ${isDisabled || isLoading ? "opacity-70" : ""}`}
       style={containerStyleObject}
     >
       {iconLeft ? iconLeft : ""}
