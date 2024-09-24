@@ -1,4 +1,5 @@
 import CustomButton from "@/components/custom/CustomButton";
+import CustomCheckbox from "@/components/custom/CustomCheckbox";
 import FormFieldCustom from "@/components/custom/FormFieldCustom";
 import SignUpVerification from "@/components/sign-up/SignUpVerification";
 import { images } from "@/constants";
@@ -105,7 +106,7 @@ const SignUp = () => {
                     color="white"
                   />
                 }
-                containerStyleClasses="bg-primary w-full mt-5 "
+                containerStyleClasses="bg-primary w-full mt-3 "
                 textStyleClasses="text-white mr-2"
                 isLoading={isSubmitting}
               />
@@ -118,7 +119,7 @@ const SignUp = () => {
                 placeholder={"Nhập tên cửa hàng..."}
                 handleChangeText={(e) => setForm({ ...form, name: e })}
                 keyboardType="default"
-                otherStyleClasses="mt-5"
+                otherStyleClasses="mt-3"
               />
               <FormFieldCustom
                 title={"Số điện thoại"}
@@ -126,7 +127,7 @@ const SignUp = () => {
                 placeholder={"Nhập số điện thoại..."}
                 handleChangeText={(e) => setForm({ ...form, email: e })}
                 keyboardType="email-address"
-                otherStyleClasses="mt-5"
+                otherStyleClasses="mt-3"
               />
 
               <FormFieldCustom
@@ -135,59 +136,32 @@ const SignUp = () => {
                 readOnly
                 placeholder={"Chọn địa chỉ cửa hàng..."}
                 handleChangeText={(e) => setForm({ ...form, password: e })}
-                otherStyleClasses="mt-5"
+                otherStyleClasses="mt-3"
                 iconRight={
                   <TouchableOpacity className="h-[40px] w-[40px] bg-primary rounded-md justify-center items-center relative">
                     <Ionicons name="location-outline" size={28} color="white" />
                   </TouchableOpacity>
                 }
               />
-              <View className="flex-row items-center justify-start mt-4 mx-[0.2px]">
-                <View
-                  className={`${
-                    Platform.OS === "ios"
-                      ? "border-2 rounded h-[30px] w-[31px] ml-1"
-                      : ""
-                  } border-gray-300 justify-center items-center relative mr-2`}
-                >
-                  {Platform.OS === "ios" ? (
-                    <View
-                      className={`${
-                        Platform.OS === "ios" ? "mt-[-4px] ml-[-5px]" : ""
-                      }`}
+              <CustomCheckbox
+                isChecked={isAcceptedPolicy}
+                handlePress={() => setIsAcceptedPolicy(!isAcceptedPolicy)}
+                label={
+                  <Text>
+                    Đồng ý với{" "}
+                    <Text
+                      style={{
+                        color: "blue-200",
+                        textDecorationLine: "underline",
+                      }}
                     >
-                      <Checkbox.IOS
-                        status={isAcceptedPolicy ? "checked" : "unchecked"}
-                        onPress={() => setIsAcceptedPolicy(!isAcceptedPolicy)}
-                      />
-                    </View>
-                  ) : (
-                    <Checkbox.Android
-                      status={isAcceptedPolicy ? "checked" : "unchecked"}
-                      onPress={() => setIsAcceptedPolicy(!isAcceptedPolicy)}
-                    />
-                  )}
+                      chính sách dành cho cửa hàng
+                    </Text>{" "}
+                    trên hệ thống MealSync
+                  </Text>
+                }
+              />
 
-                  {/* <CheckBox
-                    center
-                    title="Click Here"
-                    checked={isAcceptedPolicy}
-                    onPress={() => setIsAcceptedPolicy(!isAcceptedPolicy)}
-                  /> */}
-                </View>
-                <Text className="flex-1 font-semibold text-gray-600 text-[12px] italic">
-                  Đồng ý với{" "}
-                  <Text
-                    style={{
-                      color: "blue-200",
-                      textDecorationLine: "underline",
-                    }}
-                  >
-                    chính sách dành cho cửa hàng
-                  </Text>{" "}
-                  trên hệ thống MealSync
-                </Text>
-              </View>
               <CustomButton
                 title="Hoàn tất đăng ký"
                 handlePress={() => {
@@ -195,7 +169,7 @@ const SignUp = () => {
                   // setStep(2);
                 }}
                 iconRight={<Text className="text-primary">{" --->"}</Text>}
-                containerStyleClasses="w-full mt-5 bg-primary"
+                containerStyleClasses="w-full mt-3 bg-primary"
                 textStyleClasses="text-white"
                 isLoading={isSubmitting}
                 isDisabled={!isAcceptedPolicy}

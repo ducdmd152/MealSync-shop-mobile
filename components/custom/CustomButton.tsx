@@ -33,7 +33,6 @@ const CustomButton = ({
   isLoading,
   isDisabled,
 }: CustomButtonProps) => {
-  console.log(title + " isDisable: " + isDisabled);
   return (
     <TouchableOpacity
       disabled={isDisabled || isLoading}
