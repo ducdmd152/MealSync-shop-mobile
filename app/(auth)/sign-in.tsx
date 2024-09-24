@@ -43,7 +43,6 @@ const SignIn = () => {
           <CustomButton
             title="Đăng nhập"
             handlePress={() => {
-              console.log("Logining....");
               router.replace("/home");
             }}
             containerStyleClasses="bg-primary w-full mt-7"

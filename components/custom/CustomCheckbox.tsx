@@ -18,7 +18,7 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
 }) => {
   return (
     <View
-      className={`flex-row items-center justify-start mt-4 mx-[0.2px] ${containerStyleClasses}`}
+      className={`flex-row items-center justify-start mx-[0.2px] ${containerStyleClasses}`}
     >
       <View
         className={`${

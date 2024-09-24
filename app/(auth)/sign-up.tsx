@@ -23,6 +23,8 @@ import { Checkbox } from "react-native-paper";
 const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAcceptedPolicy, setIsAcceptedPolicy] = useState(false);
+  const [hasA, setHasA] = useState(true);
+  const [hasB, setHasB] = useState(true);
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     name: "",
@@ -47,7 +49,7 @@ const SignUp = () => {
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView contentContainerStyle={{ height: "100%", flexShrink: 0 }}>
-        <View className="w-full min-h-full justify-start items-center px-4 shink-0">
+        <View className="w-full min-h-full justify-center items-center px-4 shink-0">
           <Image
             source={images.signInLogo1}
             resizeMode="contain"
@@ -143,9 +145,32 @@ const SignUp = () => {
                   </TouchableOpacity>
                 }
               />
+
+              <View className={`gap-y-0 mt-3`}>
+                <Text className="text-base text-gray-500 font-pmedium">
+                  Khu bán hàng
+                </Text>
+                <View className="flex-row gap-x-2 ml-[2px]">
+                  <CustomCheckbox
+                    isChecked={hasA}
+                    handlePress={() => setHasA(!hasA)}
+                    label={<Text className="text-[16px]">Khu A</Text>}
+                    containerStyleClasses={"w-[88px]"}
+                  />
+                  <CustomCheckbox
+                    isChecked={hasB}
+                    handlePress={() => setHasB(!hasB)}
+                    label={<Text className="text-[16px]">Khu B</Text>}
+                    containerStyleClasses={"w-[88px]"}
+                  />
+                </View>
+              </View>
+
+              <View className="border-b-[.7px] border-gray-100 mt-3" />
               <CustomCheckbox
                 isChecked={isAcceptedPolicy}
                 handlePress={() => setIsAcceptedPolicy(!isAcceptedPolicy)}
+                containerStyleClasses="mt-3"
                 label={
                   <Text>
                     Đồng ý với{" "}
