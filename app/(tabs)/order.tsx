@@ -9,7 +9,7 @@ const Order = () => {
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
       <CustomButton
-        title="09/10/2024 | 8:00-22:00"
+        title="09/10/2024 | 8:00-8:30"
         handlePress={() => {}}
         containerStyleClasses="h-[32px] px-3 bg-transparent border-2 border-gray-200 absolute bottom-4 right-4 bg-secondary-100 font-psemibold z-10"
         iconLeft={<Ionicons name="filter-outline" size={21} color="white" />}
