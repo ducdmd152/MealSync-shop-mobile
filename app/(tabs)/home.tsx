@@ -1,9 +1,8 @@
 import { StatusBar } from "expo-status-bar";
 import { Link, router } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/already-components/ThemedText";
 import CustomButton from "@/components/custom/CustomButton";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import { Avatar } from "react-native-paper";
 
@@ -37,32 +36,34 @@ export default function HomeScreen() {
             </Link>
           </View>
           <View className="w-full flex-row gap-2 items-between">
-            <View className="flex-1 h-[80px] bg-gray-200 bg-yellow-200 border-2 border-gray-200 rounded-xl items-center justify-center">
-              <Text className="font-semibold">10</Text>
-              <Text>chờ xác nhận</Text>
-            </View>
-            <View className="flex-1 h-[80px] bg-gray-200 bg-[#91DBDB]  border-2 border-gray-200 rounded-xl items-center justify-center">
-              <Text className="font-semibold">10</Text>
+            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000  border-2 border-gray-200 rounded-xl items-center justify-center">
+              <Text className="font-semibold text-xl text-secondary-100">
+                10
+              </Text>
+              <Text className="text-secondary-200">chờ xác nhận</Text>
+            </TouchableOpacity>
+            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000  border-2 border-gray-200 rounded-xl items-center justify-center">
+              <Text className="font-semibold text-xl">10</Text>
               <Text>đã xác nhận</Text>
-            </View>
-            <View className="flex-1 h-[80px] bg-gray-200 bg-indigo-300 border-2 border-gray-200 rounded-xl items-center justify-center">
-              <Text className="font-semibold">10</Text>
+            </TouchableOpacity>
+            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000  border-2 border-gray-200 rounded-xl items-center justify-center">
+              <Text className="font-semibold text-xl">10</Text>
               <Text>đang chuẩn bị</Text>
-            </View>
+            </TouchableOpacity>
           </View>
           <View className="w-full flex-row gap-2 items-between mt-2">
-            <View className="flex-1 h-[80px] bg-gray-200 bg-[#5BC9C9] border-2 border-gray-200 rounded-xl items-center justify-center">
-              <Text className="font-semibold">10</Text>
+            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000 border-2 border-gray-200 rounded-xl items-center justify-center">
+              <Text className="font-semibold text-xl">10</Text>
               <Text>đang giao</Text>
-            </View>
-            <View className="flex-1 h-[80px] bg-gray-200 bg-green-300 border-2 border-gray-200 rounded-xl items-center justify-center">
-              <Text className="font-semibold">10</Text>
+            </TouchableOpacity>
+            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000 border-2 border-gray-200 rounded-xl items-center justify-center">
+              <Text className="font-semibold text-xl">10</Text>
               <Text className="text-center">giao thành công</Text>
-            </View>
-            <View className="flex-1 h-[80px] bg-gray-200 bg-pink-200 border-2 border-gray-200 rounded-xl items-center justify-center">
-              <Text className="font-semibold">10</Text>
-              <Text className="text-center">giao thất bại</Text>
-            </View>
+            </TouchableOpacity>
+            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000 border-2 border-gray-200 rounded-xl items-center justify-center">
+              <Text className="font-semibold text-xl text-red-500">10</Text>
+              <Text className="text-center text-red-500">giao thất bại</Text>
+            </TouchableOpacity>
           </View>
         </View>
         {/* STATISTICS */}
@@ -73,29 +74,29 @@ export default function HomeScreen() {
               {"Tháng 9"}
             </Text>
           </View>
-          <View className="w-full h-[80px] bg-gray-200 flex-col rounded-xl items-center justify-center mb-3 bg-yellow-300">
+          <View className="w-full h-[80px] bg-gray-000 flex-col rounded-xl items-center justify-center mb-3 bg-yellow-100">
             <Text className="font-semibold">Doanh thu tháng</Text>
-            <Text className="text-center text-lg">10.000.000 đ</Text>
+            <Text className="text-center text-lg font-bold">10.000.000 đ</Text>
           </View>
           <View className="w-full flex-row gap-2 items-between">
-            <View className="flex-1 h-[80px]  bg-yellow-200 flex-col rounded-xl items-center justify-center p-1">
+            <TouchableOpacity className="flex-1 h-[80px]  bg-yellow-100 flex-col rounded-xl items-center justify-center p-1">
               <Text className="font-semibold text-green-500">10</Text>
               <Text className="text-center text-green-500">
                 Đơn hàng {"\n"} thành công
               </Text>
-            </View>
-            <View className="flex-1 h-[80px]  bg-yellow-200  flex-col rounded-xl items-center justify-center p-1">
+            </TouchableOpacity>
+            <TouchableOpacity className="flex-1 h-[80px]  bg-yellow-100  flex-col rounded-xl items-center justify-center p-1">
               <Text className="font-semibold text-red-500">10</Text>
               <Text className="text-center text-red-500">
                 Đơn hàng thất bại/hoàn tiền
               </Text>
-            </View>
-            <View className="flex-1 h-[80px] bg-yellow-200 rounded-xl items-center justify-center p-1 ">
+            </TouchableOpacity>
+            <TouchableOpacity className="flex-1 h-[80px] bg-yellow-100 rounded-xl items-center justify-center p-1 ">
               <Text className="font-semibold text-purple-500">10</Text>
               <Text className="text-center text-purple-500">
                 Đơn hàng {"\n"}hủy/từ chối
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
           <CustomButton
             handlePress={() => router.push("/statistics")}
@@ -105,12 +106,12 @@ export default function HomeScreen() {
                 <Ionicons
                   size={17}
                   name="arrow-forward-outline"
-                  color="#FF9001"
+                  color="#FFB200"
                 />
               </View>
             }
             containerStyleClasses="h-[42px] border-gray-400 border-2 bg-white mt-4"
-            textStyleClasses="text-[14px] font-medium text-secondary-100"
+            textStyleClasses="text-[14px] font-medium text-[#FFB200]"
           />
         </View>
       </ScrollView>
