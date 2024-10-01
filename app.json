@@ -28,10 +28,12 @@
     },
     "plugins": [
       "expo-router",
-      "expo-image-picker",
-      {
-        "photosPermission": "Cho phép ứng dụng sẽ truy cập thư viện của bạn."
-      }
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Cho phép ứng dụng sẽ truy cập thư viện của bạn."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
