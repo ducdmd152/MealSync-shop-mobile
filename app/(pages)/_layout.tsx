@@ -37,7 +37,10 @@ const PageLayout = () => {
           name="shop/withdrawal"
           options={{ headerTitle: "Yêu cầu rút tiền" }}
         />
-        <Stack.Screen name="account" options={{ headerTitle: "Tài khoản" }} />
+        <Stack.Screen
+          name="shop/account"
+          options={{ headerTitle: "Tài khoản" }}
+        />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
     </>
