@@ -62,7 +62,7 @@ const redirections = {
     {
       text: "Tài khoản của tôi",
       icon: <Ionicons size={20} name="person-circle-outline" />,
-      handlePress: () => router.push("/account"),
+      handlePress: () => router.push("/shop/account"),
       textStyleClasses: "text-gray-800",
     },
     {
