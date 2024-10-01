@@ -68,7 +68,7 @@ const redirections = {
     {
       text: "Đăng xuất",
       icon: <Ionicons size={20} name="log-out-outline" />,
-      handlePress: () => router.push("/logout"),
+      handlePress: () => router.replace("/"),
       textStyleClasses: "text-gray-600",
     },
   ] as LinkItem[],

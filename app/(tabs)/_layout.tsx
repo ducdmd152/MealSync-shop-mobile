@@ -50,9 +50,9 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="product"
+          name="menu"
           options={{
-            title: "Sản phẩm",
+            title: "Thực đơn",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={focused ? "fast-food" : "fast-food-outline"}

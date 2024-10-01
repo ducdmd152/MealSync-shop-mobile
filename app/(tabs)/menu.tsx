@@ -4,7 +4,7 @@ import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Searchbar } from "react-native-paper";
 
-const Product = () => {
+const Menu = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
@@ -27,7 +27,7 @@ const Product = () => {
               // borderWidth: 2,
             }}
             inputStyle={{ minHeight: 0 }}
-            placeholder="Nhập tên sản phẩm..."
+            placeholder="Nhập tên món..."
             onChangeText={setSearchQuery}
             value={searchQuery}
           />
@@ -104,4 +104,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default Menu;

@@ -99,7 +99,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
           <CustomButton
-            handlePress={() => router.push("/statistics")}
+            handlePress={() => router.push("/shop/statistics")}
             title="Xem chi tiết thống kê"
             iconRight={
               <View className="mt-[-3px] ml-[3px]">
