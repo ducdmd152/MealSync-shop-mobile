@@ -15,6 +15,7 @@ interface FormFieldProps extends TextInputProps {
   placeholder: string;
   handleChangeText: (text: string) => void;
   otherStyleClasses?: string;
+  otherInputStyleClasses?: string;
   isPassword?: boolean;
   isRequired?: boolean;
   iconRight?: ReactNode;
@@ -26,6 +27,7 @@ const FormField: React.FC<FormFieldProps> = ({
   placeholder,
   handleChangeText,
   otherStyleClasses: otherStyles = "",
+  otherInputStyleClasses = "",
   isPassword,
   isRequired,
   iconRight,
@@ -37,7 +39,9 @@ const FormField: React.FC<FormFieldProps> = ({
     <View className={`space-y-2 ${otherStyles}`}>
       <Text className="text-base text-gray-500 font-pmedium">{title}</Text>
 
-      <View className="w-full h-16 px-4 rounded-2xl border-2 border-black-200 focus:border-secondary flex flex-row items-center">
+      <View
+        className={`w-full h-16 px-4 rounded-2xl border-2 border-black-200 focus:border-secondary flex flex-row items-center ${otherInputStyleClasses}`}
+      >
         <TextInput
           className="flex-1 text-gray font-psemibold text-base"
           value={value}

@@ -16,25 +16,25 @@ const PageLayout = () => {
           options={{ headerTitle: "Quản lí khuyến mãi" }}
         />
         <Stack.Screen
-          name="review"
+          name="shop/review"
           options={{ headerTitle: "Lượt đánh giá" }}
         />
         <Stack.Screen
-          name="statistics"
+          name="shop/statistics"
           options={{ headerTitle: "Hiệu suất bán hàng" }}
         />
         <Stack.Screen
-          name="setting"
+          name="shop/setting"
           options={{ headerTitle: "Cài đặt cửa hàng" }}
         />
         <Stack.Screen
-          name="balance"
+          name="shop/balance"
           options={{
             headerTitle: "Quản lí số dư",
           }}
         />
         <Stack.Screen
-          name="withdrawal"
+          name="shop/withdrawal"
           options={{ headerTitle: "Yêu cầu rút tiền" }}
         />
         <Stack.Screen name="account" options={{ headerTitle: "Tài khoản" }} />
