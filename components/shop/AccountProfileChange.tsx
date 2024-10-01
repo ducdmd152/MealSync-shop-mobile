@@ -41,10 +41,10 @@ const ShopProfileChange = () => {
         handlePress={() => {
           setStep(1);
         }}
-        // iconRight={
-        //   <Ionicons name="arrow-forward-outline" size={22} color="white" />
-        // }
-        containerStyleClasses="bg-primary w-full mt-3 h-12"
+        iconRight={
+          <Ionicons name="arrow-forward-outline" size={22} color="white" />
+        }
+        containerStyleClasses="bg-primary-100 w-full mt-3 h-12 mt-3"
         textStyleClasses="text-white mr-2"
         isLoading={isSubmitting}
       />
