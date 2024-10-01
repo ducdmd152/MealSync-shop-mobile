@@ -12,7 +12,7 @@ export default function HomeScreen() {
       <View className="w-full h-[86px] flex-row items-center justify-between p-2 gap-x-2">
         <View className="flex-1 items-start">
           <Text className="text-lg text-gray-600">Cửa hàng</Text>
-          <Text className="flex-1 text-[28px] text-gray text-primary font-pmedium">
+          <Text className="flex-1 text-[24px] text-gray text-primary font-pmedium">
             Tiệm ăn tháng năm
           </Text>
         </View>
@@ -48,7 +48,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
             <TouchableOpacity className="flex-1 h-[80px] bg-gray-000  border-2 border-gray-200 rounded-xl items-center justify-center">
               <Text className="font-semibold text-xl">10</Text>
-              <Text>đang chuẩn bị</Text>
+              <Text className="text-center">đang chuẩn bị</Text>
             </TouchableOpacity>
           </View>
           <View className="w-full flex-row gap-2 items-between mt-2">
@@ -79,19 +79,19 @@ export default function HomeScreen() {
             <Text className="text-center text-lg font-bold">10.000.000 đ</Text>
           </View>
           <View className="w-full flex-row gap-2 items-between">
-            <TouchableOpacity className="flex-1 h-[80px]  bg-yellow-100 flex-col rounded-xl items-center justify-center p-1">
+            <TouchableOpacity className="flex-1  bg-yellow-100 flex-col rounded-xl items-center justify-center p-1 py-2">
               <Text className="font-semibold text-green-500">10</Text>
               <Text className="text-center text-green-500">
                 Đơn hàng {"\n"} thành công
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-1 h-[80px]  bg-yellow-100  flex-col rounded-xl items-center justify-center p-1">
+            <TouchableOpacity className="flex-1  bg-yellow-100  flex-col rounded-xl items-center justify-center p-1 py-2">
               <Text className="font-semibold text-red-500">10</Text>
               <Text className="text-center text-red-500">
                 Đơn hàng thất bại/hoàn tiền
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-1 h-[80px] bg-yellow-100 rounded-xl items-center justify-center p-1 ">
+            <TouchableOpacity className="flex-1 bg-yellow-100 rounded-xl items-center justify-center p-1 py-2">
               <Text className="font-semibold text-purple-500">10</Text>
               <Text className="text-center text-purple-500">
                 Đơn hàng {"\n"}hủy/từ chối
