@@ -10,7 +10,7 @@ const Menu = () => {
   const [index, setIndex] = React.useState(0);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isCollapsibles, setIsCollapsibles] = React.useState<boolean[]>(
-    Array(5).fill(false)
+    Array(5).fill(true)
   );
   useEffect(() => {
     // setIsCollapsibles(Array(5).fill(true));
@@ -148,7 +148,10 @@ const Menu = () => {
                             </Text>
                           </View>
                         </View>
-                        <View className="flex-row justify-end gap-2 pt-4">
+                        <View className="flex-row justify-between items-center gap-2 pt-2">
+                          <Text className="text-gray-500 italic text-[12px]">
+                            100 đơn cần xử lí trong 2h tới
+                          </Text>
                           <TouchableOpacity
                             onPress={() => {}}
                             className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
