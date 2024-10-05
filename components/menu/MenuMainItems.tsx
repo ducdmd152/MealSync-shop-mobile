@@ -33,7 +33,7 @@ const Menu = () => {
   }>) => {
     const i = categories.findIndex((cat) => cat.id === item.id);
     return (
-      <View key={item.id}>
+      <View key={item.id} className="mb-1">
         <TouchableOpacity
           className="flex-row justify-between items-center pr-2 mb-2"
           onPress={() =>
