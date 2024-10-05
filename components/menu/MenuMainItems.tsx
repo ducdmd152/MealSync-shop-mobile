@@ -30,7 +30,6 @@ const Menu = () => {
       </View>
 
       <View className="w-full gap-2 p-4">
-        <View className="mt-4"></View>
         {/* <View className="w-full">
           <Searchbar
             style={{
@@ -46,7 +45,7 @@ const Menu = () => {
           />
         </View> */}
         <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
-          <View className="w-full flex-row gap-2 items-center justify-between pb-2">
+          <View className="w-full flex-row gap-2 items-center justify-between pb-2 ">
             <Text className="bg-gray-100 rounded-xl px-4 py-2 bg-secondary">
               Tất cả
             </Text>
@@ -63,7 +62,7 @@ const Menu = () => {
           </View>
         </ScrollView>
         <ScrollView style={{ width: "100%", flexGrow: 1 }}>
-          <View className="gap-y-2 pb-[154px]">
+          <View className="gap-y-2 pb-[200px]">
             {Array.from({ length: 3 }, (_, i) => (
               <View key={i}>
                 <TouchableOpacity
