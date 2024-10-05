@@ -8,6 +8,7 @@ import { Tab } from "react-native-elements";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
+import { BottomSheet } from "@rneui/themed";
 
 const initialCategories = [
   { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
@@ -18,6 +19,7 @@ const initialCategories = [
 const Menu = () => {
   const [index, setIndex] = React.useState(0);
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
 
   const [categories, setCategories] = useState(initialCategories);
 
@@ -143,7 +145,9 @@ const Menu = () => {
       <View className="absolute w-full items-center justify-center bottom-28 left-0 z-10">
         <CustomButton
           title="Thêm món/danh mục mới"
-          handlePress={() => {}}
+          handlePress={() => {
+            setIsBottomSheetVisible(true);
+          }}
           containerStyleClasses="w-[98%] h-[44px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
           // iconLeft={
           //   <Ionicons name="add-circle-outline" size={21} color="white" />
@@ -196,6 +200,35 @@ const Menu = () => {
           />
         </View>
       </View>
+
+      <BottomSheet modalProps={{}} isVisible={isBottomSheetVisible}>
+        <View className="p-4 bg-white rounded-t-lg min-h-[120px] ">
+          <TouchableOpacity
+            className="items-center"
+            onPress={() => setIsBottomSheetVisible(false)}
+          >
+            <Ionicons name="chevron-down-outline" size={24} color="gray" />
+          </TouchableOpacity>
+          <TouchableOpacity className="p-4">
+            <Text className="text-lg text-primary font-semibold shadow drop-shadow-lg">
+              Thêm món mới
+            </Text>
+            <Text className="text-sm text-gray-400 italic">
+              Ví dụ: trà sữa, bánh ngọt,...
+            </Text>
+          </TouchableOpacity>
+          <View className="border-b-2 border-gray-200"></View>
+          <TouchableOpacity className="p-4">
+            <Text className="text-lg text-primary font-semibold">
+              Thêm danh mục mới
+            </Text>
+
+            <Text className="text-sm text-gray-400 italic">
+              Ví dụ: đồ uống, ăn nhanh,...
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheet>
     </View>
   );
 };
