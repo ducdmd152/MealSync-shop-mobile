@@ -218,7 +218,7 @@ const MenuMainItems = () => {
             className="p-4"
             onPress={() => {
               setIsBottomSheetVisible(false);
-              router.push("/menu/food-details");
+              router.push("/menu/food");
             }}
           >
             <Text className="text-lg text-primary font-semibold shadow drop-shadow-lg">
@@ -233,7 +233,7 @@ const MenuMainItems = () => {
             className="p-4"
             onPress={() => {
               setIsBottomSheetVisible(false);
-              router.push("/menu/category-details");
+              router.push("/menu/category/create");
             }}
           >
             <Text className="text-lg text-primary font-semibold">
