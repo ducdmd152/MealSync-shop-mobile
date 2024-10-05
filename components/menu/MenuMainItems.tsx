@@ -59,7 +59,9 @@ const MenuMainItems = () => {
             </View>
             <CustomButton
               title="Chỉnh sửa danh mục"
-              handlePress={() => {}}
+              handlePress={() => {
+                router.push("/menu/category/update");
+              }}
               containerStyleClasses="bg-white border-gray-200 border-2 h-[26px] px-[8px]"
               textStyleClasses="text-gray-700 text-[11px] mt-[-5px] text-[#227B94]"
               // iconRight={
