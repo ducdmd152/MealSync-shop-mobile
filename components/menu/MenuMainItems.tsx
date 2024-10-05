@@ -10,20 +10,14 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 
 const initialCategories = [
-  { id: 1, name: "Ăn sáng", items: 2 },
-  { id: 2, name: "Ăn trưa", items: 2 },
-  { id: 3, name: "Ăn tối", items: 2 },
+  { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
+  { id: 2, name: "Ăn trưa", items: 2, isCollapsible: true },
+  { id: 3, name: "Ăn tối", items: 2, isCollapsible: true },
 ];
 
 const Menu = () => {
   const [index, setIndex] = React.useState(0);
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [isCollapsibles, setIsCollapsibles] = React.useState<boolean[]>(
-    Array(5).fill(true)
-  );
-  useEffect(() => {
-    // setIsCollapsibles(Array(5).fill(true));
-  }, []);
 
   const [categories, setCategories] = useState(initialCategories);
 
@@ -31,15 +25,24 @@ const Menu = () => {
     item,
     drag,
     isActive,
-  }: RenderItemParams<{ id: number; name: string; items: number }>) => {
+  }: RenderItemParams<{
+    id: number;
+    name: string;
+    items: number;
+    isCollapsible: boolean;
+  }>) => {
     const i = categories.findIndex((cat) => cat.id === item.id);
     return (
       <View key={item.id}>
         <TouchableOpacity
           className="flex-row justify-between items-center pr-2 mb-2"
           onPress={() =>
-            setIsCollapsibles(
-              isCollapsibles.map((item, index) => (index === i ? !item : item))
+            setCategories(
+              categories.map((cat) =>
+                item.id === cat.id
+                  ? { ...cat, isCollapsible: !cat.isCollapsible }
+                  : cat
+              )
             )
           }
           onLongPress={drag}
@@ -68,7 +71,7 @@ const Menu = () => {
             />
           </View>
           <View className="flex-row items-center gap-x-6">
-            {isCollapsibles[i] ? (
+            {item.isCollapsible ? (
               <Ionicons name="chevron-up-outline" size={21} color="gray" />
             ) : (
               <Ionicons name="chevron-down-outline" size={21} color="gray" />
@@ -76,7 +79,7 @@ const Menu = () => {
           </View>
         </TouchableOpacity>
 
-        <Collapsible collapsed={isCollapsibles[i]}>
+        <Collapsible collapsed={item.isCollapsible}>
           <View className="gap-y-2 pb-2">
             {Array.from({ length: 2 }, (_, j) => (
               <View
@@ -94,10 +97,10 @@ const Menu = () => {
                     />
                     <View>
                       <Text className="text-md font-psemibold mt-[-2px]">
-                        {j === 0 ? "Cơm tấm Sài Gòn" : "Phở bò"}
+                        {j === 0 ? "Cơm tấm Sài Gòn" : "Phở bò"} - {item.name}
                       </Text>
                       <Text className="text-md italic text-gray-500 mt-[-2px]">
-                        {j === 0 ? "120.000đ" : "80.000đ"}
+                        {j === 0 ? "120.000đ" : "80.000đ"} - {item.name}
                       </Text>
                     </View>
                   </View>
