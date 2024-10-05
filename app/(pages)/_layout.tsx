@@ -49,6 +49,10 @@ const PageLayout = () => {
           name="menu/category/update"
           options={{ headerTitle: "Chỉnh sửa danh mục" }}
         />
+        <Stack.Screen
+          name="menu/food/create"
+          options={{ headerTitle: "Tạo mới sản phẩm" }}
+        />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
     </>

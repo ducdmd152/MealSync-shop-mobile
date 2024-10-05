@@ -220,7 +220,7 @@ const MenuMainItems = () => {
             className="p-4"
             onPress={() => {
               setIsBottomSheetVisible(false);
-              router.push("/menu/food");
+              router.push("/menu/food/create");
             }}
           >
             <Text className="text-lg text-primary font-semibold shadow drop-shadow-lg">

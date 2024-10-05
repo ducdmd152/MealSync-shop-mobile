@@ -16,9 +16,12 @@ interface FormFieldProps extends TextInputProps {
   handleChangeText: (text: string) => void;
   otherStyleClasses?: string;
   otherInputStyleClasses?: string;
+  otherTextInputStyleClasses?: string;
   isPassword?: boolean;
   isRequired?: boolean;
   iconRight?: ReactNode;
+  multiline?: boolean;
+  numberOfLines?: number;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -28,22 +31,33 @@ const FormField: React.FC<FormFieldProps> = ({
   handleChangeText,
   otherStyleClasses: otherStyles = "",
   otherInputStyleClasses = "",
+  otherTextInputStyleClasses = "",
   isPassword,
-  isRequired,
+  isRequired = false,
   iconRight,
+  multiline = false,
+  numberOfLines = 1,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <View className={`space-y-2 ${otherStyles}`}>
-      <Text className="text-base text-gray-500 font-pmedium">{title}</Text>
+      <View className="flex-row items-center">
+        <Text className="text-base text-gray-500 font-pmedium">{title}</Text>
+        {isRequired && <Text className="ml-1 text-[14px] text-[red]">*</Text>}
+      </View>
 
       <View
-        className={`w-full h-16 px-4 rounded-2xl border-2 border-black-200 focus:border-secondary flex flex-row items-center ${otherInputStyleClasses}`}
+        className={`w-full h-16 px-4 rounded-2xl border-2 border-gray-400 focus:border-secondary flex flex-row items-center ${otherInputStyleClasses}`}
       >
         <TextInput
-          className="flex-1 text-gray font-psemibold text-base"
+          className={
+            "flex-1 text-gray font-psemibold text-base " +
+            otherTextInputStyleClasses
+          }
+          multiline={multiline}
+          numberOfLines={numberOfLines}
           value={value}
           placeholder={placeholder}
           placeholderTextColor="#7B7B8B"
