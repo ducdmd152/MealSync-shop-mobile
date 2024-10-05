@@ -9,6 +9,7 @@ import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { BottomSheet } from "@rneui/themed";
+import { router } from "expo-router";
 
 const initialCategories = [
   { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
@@ -16,7 +17,7 @@ const initialCategories = [
   { id: 3, name: "Ăn tối", items: 2, isCollapsible: true },
 ];
 
-const Menu = () => {
+const MenuMainItems = () => {
   const [index, setIndex] = React.useState(0);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
@@ -89,7 +90,7 @@ const Menu = () => {
                 className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
               >
                 <View className="flex-row items-start justify-between gap-2">
-                  <View className="flex-row justify-start items-start gap-2">
+                  <View className="flex-row justify-start items-start gap-2 flex-1">
                     <Image
                       source={{
                         uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1200px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg",
@@ -97,12 +98,16 @@ const Menu = () => {
                       resizeMode="cover"
                       className="h-[36px] w-[40px] rounded-md opacity-85"
                     />
-                    <View>
-                      <Text className="text-md font-psemibold mt-[-2px]">
+                    <View className="flex-1">
+                      <Text
+                        className="text-md font-psemibold mt-[-2px]"
+                        numberOfLines={2}
+                        ellipsizeMode="tail"
+                      >
                         {j === 0 ? "Cơm tấm Sài Gòn" : "Phở bò"} - {item.name}
                       </Text>
                       <Text className="text-md italic text-gray-500 mt-[-2px]">
-                        {j === 0 ? "120.000đ" : "80.000đ"} - {item.name}
+                        {j === 0 ? "120.000đ" : "80.000đ"}
                       </Text>
                     </View>
                   </View>
@@ -209,7 +214,13 @@ const Menu = () => {
           >
             <Ionicons name="chevron-down-outline" size={24} color="gray" />
           </TouchableOpacity>
-          <TouchableOpacity className="p-4">
+          <TouchableOpacity
+            className="p-4"
+            onPress={() => {
+              setIsBottomSheetVisible(false);
+              router.push("/menu/food-details");
+            }}
+          >
             <Text className="text-lg text-primary font-semibold shadow drop-shadow-lg">
               Thêm món mới
             </Text>
@@ -218,7 +229,13 @@ const Menu = () => {
             </Text>
           </TouchableOpacity>
           <View className="border-b-2 border-gray-200"></View>
-          <TouchableOpacity className="p-4">
+          <TouchableOpacity
+            className="p-4"
+            onPress={() => {
+              setIsBottomSheetVisible(false);
+              router.push("/menu/category-details");
+            }}
+          >
             <Text className="text-lg text-primary font-semibold">
               Thêm danh mục mới
             </Text>
@@ -233,4 +250,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default MenuMainItems;
