@@ -41,6 +41,14 @@ const PageLayout = () => {
           name="shop/account"
           options={{ headerTitle: "Tài khoản" }}
         />
+        <Stack.Screen
+          name="menu/category/create"
+          options={{ headerTitle: "Thêm mới danh mục" }}
+        />
+        <Stack.Screen
+          name="menu/category/update"
+          options={{ headerTitle: "Chỉnh sửa danh mục" }}
+        />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
     </>

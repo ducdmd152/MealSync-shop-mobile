@@ -12,11 +12,11 @@ const MenuGroupOptions = () => {
         <CustomButton
           title="Thêm nhóm lựa chọn"
           handlePress={() => {}}
-          containerStyleClasses="w-[98%] h-[44px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
+          containerStyleClasses="w-[98%] h-[50px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
           // iconLeft={
           //   <Ionicons name="add-circle-outline" size={21} color="white" />
           // }
-          textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
+          textStyleClasses="text-[15px] text-gray-900 ml-1 text-white"
         />
       </View>
       <View className="w-full gap-2 p-4">

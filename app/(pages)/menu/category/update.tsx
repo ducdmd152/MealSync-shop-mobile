@@ -53,24 +53,32 @@ const CategoryUpdate = () => {
                       </View>
                     </View>
 
-                    <View className="flex-row gap-2 items-start">
+                    <View className="gap-2 items-end">
                       <Text className="bg-blue-100 text-blue-800 text-[12.5px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
                         Status
                       </Text>
+                      <TouchableOpacity
+                        onPress={() => {}}
+                        className=" bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px] bg-white border-0 py-2"
+                      >
+                        <Text className="text-[14px] text-white text-[#227B94] font-semibold">
+                          Chỉnh sửa
+                        </Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
                   <View className="flex-row justify-end items-center gap-2">
                     {/* <Text className="text-gray-500 italic text-[12px]">
                     100 đơn cần xử lí trong 2h tới
                   </Text> */}
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                       onPress={() => {}}
                       className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px] bg-white border-0"
                     >
                       <Text className="text-[13.5px] text-white text-[#227B94] font-semibold">
                         Chỉnh sửa
                       </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     {/* <TouchableOpacity
                             onPress={() => {}}
                             className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"

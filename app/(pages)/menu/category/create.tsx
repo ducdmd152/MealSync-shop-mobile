@@ -20,7 +20,7 @@ const CategoryPage = () => {
         />
         <View className="items-center justify-center mt-2">
           <CustomButton
-            title="Hoàn tất thêm danh mục"
+            title="Thêm danh mục"
             handlePress={() => {}}
             containerStyleClasses="w-full h-[52px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
             // iconLeft={
