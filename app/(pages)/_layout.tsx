@@ -57,6 +57,10 @@ const PageLayout = () => {
           name="menu/option-group/create"
           options={{ headerTitle: "Thêm nhóm lựa chọn" }}
         />
+        <Stack.Screen
+          name="menu/option-group/link"
+          options={{ headerTitle: "Liên kết thực đơn chính" }}
+        />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
     </>

@@ -6,6 +6,7 @@ import CustomButton from "@/components/custom/CustomButton";
 import { router } from "expo-router";
 import CustomCheckbox from "@/components/custom/CustomCheckbox";
 import { Ionicons } from "@expo/vector-icons";
+import { Switch } from "react-native-paper";
 
 interface Option {
   option: string;
@@ -13,6 +14,8 @@ interface Option {
 }
 
 const OptionGroupCreate: React.FC = () => {
+  const [isSwitchOn, setIsSwitchOn] = React.useState(true);
+  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
   const [options, setOptions] = useState<Option[]>([
     { option: "", price: "0" },
   ]);
@@ -51,7 +54,7 @@ const OptionGroupCreate: React.FC = () => {
     };
     // Gửi `data` về server ở đây
     console.log("Submit data:", data);
-    router.push("/menu");
+    router.push("/menu/option-group/link");
   };
 
   return (
@@ -149,6 +152,25 @@ const OptionGroupCreate: React.FC = () => {
                 handleChangeText={setMaxSelect}
               />
             </View>
+          </View>
+          <View className="flex-row items-center justify-start ml-1 mt-4">
+            <FormField
+              title={isSwitchOn ? "Mở bán ngay" : "Tạm ẩn"}
+              otherStyleClasses="w-[110px]"
+              otherInputStyleClasses="h-12"
+              otherTextInputStyleClasses="text-sm"
+              // isRequired={true}
+              placeholder="0"
+              value={""}
+              labelOnly={true}
+              handleChangeText={() => {}}
+              keyboardType="numeric"
+            />
+            <Switch
+              color="#e95137"
+              value={isSwitchOn}
+              onValueChange={onToggleSwitch}
+            />
           </View>
         </View>
 
