@@ -13,6 +13,7 @@ import {
 } from "react-native-dropdown-select-list";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { Switch } from "react-native-paper";
 const data = [
   { key: "1", value: "Mobiles", disabled: true },
   { key: "2", value: "Appliances" },
@@ -36,6 +37,8 @@ const categories = [
 const FoodCreate = () => {
   const [select, setSelect] = React.useState("");
   const [selected, setSelected] = React.useState<string[]>([]);
+  const [isSwitchOn, setIsSwitchOn] = React.useState(true);
+  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
   return (
     <PageLayoutWrapper>
       <View className="p-4 bg-white">
@@ -75,10 +78,10 @@ const FoodCreate = () => {
             multiline={true}
             numberOfLines={2}
             otherStyleClasses="mt-5"
-            otherInputStyleClasses="h-20 items-start"
+            otherInputStyleClasses="h-19 items-start"
             otherTextInputStyleClasses="text-sm h-17 mt-2"
             isRequired={true}
-            placeholder="Nhập tên mô tả..."
+            placeholder="Nhập mô tả món..."
             value={""}
             handleChangeText={() => {}}
           />
@@ -174,6 +177,55 @@ const FoodCreate = () => {
               closeicon={
                 <Ionicons name="checkmark-outline" size={22} color="gray" />
               }
+            />
+          </View>
+          <View>
+            <FormField
+              title="Thời gian phục vụ"
+              otherStyleClasses="mt-5"
+              otherInputStyleClasses="h-12"
+              otherTextInputStyleClasses="text-sm"
+              isRequired={true}
+              placeholder="0"
+              value={""}
+              handleChangeText={() => {}}
+              keyboardType="numeric"
+              labelOnly={true}
+            />
+            <Text className="text-[12px] text-gray-600 italic mt-1 ml-1 mb-2">
+              Lựa chọn theo các khoảng thời gian hoạt động của cửa hàng
+            </Text>
+            <MultipleSelectList
+              setSelected={(val: string[]) => setSelected(val)}
+              data={data}
+              save="value"
+              placeholder="Lựa chọn khoảng thời gian phục vụ"
+              onSelect={() => {}}
+              search={false}
+              label="Các khoảng thời gian đã chọn"
+              dropdownShown={false}
+              closeicon={
+                <Ionicons name="checkmark-outline" size={22} color="gray" />
+              }
+            />
+          </View>
+          <View className="flex-row items-center justify-start">
+            <FormField
+              title={isSwitchOn ? "Mở bán ngay" : "Tạm ẩn"}
+              otherStyleClasses="w-[110px]"
+              otherInputStyleClasses="h-12"
+              otherTextInputStyleClasses="text-sm"
+              // isRequired={true}
+              placeholder="0"
+              value={""}
+              labelOnly={true}
+              handleChangeText={() => {}}
+              keyboardType="numeric"
+            />
+            <Switch
+              color="#e95137"
+              value={isSwitchOn}
+              onValueChange={onToggleSwitch}
             />
           </View>
         </View>
