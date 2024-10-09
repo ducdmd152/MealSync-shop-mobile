@@ -132,7 +132,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           >
             {updateButton || (
               <CustomButton
-                title="Cập nhật"
+                title="Lưu"
                 containerStyleClasses="bg-white  bg-[#227B94] h-9"
                 textStyleClasses="text-sm text-white"
                 handlePress={() => {}}
@@ -149,7 +149,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             {cancelButton || (
               <CustomButton
                 title="Hủy"
-                containerStyleClasses="bg-white  border-[2px] boder-[#227B94] h-9"
+                containerStyleClasses="bg-white  border-[2px] boder-[#227B94] h-8 border-gray-300"
                 textStyleClasses="text-sm text-[#227B94]"
                 handlePress={() => {
                   setCacheUri(uri); // Đổi avatar thành image
