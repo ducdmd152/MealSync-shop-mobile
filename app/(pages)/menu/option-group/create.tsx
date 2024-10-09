@@ -54,7 +54,7 @@ const OptionGroupCreate: React.FC = () => {
     };
     // Gửi `data` về server ở đây
     console.log("Submit data:", data);
-    router.push("/menu/option-group/link");
+    router.replace("/menu/option-group/link");
   };
 
   return (
@@ -120,18 +120,18 @@ const OptionGroupCreate: React.FC = () => {
             containerStyleClasses="h-10 bg-white border-2 border-gray-300 mt-2"
             textStyleClasses="text-sm text-secondary"
           />
-
-          <View className="mt-3">
+          <View className="border-b-2 border-gray-200 mt-4" />
+          <View className="mt-5">
             <CustomCheckbox
               isChecked={isMultiSelect}
               handlePress={() => setIsMultiSelect(!isMultiSelect)}
               label={<Text className="text-[16px]">Cho phép chọn nhiều</Text>}
-              containerStyleClasses={"w-[200px]"}
+              containerStyleClasses={"w-[240px]"}
             />
-            <View className="flex-row">
+            <View className="flex-row mt-1">
               <FormField
                 title="Chọn tối thiểu"
-                otherStyleClasses="w-[120px] ml-2"
+                otherStyleClasses="w-[150px] ml-2"
                 otherInputStyleClasses="h-8"
                 otherTextInputStyleClasses="text-sm text-center"
                 isRequired={true}
@@ -142,7 +142,7 @@ const OptionGroupCreate: React.FC = () => {
               />
               <FormField
                 title="Chọn tối đa"
-                otherStyleClasses="w-[120px] ml-4"
+                otherStyleClasses="w-[150px] ml-4"
                 otherInputStyleClasses="h-8"
                 otherTextInputStyleClasses="text-sm text-center"
                 isRequired={true}
@@ -153,10 +153,11 @@ const OptionGroupCreate: React.FC = () => {
               />
             </View>
           </View>
+          <View className="border-b-2 border-gray-200 mt-3" />
           <View className="flex-row items-center justify-start ml-1 mt-4">
             <FormField
-              title={isSwitchOn ? "Mở bán ngay" : "Tạm ẩn"}
-              otherStyleClasses="w-[110px]"
+              title={isSwitchOn ? "Mở bán ngay" : "Tạm ẩn nhóm"}
+              otherStyleClasses="w-[150px]"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
               // isRequired={true}

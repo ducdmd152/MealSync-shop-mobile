@@ -1,27 +1,33 @@
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Searchbar } from "react-native-paper";
 import Collapsible from "react-native-collapsible";
-import { Tab } from "react-native-elements";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { BottomSheet } from "@rneui/themed";
 import { router } from "expo-router";
+import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 
 const initialCategories = [
-  { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
-  { id: 2, name: "Ăn trưa", items: 2, isCollapsible: true },
-  { id: 3, name: "Ăn tối", items: 2, isCollapsible: true },
+  { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true, linked: false },
+  { id: 2, name: "Ăn trưa", items: 2, isCollapsible: true, linked: false },
+  { id: 3, name: "Ăn tối", items: 2, isCollapsible: true, linked: false },
 ];
 
 const OptionGroupLink = () => {
   const [index, setIndex] = React.useState(0);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-
   const [categories, setCategories] = useState(initialCategories);
 
   const renderCategory = ({
@@ -33,8 +39,51 @@ const OptionGroupLink = () => {
     name: string;
     items: number;
     isCollapsible: boolean;
+    linked: boolean; // Added linked status
   }>) => {
     const i = categories.findIndex((cat) => cat.id === item.id);
+
+    const handleLinkToggle = () => {
+      const action = item.linked ? "gỡ liên kết" : "liên kết";
+      Alert.alert(
+        `Xác nhận ${action}`,
+        `Bạn có chắc chắn muốn ${action} món này?`,
+        item.linked
+          ? [
+              {
+                text: "Đồng ý",
+                onPress: () => {
+                  setCategories((prevCategories) =>
+                    prevCategories.map((cat, idx) =>
+                      idx === i ? { ...cat, linked: !cat.linked } : cat
+                    )
+                  );
+                },
+              },
+              {
+                text: "Hủy",
+                style: "cancel",
+              },
+            ]
+          : [
+              {
+                text: "Hủy",
+                style: "cancel",
+              },
+              {
+                text: "Đồng ý",
+                onPress: () => {
+                  setCategories((prevCategories) =>
+                    prevCategories.map((cat, idx) =>
+                      idx === i ? { ...cat, linked: !cat.linked } : cat
+                    )
+                  );
+                },
+              },
+            ]
+      );
+    };
+
     return (
       <View key={item.id} className="mb-1">
         <TouchableOpacity
@@ -85,14 +134,11 @@ const OptionGroupLink = () => {
                     />
                     <View className="flex-1">
                       <Text
-                        className="text-md font-psemibold mt-[-2px]"
+                        className="text-[12.5px] font-psemibold mt-[-2px]"
                         numberOfLines={2}
                         ellipsizeMode="tail"
                       >
                         {j === 0 ? "Cơm tấm Sài Gòn" : "Phở bò"} - {item.name}
-                      </Text>
-                      <Text className="text-md italic text-gray-500 mt-[-2px]">
-                        {j === 0 ? "120.000đ" : "80.000đ"}
                       </Text>
                     </View>
                   </View>
@@ -104,21 +150,17 @@ const OptionGroupLink = () => {
                   </View>
                 </View>
                 <View className="flex-row justify-between items-center gap-2 pt-2">
-                  <Text className="text-gray-500 italic text-[12px] text-secondary-200">
-                    100 đơn cần xử lí trong 2h tới
-                  </Text>
+                  <Text className="text-gray-500 italic text-[12px] text-secondary-200"></Text>
                   <TouchableOpacity
-                    onPress={() => {}}
-                    className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                    onPress={handleLinkToggle}
+                    className={`rounded-md items-center justify-center px-[6px] py-[2.2px] ${
+                      item.linked ? "bg-red-500" : "bg-[#227B94]"
+                    }`}
                   >
-                    <Text className="text-[13.5px] text-white">Liên kết</Text>
+                    <Text className="text-[13.5px] text-white font-semibold">
+                      {item.linked ? "Gỡ liên kết" : "Liên kết"}
+                    </Text>
                   </TouchableOpacity>
-                  {/* <TouchableOpacity
-                            onPress={() => {}}
-                            className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                          >
-                            <Text className="text-[13.5px]">Chi tiết</Text>
-                          </TouchableOpacity> */}
                 </View>
               </View>
             ))}
@@ -131,107 +173,47 @@ const OptionGroupLink = () => {
   };
 
   return (
-    <View className="w-full h-full bg-white text-black  relative">
-      <View className="absolute w-full items-center justify-center bottom-28 left-0 z-10">
+    <PageLayoutWrapper isScroll={false}>
+      <View className="bg-gray-200 p-4">
+        <Text className="text-[16px] font-semibold text-gray-800 ">
+          Liên kết "Kích cỡ" với thực đơn chính
+        </Text>
+      </View>
+
+      <ScrollView style={{ flexGrow: 1 }}>
+        <View
+          className="flex-1 w bg-white text-black  relative"
+          style={{ height: "100%" }}
+        >
+          <View className="w-full gap-2 p-4">
+            <Text className="text-[14px] text-gray-800 mt-2 italic">
+              4 món đã được liên kết
+            </Text>
+            <View className="gap-y-2 pb-[200px]">
+              <DraggableFlatList
+                style={{ width: "100%", flexGrow: 1 }}
+                data={categories}
+                renderItem={renderCategory}
+                keyExtractor={(item) => `category-${item.id}`}
+                onDragEnd={({ data }) => {
+                  setCategories(data);
+                }}
+              />
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+      <View className="p-4">
         <CustomButton
-          title="Thêm món/danh mục mới"
+          title="Hoàn tất"
+          containerStyleClasses="mt-2 bg-primary"
+          textStyleClasses="text-white"
           handlePress={() => {
-            setIsBottomSheetVisible(true);
+            router.replace("/menu/option-group/create");
           }}
-          containerStyleClasses="w-[98%] h-[50px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
-          // iconLeft={
-          //   <Ionicons name="add-circle-outline" size={21} color="white" />
-          // }
-          textStyleClasses="text-[15px] text-gray-900 ml-1 text-white"
         />
       </View>
-
-      <View className="w-full gap-2 p-4">
-        {/* <View className="w-full">
-          <Searchbar
-            style={{
-              height: 50,
-              // backgroundColor: "white",
-              // borderColor: "lightgray",
-              // borderWidth: 2,
-            }}
-            inputStyle={{ minHeight: 0 }}
-            placeholder="Nhập tên món..."
-            onChangeText={setSearchQuery}
-            value={searchQuery}
-          />
-        </View> */}
-        <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
-          <View className="w-full flex-row gap-2 items-center justify-between pb-2 ">
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 bg-secondary">
-              Tất cả
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Trong khung giờ
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Ngoài khung giờ
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Tạm hết hàng
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">Đã ẩn</Text>
-          </View>
-        </ScrollView>
-        <View className="gap-y-2 pb-[200px]">
-          <DraggableFlatList
-            style={{ width: "100%", flexGrow: 1 }}
-            data={categories}
-            renderItem={renderCategory}
-            keyExtractor={(item) => `category-${item.id}`}
-            onDragEnd={({ data }) => {
-              setCategories(data);
-            }}
-          />
-        </View>
-      </View>
-
-      <BottomSheet modalProps={{}} isVisible={isBottomSheetVisible}>
-        <View className="p-4 bg-white rounded-t-lg min-h-[120px] ">
-          <TouchableOpacity
-            className="items-center"
-            onPress={() => setIsBottomSheetVisible(false)}
-          >
-            <Ionicons name="chevron-down-outline" size={24} color="gray" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="p-4"
-            onPress={() => {
-              setIsBottomSheetVisible(false);
-              router.push("/menu/food/create");
-            }}
-          >
-            <Text className="text-lg text-primary font-semibold shadow drop-shadow-lg">
-              Thêm món mới
-            </Text>
-            <Text className="text-sm text-gray-400 italic">
-              Ví dụ: trà sữa, bánh ngọt,...
-            </Text>
-          </TouchableOpacity>
-          <View className="border-b-2 border-gray-200"></View>
-          <TouchableOpacity
-            className="p-4"
-            onPress={() => {
-              setIsBottomSheetVisible(false);
-              router.push("/menu/category/create");
-            }}
-          >
-            <Text className="text-lg text-primary font-semibold">
-              Thêm danh mục mới
-            </Text>
-
-            <Text className="text-sm text-gray-400 italic">
-              Ví dụ: đồ uống, ăn nhanh,...
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </BottomSheet>
-    </View>
+    </PageLayoutWrapper>
   );
 };
 
