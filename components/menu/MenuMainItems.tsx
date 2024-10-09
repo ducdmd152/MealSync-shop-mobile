@@ -121,7 +121,7 @@ const MenuMainItems = () => {
                   </View>
                 </View>
                 <View className="flex-row justify-between items-center gap-2 pt-2">
-                  <Text className="text-gray-500 italic text-[12px]">
+                  <Text className="text-gray-500 italic text-[12px] text-secondary-200">
                     100 đơn cần xử lí trong 2h tới
                   </Text>
                   <TouchableOpacity

@@ -26,7 +26,7 @@ const Menu = () => {
           />
           <View className="w-[4px]"></View>
           <CustomButton
-            title="Lựa chọn phụ"
+            title="Nhóm lựa chọn"
             handlePress={() => {
               setIndex(1);
             }}

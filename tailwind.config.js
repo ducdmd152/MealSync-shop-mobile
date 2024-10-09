@@ -32,6 +32,7 @@ module.exports = {
           900: "#FFFFFF",
         },
         tertiary: "#9EA1B1",
+        cyan: "#227B94",
         black: {
           DEFAULT: "#000",
           100: "#1E1E2D",

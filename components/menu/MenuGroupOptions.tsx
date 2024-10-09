@@ -3,6 +3,7 @@ import React from "react";
 import CustomButton from "../custom/CustomButton";
 import { Searchbar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 const MenuGroupOptions = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -11,7 +12,9 @@ const MenuGroupOptions = () => {
       <View className="absolute w-full items-center justify-center bottom-28 left-0 z-10">
         <CustomButton
           title="Thêm nhóm lựa chọn"
-          handlePress={() => {}}
+          handlePress={() => {
+            router.push("/menu/option-group/create");
+          }}
           containerStyleClasses="w-[98%] h-[50px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
           // iconLeft={
           //   <Ionicons name="add-circle-outline" size={21} color="white" />
