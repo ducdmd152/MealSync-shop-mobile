@@ -36,14 +36,22 @@ const SignIn = () => {
     }),
     onSubmit: async (values) => {
       setIsSubmitting(true);
-      console.log(values);
       setServerError(null); // Reset error before making API call
       try {
-        const response = await apiClient.post("login", values);
-        console.log(response.data);
-        sessionService.setAuthToken(response.data.token);
+        const response = await apiClient.post("auth/login", {
+          loginContext: 1,
+          ...values,
+          email: "thientryhard@gmail.com",
+          password: "1",
+        });
+        // console.log(response.data);
+        await sessionService.setAuthToken(
+          response.data?.value?.tokenResponse?.accessToken || ""
+        );
+        console.log(await sessionService.getAuthToken());
         router.replace("/home");
       } catch (error: any) {
+        console.log(error);
         if (error.response && error.response.status === 403) {
           setServerError("Email hoặc mật khẩu không đúng");
         } else {
