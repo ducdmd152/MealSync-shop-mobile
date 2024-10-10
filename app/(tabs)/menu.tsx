@@ -7,9 +7,14 @@ import Collapsible from "react-native-collapsible";
 import { Tab } from "react-native-elements";
 import MenuMainItems from "@/components/menu/MenuMainItems";
 import MenuGroupOptions from "@/components/menu/MenuGroupOptions";
+import useCounterState from "@/hooks/states/useCounterState";
 
 const Menu = () => {
   const [index, setIndex] = React.useState(0);
+  const counter = useCounterState((state) => state.counter);
+  const increment = useCounterState((state) => state.increment);
+  const reset = useCounterState((state) => state.reset);
+  const changeMax = useCounterState((state) => state.changeMax);
   return (
     <View className="bg-white">
       <View className="p-2 pb-0">

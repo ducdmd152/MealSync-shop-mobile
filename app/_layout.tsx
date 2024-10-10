@@ -20,6 +20,7 @@ import { images } from "@/constants";
 import { Image } from "react-native";
 import { PaperProvider } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import TanStackProvider from "@/config/providers/TanStackProvider";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -69,22 +70,24 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider value={DefaultTheme}>
-        <PaperProvider>
-          {/* <KeyboardAvoidingView
+      <TanStackProvider>
+        <ThemeProvider value={DefaultTheme}>
+          <PaperProvider>
+            {/* <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       > */}
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(pages)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          {/* </KeyboardAvoidingView> */}
-        </PaperProvider>
-      </ThemeProvider>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="(pages)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            {/* </KeyboardAvoidingView> */}
+          </PaperProvider>
+        </ThemeProvider>
+      </TanStackProvider>
     </GestureHandlerRootView>
   );
 }
