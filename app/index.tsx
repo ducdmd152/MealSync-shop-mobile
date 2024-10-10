@@ -46,7 +46,7 @@ export default function HomeScreen() {
             <CustomButton
               title="Đăng nhập"
               handlePress={() => {
-                router.push("/sign-in");
+                router.replace("/sign-in");
               }}
               containerStyleClasses="w-full mt-4 bg-primary"
               textStyleClasses="text-white"
@@ -54,7 +54,7 @@ export default function HomeScreen() {
             <CustomButton
               title="Đăng ký"
               handlePress={() => {
-                router.push("/sign-up");
+                router.replace("/sign-up");
               }}
               containerStyleClasses="w-full mt-4 bg-white border-gray-600 border-2"
               textStyleClasses="text-gray-600"

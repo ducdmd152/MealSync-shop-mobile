@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
@@ -21,6 +21,7 @@ import { Image } from "react-native";
 import { PaperProvider } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import TanStackProvider from "@/config/providers/TanStackProvider";
+import sessionService from "@/services/session-service";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -28,6 +29,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded, setLoaded] = useState(false);
   const colorScheme = useColorScheme();
+  const [isCheckedAuth, setIsCheckedAuth] = useState(false);
   const [fontsLoaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -49,14 +51,27 @@ export default function RootLayout() {
   }, [fontsLoaded, error]);
 
   useEffect(() => {
-    setLoaded(fontsLoaded); // list of loaded statuses
-  }, [fontsLoaded]);
+    setLoaded(fontsLoaded && isCheckedAuth); // list of loaded statuses
+  }, [fontsLoaded, isCheckedAuth]);
 
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    setIsCheckedAuth(true);
+    const checkAuth = async () => {
+      const token = await sessionService.getAuthToken();
+      if (token) {
+        router.replace("/home");
+      }
+      setIsCheckedAuth(true);
+    };
+
+    checkAuth();
+  }, []);
 
   if (!loaded) {
     return (

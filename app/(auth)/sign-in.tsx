@@ -3,11 +3,12 @@ import * as Yup from "yup";
 import CustomButton from "@/components/custom/CustomButton";
 import FormFieldCustom from "@/components/custom/FormFieldCustom";
 import { images } from "@/constants";
-import { Link, router } from "expo-router";
+import { Link, router, useNavigation } from "expo-router";
 import React, { useState } from "react";
 import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 import apiClient from "@/services/api-services/api-client";
 import sessionService from "@/services/session-service";
+import { CommonActions } from "@react-navigation/native";
 
 interface FormValues {
   email: string;
@@ -15,6 +16,7 @@ interface FormValues {
 }
 
 const SignIn = () => {
+  const navigation = useNavigation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -49,6 +51,12 @@ const SignIn = () => {
           response.data?.value?.tokenResponse?.accessToken || ""
         );
         console.log(await sessionService.getAuthToken());
+        // navigation.dispatch(
+        //   CommonActions.reset({
+        //     index: 0,
+        //     routes: [{ name: "home" }],
+        //   })
+        // );
         router.replace("/home");
       } catch (error: any) {
         console.log(error);

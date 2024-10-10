@@ -10,6 +10,7 @@ import AvatarImage from "react-native-paper/lib/typescript/components/Avatar/Ava
 import { Avatar, Switch } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
+import sessionService from "@/services/session-service";
 const redirections = {
   shop: [
     {
@@ -68,7 +69,10 @@ const redirections = {
     {
       text: "Đăng xuất",
       icon: <Ionicons size={20} name="log-out-outline" />,
-      handlePress: () => router.replace("/"),
+      handlePress: () => {
+        sessionService.clear();
+        router.replace("/");
+      },
       textStyleClasses: "text-gray-600",
     },
   ] as LinkItem[],

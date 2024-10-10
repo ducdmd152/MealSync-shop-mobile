@@ -6,6 +6,9 @@ const sessionService = {
   },
   setAuthToken: async (token: string) =>
     await AsyncStorage.setItem("auth-token", token),
+  clear: () => {
+    AsyncStorage.removeItem("auth-token");
+  },
 };
 
 export default sessionService;
