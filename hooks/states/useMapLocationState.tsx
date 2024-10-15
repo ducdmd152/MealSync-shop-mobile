@@ -9,8 +9,8 @@ interface MapLocationState {
 
 const useMapLocationState = create<MapLocationState>((set) => ({
   address: "12/10 Nguyễn Văn A",
-  latitude: 0,
-  longitude: 0,
+  latitude: 0.1,
+  longitude: 0.1,
   setLocation: (address, latitude, longitude) =>
     set({ address, latitude, longitude }),
 }));

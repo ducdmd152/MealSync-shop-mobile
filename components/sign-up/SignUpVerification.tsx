@@ -3,17 +3,27 @@ import { View, Button, Text, Alert } from "react-native";
 import OTPTextView from "react-native-otp-textinput";
 import CustomButton from "../custom/CustomButton";
 import { router } from "expo-router";
+import sessionService from "@/services/session-service";
 
 const SignUpVerification = () => {
   const lengthOfCode = 4;
   const [code, setCode] = useState("");
   const otpInput = useRef<OTPTextView | null>(null);
+  const [email, setEmail] = useState("");
 
   const clearText = () => {
     if (otpInput.current) {
       otpInput.current.clear();
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      const mail = await sessionService.getAuthEmail();
+      if (email != null) setEmail(mail || "");
+    })();
+  }, []);
+
   const onVerify = () => {
     if (code.length < lengthOfCode)
       Alert.alert("Hoàn thành nhập liệu", "Vui lòng nhập đầy đủ mã xác thực!");
@@ -32,7 +42,7 @@ const SignUpVerification = () => {
   return (
     <View className="mt-4">
       <Text className="text-lg text-gray-500 text-center text-semibold mt-2 font-psemibold">
-        Mã xác thực đã được gửi qua email
+        Mã xác thực đã được gửi qua {email}
       </Text>
       <OTPTextView
         inputCount={lengthOfCode}

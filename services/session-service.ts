@@ -6,7 +6,14 @@ const sessionService = {
   },
   setAuthToken: async (token: string) =>
     await AsyncStorage.setItem("auth-token", token),
+  getAuthEmail: async () => {
+    const token = await AsyncStorage.getItem("auth-email");
+    return token;
+  },
+  setAuthEmail: async (email: string) =>
+    await AsyncStorage.setItem("auth-email", email.trim().toLowerCase()),
   clear: () => {
+    AsyncStorage.removeItem("auth-email");
     AsyncStorage.removeItem("auth-token");
   },
 };

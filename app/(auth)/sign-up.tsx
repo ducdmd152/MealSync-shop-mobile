@@ -5,6 +5,8 @@ import FormFieldCustom from "@/components/custom/FormFieldCustom";
 import SignUpVerification from "@/components/sign-up/SignUpVerification";
 import { images } from "@/constants";
 import useMapLocationState from "@/hooks/states/useMapLocationState";
+import apiClient from "@/services/api-services/api-client";
+import sessionService from "@/services/session-service";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -40,11 +42,25 @@ const SignUp = () => {
     setForm({ ...form, address: location.address });
   }, [location]);
 
-  const dormitories: { id: number; name: string }[] = [
+  const dormitories = [
     { id: 1, name: "Khu A" },
     { id: 2, name: "Khu B" },
-    // Thêm các khu khác nếu cần
   ];
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+  const validatePhoneNumber = (phoneNumber: string) => {
+    const phoneRegex = /^[0-9]{10}$/;
+    return phoneRegex.test(phoneNumber);
+  };
 
   const onSubmit = async () => {
     if (
@@ -56,17 +72,22 @@ const SignUp = () => {
       !form.phoneNumber ||
       !form.address
     ) {
-      Alert.alert(
-        "Thông báo",
-        `Vui lòng điền đầy đủ thông tin${
-          selectedDormitories.length === 0 ? " và chọn khu" : ""
-        }!`
-      );
+      Alert.alert("Thông báo", "Vui lòng điền đầy đủ thông tin!");
+      return;
+    }
+
+    if (form.shopName.length < 6) {
+      Alert.alert("Thông báo", "Tên cửa hàng phải có ít nhất 6 ký tự.");
+      return;
+    }
+
+    if (!validatePhoneNumber(form.phoneNumber)) {
+      Alert.alert("Thông báo", "Số điện thoại không hợp lệ.");
       return;
     }
 
     if (selectedDormitories.length === 0) {
-      Alert.alert("Thông báo", `Vui lòng chọn khu vực bán!`);
+      Alert.alert("Thông báo", "Vui lòng chọn khu vực bán!");
       return;
     }
 
@@ -86,11 +107,16 @@ const SignUp = () => {
     setIsSubmitting(true);
     try {
       // Gọi API để gửi dữ liệu
-      // const result = await apiClient.post("auth/register", requestData);
-      setStep(2); // Chuyển sang bước xác minh
+      console.log("Sign Up: ", requestData);
+      const result = await apiClient.post("auth/shop-register", requestData);
+      sessionService.setAuthEmail(result.data?.value?.email), setStep(2); // to verify code
       // router.replace("/home");
     } catch (error: any) {
-      Alert.alert("Error", error?.message || "Something went wrong!");
+      console.log(error, error.response);
+      Alert.alert(
+        "Lỗi đăng ký!",
+        error?.response?.data?.error?.message || "Lỗi mất rồi!"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -142,8 +168,28 @@ const SignUp = () => {
             Alert.alert("Thông báo", `Vui lòng điền đầy đủ thông tin!`);
             return;
           }
-          if (form.password || form.confirmPassword) {
-            Alert.alert("Thông báo", `Mật khẩu không trùng khớp!`);
+          if (form.name.length < 6) {
+            Alert.alert(
+              "Thông báo",
+              "Tên chủ cửa hàng phải có ít nhất 6 ký tự."
+            );
+            return;
+          }
+
+          if (!validateEmail(form.email)) {
+            Alert.alert("Thông báo", "Email không hợp lệ.");
+            return;
+          }
+          if (!validatePassword(form.password)) {
+            Alert.alert(
+              "Thông báo",
+              "Mật khẩu phải có ít nhất 1 chữ hoa, 1 chữ thường, 1 ký tự đặc biệt và 1 số."
+            );
+            return;
+          }
+
+          if (form.password !== form.confirmPassword) {
+            Alert.alert("Thông báo", "Mật khẩu không trùng khớp.");
             return;
           }
           setStep(1);
@@ -240,6 +286,7 @@ const SignUp = () => {
         textStyleClasses="ml-2 text-gray-600"
         isLoading={isSubmitting}
       />
+      {/* Other components */}
     </View>
   );
 
@@ -254,9 +301,11 @@ const SignUp = () => {
         <Text className="text-2xl text-gray text-semibold mt-2 font-psemibold">
           Đăng ký
         </Text>
-        <Text className="text-[12.8px] text-gray italic mt-1">
-          Vui lòng điền đầy đủ các trường thông tin
-        </Text>
+        {step != 2 && (
+          <Text className="text-[12.8px] text-gray italic mt-1">
+            Vui lòng điền đầy đủ các trường thông tin
+          </Text>
+        )}
 
         {step === 2 ? (
           <SignUpVerification />
