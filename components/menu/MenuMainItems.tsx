@@ -26,6 +26,8 @@ import apiClient from "@/services/api-services/api-client";
 import FoodModel from "@/types/models/FoodModel";
 import APICommonResponse from "@/types/responses/APICommonResponse";
 import { RefreshControl } from "react-native-gesture-handler";
+import { showMessage, hideMessage } from "react-native-flash-message";
+import { useToast } from "react-native-toast-notifications";
 
 const initialCategories = [
   { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
@@ -41,6 +43,7 @@ interface ExtendCategoryModel extends CategoryModel {
   isCollapsible: boolean;
 }
 const MenuMainItems = () => {
+  const toast = useToast();
   const [query, setQuery] = useState<FoodListQuery>({} as FoodListQuery);
   const [extendCategories, setExtendCategories] = useState<
     ExtendCategoryModel[]
@@ -50,29 +53,29 @@ const MenuMainItems = () => {
 
   // const [categories, setCategories] = useState(initialCategories);
 
-  const onRearrange = async (data: { ids: number[] }) => {
+  const onRearrange = async (data: ExtendCategoryModel[]) => {
+    const prevExtendCategories = extendCategories;
+    setExtendCategories(data);
     try {
-      const response = await apiClient.put(
-        "shop-owner/category/re-arrange",
-        data
-      );
-      const { value, isSuccess, error } = response.data;
+      console.log("Update categories order: ", {
+        ids: extendCategories.map((category) => category.categoryId),
+      });
 
-      if (isSuccess) {
-        Alert.alert("Thành công", `Danh mục "${value.name}" đã được thêm!`);
-        router.replace("/menu");
-      } else {
-        Alert.alert(
-          "Thông báo",
-          error.message || "Có lỗi xảy ra khi thêm danh mục!"
-        );
-      }
+      const response = await apiClient.put("shop-owner/category/re-arrange", {
+        ids: extendCategories.map((category) => category.categoryId),
+      });
+      const { value, isSuccess, error } = response.data;
+      showMessage({
+        message: "Thay đổi thứ tự thành công!",
+        type: "success",
+      });
     } catch (error: any) {
-      Alert.alert(
-        "Lỗi",
-        error?.response?.data?.error?.message ||
-          "Hệ thống đang bảo trì, vui lòng thử lại sau."
-      );
+      setExtendCategories(prevExtendCategories);
+      toast.show("Hệ thống gặp lỗi, vui lòng thử lại.", {
+        type: "danger",
+        duration: 5000,
+      });
+      // Alert.alert("Lỗi", "Hệ thống gặp lỗi, vui lòng thử lại.");
     } finally {
     }
   };
@@ -139,7 +142,7 @@ const MenuMainItems = () => {
                 router.push("/menu/category/update");
               }}
               containerStyleClasses="bg-white border-gray-200 border-2 h-[26px] px-[8px]"
-              textStyleClasses="text-gray-700 text-[11px] mt-[-2px] text-[#227B94]"
+              textStyleClasses="text-gray-700 text-[10px] mt-[-3.5px] text-[#227B94]"
             />
           </View>
           <View className="flex-row items-center gap-x-6">
@@ -270,15 +273,7 @@ const MenuMainItems = () => {
             renderItem={renderCategory}
             keyExtractor={(item) => `category-${item.categoryId}`}
             onDragEnd={({ data }) => {
-              setExtendCategories(data);
-              console.log({
-                ids: extendCategories.map((category) => category.categoryId),
-              });
-              onRearrange({
-                ids: extendCategories.map(
-                  (category) => category.categoryId
-                ) as number[],
-              });
+              onRearrange(data);
             }}
             refreshControl={
               <RefreshControl

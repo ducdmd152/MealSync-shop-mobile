@@ -8,6 +8,8 @@ import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
+import FlashMessage from "react-native-flash-message";
+import { ToastProvider } from "react-native-toast-notifications";
 
 import { useColorScheme } from "@/hooks/themes/useColorScheme";
 import {
@@ -87,20 +89,23 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TanStackProvider>
         <ThemeProvider value={DefaultTheme}>
-          <PaperProvider>
-            {/* <KeyboardAvoidingView
+          <ToastProvider offset={172}>
+            <PaperProvider>
+              {/* <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       > */}
-            <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="(pages)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            {/* </KeyboardAvoidingView> */}
-          </PaperProvider>
+              <Stack>
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="(pages)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              {/* <FlashMessage position="bottom" /> */}
+              {/* </KeyboardAvoidingView> */}
+            </PaperProvider>
+          </ToastProvider>
         </ThemeProvider>
       </TanStackProvider>
     </GestureHandlerRootView>
