@@ -38,6 +38,9 @@ const FoodCreate = () => {
   const [select, setSelect] = React.useState("");
   const [selected, setSelected] = React.useState<string[]>([]);
   const [isSwitchOn, setIsSwitchOn] = React.useState(true);
+  const [imageURI, setImageURI] = React.useState(
+    "https://join.travelmanagers.com.au/wp-content/uploads/2017/09/default-placeholder-300x300.png"
+  );
   const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
   return (
     <PageLayoutWrapper>
@@ -46,9 +49,11 @@ const FoodCreate = () => {
           <Text className="text-lg font-semibold">Ảnh mô tả</Text>
           <ImageUpload
             containerStyleClasses="mt-2"
-            uri="https://reactnative.dev/img/tiny_logo.png"
-            setUri={() => {}}
-            imageStyleObject={{ height: 100, width: 90 }}
+            uri={imageURI}
+            setUri={(uri: string) => {
+              setImageURI(uri);
+            }}
+            imageStyleObject={{ height: 90, width: 90 }}
             updateButton={
               <CustomButton
                 title="Lưu"
@@ -211,8 +216,8 @@ const FoodCreate = () => {
           </View>
           <View className="flex-row items-center justify-start">
             <FormField
-              title={isSwitchOn ? "Mở bán ngay" : "Tạm ẩn"}
-              otherStyleClasses="w-[110px]"
+              title={isSwitchOn ? "Mở bán ngay" : "Tạm ẩn món"}
+              otherStyleClasses="w-[152px]"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
               // isRequired={true}
@@ -231,7 +236,7 @@ const FoodCreate = () => {
         </View>
         <CustomButton
           title="Hoàn tất"
-          containerStyleClasses="mt-2 bg-primary"
+          containerStyleClasses="mt-5 bg-primary"
           textStyleClasses="text-white"
           handlePress={() => {
             router.push("/menu");

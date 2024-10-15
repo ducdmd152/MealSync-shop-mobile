@@ -14,6 +14,7 @@ import { Colors } from "@/constants/Colors";
 import CONSTANTS from "@/constants/data";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import CustomButton from "../custom/CustomButton";
+import apiClient from "@/services/api-services/api-client";
 
 const styles = StyleSheet.create({
   shadow: {
@@ -89,7 +90,21 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const handleSaveImage = async () => {
     try {
+      // const formData = new FormData();
+      // formData.append("file", {
+      //   uri: cacheUri,
+      //   type: cacheUri.endsWith(".png") ? "image/png" : "image/jpeg",
+      //   name: cacheUri.endsWith(".png") ? "image.png" : "image.jpg",
+      // } as any);
+
+      // const res = await apiClient.put("storage/file/upload", formData, {
+      //   headers: {
+      //     "Content-type": "multipart/form-data",
+      //   },
+      // });
+      console.log("Cache URI: ", cacheUri);
       setUri(cacheUri);
+      console.log("URI: ", uri);
       // Xử lý logic upload hình ảnh
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -106,7 +121,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         }}
       >
         <Image
-          className="h-full w-full"
+          resizeMode="cover"
+          className="h-full w-full "
           source={{
             uri: isChangeMode ? cacheUri : uri,
           }}
@@ -142,7 +158,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
           <TouchableOpacity
             onPress={() => {
-              setCacheUri(uri); // Đổi avatar thành image
+              setCacheUri(uri);
               setIsChangeMode(false);
             }}
           >
@@ -151,10 +167,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 title="Hủy"
                 containerStyleClasses="bg-white  border-[2px] boder-[#227B94] h-8 border-gray-300"
                 textStyleClasses="text-sm text-[#227B94]"
-                handlePress={() => {
-                  setCacheUri(uri); // Đổi avatar thành image
-                  setIsChangeMode(false);
-                }}
+                handlePress={() => {}}
               />
             )}
           </TouchableOpacity>
