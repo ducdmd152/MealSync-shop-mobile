@@ -136,7 +136,7 @@ const MenuMainItems = () => {
                         numberOfLines={2}
                         ellipsizeMode="tail"
                       >
-                        {food.name} - {item.categoryName}
+                        {food.name}
                       </Text>
                       <Text className="text-md italic text-gray-500 mt-[-2px]">
                         {food.price.toLocaleString()}đ
