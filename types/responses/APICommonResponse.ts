@@ -3,6 +3,8 @@ export default interface APICommonResponse {
   isFailure: boolean;
   isWarning: boolean;
   error: {
+    isClientError: boolean;
+    isSystemError: boolean;
     code: string;
     message: string;
   };

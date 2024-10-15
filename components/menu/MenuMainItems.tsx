@@ -10,6 +10,14 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { BottomSheet } from "@rneui/themed";
 import { router } from "expo-router";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import { CategoryModel } from "@/types/models/CategoryModel";
+import FetchResponse from "@/types/responses/FetchResponse";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import apiClient from "@/services/api-services/api-client";
+import FoodModel from "@/types/models/FoodModel";
+import APICommonResponse from "@/types/responses/APICommonResponse";
 
 const initialCategories = [
   { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
@@ -17,32 +25,61 @@ const initialCategories = [
   { id: 3, name: "Ăn tối", items: 2, isCollapsible: true },
 ];
 
+interface FoodListResponse extends APICommonResponse {
+  value: CategoryModel[];
+}
+interface FoodListQuery {}
+interface ExtendCategoryModel extends CategoryModel {
+  isCollapsible: boolean;
+}
 const MenuMainItems = () => {
-  const [index, setIndex] = React.useState(0);
+  const [query, setQuery] = useState<FoodListQuery>({} as FoodListQuery);
+  const [extendCategories, setExtendCategories] = useState<
+    ExtendCategoryModel[]
+  >([]);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
 
-  const [categories, setCategories] = useState(initialCategories);
+  // const [categories, setCategories] = useState(initialCategories);
+
+  const {
+    data: categories,
+    isLoading,
+    error,
+    refetch,
+  } = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.FOOD_LIST,
+    (): Promise<FoodListResponse> =>
+      apiClient.get(endpoints.FOOD_LIST).then((response) => response.data),
+    [query]
+  );
+  console.log(categories);
+
+  useEffect(() => {
+    if (categories?.value)
+      setExtendCategories(
+        categories?.value?.map((category) => ({
+          ...category,
+          isCollapsible: true,
+        })) as ExtendCategoryModel[]
+      );
+  }, [categories]);
+
+  console.log(extendCategories);
 
   const renderCategory = ({
     item,
     drag,
     isActive,
-  }: RenderItemParams<{
-    id: number;
-    name: string;
-    items: number;
-    isCollapsible: boolean;
-  }>) => {
-    const i = categories.findIndex((cat) => cat.id === item.id);
+  }: RenderItemParams<ExtendCategoryModel>) => {
     return (
-      <View key={item.id} className="mb-1">
+      <View key={item.categoryId} className="mb-1">
         <TouchableOpacity
           className="flex-row justify-between items-center pr-2 mb-2"
           onPress={() =>
-            setCategories(
-              categories.map((cat) =>
-                item.id === cat.id
+            setExtendCategories(
+              extendCategories?.map((cat) =>
+                item.categoryId === cat.categoryId
                   ? { ...cat, isCollapsible: !cat.isCollapsible }
                   : cat
               )
@@ -53,9 +90,11 @@ const MenuMainItems = () => {
           <View>
             <View className="flex-row items-center gap-x-2">
               <Text className="font-bold text-lg text-gray-800">
-                {item.name}
+                {item.categoryName}
               </Text>
-              <Text className="text-gray-700 text-sm">2 món</Text>
+              <Text className="text-gray-700 text-sm">
+                {item.foods.length} món
+              </Text>
             </View>
             <CustomButton
               title="Chỉnh sửa danh mục"
@@ -63,16 +102,7 @@ const MenuMainItems = () => {
                 router.push("/menu/category/update");
               }}
               containerStyleClasses="bg-white border-gray-200 border-2 h-[26px] px-[8px]"
-              textStyleClasses="text-gray-700 text-[11px] mt-[-5px] text-[#227B94]"
-              // iconRight={
-              //   <View className="ml-1">
-              //     <Ionicons
-              //       name="create-outline"
-              //       size={14}
-              //       color="#227B94"
-              //     />
-              //   </View>
-              // }
+              textStyleClasses="text-gray-700 text-[11px] mt-[-2px] text-[#227B94]"
             />
           </View>
           <View className="flex-row items-center gap-x-6">
@@ -86,16 +116,16 @@ const MenuMainItems = () => {
 
         <Collapsible collapsed={item.isCollapsible}>
           <View className="gap-y-2 pb-2">
-            {Array.from({ length: 2 }, (_, j) => (
+            {item.foods?.map((food) => (
               <View
-                key={j}
+                key={food.id}
                 className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
               >
                 <View className="flex-row items-start justify-between gap-2">
                   <View className="flex-row justify-start items-start gap-2 flex-1">
                     <Image
                       source={{
-                        uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1200px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg",
+                        uri: food.imageUrl || "https://via.placeholder.com/40", // Fallback image
                       }}
                       resizeMode="cover"
                       className="h-[36px] w-[40px] rounded-md opacity-85"
@@ -106,17 +136,21 @@ const MenuMainItems = () => {
                         numberOfLines={2}
                         ellipsizeMode="tail"
                       >
-                        {j === 0 ? "Cơm tấm Sài Gòn" : "Phở bò"} - {item.name}
+                        {food.name} - {item.categoryName}
                       </Text>
                       <Text className="text-md italic text-gray-500 mt-[-2px]">
-                        {j === 0 ? "120.000đ" : "80.000đ"}
+                        {food.price.toLocaleString()}đ
                       </Text>
                     </View>
                   </View>
 
                   <View className="flex-row gap-2 items-start">
                     <Text className="bg-blue-100 text-blue-800 text-[12.5px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                      Status
+                      {food.status == 1
+                        ? food.isSoldOut
+                          ? "Hết hàng"
+                          : "Còn hàng"
+                        : "Tạm ẩn"}
                     </Text>
                   </View>
                 </View>
@@ -130,12 +164,6 @@ const MenuMainItems = () => {
                   >
                     <Text className="text-[13.5px] text-white">Chỉnh sửa</Text>
                   </TouchableOpacity>
-                  {/* <TouchableOpacity
-                            onPress={() => {}}
-                            className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                          >
-                            <Text className="text-[13.5px]">Chi tiết</Text>
-                          </TouchableOpacity> */}
                 </View>
               </View>
             ))}
@@ -163,11 +191,11 @@ const MenuMainItems = () => {
         />
       </View>
 
-      <View className="w-full gap-2 p-4">
-        {/* <View className="w-full">
+      <View className="w-full gap-2 p-4 pt-3">
+        <View className="w-full">
           <Searchbar
             style={{
-              height: 50,
+              height: 40,
               // backgroundColor: "white",
               // borderColor: "lightgray",
               // borderWidth: 2,
@@ -177,8 +205,8 @@ const MenuMainItems = () => {
             onChangeText={setSearchQuery}
             value={searchQuery}
           />
-        </View> */}
-        <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
+        </View>
+        {/* <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
           <View className="w-full flex-row gap-2 items-center justify-between pb-2 ">
             <Text className="bg-gray-100 rounded-xl px-4 py-2 bg-secondary">
               Tất cả
@@ -194,15 +222,15 @@ const MenuMainItems = () => {
             </Text>
             <Text className="bg-gray-100 rounded-xl px-4 py-2 ">Đã ẩn</Text>
           </View>
-        </ScrollView>
+        </ScrollView> */}
         <View className="gap-y-2 pb-[200px]">
           <DraggableFlatList
             style={{ width: "100%", flexGrow: 1 }}
-            data={categories}
+            data={extendCategories}
             renderItem={renderCategory}
             keyExtractor={(item) => `category-${item.id}`}
             onDragEnd={({ data }) => {
-              setCategories(data);
+              setExtendCategories(data);
             }}
           />
         </View>
