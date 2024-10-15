@@ -61,7 +61,10 @@ const SignIn = () => {
         if (error.response && error.response.status === 403) {
           setServerError("Email hoặc mật khẩu không đúng");
         } else {
-          setServerError("Hệ thống đang bảo trì, vui lòng thử lại sau!");
+          setServerError(
+            error?.response?.data?.error?.message ||
+              "Hệ thống đang bảo trì, vui lòng thử lại sau!"
+          );
         }
       } finally {
         setIsSubmitting(false);
