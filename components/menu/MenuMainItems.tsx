@@ -60,7 +60,10 @@ const MenuMainItems = () => {
       setExtendCategories(
         categories?.value?.map((category) => ({
           ...category,
-          isCollapsible: true,
+          isCollapsible:
+            extendCategories.find(
+              (cat) => cat.categoryId == category.categoryId
+            )?.isCollapsible || true,
         })) as ExtendCategoryModel[]
       );
   }, [categories]);
@@ -223,7 +226,7 @@ const MenuMainItems = () => {
             <Text className="bg-gray-100 rounded-xl px-4 py-2 ">Đã ẩn</Text>
           </View>
         </ScrollView> */}
-        <View className="gap-y-2 pb-[200px]">
+        <View className="gap-y-2 pb-[250px]">
           {isLoading && (
             <ActivityIndicator animating={isLoading} color="#FCF450" />
           )}
