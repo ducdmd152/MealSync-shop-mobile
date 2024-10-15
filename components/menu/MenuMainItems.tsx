@@ -58,17 +58,16 @@ const MenuMainItems = () => {
     setExtendCategories(data);
     try {
       console.log("Update categories order: ", {
-        ids: extendCategories.map((category) => category.categoryId),
+        ids: extendCategories.map((category) => category.id),
       });
 
       const response = await apiClient.put("shop-owner/category/re-arrange", {
-        ids: extendCategories.map((category) => category.categoryId),
+        ids: extendCategories.map((category) => category.id),
       });
       const { value, isSuccess, error } = response.data;
-      setExtendCategories(prevExtendCategories);
       toast.show("Cập nhật thứ tự thành công!", {
         type: "success",
-        duration: 5000,
+        duration: 2000,
       });
     } catch (error: any) {
       setExtendCategories(prevExtendCategories);
@@ -95,14 +94,14 @@ const MenuMainItems = () => {
   );
 
   useEffect(() => {
+    console.log(categories?.value);
     if (categories?.value)
       setExtendCategories(
         categories?.value?.map((category) => ({
           ...category,
           isCollapsible:
-            extendCategories.find(
-              (cat) => cat.categoryId == category.categoryId
-            )?.isCollapsible || true,
+            extendCategories.find((cat) => cat.id == category.id)
+              ?.isCollapsible || true,
         })) as ExtendCategoryModel[]
       );
   }, [categories]);
@@ -113,15 +112,15 @@ const MenuMainItems = () => {
     drag,
     isActive,
   }: RenderItemParams<ExtendCategoryModel>) => {
-    // console.log(item.categoryId);
+    // console.log(item.id);
     return (
-      <View key={item.categoryId} className="mb-1">
+      <View key={item.id} className="mb-1">
         <TouchableOpacity
           className="flex-row justify-between items-center pr-2 mb-2"
           onPress={() =>
             setExtendCategories(
               extendCategories?.map((cat) =>
-                item.categoryId === cat.categoryId
+                item.id === cat.id
                   ? { ...cat, isCollapsible: !cat.isCollapsible }
                   : cat
               )
@@ -132,7 +131,7 @@ const MenuMainItems = () => {
           <View>
             <View className="flex-row items-center gap-x-2">
               <Text className="font-bold text-lg text-gray-800">
-                {item.categoryName}
+                {item.name}
               </Text>
               <Text className="text-gray-700 text-sm">
                 {item.foods.length} món
@@ -273,7 +272,7 @@ const MenuMainItems = () => {
             style={{ width: "100%", flexGrow: 1 }}
             data={extendCategories}
             renderItem={renderCategory}
-            keyExtractor={(item) => `category-${item.categoryId}`}
+            keyExtractor={(item) => `category-${item.id}`}
             onDragEnd={({ data }) => {
               onRearrange(data);
             }}
