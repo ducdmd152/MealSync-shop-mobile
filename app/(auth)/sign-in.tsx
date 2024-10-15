@@ -41,16 +41,14 @@ const SignIn = () => {
       setServerError(null); // Reset error before making API call
       try {
         const response = await apiClient.post("auth/login", {
-          loginContext: 1,
+          loginContext: 2,
           ...values,
-          email: "thientryhard@gmail.com",
-          password: "1",
         });
         // console.log(response.data);
         await sessionService.setAuthToken(
           response.data?.value?.tokenResponse?.accessToken || ""
         );
-        console.log(await sessionService.getAuthToken());
+        // console.log(await sessionService.getAuthToken());
         // navigation.dispatch(
         //   CommonActions.reset({
         //     index: 0,
@@ -59,7 +57,7 @@ const SignIn = () => {
         // );
         router.replace("/home");
       } catch (error: any) {
-        console.log(error);
+        // console.log(error);
         if (error.response && error.response.status === 403) {
           setServerError("Email hoặc mật khẩu không đúng");
         } else {
