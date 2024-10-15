@@ -2,7 +2,7 @@ import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
-import { Searchbar } from "react-native-paper";
+import { ActivityIndicator, Searchbar } from "react-native-paper";
 import Collapsible from "react-native-collapsible";
 import { Tab } from "react-native-elements";
 import DraggableFlatList, {
@@ -18,6 +18,7 @@ import { endpoints } from "@/services/api-services/api-service-instances";
 import apiClient from "@/services/api-services/api-client";
 import FoodModel from "@/types/models/FoodModel";
 import APICommonResponse from "@/types/responses/APICommonResponse";
+import { RefreshControl } from "react-native-gesture-handler";
 
 const initialCategories = [
   { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
@@ -53,7 +54,6 @@ const MenuMainItems = () => {
       apiClient.get(endpoints.FOOD_LIST).then((response) => response.data),
     [query]
   );
-  console.log(categories);
 
   useEffect(() => {
     if (categories?.value)
@@ -65,13 +65,13 @@ const MenuMainItems = () => {
       );
   }, [categories]);
 
-  console.log(extendCategories);
-
+  // console.log(extendCategories);
   const renderCategory = ({
     item,
     drag,
     isActive,
   }: RenderItemParams<ExtendCategoryModel>) => {
+    // console.log(item.categoryId);
     return (
       <View key={item.categoryId} className="mb-1">
         <TouchableOpacity
@@ -224,14 +224,26 @@ const MenuMainItems = () => {
           </View>
         </ScrollView> */}
         <View className="gap-y-2 pb-[200px]">
+          {isLoading && (
+            <ActivityIndicator animating={isLoading} color="#FCF450" />
+          )}
           <DraggableFlatList
             style={{ width: "100%", flexGrow: 1 }}
             data={extendCategories}
             renderItem={renderCategory}
-            keyExtractor={(item) => `category-${item.id}`}
+            keyExtractor={(item) => `category-${item.categoryId}`}
             onDragEnd={({ data }) => {
               setExtendCategories(data);
             }}
+            refreshControl={
+              <RefreshControl
+                tintColor={"#FCF450"}
+                onRefresh={() => {
+                  refetch();
+                }}
+                refreshing={isLoading}
+              />
+            }
           />
         </View>
       </View>
