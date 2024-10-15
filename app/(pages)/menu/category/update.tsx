@@ -6,8 +6,11 @@ import { router } from "expo-router";
 import FormField from "@/components/custom/FormFieldCustom";
 import CustomButton from "@/components/custom/CustomButton";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import usePathState from "@/hooks/states/usePathState";
 
 const CategoryUpdate = () => {
+  const categoryId = usePathState((state) => state.categoryId);
+
   return (
     <PageLayoutWrapper isScroll={false}>
       <View className="flex-1 p-4 justify-between">

@@ -1,4 +1,11 @@
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
@@ -42,6 +49,33 @@ const MenuMainItems = () => {
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
 
   // const [categories, setCategories] = useState(initialCategories);
+
+  const onRearrange = async (data: { ids: number[] }) => {
+    try {
+      const response = await apiClient.put(
+        "shop-owner/category/re-arrange",
+        data
+      );
+      const { value, isSuccess, error } = response.data;
+
+      if (isSuccess) {
+        Alert.alert("Thành công", `Danh mục "${value.name}" đã được thêm!`);
+        router.replace("/menu");
+      } else {
+        Alert.alert(
+          "Thông báo",
+          error.message || "Có lỗi xảy ra khi thêm danh mục!"
+        );
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Lỗi",
+        error?.response?.data?.error?.message ||
+          "Hệ thống đang bảo trì, vui lòng thử lại sau."
+      );
+    } finally {
+    }
+  };
 
   const {
     data: categories,
@@ -237,6 +271,14 @@ const MenuMainItems = () => {
             keyExtractor={(item) => `category-${item.categoryId}`}
             onDragEnd={({ data }) => {
               setExtendCategories(data);
+              console.log({
+                ids: extendCategories.map((category) => category.categoryId),
+              });
+              onRearrange({
+                ids: extendCategories.map(
+                  (category) => category.categoryId
+                ) as number[],
+              });
             }}
             refreshControl={
               <RefreshControl
