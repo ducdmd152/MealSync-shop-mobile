@@ -4,9 +4,10 @@ import CustomCheckbox from "@/components/custom/CustomCheckbox";
 import FormFieldCustom from "@/components/custom/FormFieldCustom";
 import SignUpVerification from "@/components/sign-up/SignUpVerification";
 import { images } from "@/constants";
+import useMapLocationState from "@/hooks/states/useMapLocationState";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -22,15 +23,22 @@ const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAcceptedPolicy, setIsAcceptedPolicy] = useState(false);
   const [selectedDormitories, setSelectedDormitories] = useState<number[]>([]);
+  const location = useMapLocationState();
+
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     shopName: "",
     phoneNumber: "",
     address: "",
   });
+
+  useEffect(() => {
+    setForm({ ...form, address: location.address });
+  }, [location]);
 
   const dormitories: { id: number; name: string }[] = [
     { id: 1, name: "Khu A" },
@@ -39,7 +47,15 @@ const SignUp = () => {
   ];
 
   const onSubmit = async () => {
-    if (!form.name || !form.email || !form.password) {
+    if (
+      !form.name ||
+      !form.email ||
+      !form.password ||
+      !form.confirmPassword ||
+      !form.shopName ||
+      !form.phoneNumber ||
+      !form.address
+    ) {
       Alert.alert(
         "Thông báo",
         `Vui lòng điền đầy đủ thông tin${
@@ -48,6 +64,7 @@ const SignUp = () => {
       );
       return;
     }
+
     if (selectedDormitories.length === 0) {
       Alert.alert("Thông báo", `Vui lòng chọn khu vực bán!`);
       return;
@@ -57,13 +74,13 @@ const SignUp = () => {
       email: form.email,
       fullName: form.name,
       phoneNumber: form.phoneNumber,
-      gender: 1, // Hoặc lấy từ một trường chọn khác
+      gender: 1,
       password: form.password,
       shopName: form.shopName,
       dormitoryIds: selectedDormitories,
-      address: form.address,
-      latitude: 0.1, // Hoặc lấy từ trường địa chỉ
-      longitude: 0.1, // Hoặc lấy từ trường địa chỉ
+      address: location.address,
+      latitude: location.latitude,
+      longitude: location.longitude,
     };
 
     setIsSubmitting(true);
@@ -107,15 +124,30 @@ const SignUp = () => {
       />
       <FormFieldCustom
         title={"Xác nhận mật khẩu"}
-        value={form.password}
+        value={form.confirmPassword}
         placeholder={"Xác nhận mật khẩu..."}
-        handleChangeText={(e) => setForm({ ...form, password: e })}
+        handleChangeText={(e) => setForm({ ...form, confirmPassword: e })}
         isPassword={true}
         otherStyleClasses="mt-3"
       />
       <CustomButton
         title="Tiếp tục"
-        handlePress={() => setStep(1)}
+        handlePress={() => {
+          if (
+            !form.name ||
+            !form.email ||
+            !form.password ||
+            !form.confirmPassword
+          ) {
+            Alert.alert("Thông báo", `Vui lòng điền đầy đủ thông tin!`);
+            return;
+          }
+          if (form.password || form.confirmPassword) {
+            Alert.alert("Thông báo", `Mật khẩu không trùng khớp!`);
+            return;
+          }
+          setStep(1);
+        }}
         iconRight={
           <Ionicons name="arrow-forward-outline" size={22} color="white" />
         }
