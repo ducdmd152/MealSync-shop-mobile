@@ -65,10 +65,10 @@ const MenuMainItems = () => {
         ids: extendCategories.map((category) => category.id),
       });
       const { value, isSuccess, error } = response.data;
-      toast.show("Cập nhật thứ tự thành công!", {
-        type: "success",
-        duration: 2000,
-      });
+      // toast.show("Cập nhật thứ tự thành công!", {
+      //   type: "success",
+      //   duration: 2000,
+      // });
     } catch (error: any) {
       setExtendCategories(prevExtendCategories);
       refetch();
