@@ -16,7 +16,7 @@ import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { BottomSheet } from "@rneui/themed";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
@@ -105,6 +105,12 @@ const MenuMainItems = () => {
         })) as ExtendCategoryModel[]
       );
   }, [categories]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [])
+  );
 
   // console.log(extendCategories);
   const renderCategory = ({
