@@ -1,5 +1,5 @@
-import { View, Text } from "react-native";
-import React, { useState } from "react";
+import { View, Text, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
 import Avatar from "react-native-paper/lib/typescript/components/Avatar/AvatarIcon";
 import AvatarChange from "@/components/common/AvatarChange";
 import ImageUpload from "@/components/common/ImageUpload";
@@ -23,48 +23,20 @@ import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
 import OptionGroupModel from "@/types/models/OptionGroupModel";
+import * as Yup from "yup";
 import FetchResponse, {
   FetchOnlyListResponse,
 } from "@/types/responses/FetchResponse";
 import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
-const shopCategoryChoices = [
-  { key: "1", value: "Mobiles", disabled: true },
-  { key: "2", value: "Appliances" },
-  { key: "3", value: "Cameras" },
-  { key: "4", value: "Computers", disabled: true },
-  { key: "5", value: "Vegetables" },
-  { key: "6", value: "Diary Products" },
-  { key: "7", value: "Drinks" },
-];
-
-const platformCategoryChoices = [
-  { key: "1", value: "Mobiles", disabled: true },
-  { key: "2", value: "Appliances" },
-  { key: "3", value: "Cameras" },
-  { key: "4", value: "Computers", disabled: true },
-  { key: "5", value: "Vegetables" },
-  { key: "6", value: "Diary Products" },
-  { key: "7", value: "Drinks" },
-];
-
-const optionGroupChoices = [
-  { key: "1", value: "Mobiles", disabled: true },
-  { key: "2", value: "Appliances" },
-  { key: "3", value: "Cameras" },
-  { key: "4", value: "Computers", disabled: true },
-  { key: "5", value: "Vegetables" },
-  { key: "6", value: "Diary Products" },
-  { key: "7", value: "Drinks" },
-];
-const operatingSlotChoices = [
-  { key: "1", value: "Mobiles", disabled: true },
-  { key: "2", value: "Appliances" },
-  { key: "3", value: "Cameras" },
-  { key: "4", value: "Computers", disabled: true },
-  { key: "5", value: "Vegetables" },
-  { key: "6", value: "Diary Products" },
-  { key: "7", value: "Drinks" },
-];
+import { useFormik } from "formik";
+const validationSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(6, "Tên món phải từ 6 kí tự trở lên")
+    .required("Tên món là bắt buộc"),
+  price: Yup.number().min(1, "Giá phải lớn hơn 0").required("Giá là bắt buộc"),
+  platformCategoryId: Yup.number().min(0, "Danh mục hệ thống là bắt buộc"),
+  shopCategoryId: Yup.number().min(0, "Danh mục cửa hàng là bắt buộc"),
+});
 interface ShopCategoryListResponse extends APICommonResponse {
   value: ShopCategoryModel[];
 }
@@ -76,8 +48,8 @@ const FoodCreate = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState(0);
-  const [selectedShopCategory, setSelectedShopCategory] = useState("");
-  const [selectedPlatformCategory, setSelectedPlatformCategory] = useState("");
+  const [selectedShopCategory, setSelectedShopCategory] = useState(-1);
+  const [selectedPlatformCategory, setSelectedPlatformCategory] = useState(-1);
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
     []
   );
@@ -88,6 +60,18 @@ const FoodCreate = () => {
   const [imageURI, setImageURI] = useState(
     "https://join.travelmanagers.com.au/wp-content/uploads/2017/09/default-placeholder-300x300.png"
   );
+
+  useEffect(() => {
+    formik.setFieldValue("shopCategoryId", Number(selectedShopCategory));
+    console.log(formik.values);
+  }, [selectedShopCategory]);
+  useEffect(() => {
+    formik.setFieldValue(
+      "platformCategoryId",
+      Number(selectedPlatformCategory)
+    );
+    console.log(formik.values);
+  }, [selectedPlatformCategory]);
 
   const onToggleSwitch = () => setIsAvailable(!isAvailable);
   const {
@@ -151,6 +135,82 @@ const FoodCreate = () => {
     []
   );
 
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      description: "",
+      price: 0,
+      platformCategoryId: -1,
+      shopCategoryId: -1,
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      let toReturn = false;
+      const submit = async () => {
+        try {
+          // Construct the data object to send to the API
+          const foodData = {
+            ...values,
+            imgUrl: imageURI,
+            status: isAvailable ? 1 : 2,
+            price: Number(values.price),
+            optionGroups: selectedOptionGroups.map((item) =>
+              Number(item)
+            ) as number[],
+            operatingSlots: selectedOperatingSlots.map((item) =>
+              Number(item)
+            ) as number[],
+          };
+          console.log("FOOD DATA: ", foodData);
+          // Send POST request to the API
+          const response = await apiClient.post(
+            "shop-owner/food/create",
+            foodData
+          );
+          console.log("RESPONSE : ", foodData, response);
+
+          // Handle successful response
+          Alert.alert("Hoàn tất", "Món ăn đã được tạo thành công");
+          router.push("/menu");
+        } catch (error: any) {
+          // Handle error response
+          console.error("ERROR", error);
+          Alert.alert(
+            "Xảy ra lỗi khi tạo món ăn",
+            error?.response?.data?.error?.message || "Vui lòng thử lại!"
+          );
+        }
+      };
+      if (selectedOperatingSlots.length === 0 && isAvailable) {
+        Alert.alert(
+          "Vui lòng chọn khung giờ",
+          "Để mở bán ngay, bạn cần chọn ít nhất 1 khung giờ cho món",
+          [
+            {
+              text: "Đã hiểu",
+              onPress: () => {
+                toReturn = true;
+                return;
+              },
+              style: "cancel",
+            },
+            {
+              text: "Tạm tắt món",
+              onPress: () => {
+                setIsAvailable(false);
+                toReturn = false;
+                submit();
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+        return;
+      }
+      submit();
+    },
+  });
+
   return (
     <PageLayoutWrapper>
       <View className="p-4 bg-white">
@@ -184,9 +244,20 @@ const FoodCreate = () => {
             otherTextInputStyleClasses="text-sm"
             isRequired={true}
             placeholder="Nhập tên món..."
-            value={""}
-            handleChangeText={() => {}}
+            value={formik.values.name}
+            handleChangeText={(e) => {
+              formik.setFieldValue("name", e);
+            }}
           />
+          {(formik.touched.name && formik.errors.name
+            ? formik.errors.name
+            : "") && (
+            <Text className="text-red-500 mt-2 text-left w-full italic">
+              {formik.touched.name && formik.errors.name
+                ? formik.errors.name
+                : ""}
+            </Text>
+          )}
           <FormField
             title="Mô tả"
             multiline={true}
@@ -194,10 +265,12 @@ const FoodCreate = () => {
             otherStyleClasses="mt-5"
             otherInputStyleClasses="h-19 items-start"
             otherTextInputStyleClasses="text-sm h-17 mt-2"
-            isRequired={true}
+            // isRequired={true}
             placeholder="Nhập mô tả món..."
-            value={""}
-            handleChangeText={() => {}}
+            value={formik.values.description}
+            handleChangeText={(e) => {
+              formik.setFieldValue("description", e);
+            }}
           />
           <FormField
             title="Giá"
@@ -206,10 +279,21 @@ const FoodCreate = () => {
             otherTextInputStyleClasses="text-sm"
             isRequired={true}
             placeholder="0"
-            value={""}
-            handleChangeText={() => {}}
+            value={formik.values.price + ""}
+            handleChangeText={(e) => {
+              formik.setFieldValue("price", Number(e));
+            }}
             keyboardType="numeric"
           />
+          {(formik.touched.price && formik.errors.price
+            ? formik.errors.price
+            : "") && (
+            <Text className="text-red-500 mt-2 text-left w-full italic">
+              {formik.touched.price && formik.errors.price
+                ? formik.errors.price
+                : ""}
+            </Text>
+          )}
           <View>
             <FormField
               title="Danh mục trong cửa hàng"
@@ -236,6 +320,15 @@ const FoodCreate = () => {
               placeholder="Danh mục trong cửa hàng"
               searchPlaceholder="Tìm kiếm..."
             />
+            {(formik.touched.shopCategoryId && formik.errors.shopCategoryId
+              ? formik.errors.shopCategoryId
+              : "") && (
+              <Text className="text-red-500 mt-2 text-left w-full italic">
+                {formik.touched.shopCategoryId && formik.errors.shopCategoryId
+                  ? formik.errors.shopCategoryId
+                  : ""}
+              </Text>
+            )}
             <Text className="text-[12px] text-gray-600 italic mt-1 ml-1">
               Danh mục này được sử dụng để phân loại và chia nhóm sản phẩm trong
               cửa hàng của bạn.
@@ -269,6 +362,17 @@ const FoodCreate = () => {
               placeholder="Danh mục trên hệ thống"
               searchPlaceholder="Tìm kiếm..."
             />
+            {(formik.touched.platformCategoryId &&
+            formik.errors.platformCategoryId
+              ? formik.errors.platformCategoryId
+              : "") && (
+              <Text className="text-red-500 mt-2 text-left w-full italic">
+                {formik.touched.platformCategoryId &&
+                formik.errors.platformCategoryId
+                  ? formik.errors.platformCategoryId
+                  : ""}
+              </Text>
+            )}
             <Text className="text-[12px] text-gray-600 italic mt-1 ml-1">
               Danh mục này được sử dụng để phân loại và hỗ trợ tìm kiếm dễ dàng
               trên hệ thống.
@@ -320,7 +424,7 @@ const FoodCreate = () => {
               otherStyleClasses="mt-5"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
-              isRequired={true}
+              // isRequired={true}
               placeholder="0"
               value={""}
               handleChangeText={() => {}}
@@ -373,9 +477,7 @@ const FoodCreate = () => {
           title="Hoàn tất"
           containerStyleClasses="mt-5 bg-primary"
           textStyleClasses="text-white"
-          handlePress={() => {
-            router.push("/menu");
-          }}
+          handlePress={formik.handleSubmit}
         />
       </View>
     </PageLayoutWrapper>

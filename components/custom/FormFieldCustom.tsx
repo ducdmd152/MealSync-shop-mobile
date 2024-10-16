@@ -12,7 +12,7 @@ import {
 interface FormFieldProps extends TextInputProps {
   title: string;
   value: string;
-  placeholder: string;
+  placeholder?: string;
   handleChangeText: (text: string) => void;
   otherStyleClasses?: string;
   otherInputStyleClasses?: string;
@@ -28,7 +28,7 @@ interface FormFieldProps extends TextInputProps {
 const FormField: React.FC<FormFieldProps> = ({
   title,
   value,
-  placeholder,
+  placeholder = "",
   handleChangeText,
   otherStyleClasses: otherStyles = "",
   otherInputStyleClasses = "",
