@@ -173,7 +173,7 @@ const MenuMainItems = () => {
                     />
                     <View className="flex-1">
                       <Text
-                        className="text-md font-psemibold mt-[-2px]"
+                        className="text-md font-psemibold mt-[-2px] text-gray-600"
                         numberOfLines={2}
                         ellipsizeMode="tail"
                       >

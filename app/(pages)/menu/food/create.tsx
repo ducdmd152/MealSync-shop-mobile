@@ -173,10 +173,8 @@ const FoodCreate = () => {
           Alert.alert("Hoàn tất", "Món ăn đã được tạo thành công");
           router.push("/menu");
         } catch (error: any) {
-          // Handle error response
-          console.error("ERROR", error);
           Alert.alert(
-            "Xảy ra lỗi khi tạo món ăn",
+            "Xảy ra lỗi khi tạo món",
             error?.response?.data?.error?.message || "Vui lòng thử lại!"
           );
         }
