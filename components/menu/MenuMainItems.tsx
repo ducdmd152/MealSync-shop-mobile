@@ -19,7 +19,7 @@ import { BottomSheet } from "@rneui/themed";
 import { router } from "expo-router";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import { CategoryModel } from "@/types/models/CategoryModel";
+import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
 import FetchResponse from "@/types/responses/FetchResponse";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import apiClient from "@/services/api-services/api-client";
@@ -36,10 +36,10 @@ const initialCategories = [
 ];
 
 interface FoodListResponse extends APICommonResponse {
-  value: CategoryModel[];
+  value: ShopCategoryModel[];
 }
 interface FoodListQuery {}
-interface ExtendCategoryModel extends CategoryModel {
+interface ExtendCategoryModel extends ShopCategoryModel {
   isCollapsible: boolean;
 }
 const MenuMainItems = () => {
@@ -134,7 +134,7 @@ const MenuMainItems = () => {
                 {item.name}
               </Text>
               <Text className="text-gray-700 text-sm">
-                {item.foods.length} món
+                {item.foods?.length} món
               </Text>
             </View>
             <CustomButton

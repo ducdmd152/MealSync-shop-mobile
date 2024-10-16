@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "react-native-paper/lib/typescript/components/Avatar/AvatarIcon";
 import AvatarChange from "@/components/common/AvatarChange";
 import ImageUpload from "@/components/common/ImageUpload";
@@ -14,7 +14,20 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Switch } from "react-native-paper";
-const data = [
+import sessionService from "@/services/session-service";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
+import APICommonResponse from "@/types/responses/APICommonResponse";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
+import OptionGroupModel from "@/types/models/OptionGroupModel";
+import FetchResponse, {
+  FetchOnlyListResponse,
+} from "@/types/responses/FetchResponse";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+const shopCategoryChoices = [
   { key: "1", value: "Mobiles", disabled: true },
   { key: "2", value: "Appliances" },
   { key: "3", value: "Cameras" },
@@ -24,7 +37,7 @@ const data = [
   { key: "7", value: "Drinks" },
 ];
 
-const categories = [
+const platformCategoryChoices = [
   { key: "1", value: "Mobiles", disabled: true },
   { key: "2", value: "Appliances" },
   { key: "3", value: "Cameras" },
@@ -33,15 +46,111 @@ const categories = [
   { key: "6", value: "Diary Products" },
   { key: "7", value: "Drinks" },
 ];
+
+const optionGroupChoices = [
+  { key: "1", value: "Mobiles", disabled: true },
+  { key: "2", value: "Appliances" },
+  { key: "3", value: "Cameras" },
+  { key: "4", value: "Computers", disabled: true },
+  { key: "5", value: "Vegetables" },
+  { key: "6", value: "Diary Products" },
+  { key: "7", value: "Drinks" },
+];
+const operatingSlotChoices = [
+  { key: "1", value: "Mobiles", disabled: true },
+  { key: "2", value: "Appliances" },
+  { key: "3", value: "Cameras" },
+  { key: "4", value: "Computers", disabled: true },
+  { key: "5", value: "Vegetables" },
+  { key: "6", value: "Diary Products" },
+  { key: "7", value: "Drinks" },
+];
+interface ShopCategoryListResponse extends APICommonResponse {
+  value: ShopCategoryModel[];
+}
+interface PlatformCategoryListResponse extends APICommonResponse {
+  value: PlatformCategoryModel[];
+}
 
 const FoodCreate = () => {
-  const [select, setSelect] = React.useState("");
-  const [selected, setSelected] = React.useState<string[]>([]);
-  const [isSwitchOn, setIsSwitchOn] = React.useState(true);
-  const [imageURI, setImageURI] = React.useState(
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState(0);
+  const [selectedShopCategory, setSelectedShopCategory] = useState("");
+  const [selectedPlatformCategory, setSelectedPlatformCategory] = useState("");
+  const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
+    []
+  );
+  const [selectedOperatingSlots, setSelectedOperatingSlots] = useState<
+    string[]
+  >([]);
+  const [isAvailable, setIsAvailable] = useState(true);
+  const [imageURI, setImageURI] = useState(
     "https://join.travelmanagers.com.au/wp-content/uploads/2017/09/default-placeholder-300x300.png"
   );
-  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+
+  const onToggleSwitch = () => setIsAvailable(!isAvailable);
+  const {
+    data: shopCategories,
+    isLoading: isShopCategoriesLoading,
+    error: shopCategoriesError,
+    refetch: shopCategoriesRefetch,
+  } = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.SHOP_CATEGORY_LIST,
+    (): Promise<ShopCategoryListResponse> =>
+      apiClient
+        .get(endpoints.SHOP_CATEGORY_LIST)
+        .then((response) => response.data),
+    []
+  );
+  const {
+    data: platformCategories,
+    isLoading: isPlatformCategoriesLoading,
+    error: platformCategoriesError,
+    refetch: platformCategoriesRefetch,
+  } = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.PLATFORM_CATEGORY_LIST,
+    (): Promise<PlatformCategoryListResponse> =>
+      apiClient
+        .get(endpoints.PLATFORM_CATEGORY_LIST)
+        .then((response) => response.data),
+    []
+  );
+  const {
+    data: optionGroups,
+    isLoading: isOptionGroupsLoading,
+    error: optionGroupsError,
+    refetch: optionGroupsRefetch,
+  } = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.OPTION_GROUP_LIST,
+    async (): Promise<FetchResponse<OptionGroupModel>> =>
+      apiClient
+        .get(endpoints.OPTION_GROUP_LIST, {
+          headers: {
+            Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+          },
+          params: {
+            pageIndex: 1,
+            pageSize: 100_000_000,
+          },
+        })
+        .then((response) => response.data),
+    []
+  );
+  const {
+    data: operatingSlots,
+    isLoading: isOperatingSlotsLoading,
+    error: operatingSlotsError,
+    refetch: operatingSlotsRefetch,
+  } = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST,
+    (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
+      apiClient
+        .get(endpoints.OPERATING_SLOT_LIST)
+        .then((response) => response.data),
+    []
+  );
+
   return (
     <PageLayoutWrapper>
       <View className="p-4 bg-white">
@@ -115,9 +224,15 @@ const FoodCreate = () => {
               labelOnly={true}
             />
             <SelectList
-              setSelected={(val: string) => setSelect(val)}
-              data={data}
-              save="value"
+              setSelected={setSelectedShopCategory}
+              data={
+                shopCategories?.value?.map((cat: ShopCategoryModel) => ({
+                  key: cat.id.toString(),
+                  value: cat.name,
+                })) || []
+              }
+              save="key"
+              notFoundText="Không tìm thấy"
               placeholder="Danh mục trong cửa hàng"
               searchPlaceholder="Tìm kiếm..."
             />
@@ -141,10 +256,17 @@ const FoodCreate = () => {
               labelOnly={true}
             />
             <SelectList
-              setSelected={(val: string) => setSelect(val)}
-              data={data}
-              save="value"
-              placeholder="Danh mục trong cửa hàng"
+              setSelected={setSelectedPlatformCategory}
+              data={
+                platformCategories?.value?.map(
+                  (cat: PlatformCategoryModel) => ({
+                    key: cat.id.toString(),
+                    value: cat.name,
+                  })
+                ) || []
+              }
+              save="key"
+              placeholder="Danh mục trên hệ thống"
               searchPlaceholder="Tìm kiếm..."
             />
             <Text className="text-[12px] text-gray-600 italic mt-1 ml-1">
@@ -159,7 +281,6 @@ const FoodCreate = () => {
               otherStyleClasses="mt-5"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
-              isRequired={true}
               placeholder="0"
               value={""}
               handleChangeText={() => {}}
@@ -170,14 +291,23 @@ const FoodCreate = () => {
               Ví dụ: topping, kích cỡ, lượng đá,...
             </Text>
             <MultipleSelectList
-              setSelected={(val: string[]) => setSelected(val)}
-              data={data}
-              save="value"
+              setSelected={setSelectedOptionGroups}
+              data={
+                optionGroups?.value?.items?.map((group: OptionGroupModel) => ({
+                  key: group.id.toString(),
+                  value: group.title,
+                })) || []
+              }
+              save="key"
               placeholder="Liên kết các nhóm lựa chọn"
               onSelect={() => {}}
               searchPlaceholder="Tìm kiếm nhóm"
               label="Các nhóm đã liên kết"
-              notFoundText="Không tìm thấy"
+              notFoundText={
+                optionGroups?.value?.items?.length == 0
+                  ? "Chưa có nhóm lựa chọn nào, bạn vẫn thể tạo và cập nhật sau khi tạo món mới"
+                  : "Không tìm thấy"
+              }
               dropdownShown={false}
               closeicon={
                 <Ionicons name="checkmark-outline" size={22} color="gray" />
@@ -186,7 +316,7 @@ const FoodCreate = () => {
           </View>
           <View>
             <FormField
-              title="Thời gian phục vụ"
+              title="Khung thời gian phục vụ"
               otherStyleClasses="mt-5"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
@@ -198,12 +328,17 @@ const FoodCreate = () => {
               labelOnly={true}
             />
             <Text className="text-[12px] text-gray-600 italic mt-1 ml-1 mb-2">
-              Lựa chọn theo các khoảng thời gian hoạt động của cửa hàng
+              Chọn theo các khoảng thời gian hoạt động của cửa hàng
             </Text>
             <MultipleSelectList
-              setSelected={(val: string[]) => setSelected(val)}
-              data={data}
-              save="value"
+              setSelected={setSelectedOperatingSlots}
+              data={
+                operatingSlots?.value?.map((item: OperatingSlotModel) => ({
+                  key: item.id.toString(),
+                  value: item.frameFormat,
+                })) || []
+              }
+              save="key"
               placeholder="Lựa chọn khoảng thời gian phục vụ"
               onSelect={() => {}}
               search={false}
@@ -214,9 +349,9 @@ const FoodCreate = () => {
               }
             />
           </View>
-          <View className="flex-row items-center justify-start">
+          <View className="flex-row items-center justify-start mt-2">
             <FormField
-              title={isSwitchOn ? "Mở bán ngay" : "Tạm ẩn món"}
+              title={isAvailable ? "Mở bán ngay" : "Tạm ẩn món"}
               otherStyleClasses="w-[152px]"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
@@ -229,7 +364,7 @@ const FoodCreate = () => {
             />
             <Switch
               color="#e95137"
-              value={isSwitchOn}
+              value={isAvailable}
               onValueChange={onToggleSwitch}
             />
           </View>
