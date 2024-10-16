@@ -37,6 +37,23 @@ const validationSchema = Yup.object().shape({
   platformCategoryId: Yup.number().min(0, "Danh mục hệ thống là bắt buộc"),
   shopCategoryId: Yup.number().min(0, "Danh mục cửa hàng là bắt buộc"),
 });
+const formatPrice = (value: number) => {
+  console.log(
+    "Price:",
+    value,
+    new Intl.NumberFormat("vi-VN", {
+      style: "decimal",
+      maximumFractionDigits: 0,
+    }).format(value)
+  );
+  return new Intl.NumberFormat("vi-VN", {
+    style: "decimal",
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+const parseFormattedNumber = (formattedValue: string) => {
+  return Number(formattedValue.replace(/\./g, ""));
+};
 interface ShopCategoryListResponse extends APICommonResponse {
   value: ShopCategoryModel[];
 }
@@ -273,15 +290,16 @@ const FoodCreate = () => {
           <FormField
             title="Giá"
             otherStyleClasses="mt-5"
-            otherInputStyleClasses="h-12"
+            otherInputStyleClasses="h-12 justify-start"
             otherTextInputStyleClasses="text-sm"
             isRequired={true}
             placeholder="0"
-            value={formik.values.price + ""}
+            value={formatPrice(formik.values.price)}
             handleChangeText={(e) => {
-              formik.setFieldValue("price", Number(e));
+              formik.setFieldValue("price", parseFormattedNumber(e));
             }}
             keyboardType="numeric"
+            iconRight={<Text>₫</Text>}
           />
           {(formik.touched.price && formik.errors.price
             ? formik.errors.price
