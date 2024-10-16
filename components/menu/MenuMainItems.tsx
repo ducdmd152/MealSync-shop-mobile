@@ -28,6 +28,10 @@ import APICommonResponse from "@/types/responses/APICommonResponse";
 import { RefreshControl } from "react-native-gesture-handler";
 import { showMessage, hideMessage } from "react-native-flash-message";
 import { useToast } from "react-native-toast-notifications";
+import ValueResponse from "@/types/responses/ValueReponse";
+import FoodDetailModel from "@/types/models/FoodDetailModel";
+import useModelState from "@/hooks/states/useModelState";
+import usePathState from "@/hooks/states/usePathState";
 
 const initialCategories = [
   { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
@@ -50,6 +54,8 @@ const MenuMainItems = () => {
   >([]);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const { foodDetailModel, setFoodDetailModel } = useModelState();
+  const { notFoundInfo, setNotFoundInfo } = usePathState();
 
   // const [categories, setCategories] = useState(initialCategories);
 
@@ -206,7 +212,32 @@ const MenuMainItems = () => {
                     100 đơn cần xử lí trong 2h tới
                   </Text>
                   <TouchableOpacity
-                    onPress={() => {}}
+                    onPress={async () => {
+                      setNotFoundInfo(
+                        notFoundInfo.message,
+                        "/menu",
+                        notFoundInfo.linkDesc
+                      );
+                      try {
+                        const response = await apiClient.get<
+                          ValueResponse<FoodDetailModel>
+                        >(`shop-owner/food/${food.id}/detail`);
+                        setFoodDetailModel({ ...response.data.value });
+                        router.push("/menu/food/update");
+                        // console.log("Food Detail model: ", foodDetailModel);
+                      } catch (error: any) {
+                        if (error.response && error.response.status === 404) {
+                          Alert.alert("Oops!", "Món này không tồn tại!");
+                          refetch();
+                        } else {
+                          Alert.alert(
+                            "Oops!",
+                            error?.response?.data?.error?.message ||
+                              "Hệ thống đang bảo trì, vui lòng thử lại sau!"
+                          );
+                        }
+                      }
+                    }}
                     className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                   >
                     <Text className="text-[13.5px] text-white">Chỉnh sửa</Text>
