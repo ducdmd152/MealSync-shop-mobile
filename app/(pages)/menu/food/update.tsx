@@ -458,6 +458,7 @@ const FoodUpdate = () => {
               Ví dụ: topping, kích cỡ, lượng đá,...
             </Text>
             <CustomMultipleSelectList
+              selectedText="Liên kết đã chọn"
               defaultOptions={
                 (
                   optionGroups?.value?.items?.map(

@@ -29,6 +29,7 @@ import FetchResponse, {
 } from "@/types/responses/FetchResponse";
 import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import { useFormik } from "formik";
+import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -410,7 +411,8 @@ const FoodCreate = () => {
             <Text className="text-[12px] text-gray-600 italic mt-1 ml-1 mb-2">
               Ví dụ: topping, kích cỡ, lượng đá,...
             </Text>
-            <MultipleSelectList
+            <CustomMultipleSelectList
+              selectedText="Liên kết đã chọn"
               setSelected={setSelectedOptionGroups}
               data={
                 optionGroups?.value?.items?.map((group: OptionGroupModel) => ({
@@ -450,7 +452,8 @@ const FoodCreate = () => {
             <Text className="text-[12px] text-gray-600 italic mt-1 ml-1 mb-2">
               Chọn theo các khoảng thời gian hoạt động của cửa hàng
             </Text>
-            <MultipleSelectList
+            <CustomMultipleSelectList
+              selectedText="Khoảng đã chọn"
               setSelected={setSelectedOperatingSlots}
               data={
                 operatingSlots?.value?.map((item: OperatingSlotModel) => ({
