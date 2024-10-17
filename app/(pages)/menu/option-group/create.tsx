@@ -7,15 +7,21 @@ import { router } from "expo-router";
 import CustomCheckbox from "@/components/custom/CustomCheckbox";
 import { Ionicons } from "@expo/vector-icons";
 import { Switch } from "react-native-paper";
+import apiClient from "@/services/api-services/api-client";
+import sessionService from "@/services/session-service";
 
-interface Option {
+interface Option extends OptionSubmit {
+  error: OptionError;
+}
+interface OptionSubmit {
   title: string;
   price: number;
   isCalculatePrice: boolean;
   isDefault: boolean;
   imageUrl: string;
-  error: OptionError;
+  status: number;
 }
+
 interface OptionError {
   title: string;
   price: string;
@@ -35,6 +41,9 @@ const parseFormattedNumber = (formattedValue: string) => {
 };
 
 const OptionGroupCreate: React.FC = () => {
+  (async () => {
+    console.log(await sessionService.getAuthToken());
+  })();
   const [isAvailable, setIsSwitchOn] = React.useState(true);
   const [formError, setFormError] = React.useState({
     title: "",
@@ -47,6 +56,7 @@ const OptionGroupCreate: React.FC = () => {
       isDefault: true,
       imageUrl: "no-img",
       error: { title: "", price: "" },
+      status: 1,
     },
   ]);
   const [title, setTitle] = useState<string>("");
@@ -208,6 +218,7 @@ const OptionGroupCreate: React.FC = () => {
         isDefault: false,
         imageUrl: "no-img",
         error: { title: "", price: "" },
+        status: 1,
       },
     ]);
   };
@@ -217,24 +228,34 @@ const OptionGroupCreate: React.FC = () => {
     value: string | number | boolean
   ) => {
     // if (isTrySubmitted > 0) setIsTrySubmitted(isTrySubmitted + 1);
-    let updatedOptions = options.map((item, i) =>
-      i === index
-        ? {
-            ...item,
-            [field]:
-              field == "price" ? (item.isCalculatePrice ? value : 0) : value,
-          }
-        : item
-    );
-    updatedOptions = updatedOptions.map((item, i) =>
-      i === index
-        ? {
-            ...item,
-            price: item.isCalculatePrice ? item.price : 0,
-          }
-        : item
-    );
-    setOptions(updatedOptions);
+
+    if (field == "isCalculatePrice") {
+      let updatedOptions = options.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              isCalculatePrice: Boolean(value),
+              price: value ? 1000 : 0,
+            }
+          : item
+      );
+      setOptions(updatedOptions);
+    } else if (field == "price") {
+      let updatedOptions = options.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              price: Number(value),
+            }
+          : item
+      );
+      setOptions(updatedOptions);
+    } else {
+      const updatedOptions = options.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      );
+      setOptions(updatedOptions);
+    }
   };
 
   const handleRemoveOption = (index: number) => {
@@ -242,18 +263,34 @@ const OptionGroupCreate: React.FC = () => {
     setOptions(updatedOptions);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) return;
 
     const data = {
       title,
-      options,
-      isMultiSelect: isRequire,
-      minSelect,
-      maxSelect,
+      options: options as OptionSubmit[],
+      isRequire,
+      minChoices: minSelect,
+      maxChoices: maxSelect,
+      type: isMultiSelect ? 1 : 2,
+      status: isAvailable ? 1 : 2,
     };
     console.log("Submit data:", data);
-    // router.replace("/menu/option-group/link");
+    try {
+      const response = await apiClient.post(
+        "shop-owner/option-group/create",
+        data
+      );
+      console.log("RESPONSE : ", response);
+
+      Alert.alert("Hoàn tất", "Nhóm được tạo thành công");
+      // router.replace("/menu/option-group/link");
+    } catch (error: any) {
+      Alert.alert(
+        "Xảy ra lỗi khi tạo món",
+        error?.response?.data?.error?.message || "Vui lòng thử lại!"
+      );
+    }
   };
 
   return (
@@ -269,66 +306,69 @@ const OptionGroupCreate: React.FC = () => {
             value={title}
             handleChangeText={setTitle}
           />
-          <CustomCheckbox
-            isChecked={isRequire}
-            handlePress={() => setIsRequire(!isRequire)}
-            label={
-              <Text className="text-[16px]">Đây là nhóm lựa chọn bắt buộc</Text>
-            }
-            containerStyleClasses={""}
-          />
+
           <View>
             {options.map((item, index) => (
-              <View key={index}>
-                <View className="flex-row w-full mt-4 items-center items-end">
+              <View
+                key={index}
+                className="bg-white drop-shadow-md rounded-lg shadow p-1 mt-2"
+              >
+                <View className="flex-row w-full items-center items-end ">
                   <FormField
                     title={`Lựa chọn ${index + 1}`}
-                    otherStyleClasses="flex-1"
-                    otherInputStyleClasses="h-10"
+                    titleStyleClasses="text-[14px] ml-1"
+                    otherStyleClasses="flex-1 "
+                    otherInputStyleClasses="h-10 border-gray-400"
                     otherTextInputStyleClasses="text-sm"
                     isRequired={true}
                     placeholder="Nhập lựa chọn..."
                     value={item.title}
-                    handleChangeText={(text: string) =>
-                      handleOptionChange(index, "title", text)
-                    }
+                    handleChangeText={(text: string) => {
+                      setIsTrySubmitted(isTrySubmitted + 1);
+                      handleOptionChange(index, "title", text);
+                    }}
                   />
                   <FormField
                     title="Giá thêm"
+                    titleStyleClasses="text-[14px] ml-1"
                     otherStyleClasses="w-[160px] ml-2"
-                    otherInputStyleClasses="h-10"
+                    otherInputStyleClasses="h-10 border-gray-400"
                     otherTextInputStyleClasses="text-sm"
                     isRequired={true}
                     placeholder=""
                     readOnly={!item.isCalculatePrice}
                     value={formatPrice(item.price)}
-                    handleChangeText={(text: string) =>
+                    handleChangeText={(text: string) => {
+                      setIsTrySubmitted(isTrySubmitted + 1);
                       handleOptionChange(
                         index,
                         "price",
                         parseFormattedNumber(text)
-                      )
-                    }
+                      );
+                    }}
                     iconRight={
                       <View className="flex-row items-center mr-[-10px]">
                         <Text className="mb-1">₫</Text>
                         <Switch
+                          className="scale-75"
                           color="#FF9C01"
                           value={item.isCalculatePrice}
-                          onValueChange={() =>
+                          onValueChange={(value) => {
                             handleOptionChange(
                               index,
                               "isCalculatePrice",
-                              !item.isCalculatePrice
-                            )
-                          }
+                              value
+                            );
+
+                            setIsTrySubmitted(isTrySubmitted + 1);
+                          }}
                         />
                       </View>
                     }
                   />
                 </View>
                 {item.error.title && (
-                  <Text className="ml-2 text-red-500 mt-2 text-left w-full italic">
+                  <Text className="ml-2 text-[12.5px] text-red-500 mt-2 text-left w-full italic">
                     {item.error.title}
                   </Text>
                 )}
@@ -339,16 +379,65 @@ const OptionGroupCreate: React.FC = () => {
                       handleOptionChange(index, "isDefault", !item.isDefault);
                     }}
                     label={
-                      <Text className="text-[15px]">Lựa chọn mặc định</Text>
+                      <Text className="text-[16px]">Lựa chọn mặc định</Text>
                     }
-                    containerStyleClasses={"w-[220px]"}
+                    containerStyleClasses={"flex-1 scale-75 ml-[-20px]"}
                   />
-                  <CustomButton
-                    title="Xóa"
-                    handlePress={() => handleRemoveOption(index)}
-                    containerStyleClasses="h-10 bg-red-500 ml-2 px-2 bg-white border-2 border-red-400 box-border border-0"
-                    textStyleClasses="text-white text-sm text-primary text-[14px]"
-                  />
+                  <View className="flex-row items-center">
+                    <CustomButton
+                      title={item.status == 1 ? "Có sẵn" : "Đã ẩn"}
+                      handlePress={() =>
+                        Alert.alert(
+                          "Xác nhận thay đổi",
+                          `Bạn có chắc muốn ${
+                            item.status === 1 ? "tạm ẩn" : "bật có sẵn"
+                          } lựa chọn này không?`,
+                          item.status == 1
+                            ? [
+                                {
+                                  text: "Hủy",
+                                  style: "cancel",
+                                },
+                                {
+                                  text: "Đồng ý",
+                                  onPress: () =>
+                                    handleOptionChange(
+                                      index,
+                                      "status",
+                                      3 - item.status
+                                    ),
+                                },
+                              ]
+                            : [
+                                {
+                                  text: "Đồng ý",
+                                  onPress: () =>
+                                    handleOptionChange(
+                                      index,
+                                      "status",
+                                      3 - item.status
+                                    ),
+                                },
+                                {
+                                  text: "Hủy",
+                                  // style: "cancel",
+                                },
+                              ]
+                        )
+                      }
+                      containerStyleClasses="w-22 h-10 bg-red-500 bg-white border-2 border-red-400 box-border border-0"
+                      textStyleClasses={
+                        "text-white text-sm  text-[12px] " +
+                        (item.status == 1 ? "text-secondary" : "text-gray-500")
+                      }
+                    />
+                    <CustomButton
+                      title="Xóa"
+                      handlePress={() => handleRemoveOption(index)}
+                      containerStyleClasses="ml-[-12px] h-10 bg-red-500  bg-white border-2 border-red-400 box-border border-0"
+                      textStyleClasses="text-white text-sm text-primary text-[12px]"
+                    />
+                  </View>
                 </View>
               </View>
             ))}
@@ -361,7 +450,17 @@ const OptionGroupCreate: React.FC = () => {
             textStyleClasses="text-sm text-secondary"
           />
           <View className="border-b-2 border-gray-200 mt-4" />
-          <View className="mt-5">
+          <View className="bg-[#f3f4f6] py-2 mt-1">
+            <CustomCheckbox
+              isChecked={isRequire}
+              handlePress={() => setIsRequire(!isRequire)}
+              label={
+                <Text className="text-[16px]">
+                  Đây là nhóm lựa chọn bắt buộc
+                </Text>
+              }
+              containerStyleClasses={"mb-2"}
+            />
             <CustomCheckbox
               isChecked={isMultiSelect}
               handlePress={() => setIsMultiSelect(!isMultiSelect)}
@@ -407,8 +506,13 @@ const OptionGroupCreate: React.FC = () => {
 
           <View className="flex-row items-center justify-start ml-1 mt-4">
             <FormField
-              title={isAvailable ? "Có sẵn" : "Tạm ẩn"}
-              otherStyleClasses="w-[100px]"
+              title={
+                isAvailable
+                  ? "Hiển thị trên các món đã liên kết"
+                  : "Đã tạm ẩn trên các món liên kết"
+              }
+              otherStyleClasses="w-[264px]"
+              titleStyleClasses="text-sm"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
               placeholder="0"

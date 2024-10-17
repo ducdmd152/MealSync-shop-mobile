@@ -23,6 +23,7 @@ interface FormFieldProps extends TextInputProps {
   iconRight?: ReactNode;
   multiline?: boolean;
   numberOfLines?: number;
+  titleStyleClasses?: string;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -39,6 +40,7 @@ const FormField: React.FC<FormFieldProps> = ({
   multiline = false,
   numberOfLines = 1,
   labelOnly = false,
+  titleStyleClasses = "",
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -46,7 +48,11 @@ const FormField: React.FC<FormFieldProps> = ({
   return (
     <View className={`space-y-2 ${otherStyles}`}>
       <View className="flex-row items-center">
-        <Text className="text-base text-gray-500 font-pmedium">{title}</Text>
+        <Text
+          className={`text-base text-gray-500 font-pmedium ${titleStyleClasses}`}
+        >
+          {title}
+        </Text>
         {isRequired && <Text className="ml-1 text-[14px] text-[red]">*</Text>}
       </View>
 
