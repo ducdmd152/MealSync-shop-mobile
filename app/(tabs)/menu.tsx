@@ -8,9 +8,10 @@ import { Tab } from "react-native-elements";
 import MenuMainItems from "@/components/menu/MenuMainItems";
 import MenuGroupOptions from "@/components/menu/MenuGroupOptions";
 import useCounterState from "@/hooks/states/useCounterState";
+import usePathState from "@/hooks/states/usePathState";
 
 const Menu = () => {
-  const [index, setIndex] = React.useState(0);
+  const { menuSessionIndex, setMenuSessionIndex } = usePathState();
   const counter = useCounterState((state) => state.counter);
   const increment = useCounterState((state) => state.increment);
   const reset = useCounterState((state) => state.reset);
@@ -22,27 +23,31 @@ const Menu = () => {
           <CustomButton
             title="Thực đơn chính"
             handlePress={() => {
-              setIndex(0);
+              setMenuSessionIndex(0);
             }}
             containerStyleClasses={`flex-1 px-2  h-[40px] rounded-md ${
-              index == 0 ? "bg-primary-100" : "bg-white"
+              menuSessionIndex == 0 ? "bg-primary-100" : "bg-white"
             }`}
-            textStyleClasses={`text-sm ${index == 0 ? "text-white" : ""}`}
+            textStyleClasses={`text-sm ${
+              menuSessionIndex == 0 ? "text-white" : ""
+            }`}
           />
           <View className="w-[4px]"></View>
           <CustomButton
             title="Nhóm lựa chọn"
             handlePress={() => {
-              setIndex(1);
+              setMenuSessionIndex(1);
             }}
             containerStyleClasses={`flex-1 px-2  h-[40px] rounded-md ${
-              index == 1 ? "bg-primary-100" : "bg-white"
+              menuSessionIndex == 1 ? "bg-primary-100" : "bg-white"
             }`}
-            textStyleClasses={`text-sm ${index == 1 ? "text-white" : ""}`}
+            textStyleClasses={`text-sm ${
+              menuSessionIndex == 1 ? "text-white" : ""
+            }`}
           />
         </View>
       </View>
-      {index == 0 ? <MenuMainItems /> : <MenuGroupOptions />}
+      {menuSessionIndex == 0 ? <MenuMainItems /> : <MenuGroupOptions />}
     </View>
   );
 };

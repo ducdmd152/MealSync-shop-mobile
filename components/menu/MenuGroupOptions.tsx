@@ -1,12 +1,40 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import CustomButton from "../custom/CustomButton";
-import { Searchbar } from "react-native-paper";
+import { ActivityIndicator, Searchbar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import FetchResponse from "@/types/responses/FetchResponse";
+import OptionGroupModel from "@/types/models/OptionGroupModel";
+import sessionService from "@/services/session-service";
+import apiClient from "@/services/api-services/api-client";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 
 const MenuGroupOptions = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
+  const {
+    data: optionGroups,
+    isLoading: isOptionGroupsLoading,
+    error: optionGroupsError,
+    refetch: optionGroupsRefetch,
+  } = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.OPTION_GROUP_LIST,
+    async (): Promise<FetchResponse<OptionGroupModel>> =>
+      apiClient
+        .get(endpoints.OPTION_GROUP_LIST, {
+          headers: {
+            Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+          },
+          params: {
+            pageIndex: 1,
+            pageSize: 100_000_000,
+          },
+        })
+        .then((response) => response.data),
+    []
+  );
   return (
     <View className="w-full h-full bg-white text-black  relative">
       <View className="absolute w-full items-center justify-center bottom-28 left-0 z-10">
@@ -37,16 +65,23 @@ const MenuGroupOptions = () => {
             value={searchQuery}
           />
         </View>
-        <Text className="text-right italic gray-700">
-          4 nhóm lựa chọn có sẵn
-        </Text>
+        {isOptionGroupsLoading ? (
+          <ActivityIndicator
+            animating={isOptionGroupsLoading}
+            color="#FCF450"
+          />
+        ) : (
+          <Text className="text-right italic gray-700">
+            {optionGroups?.value.items.length} nhóm lựa chọn có sẵn
+          </Text>
+        )}
         <ScrollView style={{ width: "100%", flexGrow: 1 }}>
           <View className="gap-y-2 pb-[240px]">
             <ScrollView style={{ width: "100%", flexGrow: 1 }}>
               <View className="gap-y-1">
-                {Array.from({ length: 10 }, (_, i) => (
+                {optionGroups?.value.items.map((item) => (
                   <View
-                    key={i}
+                    key={item.id}
                     className="p-4 pt-3 bg-white drop-shadow-lg rounded-lg shadow border-2 border-gray-200"
                   >
                     <View className="flex-row items-start justify-between gap-2">
@@ -62,14 +97,18 @@ const MenuGroupOptions = () => {
                       </View> */}
                         <View className="flex-1">
                           <Text
-                            className="text-[12.5px] font-psemibold mt-[-2px]"
+                            className="text-[14px] font-psemibold mt-[-2px]"
                             numberOfLines={2}
                             ellipsizeMode="tail"
                           >
-                            Cỡ ly
+                            {item.title}
                           </Text>
-                          <Text className="text-[12px] italic text-gray-500 mt-[-2px]">
-                            S (nhỏ), M (vừa), L (lớn)
+                          <Text
+                            className="text-[12px] italic text-gray-500"
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                          >
+                            {item.options.map((o) => o.title).join(", ")}
                           </Text>
                         </View>
                       </View>
@@ -91,7 +130,7 @@ const MenuGroupOptions = () => {
                         className="bg-[#227B94] border-[#227B94] border-0 rounded-md items-center justify-center px-[6px] py-[2.2px] bg-white "
                       >
                         <Text className="text-[13.5px] text-white text-[#227B94] font-semibold">
-                          3 món đang liên kết
+                          {item.numOfItemLinked} món đang liên kết
                         </Text>
                       </TouchableOpacity>
                     </View>
