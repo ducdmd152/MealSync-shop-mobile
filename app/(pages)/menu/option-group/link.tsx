@@ -57,6 +57,7 @@ const OptionGroupLink = () => {
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const { notFoundInfo, setNotFoundInfo } = usePathState();
   const [linkedIdList, setLinkedIdList] = useState<number[]>([]);
+  const [linkingIdList, setLinkingIdList] = useState<number[]>([]);
   const optionGroupModel = useModelState((state) => state.optionGroupModel);
 
   // const [categories, setCategories] = useState(initialCategories);
@@ -91,6 +92,7 @@ const OptionGroupLink = () => {
 
   const handleLinkToggle = (isToLink: boolean, food: FoodModel) => {
     const action = isToLink ? "gỡ liên kết" : "liên kết";
+
     Alert.alert(
       `Xác nhận ${action}`,
       `Bạn có chắc chắn muốn ${action} món này?`,
@@ -99,13 +101,18 @@ const OptionGroupLink = () => {
             {
               text: "Đồng ý",
               onPress: async () => {
+                setLinkingIdList([...linkingIdList, food.id]);
                 const oldLinkedIdList = linkedIdList;
                 setLinkedIdList([...linkedIdList, food.id]);
+                console.log({
+                  optionGroupId: optionGroupModel.id,
+                  foodId: food.id,
+                });
                 try {
                   const response = await apiClient.post(
                     "shop-owner/option-group/link-food",
                     {
-                      optionGroupId: optionGroupModel.id,
+                      optionGroupId: optionGroupModel.id || 5,
                       foodId: food.id,
                     }
                   );
@@ -118,6 +125,7 @@ const OptionGroupLink = () => {
                   // router.replace("/menu/option-group/link");
                 } catch (error: any) {
                   setLinkedIdList(oldLinkedIdList);
+                  console.log(error);
                   if (error.response && error.response.status === 500) {
                     Alert.alert("Xảy ra lỗi", "Vui lòng thử lại!");
                   } else
@@ -126,6 +134,8 @@ const OptionGroupLink = () => {
                       error?.response?.data?.error?.message ||
                         "Vui lòng thử lại!"
                     );
+                } finally {
+                  setLinkingIdList(linkingIdList.filter((id) => id != food.id));
                 }
               },
             },
@@ -141,6 +151,7 @@ const OptionGroupLink = () => {
             {
               text: "Đồng ý",
               onPress: async () => {
+                setLinkingIdList([...linkingIdList, food.id]);
                 const oldLinkedIdList = linkedIdList;
                 setLinkedIdList(linkedIdList.filter((id) => id != food.id));
                 try {
@@ -168,6 +179,8 @@ const OptionGroupLink = () => {
                       error?.response?.data?.error?.message ||
                         "Vui lòng thử lại!"
                     );
+                } finally {
+                  setLinkingIdList(linkingIdList.filter((id) => id != food.id));
                 }
               },
             },
@@ -295,7 +308,12 @@ const OptionGroupLink = () => {
                       linkedIdList.some((id) => food.id == id)
                         ? "bg-red-500"
                         : "bg-[#227B94]"
+                    } ${
+                      linkingIdList.some((id) => food.id == id)
+                        ? " opacity-50"
+                        : " "
                     }`}
+                    disabled={linkingIdList.some((id) => food.id == id)}
                   >
                     <Text className="text-[13.5px] text-white">
                       {linkedIdList.some((id) => food.id == id)
@@ -316,65 +334,63 @@ const OptionGroupLink = () => {
 
   return (
     <PageLayoutWrapper isScroll={false}>
-      <View className="bg-gray-200 p-4">
+      <View className="bg-gray-200 p-4 ">
         <Text className="text-[16px] font-semibold text-gray-800 ">
           Liên kết "{optionGroupModel.title}" với thực đơn chính
         </Text>
       </View>
 
-      <ScrollView style={{ flexGrow: 1 }}>
-        <View
-          className="flex-1 w bg-white text-black  relative"
-          style={{ height: "100%" }}
-        >
-          <View className="w-full gap-2 p-4 pt-3">
-            <View className="w-full">
-              <Searchbar
-                style={{
-                  height: 40,
-                  // backgroundColor: "white",
-                  // borderColor: "lightgray",
-                  // borderWidth: 2,
-                }}
-                inputStyle={{ minHeight: 0 }}
-                placeholder="Nhập tên món..."
-                onChangeText={setSearchQuery}
-                value={searchQuery}
-              />
-            </View>
-            <Text className="text-[14px] text-gray-800 mt-2 text-right italic">
-              {optionGroupModel.numOfItemLinked || 0} món đã được liên kết
-            </Text>
-            <View className="gap-y-2 pb-[250px]">
-              {isLoading && (
-                <ActivityIndicator animating={isLoading} color="#FCF450" />
-              )}
-              <DraggableFlatList
-                style={{ width: "100%", flexGrow: 1 }}
-                data={extendCategories}
-                renderItem={renderCategory}
-                keyExtractor={(item) => `category-${item.id}`}
-                onDragEnd={({ data }) => {
-                  onRearrange(data);
-                }}
-                refreshControl={
-                  <RefreshControl
-                    tintColor={"#FCF450"}
-                    onRefresh={() => {
-                      refetch();
-                    }}
-                    refreshing={isLoading}
-                  />
-                }
-              />
-            </View>
+      <View className="flex-1 bg-white text-black relative ">
+        <View className="w-full flex-1 gap-2 p-4 pt-3 pb-0 bg-secondar">
+          <View className="w-full ">
+            <Searchbar
+              style={{
+                height: 40,
+                // backgroundColor: "white",
+                // borderColor: "lightgray",
+                // borderWidth: 2,
+              }}
+              inputStyle={{ minHeight: 0 }}
+              placeholder="Nhập tên món..."
+              onChangeText={setSearchQuery}
+              value={searchQuery}
+            />
+          </View>
+          <Text className="text-[14px] text-gray-800 mt-2 text-right italic ">
+            {optionGroupModel.numOfItemLinked || 0} món đã được liên kết
+          </Text>
+          <View
+            className="gap-y-2  flex-1 "
+            style={{ width: "100%", flexGrow: 1 }}
+          >
+            {isLoading && (
+              <ActivityIndicator animating={isLoading} color="#FCF450" />
+            )}
+            <DraggableFlatList
+              style={{ width: "100%", flexGrow: 1 }}
+              data={extendCategories}
+              renderItem={renderCategory}
+              keyExtractor={(item) => `category-${item.id}`}
+              onDragEnd={({ data }) => {
+                onRearrange(data);
+              }}
+              refreshControl={
+                <RefreshControl
+                  tintColor={"#FCF450"}
+                  onRefresh={() => {
+                    refetch();
+                  }}
+                  refreshing={isLoading}
+                />
+              }
+            />
           </View>
         </View>
-      </ScrollView>
+      </View>
       <View className="p-4">
         <CustomButton
           title="Hoàn tất"
-          containerStyleClasses="mt-2 bg-primary"
+          containerStyleClasses="bg-primary"
           textStyleClasses="text-white"
           handlePress={() => {
             router.replace("/menu/option-group/create");
