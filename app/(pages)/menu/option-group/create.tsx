@@ -504,7 +504,7 @@ const OptionGroupCreate: React.FC = () => {
           </View>
           <View className="border-b-2 border-gray-200 mt-3" />
 
-          <View className="flex-row items-center justify-start ml-1 mt-4">
+          <View className="flex-row items-center justify-between ml-1 mt-4">
             <FormField
               title={
                 isAvailable
