@@ -290,7 +290,7 @@ const OptionGroupUpdate: React.FC = () => {
       type: isMultiSelect ? 2 : 1,
       status: isAvailable ? 1 : 2,
     };
-    console.log("Submit data:", data);
+    // console.log("Submit data:", data);
     try {
       setIsLoading(true);
       const response = await apiClient.put(

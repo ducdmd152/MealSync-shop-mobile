@@ -174,7 +174,35 @@ const MenuGroupOptions = () => {
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => {}}
+                        onPress={async () => {
+                          setNotFoundInfo(
+                            notFoundInfo.message,
+                            "/menu",
+                            notFoundInfo.linkDesc
+                          );
+                          try {
+                            const response = await apiClient.get<
+                              ValueResponse<OptionGroupModel>
+                            >(`shop-owner/option-group/${item.id}`);
+                            setOptionGroupModel(response.data.value);
+                            router.push("/menu/option-group/link");
+                            // console.log("Food Detail model: ", foodDetailModel);
+                          } catch (error: any) {
+                            if (
+                              error.response &&
+                              error.response.status === 404
+                            ) {
+                              Alert.alert("Oops!", "Nhóm này không tồn tại!");
+                              optionGroupsRefetch();
+                            } else {
+                              Alert.alert(
+                                "Oops!",
+                                error?.response?.data?.error?.message ||
+                                  "Hệ thống đang bảo trì, vui lòng thử lại sau!"
+                              );
+                            }
+                          }
+                        }}
                         className="bg-[#227B94] border-[#227B94] border-0 rounded-md items-center justify-center px-[6px] py-[2.2px] bg-white "
                       >
                         <Text className="text-[13.5px] text-white text-[#227B94] font-semibold">
