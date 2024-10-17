@@ -1,5 +1,5 @@
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Searchbar } from "react-native-paper";
@@ -11,7 +11,17 @@ import useCounterState from "@/hooks/states/useCounterState";
 import usePathState from "@/hooks/states/usePathState";
 
 const Menu = () => {
-  const { menuSessionIndex, setMenuSessionIndex } = usePathState();
+  const [index, setIndex] = useState(0);
+  const menuSessionIndex = usePathState((state) => state.menuSessionIndex);
+  const setMenuSessionIndex = usePathState(
+    (state) => state.setMenuSessionIndex
+  );
+  useEffect(() => {
+    if (index != menuSessionIndex) setIndex(menuSessionIndex);
+  }, [menuSessionIndex]);
+  useEffect(() => {
+    if (index != menuSessionIndex) setMenuSessionIndex(index);
+  }, [index]);
   const counter = useCounterState((state) => state.counter);
   const increment = useCounterState((state) => state.increment);
   const reset = useCounterState((state) => state.reset);
@@ -23,31 +33,27 @@ const Menu = () => {
           <CustomButton
             title="Thực đơn chính"
             handlePress={() => {
-              setMenuSessionIndex(0);
+              setIndex(0);
             }}
             containerStyleClasses={`flex-1 px-2  h-[40px] rounded-md ${
-              menuSessionIndex == 0 ? "bg-primary-100" : "bg-white"
+              index == 0 ? "bg-primary-100" : "bg-white"
             }`}
-            textStyleClasses={`text-sm ${
-              menuSessionIndex == 0 ? "text-white" : ""
-            }`}
+            textStyleClasses={`text-sm ${index == 0 ? "text-white" : ""}`}
           />
           <View className="w-[4px]"></View>
           <CustomButton
             title="Nhóm lựa chọn"
             handlePress={() => {
-              setMenuSessionIndex(1);
+              setIndex(1);
             }}
             containerStyleClasses={`flex-1 px-2  h-[40px] rounded-md ${
-              menuSessionIndex == 1 ? "bg-primary-100" : "bg-white"
+              index == 1 ? "bg-primary-100" : "bg-white"
             }`}
-            textStyleClasses={`text-sm ${
-              menuSessionIndex == 1 ? "text-white" : ""
-            }`}
+            textStyleClasses={`text-sm ${index == 1 ? "text-white" : ""}`}
           />
         </View>
       </View>
-      {menuSessionIndex == 0 ? <MenuMainItems /> : <MenuGroupOptions />}
+      {index == 0 ? <MenuMainItems /> : <MenuGroupOptions />}
     </View>
   );
 };

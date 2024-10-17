@@ -158,7 +158,7 @@ const OptionGroupUpdate: React.FC = () => {
       setMinSelect(maxSelect);
     }
 
-    console.log("max: ", maxSelect);
+    // console.log("max: ", maxSelect);
     setMinSelectText(minSelect + "");
     setMaxSelectText(maxSelect + "");
   }, [
@@ -278,7 +278,7 @@ const OptionGroupUpdate: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-    console.log("isMultiSelect: ", isMultiSelect);
+    // console.log("isMultiSelect: ", isMultiSelect);
 
     const data = {
       id: optionGroupModel.id,
@@ -301,7 +301,7 @@ const OptionGroupUpdate: React.FC = () => {
       Alert.alert("Hoàn tất", "Đã cập nhật nhóm thành công");
       // router.replace("/menu/option-group/link");
     } catch (error: any) {
-      console.log(error);
+      // console.log(error);
       Alert.alert(
         "Xảy ra lỗi khi cập nhật nhóm",
         error?.response?.data?.error?.message || "Vui lòng thử lại!"
