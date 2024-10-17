@@ -160,11 +160,13 @@ const OptionGroupLink = () => {
                 const oldLinkedIdList = linkedIdList;
                 setLinkedIdList(linkedIdList.filter((id) => id != food.id));
                 try {
-                  const response = await apiClient.post(
-                    "shop-owner/option-group/link-food",
+                  const response = await apiClient.delete(
+                    "shop-owner/option-group/unlink-food",
                     {
-                      optionGroupId: optionGroupModel.id,
-                      foodId: food.id,
+                      data: {
+                        optionGroupId: optionGroupModel.id,
+                        foodId: food.id,
+                      },
                     }
                   );
 
