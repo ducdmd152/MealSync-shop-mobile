@@ -9,15 +9,33 @@ import { Ionicons } from "@expo/vector-icons";
 import { Switch } from "react-native-paper";
 
 interface Option {
-  option: string;
-  price: string;
+  title: string;
+  price: number;
+  isCalculatePrice: boolean;
+  isDefault: boolean;
+  imageUrl: string;
 }
+const formatPrice = (value: number) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "decimal",
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+const parseFormattedNumber = (formattedValue: string) => {
+  return Number(formattedValue.replace(/\./g, ""));
+};
 
 const OptionGroupCreate: React.FC = () => {
-  const [isSwitchOn, setIsSwitchOn] = React.useState(true);
-  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+  const [isAvailable, setIsSwitchOn] = React.useState(true);
+  const onToggleSwitch = () => setIsSwitchOn(!isAvailable);
   const [options, setOptions] = useState<Option[]>([
-    { option: "", price: "0" },
+    {
+      title: "",
+      price: 0,
+      isCalculatePrice: true,
+      isDefault: true,
+      imageUrl: "no-img",
+    },
   ]);
   const [title, setTitle] = useState<string>("");
   const [isMultiSelect, setIsMultiSelect] = useState<boolean>(false);
@@ -25,16 +43,22 @@ const OptionGroupCreate: React.FC = () => {
   const [maxSelect, setMaxSelect] = useState<string>("1");
 
   const handleAddOption = () => {
-    setOptions([...options, { option: "", price: "0" }]);
+    setOptions([...options, { title: "", price: "0" }]);
   };
 
   const handleOptionChange = (
     index: number,
     field: keyof Option,
-    value: string
+    value: string | number | boolean
   ) => {
     const updatedOptions = options.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
+      i === index
+        ? {
+            ...item,
+            [field]: value,
+            price: item.price * Number(item.isCalculatePrice),
+          }
+        : item
     );
     setOptions(updatedOptions);
   };
@@ -73,43 +97,77 @@ const OptionGroupCreate: React.FC = () => {
 
           <View>
             {options.map((item, index) => (
-              <View
-                key={index}
-                className="flex-row w-full mt-4 items-center items-end"
-              >
-                <FormField
-                  title={`Lựa chọn ${index + 1}`}
-                  otherStyleClasses="flex-1"
-                  otherInputStyleClasses="h-10"
-                  otherTextInputStyleClasses="text-sm"
-                  isRequired={true}
-                  placeholder="Nhập lựa chọn..."
-                  value={item.option}
-                  handleChangeText={(text: string) =>
-                    handleOptionChange(index, "option", text)
-                  }
-                />
-                <FormField
-                  title="Giá thêm"
-                  otherStyleClasses="w-[120px] ml-2"
-                  otherInputStyleClasses="h-10"
-                  otherTextInputStyleClasses="text-sm"
-                  isRequired={true}
-                  placeholder=""
-                  value={item.price}
-                  handleChangeText={(text: string) =>
-                    handleOptionChange(index, "price", text)
-                  }
-                />
-                <CustomButton
-                  title="Xóa"
-                  //   iconLeft={
-                  //     <Ionicons name="close-outline" size={22} color="#ef4444" />
-                  //   }
-                  handlePress={() => handleRemoveOption(index)}
-                  containerStyleClasses="h-10 bg-red-500 ml-2 px-2 bg-white border-2 border-red-400 box-border"
-                  textStyleClasses="text-white text-sm text-primary text-[12px]"
-                />
+              <View className="">
+                <View
+                  key={index}
+                  className="flex-row w-full mt-4 items-center items-end"
+                >
+                  <FormField
+                    title={`Lựa chọn ${index + 1}`}
+                    otherStyleClasses="flex-1"
+                    otherInputStyleClasses="h-10"
+                    otherTextInputStyleClasses="text-sm"
+                    isRequired={true}
+                    placeholder="Nhập lựa chọn..."
+                    value={item.title}
+                    handleChangeText={(text: string) =>
+                      handleOptionChange(index, "option", text)
+                    }
+                  />
+                  <FormField
+                    title="Giá thêm"
+                    otherStyleClasses="w-[160px] ml-2"
+                    otherInputStyleClasses="h-10"
+                    otherTextInputStyleClasses="text-sm"
+                    isRequired={true}
+                    placeholder=""
+                    value={formatPrice(item.price)}
+                    handleChangeText={(text: string) =>
+                      handleOptionChange(
+                        index,
+                        "price",
+                        parseFormattedNumber(text)
+                      )
+                    }
+                    iconRight={
+                      <View className="flex-row items-center mr-[-10px]">
+                        <Text className="mb-1">₫</Text>
+                        <Switch
+                          color="#FF9C01"
+                          value={item.isCalculatePrice}
+                          onValueChange={() =>
+                            handleOptionChange(
+                              index,
+                              "isCalculatePrice",
+                              !item.isCalculatePrice
+                            )
+                          }
+                        />
+                      </View>
+                    }
+                  />
+                </View>
+                <View className="flex-row items-center justify-between">
+                  <CustomCheckbox
+                    isChecked={item.isDefault}
+                    handlePress={() => {
+                      handleOptionChange(index, "isDefault", !item.isDefault);
+                    }}
+                    label={
+                      <Text className="text-[16px]">Lựa chọn mặc định</Text>
+                    }
+                    containerStyleClasses={"w-[220px]"}
+                  />
+                  <CustomButton
+                    title="Xóa"
+                    //   iconLeft={
+                    //     <Ionicons name="close-outline" size={22} color="#ef4444" />
+                    //   }
+                    handlePress={() => handleRemoveOption(index)}
+                    containerStyleClasses="h-10 bg-red-500 ml-2 px-2 bg-white border-2 border-red-400 box-border border-0"
+                    textStyleClasses="text-white text-sm text-primary text-[14px]"
+                  />
+                </View>
               </View>
             ))}
           </View>
@@ -154,9 +212,10 @@ const OptionGroupCreate: React.FC = () => {
             </View>
           </View>
           <View className="border-b-2 border-gray-200 mt-3" />
+
           <View className="flex-row items-center justify-start ml-1 mt-4">
             <FormField
-              title={isSwitchOn ? "Mở bán ngay" : "Tạm ẩn nhóm"}
+              title={isAvailable ? "Mở bán ngay" : "Tạm ẩn nhóm"}
               otherStyleClasses="w-[150px]"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
@@ -169,7 +228,7 @@ const OptionGroupCreate: React.FC = () => {
             />
             <Switch
               color="#e95137"
-              value={isSwitchOn}
+              value={isAvailable}
               onValueChange={onToggleSwitch}
             />
           </View>
