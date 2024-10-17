@@ -50,7 +50,7 @@ const OptionGroupCreate: React.FC = () => {
   (async () => {
     console.log(await sessionService.getAuthToken());
   })();
-  const [isAvailable, setIsSwitchOn] = React.useState(true);
+  const [isAvailable, setIsAvailable] = React.useState(true);
   const [formError, setFormError] = React.useState({
     title: "",
   });
@@ -538,7 +538,7 @@ const OptionGroupCreate: React.FC = () => {
             <Switch
               color="#e95137"
               value={isAvailable}
-              onValueChange={setIsSwitchOn}
+              onValueChange={setIsAvailable}
             />
           </View>
         </View>

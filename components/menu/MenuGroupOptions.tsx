@@ -6,9 +6,9 @@ import {
   Image,
   Alert,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CustomButton from "../custom/CustomButton";
-import { ActivityIndicator, Searchbar } from "react-native-paper";
+import { ActivityIndicator, Searchbar, Switch } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
@@ -21,13 +21,20 @@ import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetc
 import usePathState from "@/hooks/states/usePathState";
 import ValueResponse from "@/types/responses/ValueReponse";
 import useModelState from "@/hooks/states/useModelState";
+import { useToast } from "react-native-toast-notifications";
 
 const MenuGroupOptions = () => {
+  const toast = useToast();
   const [searchQuery, setSearchQuery] = React.useState("");
   const { notFoundInfo, setNotFoundInfo } = usePathState();
   const setOptionGroupModel = useModelState(
     (state) => state.setOptionGroupModel
   );
+  const [tmpOptionGroups, setTmpOptionGroups] = useState<OptionGroupModel[]>(
+    []
+  );
+  const [statusingIdList, setStatusingIdList] = useState<number[]>([]);
+
   const {
     data: optionGroups,
     isLoading: isOptionGroupsLoading,
@@ -49,6 +56,113 @@ const MenuGroupOptions = () => {
         .then((response) => response.data),
     []
   );
+  useEffect(() => {
+    setTmpOptionGroups(optionGroups?.value?.items || []);
+  }, [optionGroups]);
+
+  const onChangeStatus = (group: OptionGroupModel, status: number) => {
+    const action = status == 1 ? "hiển thị" : "tạm ẩn";
+    Alert.alert(
+      `Xác nhận ${action}`,
+      `Bạn có chắc chắn muốn ${action} nhóm trên các món đã liên kết?`,
+      status == 1
+        ? [
+            {
+              text: "Đồng ý",
+              onPress: async () => {
+                const oldTmpOptionGroups = tmpOptionGroups;
+                setStatusingIdList([...statusingIdList, group.id]);
+                setTmpOptionGroups(
+                  tmpOptionGroups.map((item) =>
+                    item.id == group.id ? { ...item, status } : item
+                  )
+                );
+                try {
+                  const response = await apiClient.post(
+                    "shop-owner/option-group/" + group.id + "/status",
+                    {
+                      status,
+                    }
+                  );
+
+                  toast.show(`Đã bật hiển thị ${group.title}!`, {
+                    type: "success",
+                    duration: 2000,
+                  });
+
+                  // router.replace("/menu/option-group/link");
+                } catch (error: any) {
+                  setTmpOptionGroups(oldTmpOptionGroups);
+                  console.log(error);
+                  if (error.response && error.response.status === 500) {
+                    Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
+                  } else
+                    Alert.alert(
+                      "Xảy ra lỗi",
+                      error?.response?.data?.error?.message ||
+                        "Vui lòng thử lại!"
+                    );
+                } finally {
+                  setStatusingIdList(
+                    statusingIdList.filter((id) => id != group.id)
+                  );
+                }
+              },
+            },
+            {
+              text: "Hủy",
+            },
+          ]
+        : [
+            {
+              text: "Hủy",
+              // style: "cancel",
+            },
+            {
+              text: "Đồng ý",
+              onPress: async () => {
+                const oldTmpOptionGroups = tmpOptionGroups;
+                setStatusingIdList([...statusingIdList, group.id]);
+                setTmpOptionGroups(
+                  tmpOptionGroups.map((item) =>
+                    item.id == group.id ? { ...item, status } : item
+                  )
+                );
+                try {
+                  const response = await apiClient.post(
+                    "shop-owner/option-group/" + group.id + "/status",
+                    {
+                      status,
+                    }
+                  );
+
+                  toast.show(`Đã bật hiển thị ${group.title}!`, {
+                    type: "success",
+                    duration: 2000,
+                  });
+
+                  // router.replace("/menu/option-group/link");
+                } catch (error: any) {
+                  setTmpOptionGroups(oldTmpOptionGroups);
+                  console.log(error);
+                  if (error.response && error.response.status === 500) {
+                    Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
+                  } else
+                    Alert.alert(
+                      "Xảy ra lỗi",
+                      error?.response?.data?.error?.message ||
+                        "Vui lòng thử lại!"
+                    );
+                } finally {
+                  setStatusingIdList(
+                    statusingIdList.filter((id) => id != group.id)
+                  );
+                }
+              },
+            },
+          ]
+    );
+  };
   useFocusEffect(
     React.useCallback(() => {
       optionGroupsRefetch();
@@ -92,14 +206,14 @@ const MenuGroupOptions = () => {
           />
         ) : (
           <Text className="text-right italic gray-700">
-            {optionGroups?.value.items.length} nhóm lựa chọn có sẵn
+            {tmpOptionGroups.length} nhóm lựa chọn có sẵn
           </Text>
         )}
         <ScrollView style={{ width: "100%", flexGrow: 1 }}>
           <View className="gap-y-2 pb-[240px]">
             <ScrollView style={{ width: "100%", flexGrow: 1 }}>
               <View className="gap-y-1">
-                {optionGroups?.value.items.map((item) => (
+                {tmpOptionGroups.map((item) => (
                   <View
                     key={item.id}
                     className="p-4 pt-3 bg-white drop-shadow-lg rounded-lg shadow border-2 border-gray-200"
@@ -132,9 +246,19 @@ const MenuGroupOptions = () => {
                           </Text>
                         </View>
                       </View>
-                      <Text className="bg-blue-100 text-blue-800 text-[12px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                        Status
-                      </Text>
+                      <Switch
+                        className={`scale-75 ${
+                          statusingIdList.some((id) => item.id == id)
+                            ? "opacity-70"
+                            : ""
+                        }`}
+                        color="#e95137"
+                        value={item.status == 1}
+                        onValueChange={(value) =>
+                          onChangeStatus(item, value ? 1 : 2)
+                        }
+                        disabled={statusingIdList.some((id) => item.id == id)}
+                      />
                     </View>
                     <View className="flex-row justify-start gap-2 pt-3">
                       <TouchableOpacity

@@ -117,7 +117,7 @@ const OptionGroupLink = () => {
                   const response = await apiClient.post(
                     "shop-owner/option-group/link-food",
                     {
-                      optionGroupId: optionGroupModel.id || 5,
+                      optionGroupId: optionGroupModel.id,
                       foodId: food.id,
                     }
                   );
