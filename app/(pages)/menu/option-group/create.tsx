@@ -1,5 +1,5 @@
-import { View, Text } from "react-native";
-import React, { useState } from "react";
+import { View, Text, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import FormField from "@/components/custom/FormFieldCustom";
 import CustomButton from "@/components/custom/CustomButton";
@@ -14,6 +14,14 @@ interface Option {
   isCalculatePrice: boolean;
   isDefault: boolean;
   imageUrl: string;
+  error: OptionError;
+}
+interface OptionError {
+  title: string;
+  price: string;
+}
+interface FormError {
+  title: string;
 }
 const formatPrice = (value: number) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -21,13 +29,16 @@ const formatPrice = (value: number) => {
     maximumFractionDigits: 0,
   }).format(value);
 };
+
 const parseFormattedNumber = (formattedValue: string) => {
   return Number(formattedValue.replace(/\./g, ""));
 };
 
 const OptionGroupCreate: React.FC = () => {
   const [isAvailable, setIsSwitchOn] = React.useState(true);
-  const onToggleSwitch = () => setIsSwitchOn(!isAvailable);
+  const [formError, setFormError] = React.useState({
+    title: "",
+  });
   const [options, setOptions] = useState<Option[]>([
     {
       title: "",
@@ -35,28 +46,146 @@ const OptionGroupCreate: React.FC = () => {
       isCalculatePrice: true,
       isDefault: true,
       imageUrl: "no-img",
+      error: { title: "", price: "" },
     },
   ]);
   const [title, setTitle] = useState<string>("");
+  const [isRequire, setIsRequire] = useState<boolean>(false);
   const [isMultiSelect, setIsMultiSelect] = useState<boolean>(false);
-  const [minSelect, setMinSelect] = useState<string>("1");
-  const [maxSelect, setMaxSelect] = useState<string>("1");
+  const [minSelect, setMinSelect] = useState<number>(1);
+  const [maxSelect, setMaxSelect] = useState<number>(1);
+  const [minSelectText, setMinSelectText] = useState<string>("1");
+  const [maxSelectText, setMaxSelectText] = useState<string>("1");
+  const [isMinSelectBlurred, setIsMinSelectBlurred] = useState(true);
+  const [isMaxSelectBlurred, setIsMaxSelectBlurred] = useState(true);
 
-  const handleAddOption = () => {
-    setOptions([...options, { title: "", price: "0" }]);
+  useEffect(() => {}, [isMultiSelect, isRequire]);
+  useEffect(() => {
+    if (!isMaxSelectBlurred || !isMinSelectBlurred) return;
+    // console.log("isMaxSelectBlurred", isMaxSelectBlurred);
+    if (!isMultiSelect) {
+      setMinSelect(isRequire ? 1 : 0);
+      setMaxSelect(1);
+      setMinSelectText(minSelect + "");
+      setMaxSelectText(maxSelect + "");
+      return;
+    } else if (isRequire && minSelect < 1) {
+      setMinSelect(isRequire ? 1 : 0);
+      setMaxSelect(Math.max(1, maxSelect));
+      setMinSelectText(minSelect + "");
+      setMaxSelectText(maxSelect + "");
+      return;
+    }
+
+    if (isRequire && minSelect < 1) {
+      Alert.alert(
+        "Nhập liệu",
+        "Nhóm lựa chọn bắt buộc cần tối thiểu 1 câu trả lời!"
+      );
+      setMinSelect(1);
+    } else if (minSelect > options.length) {
+      setMinSelect(options.length);
+      Alert.alert(
+        "Nhập liệu",
+        "Vui lòng nhập chọn tối thiểu không quá số lựa chọn!"
+      );
+    } else if (minSelect > maxSelect) {
+      setMaxSelect(minSelect);
+    } else if (isRequire && maxSelect < 1) {
+      Alert.alert(
+        "Nhập liệu",
+        "Nhóm lựa chọn bắt buộc cần tối thiểu 1 câu trả lời!"
+      );
+      setMaxSelect(1);
+    } else if (maxSelect > options.length) {
+      setMaxSelect(options.length);
+      Alert.alert(
+        "Nhập liệu",
+        "Vui lòng nhập chọn tối đa không quá số lựa chọn!"
+      );
+    } else if (minSelect > maxSelect) {
+      setMinSelect(maxSelect);
+    }
+
+    console.log("max: ", maxSelect);
+    setMinSelectText(minSelect + "");
+    setMaxSelectText(maxSelect + "");
+  }, [
+    isMultiSelect,
+    isRequire,
+    minSelect,
+    maxSelect,
+    options,
+    isMinSelectBlurred,
+    isMaxSelectBlurred,
+  ]);
+
+  const validateForm = () => {
+    if (!title) {
+      Alert.alert("Lỗi nhập liệu", "Tiêu đề không được để trống.");
+      return false;
+    }
+    if (
+      !options.every(
+        (option) =>
+          option.title &&
+          (option.price >= 0 || option.isCalculatePrice == false)
+      )
+    ) {
+      Alert.alert(
+        "Lỗi ",
+        "Vui lòng nhập đầy đủ tiêu đề và giá hợp lệ cho các lựa chọn."
+      );
+
+      return false;
+    }
+    if (isRequire) {
+      const min = minSelect;
+      const max = maxSelect;
+      if (isNaN(min) || isNaN(max) || min < 1 || max < min) {
+        Alert.alert(
+          "Lỗi",
+          "Vui lòng nhập số chọn tối thiểu và tối đa hợp lệ (tối thiểu ≥ 1 và tối đa ≥ tối thiểu)."
+        );
+        return false;
+      }
+    }
+    return true;
   };
 
+  const handleAddOption = () => {
+    setOptions([
+      ...options,
+      {
+        title: "",
+        price: 0,
+        isCalculatePrice: true,
+        isDefault: false,
+        imageUrl: "no-img",
+        error: { title: "", price: "" },
+      },
+    ]);
+  };
   const handleOptionChange = (
     index: number,
     field: keyof Option,
     value: string | number | boolean
   ) => {
-    const updatedOptions = options.map((item, i) =>
+    console.log("price: ", value);
+    let updatedOptions = options.map((item, i) =>
       i === index
         ? {
             ...item,
-            [field]: value,
-            price: item.price * Number(item.isCalculatePrice),
+            [field]:
+              field == "price" ? (item.isCalculatePrice ? value : 0) : value,
+          }
+        : item
+    );
+    updatedOptions = updatedOptions.map((item, i) =>
+      i === index
+        ? {
+            ...item,
+            price: item.isCalculatePrice ? item.price : 0,
           }
         : item
     );
@@ -69,16 +198,17 @@ const OptionGroupCreate: React.FC = () => {
   };
 
   const handleSubmit = () => {
+    if (!validateForm()) return;
+
     const data = {
       title,
       options,
-      isMultiSelect,
+      isMultiSelect: isRequire,
       minSelect,
       maxSelect,
     };
-    // Gửi `data` về server ở đây
     console.log("Submit data:", data);
-    router.replace("/menu/option-group/link");
+    // router.replace("/menu/option-group/link");
   };
 
   return (
@@ -94,14 +224,18 @@ const OptionGroupCreate: React.FC = () => {
             value={title}
             handleChangeText={setTitle}
           />
-
+          <CustomCheckbox
+            isChecked={isRequire}
+            handlePress={() => setIsRequire(!isRequire)}
+            label={
+              <Text className="text-[16px]">Đây là nhóm lựa chọn bắt buộc</Text>
+            }
+            containerStyleClasses={""}
+          />
           <View>
             {options.map((item, index) => (
-              <View className="">
-                <View
-                  key={index}
-                  className="flex-row w-full mt-4 items-center items-end"
-                >
+              <View key={index}>
+                <View className="flex-row w-full mt-4 items-center items-end">
                   <FormField
                     title={`Lựa chọn ${index + 1}`}
                     otherStyleClasses="flex-1"
@@ -111,7 +245,7 @@ const OptionGroupCreate: React.FC = () => {
                     placeholder="Nhập lựa chọn..."
                     value={item.title}
                     handleChangeText={(text: string) =>
-                      handleOptionChange(index, "option", text)
+                      handleOptionChange(index, "title", text)
                     }
                   />
                   <FormField
@@ -121,6 +255,7 @@ const OptionGroupCreate: React.FC = () => {
                     otherTextInputStyleClasses="text-sm"
                     isRequired={true}
                     placeholder=""
+                    readOnly={!item.isCalculatePrice}
                     value={formatPrice(item.price)}
                     handleChangeText={(text: string) =>
                       handleOptionChange(
@@ -160,9 +295,6 @@ const OptionGroupCreate: React.FC = () => {
                   />
                   <CustomButton
                     title="Xóa"
-                    //   iconLeft={
-                    //     <Ionicons name="close-outline" size={22} color="#ef4444" />
-                    //   }
                     handlePress={() => handleRemoveOption(index)}
                     containerStyleClasses="h-10 bg-red-500 ml-2 px-2 bg-white border-2 border-red-400 box-border border-0"
                     textStyleClasses="text-white text-sm text-primary text-[14px]"
@@ -193,10 +325,15 @@ const OptionGroupCreate: React.FC = () => {
                 otherInputStyleClasses="h-8"
                 otherTextInputStyleClasses="text-sm text-center"
                 isRequired={true}
-                placeholder=""
+                placeholder="0"
                 readOnly={!isMultiSelect}
-                value={minSelect}
-                handleChangeText={setMinSelect}
+                value={minSelectText}
+                handleChangeText={(e) => {
+                  setMinSelect(Number(e));
+                  setMinSelectText(e);
+                }}
+                onFocus={() => setIsMinSelectBlurred(false)}
+                onBlur={() => setIsMinSelectBlurred(true)}
               />
               <FormField
                 title="Chọn tối đa"
@@ -204,10 +341,15 @@ const OptionGroupCreate: React.FC = () => {
                 otherInputStyleClasses="h-8"
                 otherTextInputStyleClasses="text-sm text-center"
                 isRequired={true}
-                placeholder=""
-                value={maxSelect}
+                placeholder="0"
+                value={maxSelectText}
                 readOnly={!isMultiSelect}
-                handleChangeText={setMaxSelect}
+                handleChangeText={(e) => {
+                  setMaxSelect(Number(e));
+                  setMaxSelectText(e);
+                }}
+                onFocus={() => setIsMaxSelectBlurred(false)}
+                onBlur={() => setIsMaxSelectBlurred(true)}
               />
             </View>
           </View>
@@ -215,21 +357,19 @@ const OptionGroupCreate: React.FC = () => {
 
           <View className="flex-row items-center justify-start ml-1 mt-4">
             <FormField
-              title={isAvailable ? "Mở bán ngay" : "Tạm ẩn nhóm"}
-              otherStyleClasses="w-[150px]"
+              title={isAvailable ? "Có sẵn" : "Tạm ẩn"}
+              otherStyleClasses="w-[100px]"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
-              // isRequired={true}
               placeholder="0"
-              value={""}
+              value=""
               labelOnly={true}
               handleChangeText={() => {}}
-              keyboardType="numeric"
             />
             <Switch
               color="#e95137"
               value={isAvailable}
-              onValueChange={onToggleSwitch}
+              onValueChange={setIsSwitchOn}
             />
           </View>
         </View>
