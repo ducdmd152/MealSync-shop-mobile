@@ -362,7 +362,7 @@ const OptionGroupLink = () => {
             />
           </View>
           <Text className="text-[14px] text-gray-800 mt-2 text-right italic ">
-            {optionGroupModel.numOfItemLinked || 0} món đã được liên kết
+            {linkedIdList.length || 0} món đã được liên kết
           </Text>
           <View
             className="gap-y-2  flex-1 "
@@ -399,7 +399,7 @@ const OptionGroupLink = () => {
           textStyleClasses="text-white"
           handlePress={() => {
             setMenuSessionIndex(1);
-            router.replace("/menu");
+            router.push("/menu");
           }}
         />
       </View>
