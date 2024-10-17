@@ -48,6 +48,9 @@ interface ExtendCategoryModel extends ShopCategoryModel {
   isCollapsible: boolean;
 }
 const OptionGroupLink = () => {
+  const setMenuSessionIndex = usePathState(
+    (state) => state.setMenuSessionIndex
+  );
   const toast = useToast();
   const [query, setQuery] = useState<FoodListQuery>({} as FoodListQuery);
   const [extendCategories, setExtendCategories] = useState<
@@ -56,9 +59,11 @@ const OptionGroupLink = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const { notFoundInfo, setNotFoundInfo } = usePathState();
-  const [linkedIdList, setLinkedIdList] = useState<number[]>([]);
-  const [linkingIdList, setLinkingIdList] = useState<number[]>([]);
   const optionGroupModel = useModelState((state) => state.optionGroupModel);
+  const [linkedIdList, setLinkedIdList] = useState<number[]>(
+    (optionGroupModel.foods || []).map((item) => item.id)
+  );
+  const [linkingIdList, setLinkingIdList] = useState<number[]>([]);
 
   // const [categories, setCategories] = useState(initialCategories);
 
@@ -393,7 +398,8 @@ const OptionGroupLink = () => {
           containerStyleClasses="bg-primary"
           textStyleClasses="text-white"
           handlePress={() => {
-            router.replace("/menu/option-group/create");
+            setMenuSessionIndex(1);
+            router.replace("/menu");
           }}
         />
       </View>

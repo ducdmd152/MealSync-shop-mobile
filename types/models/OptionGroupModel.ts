@@ -1,3 +1,4 @@
+import FoodModel from "./FoodModel";
 import OptionModel from "./OptionModel";
 
 export default interface OptionGroupModel {
@@ -10,4 +11,5 @@ export default interface OptionGroupModel {
   maxChoices: number;
   numOfItemLinked?: number;
   options?: OptionModel[];
+  foods?: FoodModel[];
 }
