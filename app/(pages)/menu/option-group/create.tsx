@@ -151,6 +151,22 @@ const OptionGroupCreate: React.FC = () => {
         return false;
       }
     }
+    if (options.filter((item) => item.isDefault).length < minSelect) {
+      Alert.alert(
+        "Lựa chọn mặc định ",
+        `Vui lòng chọn đủ tối thiểu ${minSelect} lựa chọn mặc định .`
+      );
+
+      return false;
+    }
+    if (options.filter((item) => item.isDefault).length > maxSelect) {
+      Alert.alert(
+        "Lựa chọn mặc định ",
+        `Vui lòng chỉ chọn tối đa ${maxSelect} cho lựa chọn mặc định .`
+      );
+
+      return false;
+    }
     return true;
   };
 
