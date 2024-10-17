@@ -42,7 +42,7 @@ const OptionGroupCreate: React.FC = () => {
   const [options, setOptions] = useState<Option[]>([
     {
       title: "",
-      price: 0,
+      price: 1000,
       isCalculatePrice: true,
       isDefault: true,
       imageUrl: "no-img",
@@ -58,8 +58,31 @@ const OptionGroupCreate: React.FC = () => {
   const [maxSelectText, setMaxSelectText] = useState<string>("1");
   const [isMinSelectBlurred, setIsMinSelectBlurred] = useState(true);
   const [isMaxSelectBlurred, setIsMaxSelectBlurred] = useState(true);
+  const [isTrySubmitted, setIsTrySubmitted] = useState(0);
 
   useEffect(() => {}, [isMultiSelect, isRequire]);
+  useEffect(() => {
+    if (isTrySubmitted > 0) {
+      const updatedOptions = options.map((item) => {
+        if (item.title && (!item.isCalculatePrice || item.price >= 1000))
+          return { ...item, error: { title: "", price: "" } };
+        const updatedError = {
+          title:
+            "Vui lòng " +
+            (!item.title ? "nhập tiêu đề " : "") +
+            (!item.title && item.price <= 0 && item.isCalculatePrice
+              ? "và "
+              : "") +
+            (item.price <= 1000 && item.isCalculatePrice
+              ? "nhập giá tối thiểu 1.000đ"
+              : ""),
+          price: "",
+        };
+        return { ...item, error: updatedError };
+      });
+      setOptions(updatedOptions);
+    }
+  }, [isTrySubmitted]);
   useEffect(() => {
     if (!isMaxSelectBlurred || !isMinSelectBlurred) return;
     // console.log("isMaxSelectBlurred", isMaxSelectBlurred);
@@ -70,6 +93,7 @@ const OptionGroupCreate: React.FC = () => {
       setMaxSelectText(maxSelect + "");
       return;
     }
+
     // else if (isRequire && minSelect < 1) {
     //   setMinSelect(isRequire ? 1 : 0);
     //   setMaxSelect(Math.max(1, maxSelect));
@@ -84,25 +108,28 @@ const OptionGroupCreate: React.FC = () => {
         "Nhóm lựa chọn bắt buộc cần tối thiểu 1 câu trả lời!"
       );
       setMinSelect(1);
+    } else if (minSelect < 0) {
+      setMinSelect(isRequire ? 1 : 0);
+      setMinSelectText(minSelect + "");
     } else if (minSelect > options.length) {
       setMinSelect(options.length);
       Alert.alert(
         "Nhập liệu",
-        "Vui lòng nhập chọn tối thiểu không quá số lựa chọn!"
+        `Vui lòng nhập chọn tối thiểu không quá ${options.length} số lựa chọn hiện có!`
       );
     } else if (minSelect > maxSelect) {
       setMaxSelect(minSelect);
-    } else if (isRequire && maxSelect < 1) {
+    } else if (maxSelect < 1) {
       Alert.alert(
         "Nhập liệu",
-        "Nhóm lựa chọn bắt buộc cần tối thiểu 1 câu trả lời!"
+        "Nhóm lựa chọn bắt buộc cần tối đa ít nhất 1 câu trả lời!"
       );
       setMaxSelect(1);
     } else if (maxSelect > options.length) {
       setMaxSelect(options.length);
       Alert.alert(
         "Nhập liệu",
-        "Vui lòng nhập chọn tối đa không quá số lựa chọn!"
+        `Vui lòng nhập chọn tối đa không quá ${options.length} số lựa chọn hiện có!`
       );
     } else if (minSelect > maxSelect) {
       setMinSelect(maxSelect);
@@ -122,20 +149,21 @@ const OptionGroupCreate: React.FC = () => {
   ]);
 
   const validateForm = () => {
+    setIsTrySubmitted(1);
     if (!title) {
       Alert.alert("Lỗi nhập liệu", "Tiêu đề không được để trống.");
       return false;
     }
+
     if (
       !options.every(
         (option) =>
-          option.title &&
-          (option.price >= 0 || option.isCalculatePrice == false)
+          option.title && (option.price > 0 || option.isCalculatePrice == false)
       )
     ) {
       Alert.alert(
         "Lỗi ",
-        "Vui lòng nhập đầy đủ tiêu đề và giá hợp lệ cho các lựa chọn."
+        "Vui lòng nhập tiêu đề và giá hợp lệ cho các lựa chọn."
       );
 
       return false;
@@ -175,7 +203,7 @@ const OptionGroupCreate: React.FC = () => {
       ...options,
       {
         title: "",
-        price: 0,
+        price: 1000,
         isCalculatePrice: true,
         isDefault: false,
         imageUrl: "no-img",
@@ -188,7 +216,7 @@ const OptionGroupCreate: React.FC = () => {
     field: keyof Option,
     value: string | number | boolean
   ) => {
-    console.log("price: ", value);
+    // if (isTrySubmitted > 0) setIsTrySubmitted(isTrySubmitted + 1);
     let updatedOptions = options.map((item, i) =>
       i === index
         ? {
@@ -299,6 +327,11 @@ const OptionGroupCreate: React.FC = () => {
                     }
                   />
                 </View>
+                {item.error.title && (
+                  <Text className="ml-2 text-red-500 mt-2 text-left w-full italic">
+                    {item.error.title}
+                  </Text>
+                )}
                 <View className="flex-row items-center justify-between">
                   <CustomCheckbox
                     isChecked={item.isDefault}
