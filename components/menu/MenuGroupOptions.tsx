@@ -3,7 +3,7 @@ import React from "react";
 import CustomButton from "../custom/CustomButton";
 import { ActivityIndicator, Searchbar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import FetchResponse from "@/types/responses/FetchResponse";
@@ -35,6 +35,12 @@ const MenuGroupOptions = () => {
         .then((response) => response.data),
     []
   );
+  useFocusEffect(
+    React.useCallback(() => {
+      optionGroupsRefetch();
+    }, [])
+  );
+
   return (
     <View className="w-full h-full bg-white text-black  relative">
       <View className="absolute w-full items-center justify-center bottom-28 left-0 z-10">

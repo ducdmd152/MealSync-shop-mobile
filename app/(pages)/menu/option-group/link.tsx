@@ -9,103 +9,241 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
-import { Searchbar } from "react-native-paper";
+import { ActivityIndicator, Searchbar } from "react-native-paper";
 import Collapsible from "react-native-collapsible";
+import { Tab } from "react-native-elements";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { BottomSheet } from "@rneui/themed";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
+import FetchResponse from "@/types/responses/FetchResponse";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import apiClient from "@/services/api-services/api-client";
+import FoodModel from "@/types/models/FoodModel";
+import APICommonResponse from "@/types/responses/APICommonResponse";
+import { RefreshControl } from "react-native-gesture-handler";
+import { showMessage, hideMessage } from "react-native-flash-message";
+import { useToast } from "react-native-toast-notifications";
+import ValueResponse from "@/types/responses/ValueReponse";
+import FoodDetailModel from "@/types/models/FoodDetailModel";
+import useModelState from "@/hooks/states/useModelState";
+import usePathState from "@/hooks/states/usePathState";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 
 const initialCategories = [
-  { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true, linked: false },
-  { id: 2, name: "Ăn trưa", items: 2, isCollapsible: true, linked: false },
-  { id: 3, name: "Ăn tối", items: 2, isCollapsible: true, linked: false },
+  { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
+  { id: 2, name: "Ăn trưa", items: 2, isCollapsible: true },
+  { id: 3, name: "Ăn tối", items: 2, isCollapsible: true },
 ];
 
+interface FoodListResponse extends APICommonResponse {
+  value: ShopCategoryModel[];
+}
+interface FoodListQuery {}
+interface ExtendCategoryModel extends ShopCategoryModel {
+  isCollapsible: boolean;
+}
 const OptionGroupLink = () => {
-  const [index, setIndex] = React.useState(0);
+  const toast = useToast();
+  const [query, setQuery] = useState<FoodListQuery>({} as FoodListQuery);
+  const [extendCategories, setExtendCategories] = useState<
+    ExtendCategoryModel[]
+  >([]);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-  const [categories, setCategories] = useState(initialCategories);
+  const { notFoundInfo, setNotFoundInfo } = usePathState();
+  const [linkedIdList, setLinkedIdList] = useState<number[]>([]);
+  const optionGroupModel = useModelState((state) => state.optionGroupModel);
 
+  // const [categories, setCategories] = useState(initialCategories);
+
+  const onRearrange = async (data: ExtendCategoryModel[]) => {
+    const prevExtendCategories = extendCategories;
+    setExtendCategories(data);
+    try {
+      console.log("Update categories order: ", {
+        ids: extendCategories.map((category) => category.id),
+      });
+
+      const response = await apiClient.put("shop-owner/category/re-arrange", {
+        ids: extendCategories.map((category) => category.id),
+      });
+      const { value, isSuccess, error } = response.data;
+      // toast.show("Cập nhật thứ tự thành công!", {
+      //   type: "success",
+      //   duration: 2000,
+      // });
+    } catch (error: any) {
+      setExtendCategories(prevExtendCategories);
+      refetch();
+      toast.show("Hệ thống gặp lỗi, vui lòng thử lại.", {
+        type: "danger",
+        duration: 5000,
+      });
+      // Alert.alert("Lỗi", "Hệ thống gặp lỗi, vui lòng thử lại.");
+    } finally {
+    }
+  };
+
+  const handleLinkToggle = (isToLink: boolean, food: FoodModel) => {
+    const action = isToLink ? "gỡ liên kết" : "liên kết";
+    Alert.alert(
+      `Xác nhận ${action}`,
+      `Bạn có chắc chắn muốn ${action} món này?`,
+      isToLink
+        ? [
+            {
+              text: "Đồng ý",
+              onPress: async () => {
+                const oldLinkedIdList = linkedIdList;
+                setLinkedIdList([...linkedIdList, food.id]);
+                try {
+                  const response = await apiClient.post(
+                    "shop-owner/option-group/link-food",
+                    {
+                      optionGroupId: optionGroupModel.id,
+                      foodId: food.id,
+                    }
+                  );
+
+                  toast.show(`Đã thêm vào ${food.name}!`, {
+                    type: "success",
+                    duration: 2000,
+                  });
+
+                  // router.replace("/menu/option-group/link");
+                } catch (error: any) {
+                  setLinkedIdList(oldLinkedIdList);
+                  if (error.response && error.response.status === 500) {
+                    Alert.alert("Xảy ra lỗi", "Vui lòng thử lại!");
+                  } else
+                    Alert.alert(
+                      "Xảy ra lỗi",
+                      error?.response?.data?.error?.message ||
+                        "Vui lòng thử lại!"
+                    );
+                }
+              },
+            },
+            {
+              text: "Hủy",
+            },
+          ]
+        : [
+            {
+              text: "Hủy",
+              // style: "cancel",
+            },
+            {
+              text: "Đồng ý",
+              onPress: async () => {
+                const oldLinkedIdList = linkedIdList;
+                setLinkedIdList(linkedIdList.filter((id) => id != food.id));
+                try {
+                  const response = await apiClient.post(
+                    "shop-owner/option-group/link-food",
+                    {
+                      optionGroupId: optionGroupModel.id,
+                      foodId: food.id,
+                    }
+                  );
+
+                  toast.show(`Đã gỡ khỏi ${food.name}!`, {
+                    type: "success",
+                    duration: 2000,
+                  });
+
+                  // router.replace("/menu/option-group/link");
+                } catch (error: any) {
+                  setLinkedIdList(oldLinkedIdList);
+                  if (error.response && error.response.status === 500) {
+                    Alert.alert("Xảy ra lỗi", "Vui lòng thử lại!");
+                  } else
+                    Alert.alert(
+                      "Xảy ra lỗi",
+                      error?.response?.data?.error?.message ||
+                        "Vui lòng thử lại!"
+                    );
+                }
+              },
+            },
+          ]
+    );
+  };
+  const {
+    data: categories,
+    isLoading,
+    error,
+    refetch,
+  } = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.FOOD_LIST,
+    (): Promise<FoodListResponse> =>
+      apiClient.get(endpoints.FOOD_LIST).then((response) => response.data),
+    [query]
+  );
+
+  useEffect(() => {
+    console.log(categories?.value);
+    if (categories?.value)
+      setExtendCategories(
+        categories?.value?.map((category) => ({
+          ...category,
+          isCollapsible:
+            extendCategories.find((cat) => cat.id == category.id)
+              ?.isCollapsible || true,
+        })) as ExtendCategoryModel[]
+      );
+  }, [categories]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [])
+  );
+
+  // console.log(extendCategories);
   const renderCategory = ({
     item,
     drag,
     isActive,
-  }: RenderItemParams<{
-    id: number;
-    name: string;
-    items: number;
-    isCollapsible: boolean;
-    linked: boolean; // Added linked status
-  }>) => {
-    const i = categories.findIndex((cat) => cat.id === item.id);
-
-    const handleLinkToggle = () => {
-      const action = item.linked ? "gỡ liên kết" : "liên kết";
-      Alert.alert(
-        `Xác nhận ${action}`,
-        `Bạn có chắc chắn muốn ${action} món này?`,
-        item.linked
-          ? [
-              {
-                text: "Đồng ý",
-                onPress: () => {
-                  setCategories((prevCategories) =>
-                    prevCategories.map((cat, idx) =>
-                      idx === i ? { ...cat, linked: !cat.linked } : cat
-                    )
-                  );
-                },
-              },
-              {
-                text: "Hủy",
-                style: "cancel",
-              },
-            ]
-          : [
-              {
-                text: "Hủy",
-                style: "cancel",
-              },
-              {
-                text: "Đồng ý",
-                onPress: () => {
-                  setCategories((prevCategories) =>
-                    prevCategories.map((cat, idx) =>
-                      idx === i ? { ...cat, linked: !cat.linked } : cat
-                    )
-                  );
-                },
-              },
-            ]
-      );
-    };
-
+  }: RenderItemParams<ExtendCategoryModel>) => {
+    // console.log(item.id);
     return (
       <View key={item.id} className="mb-1">
         <TouchableOpacity
           className="flex-row justify-between items-center pr-2 mb-2"
           onPress={() =>
-            setCategories(
-              categories.map((cat) =>
+            setExtendCategories(
+              extendCategories?.map((cat) =>
                 item.id === cat.id
                   ? { ...cat, isCollapsible: !cat.isCollapsible }
                   : cat
               )
             )
           }
-          onLongPress={drag}
+          // onLongPress={drag}
         >
           <View>
             <View className="flex-row items-center gap-x-2">
               <Text className="font-bold text-lg text-gray-800">
                 {item.name}
               </Text>
-              <Text className="text-gray-700 text-sm">2 món</Text>
+              <Text className="text-gray-700 text-sm">
+                {item.foods?.length} món
+              </Text>
             </View>
+            {/* <CustomButton
+              title="Chỉnh sửa danh mục"
+              handlePress={() => {
+                router.push("/menu/category/update");
+              }}
+              containerStyleClasses="bg-white border-gray-200 border-2 h-[26px] px-[8px]"
+              textStyleClasses="text-gray-700 text-[10px] mt-[-3.5px] text-[#227B94]"
+            /> */}
           </View>
           <View className="flex-row items-center gap-x-6">
             {item.isCollapsible ? (
@@ -118,47 +256,51 @@ const OptionGroupLink = () => {
 
         <Collapsible collapsed={item.isCollapsible}>
           <View className="gap-y-2 pb-2">
-            {Array.from({ length: 2 }, (_, j) => (
+            {item.foods?.map((food) => (
               <View
-                key={j}
+                key={food.id}
                 className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
               >
-                <View className="flex-row items-start justify-between gap-2">
+                <View className="flex-row items-center justify-between gap-2">
                   <View className="flex-row justify-start items-start gap-2 flex-1">
                     <Image
                       source={{
-                        uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1200px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg",
+                        uri: food.imageUrl || "https://via.placeholder.com/40", // Fallback image
                       }}
                       resizeMode="cover"
                       className="h-[36px] w-[40px] rounded-md opacity-85"
                     />
                     <View className="flex-1">
                       <Text
-                        className="text-[12.5px] font-psemibold mt-[-2px]"
+                        className="text-md font-psemibold mt-[-2px] text-gray-600"
                         numberOfLines={2}
                         ellipsizeMode="tail"
                       >
-                        {j === 0 ? "Cơm tấm Sài Gòn" : "Phở bò"} - {item.name}
+                        {food.name}
+                      </Text>
+                      <Text className="text-md italic text-gray-500 mt-[-2px]">
+                        {food.price.toLocaleString()}đ
                       </Text>
                     </View>
                   </View>
 
-                  <View className="flex-row gap-2 items-start">
-                    <Text className="bg-blue-100 text-blue-800 text-[12.5px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                      Status
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-row justify-between items-center gap-2 pt-2">
-                  <Text className="text-gray-500 italic text-[12px] text-secondary-200"></Text>
                   <TouchableOpacity
-                    onPress={handleLinkToggle}
+                    onPress={() =>
+                      handleLinkToggle(
+                        !linkedIdList.some((id) => food.id == id),
+                        food
+                      )
+                    }
                     className={`rounded-md items-center justify-center px-[6px] py-[2.2px] ${
-                      item.linked ? "bg-red-500" : "bg-[#227B94]"
+                      linkedIdList.some((id) => food.id == id)
+                        ? "bg-red-500"
+                        : "bg-[#227B94]"
                     }`}
                   >
-                    <Text className="text-[13.5px] text-white font-semibold">
-                      {item.linked ? "Gỡ liên kết" : "Liên kết"}
+                    <Text className="text-[13.5px] text-white">
+                      {linkedIdList.some((id) => food.id == id)
+                        ? "Gỡ liên kết"
+                        : "Liên kết"}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -176,7 +318,7 @@ const OptionGroupLink = () => {
     <PageLayoutWrapper isScroll={false}>
       <View className="bg-gray-200 p-4">
         <Text className="text-[16px] font-semibold text-gray-800 ">
-          Liên kết "Kích cỡ" với thực đơn chính
+          Liên kết "{optionGroupModel.title}" với thực đơn chính
         </Text>
       </View>
 
@@ -185,19 +327,45 @@ const OptionGroupLink = () => {
           className="flex-1 w bg-white text-black  relative"
           style={{ height: "100%" }}
         >
-          <View className="w-full gap-2 p-4">
-            <Text className="text-[14px] text-gray-800 mt-2 italic">
-              4 món đã được liên kết
+          <View className="w-full gap-2 p-4 pt-3">
+            <View className="w-full">
+              <Searchbar
+                style={{
+                  height: 40,
+                  // backgroundColor: "white",
+                  // borderColor: "lightgray",
+                  // borderWidth: 2,
+                }}
+                inputStyle={{ minHeight: 0 }}
+                placeholder="Nhập tên món..."
+                onChangeText={setSearchQuery}
+                value={searchQuery}
+              />
+            </View>
+            <Text className="text-[14px] text-gray-800 mt-2 text-right italic">
+              {optionGroupModel.numOfItemLinked || 0} món đã được liên kết
             </Text>
-            <View className="gap-y-2 pb-[200px]">
+            <View className="gap-y-2 pb-[250px]">
+              {isLoading && (
+                <ActivityIndicator animating={isLoading} color="#FCF450" />
+              )}
               <DraggableFlatList
                 style={{ width: "100%", flexGrow: 1 }}
-                data={categories}
+                data={extendCategories}
                 renderItem={renderCategory}
                 keyExtractor={(item) => `category-${item.id}`}
                 onDragEnd={({ data }) => {
-                  setCategories(data);
+                  onRearrange(data);
                 }}
+                refreshControl={
+                  <RefreshControl
+                    tintColor={"#FCF450"}
+                    onRefresh={() => {
+                      refetch();
+                    }}
+                    refreshing={isLoading}
+                  />
+                }
               />
             </View>
           </View>

@@ -54,7 +54,8 @@ const MenuMainItems = () => {
   >([]);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-  const { foodDetailModel, setFoodDetailModel } = useModelState();
+  const { optionGroupModel: foodDetailModel, setFoodDetailModel } =
+    useModelState();
   const { notFoundInfo, setNotFoundInfo } = usePathState();
 
   // const [categories, setCategories] = useState(initialCategories);

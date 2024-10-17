@@ -89,7 +89,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TanStackProvider>
         <ThemeProvider value={DefaultTheme}>
-          <ToastProvider offset={172}>
+          <ToastProvider offset={142}>
             <PaperProvider>
               {/* <KeyboardAvoidingView
         style={styles.container}

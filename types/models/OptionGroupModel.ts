@@ -8,6 +8,6 @@ export default interface OptionGroupModel {
   status: number;
   minChoices: number;
   maxChoices: number;
-  numOfItemLinked: number;
-  options: OptionModel[];
+  numOfItemLinked?: number;
+  options?: OptionModel[];
 }

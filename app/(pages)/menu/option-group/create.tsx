@@ -9,6 +9,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { Switch } from "react-native-paper";
 import apiClient from "@/services/api-services/api-client";
 import sessionService from "@/services/session-service";
+import ValueResponse from "@/types/responses/ValueReponse";
+import OptionGroupModel from "@/types/models/OptionGroupModel";
+import useModelState from "@/hooks/states/useModelState";
 
 interface Option extends OptionSubmit {
   error: OptionError;
@@ -41,6 +44,9 @@ const parseFormattedNumber = (formattedValue: string) => {
 };
 
 const OptionGroupCreate: React.FC = () => {
+  const setOptionGroupModel = useModelState(
+    (state) => state.setOptionGroupModel
+  );
   (async () => {
     console.log(await sessionService.getAuthToken());
   })();
@@ -264,6 +270,8 @@ const OptionGroupCreate: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    router.replace("/menu/option-group/link");
+    return;
     if (!validateForm()) return;
 
     const data = {
@@ -277,19 +285,22 @@ const OptionGroupCreate: React.FC = () => {
     };
     console.log("Submit data:", data);
     try {
-      const response = await apiClient.post(
+      const response = await apiClient.post<ValueResponse<OptionGroupModel>>(
         "shop-owner/option-group/create",
         data
       );
-      console.log("RESPONSE : ", response);
+      setOptionGroupModel(response.data.value);
 
       Alert.alert("Hoàn tất", "Nhóm được tạo thành công");
       // router.replace("/menu/option-group/link");
     } catch (error: any) {
-      Alert.alert(
-        "Xảy ra lỗi khi tạo món",
-        error?.response?.data?.error?.message || "Vui lòng thử lại!"
-      );
+      if (error.response && error.response.status === 500) {
+        Alert.alert("Xảy ra lỗi khi tạo món", "Vui lòng thử lại!");
+      } else
+        Alert.alert(
+          "Xảy ra lỗi khi tạo món",
+          error?.response?.data?.error?.message || "Vui lòng thử lại!"
+        );
     }
   };
 
