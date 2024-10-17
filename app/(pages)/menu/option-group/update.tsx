@@ -10,6 +10,7 @@ import { Switch } from "react-native-paper";
 import apiClient from "@/services/api-services/api-client";
 import sessionService from "@/services/session-service";
 import OptionModel from "@/types/models/OptionModel";
+import useModelState from "@/hooks/states/useModelState";
 
 interface Option extends OptionModel {
   error: OptionError;
@@ -33,11 +34,12 @@ const parseFormattedNumber = (formattedValue: string) => {
   return Number(formattedValue.replace(/\./g, ""));
 };
 
-const OptionGroupCreate: React.FC = () => {
-  (async () => {
-    console.log(await sessionService.getAuthToken());
-  })();
-  const [isAvailable, setIsSwitchOn] = React.useState(true);
+const OptionGroupUpdate: React.FC = () => {
+  // (async () => {
+  //   console.log(await sessionService.getAuthToken());
+  // })();
+  const optionGroupModel = useModelState((state) => state.optionGroupModel);
+  const [isAvailable, setIsAvailable] = React.useState(true);
   const [formError, setFormError] = React.useState({
     title: "",
   });
@@ -62,6 +64,24 @@ const OptionGroupCreate: React.FC = () => {
   const [isMinSelectBlurred, setIsMinSelectBlurred] = useState(true);
   const [isMaxSelectBlurred, setIsMaxSelectBlurred] = useState(true);
   const [isTrySubmitted, setIsTrySubmitted] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setTitle(optionGroupModel.title);
+    setIsRequire(optionGroupModel.isRequire);
+    setIsMultiSelect(optionGroupModel.type === 2);
+    setMinSelect(optionGroupModel.minChoices);
+    setMaxSelect(optionGroupModel.maxChoices);
+    setMinSelectText(optionGroupModel.minChoices.toString());
+    setMaxSelectText(optionGroupModel.maxChoices.toString());
+    setOptions(
+      (optionGroupModel.options || []).map((item) => ({
+        ...item,
+        error: { title: "", price: "" },
+      }))
+    );
+    setIsAvailable(optionGroupModel.status === 1);
+  }, [optionGroupModel]);
 
   useEffect(() => {}, [isMultiSelect, isRequire]);
   useEffect(() => {
@@ -258,31 +278,36 @@ const OptionGroupCreate: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
+    console.log("isMultiSelect: ", isMultiSelect);
 
     const data = {
+      id: optionGroupModel.id,
       title,
-      options: options as OptionModel[],
+      options: options.map(({ error, ...rest }) => rest) as OptionModel[],
       isRequire,
       minChoices: minSelect,
       maxChoices: maxSelect,
-      type: isMultiSelect ? 1 : 2,
+      type: isMultiSelect ? 2 : 1,
       status: isAvailable ? 1 : 2,
     };
     console.log("Submit data:", data);
     try {
-      const response = await apiClient.post(
-        "shop-owner/option-group/create",
+      setIsLoading(true);
+      const response = await apiClient.put(
+        "shop-owner/option-group" + "/" + optionGroupModel.id,
         data
       );
-      console.log("RESPONSE : ", response);
 
-      Alert.alert("Hoàn tất", "Nhóm được tạo thành công");
+      Alert.alert("Hoàn tất", "Đã cập nhật nhóm thành công");
       // router.replace("/menu/option-group/link");
     } catch (error: any) {
+      console.log(error);
       Alert.alert(
-        "Xảy ra lỗi khi tạo món",
+        "Xảy ra lỗi khi cập nhật nhóm",
         error?.response?.data?.error?.message || "Vui lòng thử lại!"
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -516,7 +541,7 @@ const OptionGroupCreate: React.FC = () => {
             <Switch
               color="#e95137"
               value={isAvailable}
-              onValueChange={setIsSwitchOn}
+              onValueChange={setIsAvailable}
             />
           </View>
         </View>
@@ -526,10 +551,11 @@ const OptionGroupCreate: React.FC = () => {
           containerStyleClasses="mt-2 bg-primary"
           textStyleClasses="text-white"
           handlePress={handleSubmit}
+          isLoading={isLoading}
         />
       </View>
     </PageLayoutWrapper>
   );
 };
 
-export default OptionGroupCreate;
+export default OptionGroupUpdate;

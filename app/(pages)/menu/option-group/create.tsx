@@ -65,6 +65,7 @@ const OptionGroupCreate: React.FC = () => {
       status: 1,
     },
   ]);
+  const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState<string>("");
   const [isRequire, setIsRequire] = useState<boolean>(false);
   const [isMultiSelect, setIsMultiSelect] = useState<boolean>(false);
@@ -280,10 +281,11 @@ const OptionGroupCreate: React.FC = () => {
       isRequire,
       minChoices: minSelect,
       maxChoices: maxSelect,
-      type: isMultiSelect ? 1 : 2,
+      type: isMultiSelect ? 2 : 1,
       status: isAvailable ? 1 : 2,
     };
     console.log("Submit data:", data);
+    setIsLoading(true);
     try {
       const response = await apiClient.post<ValueResponse<OptionGroupModel>>(
         "shop-owner/option-group/create",
@@ -295,12 +297,14 @@ const OptionGroupCreate: React.FC = () => {
       // router.replace("/menu/option-group/link");
     } catch (error: any) {
       if (error.response && error.response.status === 500) {
-        Alert.alert("Xảy ra lỗi khi tạo món", "Vui lòng thử lại!");
+        Alert.alert("Xảy ra lỗi khi tạo nhóm", "Vui lòng thử lại!");
       } else
         Alert.alert(
-          "Xảy ra lỗi khi tạo món",
+          "Xảy ra lỗi khi tạo nhóm",
           error?.response?.data?.error?.message || "Vui lòng thử lại!"
         );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -544,6 +548,7 @@ const OptionGroupCreate: React.FC = () => {
           containerStyleClasses="mt-2 bg-primary"
           textStyleClasses="text-white"
           handlePress={handleSubmit}
+          isLoading={isLoading}
         />
       </View>
     </PageLayoutWrapper>

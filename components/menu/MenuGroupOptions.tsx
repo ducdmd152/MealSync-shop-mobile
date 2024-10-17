@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import React from "react";
 import CustomButton from "../custom/CustomButton";
 import { ActivityIndicator, Searchbar } from "react-native-paper";
@@ -11,9 +18,16 @@ import OptionGroupModel from "@/types/models/OptionGroupModel";
 import sessionService from "@/services/session-service";
 import apiClient from "@/services/api-services/api-client";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import usePathState from "@/hooks/states/usePathState";
+import ValueResponse from "@/types/responses/ValueReponse";
+import useModelState from "@/hooks/states/useModelState";
 
 const MenuGroupOptions = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
+  const { notFoundInfo, setNotFoundInfo } = usePathState();
+  const setOptionGroupModel = useModelState(
+    (state) => state.setOptionGroupModel
+  );
   const {
     data: optionGroups,
     isLoading: isOptionGroupsLoading,
@@ -114,7 +128,7 @@ const MenuGroupOptions = () => {
                             numberOfLines={1}
                             ellipsizeMode="tail"
                           >
-                            {item.options.map((o) => o.title).join(", ")}
+                            {item.options?.map((o) => o.title).join(", ")}
                           </Text>
                         </View>
                       </View>
@@ -124,7 +138,35 @@ const MenuGroupOptions = () => {
                     </View>
                     <View className="flex-row justify-start gap-2 pt-3">
                       <TouchableOpacity
-                        onPress={() => {}}
+                        onPress={async () => {
+                          setNotFoundInfo(
+                            notFoundInfo.message,
+                            "/menu",
+                            notFoundInfo.linkDesc
+                          );
+                          try {
+                            const response = await apiClient.get<
+                              ValueResponse<OptionGroupModel>
+                            >(`shop-owner/option-group/${item.id}`);
+                            setOptionGroupModel(response.data.value);
+                            router.push("/menu/option-group/update");
+                            // console.log("Food Detail model: ", foodDetailModel);
+                          } catch (error: any) {
+                            if (
+                              error.response &&
+                              error.response.status === 404
+                            ) {
+                              Alert.alert("Oops!", "Nhóm này không tồn tại!");
+                              optionGroupsRefetch();
+                            } else {
+                              Alert.alert(
+                                "Oops!",
+                                error?.response?.data?.error?.message ||
+                                  "Hệ thống đang bảo trì, vui lòng thử lại sau!"
+                              );
+                            }
+                          }
+                        }}
                         className="bg-[#227B94] border-[#227B94] border-0 rounded-md items-center justify-center px-[6px] py-[2.2px] bg-white "
                       >
                         <Text className="text-[13.5px] text-white text-[#227B94] font-semibold">

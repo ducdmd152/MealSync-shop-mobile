@@ -64,8 +64,7 @@ interface PlatformCategoryListResponse extends APICommonResponse {
 }
 
 const FoodUpdate = () => {
-  const { optionGroupModel: foodDetailModel } = useModelState();
-  console.log("foodDetailModel : ", foodDetailModel);
+  const { foodDetailModel } = useModelState();
   const [name, setName] = useState(foodDetailModel.name);
   const [description, setDescription] = useState(foodDetailModel.description);
   const [price, setPrice] = useState(foodDetailModel.price);
