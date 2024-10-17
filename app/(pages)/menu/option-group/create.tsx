@@ -69,13 +69,14 @@ const OptionGroupCreate: React.FC = () => {
       setMinSelectText(minSelect + "");
       setMaxSelectText(maxSelect + "");
       return;
-    } else if (isRequire && minSelect < 1) {
-      setMinSelect(isRequire ? 1 : 0);
-      setMaxSelect(Math.max(1, maxSelect));
-      setMinSelectText(minSelect + "");
-      setMaxSelectText(maxSelect + "");
-      return;
     }
+    // else if (isRequire && minSelect < 1) {
+    //   setMinSelect(isRequire ? 1 : 0);
+    //   setMaxSelect(Math.max(1, maxSelect));
+    //   setMinSelectText(minSelect + "");
+    //   setMaxSelectText(maxSelect + "");
+    //   return;
+    // }
 
     if (isRequire && minSelect < 1) {
       Alert.alert(
@@ -289,7 +290,7 @@ const OptionGroupCreate: React.FC = () => {
                       handleOptionChange(index, "isDefault", !item.isDefault);
                     }}
                     label={
-                      <Text className="text-[16px]">Lựa chọn mặc định</Text>
+                      <Text className="text-[15px]">Lựa chọn mặc định</Text>
                     }
                     containerStyleClasses={"w-[220px]"}
                   />
