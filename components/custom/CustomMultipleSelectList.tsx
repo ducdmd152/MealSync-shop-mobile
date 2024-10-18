@@ -157,6 +157,7 @@ const CustomMultipleSelectList: React.FC<CustomMultipleSelectListProps> = ({
 
             <TextInput
               placeholder={searchPlaceholder}
+              placeholderTextColor="#888"
               onChangeText={(val) => {
                 let result = data.filter((item: L1Keys) => {
                   val.toLowerCase();

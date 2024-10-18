@@ -9,7 +9,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
-import { ActivityIndicator, Searchbar } from "react-native-paper";
+import { ActivityIndicator, Searchbar, Switch } from "react-native-paper";
 import Collapsible from "react-native-collapsible";
 import { Tab } from "react-native-elements";
 import DraggableFlatList, {
@@ -56,6 +56,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const { setFoodDetailModel, setShopCategoryModel } = useModelState();
   const { notFoundInfo, setNotFoundInfo } = usePathState();
+  const [statusingIdList, setStatusingIdList] = useState<number[]>([]);
 
   // const [categories, setCategories] = useState(initialCategories);
 
@@ -98,6 +99,126 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
       apiClient.get(endpoints.FOOD_LIST).then((response) => response.data),
     [query]
   );
+
+  const onChangeStatus = (food: FoodModel) => {
+    if (food.isSoldOut || food.status == 2) {
+      Alert.alert(`Xác nhận`, `Bạn có chắc chắn muốn mở bán ${food.name}?`, [
+        {
+          text: "Đồng ý",
+          onPress: async () => {
+            setStatusingIdList([...statusingIdList, food.id]);
+            try {
+              const response = await apiClient.put(
+                "shop-owner/food/" + food.id + "/status",
+                {
+                  status: 1,
+                  isSoldOut: false,
+                }
+              );
+              refetch();
+              toast.show(`Đã bật mở bán ${food.name}!`, {
+                type: "success",
+                duration: 2000,
+              });
+
+              // router.replace("/menu/option-group/link");
+            } catch (error: any) {
+              if (error.response && error.response.status === 500) {
+                Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
+              } else
+                Alert.alert(
+                  "Xảy ra lỗi",
+                  error?.response?.data?.error?.message || "Vui lòng thử lại!"
+                );
+            } finally {
+              setStatusingIdList(statusingIdList.filter((id) => id != food.id));
+            }
+          },
+        },
+        {
+          text: "Hủy",
+        },
+      ]);
+    } else {
+      Alert.alert(
+        `Xác nhận`,
+        `Bạn có tạm ẩn hay tạm hết hàng cho ${food.name}?`,
+        [
+          {
+            text: "Tạm hết hàng",
+            onPress: async () => {
+              setStatusingIdList([...statusingIdList, food.id]);
+              try {
+                const response = await apiClient.put(
+                  "shop-owner/food/" + food.id + "/status",
+                  {
+                    status: 1,
+                    isSoldOut: true,
+                  }
+                );
+                refetch();
+                toast.show(`Tạm hết hàng cho ${food.name}!`, {
+                  type: "success",
+                  duration: 2000,
+                });
+
+                // router.replace("/menu/option-group/link");
+              } catch (error: any) {
+                if (error.response && error.response.status === 500) {
+                  Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
+                } else
+                  Alert.alert(
+                    "Xảy ra lỗi",
+                    error?.response?.data?.error?.message || "Vui lòng thử lại!"
+                  );
+              } finally {
+                setStatusingIdList(
+                  statusingIdList.filter((id) => id != food.id)
+                );
+              }
+            },
+          },
+          {
+            text: "Tạm ẩn món",
+            onPress: async () => {
+              setStatusingIdList([...statusingIdList, food.id]);
+              try {
+                const response = await apiClient.put(
+                  "shop-owner/food/" + food.id + "/status",
+                  {
+                    status: 2,
+                    isSoldOut: false,
+                  }
+                );
+                refetch();
+                toast.show(`Tạm ẩn món ${food.name}!`, {
+                  type: "success",
+                  duration: 2000,
+                });
+
+                // router.replace("/menu/option-group/link");
+              } catch (error: any) {
+                if (error.response && error.response.status === 500) {
+                  Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
+                } else
+                  Alert.alert(
+                    "Xảy ra lỗi",
+                    error?.response?.data?.error?.message || "Vui lòng thử lại!"
+                  );
+              } finally {
+                setStatusingIdList(
+                  statusingIdList.filter((id) => id != food.id)
+                );
+              }
+            },
+          },
+          {
+            text: "Hủy",
+          },
+        ]
+      );
+    }
+  };
 
   useEffect(() => {
     console.log(categories?.value);
@@ -221,20 +342,38 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     </View>
                   </View>
 
-                  <View className="flex-row gap-2 items-start">
-                    <Text className="bg-blue-100 text-blue-800 text-[12.5px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                      {food.status == 1
-                        ? food.isSoldOut
-                          ? "Hết hàng"
-                          : "Còn hàng"
+                  <View className="items-end">
+                    <Switch
+                      className={`scale-75 mr-[-6px] ${
+                        statusingIdList.some((id) => item.id == id)
+                          ? "opacity-70"
+                          : ""
+                      }`}
+                      disabled={statusingIdList.some((id) => item.id == id)}
+                      color="#e95137"
+                      value={!food.isSoldOut && food.status == 1}
+                      onValueChange={() => onChangeStatus(food)}
+                    />
+                    <Text className="ml-2 text-gray-500 italic text-[6px] text-secondary-200 text-gray-500">
+                      {food.isSoldOut
+                        ? "Tạm hết hàng"
+                        : food.status == 1
+                        ? "Đang mở bán"
                         : "Tạm ẩn"}
                     </Text>
                   </View>
                 </View>
+
                 <View className="flex-row justify-between items-center gap-2 pt-2">
-                  <Text className="text-gray-500 italic text-[12px] text-secondary-200">
-                    100 đơn cần xử lí trong 2h tới
-                  </Text>
+                  <View>
+                    <Text className="mt-1 text-gray-500 italic text-[7px] text-secondary-200 text-gray-500">
+                      Mở bán: 10:00 - 14:00 | 16:00 - 20:00
+                    </Text>
+                    <Text className="text-gray-500 italic text-[12px] text-secondary-200">
+                      100 đơn cần xử lí trong 2h tới
+                    </Text>
+                  </View>
+
                   <TouchableOpacity
                     onPress={async () => {
                       setNotFoundInfo(
@@ -265,7 +404,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     }}
                     className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                   >
-                    <Text className="text-[13.5px] text-white">Chỉnh sửa</Text>
+                    <Text className="text-[12px] text-white">Chỉnh sửa</Text>
                   </TouchableOpacity>
                 </View>
               </View>

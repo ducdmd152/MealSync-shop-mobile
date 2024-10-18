@@ -187,6 +187,10 @@ const FoodUpdate = () => {
       value: item.frameFormat,
     })) || []
   );
+  console.log(
+    "optionGroups",
+    optionGroups?.value.items.map((item) => item.id + " " + item.title)
+  );
   const formik = useFormik({
     initialValues: {
       name: foodDetailModel.name,
@@ -235,7 +239,7 @@ const FoodUpdate = () => {
       if (selectedOperatingSlots.length === 0 && isAvailable) {
         Alert.alert(
           "Vui lòng chọn khung giờ",
-          "Để mở bán ngay, bạn cần chọn ít nhất 1 khung giờ cho món",
+          "Để mở bán, bạn cần chọn ít nhất 1 khung giờ cho món",
           [
             {
               text: "Đã hiểu",
@@ -547,8 +551,8 @@ const FoodUpdate = () => {
           </View>
           <View className="flex-row items-center justify-start mt-2">
             <FormField
-              title={isAvailable ? "Mở bán ngay" : "Tạm ẩn món"}
-              otherStyleClasses="w-[152px]"
+              title={isAvailable ? "Mở bán" : "Tạm ẩn"}
+              otherStyleClasses="w-[132px]"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
               // isRequired={true}
