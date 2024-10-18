@@ -490,7 +490,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
 
       <View className="w-full gap-2 p-4 pt-3">
         <View className="w-full">
-          <Searchbar
+          {/* <Searchbar
             style={{
               height: 40,
               // backgroundColor: "white",
@@ -501,9 +501,9 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
             placeholder="Nhập tên món..."
             onChangeText={setSearchQuery}
             value={searchQuery}
-          />
+          /> */}
         </View>
-        {/* <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
+        <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
           <View className="w-full flex-row gap-2 items-center justify-between pb-2 ">
             <Text className="bg-gray-100 rounded-xl px-4 py-2 bg-secondary">
               Tất cả
@@ -515,11 +515,14 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
               Ngoài khung giờ
             </Text>
             <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
+              Đang mở bán
+            </Text>
+            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
               Tạm hết hàng
             </Text>
             <Text className="bg-gray-100 rounded-xl px-4 py-2 ">Đã ẩn</Text>
           </View>
-        </ScrollView> */}
+        </ScrollView>
         <View className="gap-y-2 pb-[250px]">
           {isLoading && (
             <ActivityIndicator animating={isLoading} color="#FCF450" />

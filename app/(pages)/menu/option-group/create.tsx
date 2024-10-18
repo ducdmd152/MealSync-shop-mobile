@@ -12,8 +12,9 @@ import sessionService from "@/services/session-service";
 import ValueResponse from "@/types/responses/ValueReponse";
 import OptionGroupModel from "@/types/models/OptionGroupModel";
 import useModelState from "@/hooks/states/useModelState";
+import OptionModel from "@/types/models/OptionModel";
 
-interface Option extends OptionSubmit {
+interface Option extends OptionModel {
   error: OptionError;
 }
 interface OptionSubmit {
@@ -56,6 +57,7 @@ const OptionGroupCreate: React.FC = () => {
   });
   const [options, setOptions] = useState<Option[]>([
     {
+      id: 0,
       title: "",
       price: 1000,
       isCalculatePrice: true,
@@ -219,6 +221,7 @@ const OptionGroupCreate: React.FC = () => {
     setOptions([
       ...options,
       {
+        id: 0,
         title: "",
         price: 1000,
         isCalculatePrice: true,

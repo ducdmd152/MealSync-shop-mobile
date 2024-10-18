@@ -45,6 +45,7 @@ const OptionGroupUpdate: React.FC = () => {
   });
   const [options, setOptions] = useState<Option[]>([
     {
+      id: 0,
       title: "",
       price: 1000,
       isCalculatePrice: true,
@@ -225,6 +226,7 @@ const OptionGroupUpdate: React.FC = () => {
     setOptions([
       ...options,
       {
+        id: 0,
         title: "",
         price: 1000,
         isCalculatePrice: true,
