@@ -236,7 +236,30 @@ const CategoryUpdate = () => {
           />
           <CustomButton
             title="Xóa danh mục này"
-            handlePress={() => {}}
+            handlePress={async () => {
+              try {
+                const response = await apiClient.delete(
+                  `shop-owner/category/${shopCategoryModel.id}`
+                );
+                setShopCategoryModel({ ...response.data.value });
+                Alert.alert(
+                  "Hoàn tất",
+                  `Đã xóa danh mục ${shopCategoryModel.name}!`
+                );
+                router.replace("/menu");
+              } catch (error: any) {
+                if (error.response && error.response.status === 404) {
+                  Alert.alert("Oops!", "Danh mục này không còn tồn tại!");
+                  router.replace("/menu");
+                } else {
+                  Alert.alert(
+                    "Oops!",
+                    error?.response?.data?.error?.message ||
+                      "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                  );
+                }
+              }
+            }}
             isDisabled={
               shopCategoryModel.foods && shopCategoryModel.foods?.length > 0
             }
