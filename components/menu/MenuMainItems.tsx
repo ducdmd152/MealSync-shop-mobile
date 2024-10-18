@@ -141,7 +141,7 @@ const MenuMainItems = () => {
           onLongPress={drag}
         >
           <View>
-            <View className="flex-row items-center gap-x-2">
+            <View className="flex-row items-center gap-x-2 justify-start">
               <Text className="font-bold text-lg text-gray-800">
                 {item.name}
               </Text>
@@ -177,7 +177,7 @@ const MenuMainItems = () => {
                   }
                 }
               }}
-              containerStyleClasses="bg-white border-gray-200 border-2 h-[26px] px-[8px]"
+              containerStyleClasses="bg-white border-gray-200 border-2 h-[26px] px-[8px] self-start"
               textStyleClasses="text-gray-700 text-[10px] mt-[-3.5px] text-[#227B94]"
             />
           </View>

@@ -237,11 +237,27 @@ const CategoryUpdate = () => {
           <CustomButton
             title="Xóa danh mục này"
             handlePress={() => {}}
-            containerStyleClasses="mt-2 w-full h-[48px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10 border-secondary bg-white"
+            isDisabled={
+              shopCategoryModel.foods && shopCategoryModel.foods?.length > 0
+            }
+            containerStyleClasses={`mt-2 w-full h-[48px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10 border-secondary bg-white relative ${
+              shopCategoryModel.foods?.length && "border-gray-400"
+            }`}
             // iconLeft={
             //   <Ionicons name="add-circle-outline" size={21} color="white" />
             // }
-            textStyleClasses="text-[16px] text-gray-900 ml-1 text-secondary"
+            flexibleComponent={
+              shopCategoryModel.foods?.length ? (
+                <Text className="absolute bottom-1 text-[10px] text-gray-500 italic">
+                  Danh mục chỉ có thể xóa khi không chứa sản phẩm nào
+                </Text>
+              ) : (
+                <Text></Text>
+              )
+            }
+            textStyleClasses={`text-[16px] text-gray-900 ml-1 text-secondary ${
+              shopCategoryModel.foods?.length && "mb-3 text-gray-500"
+            }`}
           />
         </View>
       </View>
