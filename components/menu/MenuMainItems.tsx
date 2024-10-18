@@ -157,7 +157,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
     } else {
       Alert.alert(
         `Xác nhận`,
-        `Bạn có tạm ẩn hay tạm hết hàng cho ${food.name}?`,
+        `Bạn có chắc tạm ẩn hay tạm hết hàng cho ${food.name}?`,
         [
           {
             text: "Tạm hết hàng",
@@ -379,7 +379,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                       >
                         {food.name}
                       </Text>
-                      <Text className="text-md italic text-gray-500 mt-[-2px]">
+                      <Text className="text-[12.8px] italic text-gray-500 mt-[-2px]">
                         {food.price.toLocaleString()}đ
                       </Text>
                     </View>
@@ -387,7 +387,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
 
                   <View className="items-end">
                     <Switch
-                      className={`scale-75 mr-[-6px] ${
+                      className={`scale-75 mt-1 mr-[-6px] ${
                         statusingIdList.some((id) => item.id == id)
                           ? "opacity-70"
                           : ""
