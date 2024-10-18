@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Platform,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
@@ -402,13 +403,17 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                         statusingIdList.some((id) => item.id == id)
                           ? "opacity-50"
                           : ""
-                      }`}
+                      } ${Platform.OS == "android" ? "mt-[-7px]" : ""}`}
                       disabled={statusingIdList.some((id) => item.id == id)}
                       color="#e95137"
                       value={!food.isSoldOut && food.status == 1}
                       onValueChange={() => onChangeStatus(food)}
                     />
-                    <Text className="ml-2 text-gray-500 italic text-[6px] text-secondary-200 text-gray-500">
+                    <Text
+                      className={`ml-2 text-gray-500 italic text-[6px] text-secondary-200 text-gray-500 ${
+                        Platform.OS == "android" ? "mt-[-12px] text-[7px]" : ""
+                      }`}
+                    >
                       {food.isSoldOut
                         ? "Tạm hết hàng"
                         : food.status == 1
