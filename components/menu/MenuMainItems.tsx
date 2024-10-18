@@ -88,6 +88,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
     }
   };
 
+  const [tmpCategories, setTmpCategories] = useState<ShopCategoryModel[]>([]);
   const {
     data: categories,
     isLoading,
@@ -99,6 +100,9 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
       apiClient.get(endpoints.FOOD_LIST).then((response) => response.data),
     [query]
   );
+  useEffect(() => {
+    setTmpCategories(categories?.value || []);
+  }, [categories]);
 
   const onChangeStatus = (food: FoodModel) => {
     if (food.isSoldOut || food.status == 2) {
@@ -115,7 +119,18 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                   isSoldOut: false,
                 }
               );
-              refetch();
+              setTmpCategories(
+                tmpCategories.map((category) => {
+                  if (!category.foods) return category;
+
+                  const updatedFoods = category.foods.map((f) =>
+                    f.id === food.id ? { ...f, status: 1, isSoldOut: false } : f
+                  );
+
+                  // Trả về category mới với foods đã cập nhật
+                  return { ...category, foods: updatedFoods };
+                })
+              );
               toast.show(`Đã bật mở bán ${food.name}!`, {
                 type: "success",
                 duration: 2000,
@@ -156,7 +171,20 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     isSoldOut: true,
                   }
                 );
-                refetch();
+                setTmpCategories(
+                  tmpCategories.map((category) => {
+                    if (!category.foods) return category;
+
+                    const updatedFoods = category.foods.map((f) =>
+                      f.id === food.id
+                        ? { ...f, status: 1, isSoldOut: true }
+                        : f
+                    );
+
+                    // Trả về category mới với foods đã cập nhật
+                    return { ...category, foods: updatedFoods };
+                  })
+                );
                 toast.show(`Tạm hết hàng cho ${food.name}!`, {
                   type: "success",
                   duration: 2000,
@@ -190,7 +218,20 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     isSoldOut: false,
                   }
                 );
-                refetch();
+                setTmpCategories(
+                  tmpCategories.map((category) => {
+                    if (!category.foods) return category;
+
+                    const updatedFoods = category.foods.map((f) =>
+                      f.id === food.id
+                        ? { ...f, status: 2, isSoldOut: false }
+                        : f
+                    );
+
+                    // Trả về category mới với foods đã cập nhật
+                    return { ...category, foods: updatedFoods };
+                  })
+                );
                 toast.show(`Tạm ẩn món ${food.name}!`, {
                   type: "success",
                   duration: 2000,
@@ -221,17 +262,19 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   };
 
   useEffect(() => {
-    console.log(categories?.value);
-    if (categories?.value)
+    console.log(tmpCategories);
+    if (tmpCategories) {
+      const oldExtendCategories = extendCategories;
       setExtendCategories(
-        categories?.value?.map((category) => ({
+        tmpCategories?.map((category) => ({
           ...category,
           isCollapsible:
-            extendCategories.find((cat) => cat.id == category.id)
-              ?.isCollapsible || true,
+            oldExtendCategories.find((cat) => cat.id == category.id)
+              ?.isCollapsible ?? true,
         })) as ExtendCategoryModel[]
       );
-  }, [categories]);
+    }
+  }, [tmpCategories]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -366,11 +409,11 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
 
                 <View className="flex-row justify-between items-center gap-2 pt-2">
                   <View>
-                    <Text className="mt-1 text-gray-500 italic text-[7px] text-secondary-200 text-gray-500">
-                      Mở bán: 10:00 - 14:00 | 16:00 - 20:00
-                    </Text>
                     <Text className="text-gray-500 italic text-[12px] text-secondary-200">
                       100 đơn cần xử lí trong 2h tới
+                    </Text>
+                    <Text className="mt-1 text-gray-500 italic text-[7px] text-secondary-200 text-gray-500">
+                      Mở bán: 10:00 - 14:00 | 16:00 - 20:00
                     </Text>
                   </View>
 
@@ -402,9 +445,10 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                         }
                       }
                     }}
-                    className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                    className="bg-[#227B94] border-[#227B94] border-[1.2px] rounded-md items-center justify-center px-[6px] py-[2px] bg-whitee"
                   >
-                    <Text className="text-[12px] text-white">Chỉnh sửa</Text>
+                    {/* text-[#227B94] font-semibold */}
+                    <Text className="text-[12px] text-white ">Chỉnh sửa</Text>
                   </TouchableOpacity>
                 </View>
               </View>
