@@ -76,7 +76,7 @@ const CategoryUpdate = () => {
       } else {
         Alert.alert(
           "Thông báo",
-          error.message || "Có lỗi xảy ra khi thêm danh mục!"
+          error.message || "Có lỗi xảy ra khi cập danh mục!"
         );
       }
     } catch (error: any) {
@@ -118,6 +118,7 @@ const CategoryUpdate = () => {
                 error?.response?.data?.error?.message ||
                   "Hệ thống gặp lỗi, vui lòng thử lại sau!"
               );
+              refetch();
             }
           }
         },
