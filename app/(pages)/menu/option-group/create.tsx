@@ -265,14 +265,35 @@ const OptionGroupCreate: React.FC = () => {
     }
   };
 
+  // const handleRemoveOption = (index: number) => {
+  //   const updatedOptions = options.filter((_, i) => i !== index);
+  //   setOptions(updatedOptions);
+  // };
   const handleRemoveOption = (index: number) => {
-    const updatedOptions = options.filter((_, i) => i !== index);
-    setOptions(updatedOptions);
+    if (options.length <= 1) {
+      Alert.alert("Cần tối thiểu ít nhất 1 lựa chọn!");
+      return;
+    }
+    Alert.alert(
+      "Xác nhận thay đổi",
+      `Bạn có chắc muốn bỏ lựa chọn này không?`,
+      [
+        {
+          text: "Hủy",
+          style: "cancel",
+        },
+        {
+          text: "Đồng ý",
+          onPress: () => {
+            const updatedOptions = options.filter((_, i) => i !== index);
+            setOptions(updatedOptions);
+          },
+        },
+      ]
+    );
   };
 
   const handleSubmit = async () => {
-    router.replace("/menu/option-group/link");
-    return;
     if (!validateForm()) return;
 
     const data = {
@@ -294,7 +315,7 @@ const OptionGroupCreate: React.FC = () => {
       setOptionGroupModel(response.data.value);
 
       Alert.alert("Hoàn tất", "Nhóm được tạo thành công");
-      // router.replace("/menu/option-group/link");
+      router.replace("/menu/option-group/link");
     } catch (error: any) {
       if (error.response && error.response.status === 500) {
         Alert.alert("Xảy ra lỗi khi tạo nhóm", "Vui lòng thử lại!");
@@ -401,7 +422,20 @@ const OptionGroupCreate: React.FC = () => {
                   <View className="flex-row items-center">
                     <CustomButton
                       title={item.status == 1 ? "Có sẵn" : "Đã ẩn"}
-                      handlePress={() =>
+                      handlePress={() => {
+                        if (
+                          item.status == 1 &&
+                          options.filter((item) => item.status == 1).length <= 1
+                        ) {
+                          Alert.alert(
+                            "Mỗi nhóm lựa chọn cần ít nhất một câu trả lời được bật"
+                          );
+                          return;
+                        }
+                        if (item.status == 1 && item.isDefault) {
+                          Alert.alert("Không thể ẩn lựa chọn mặc định!");
+                          return;
+                        }
                         Alert.alert(
                           "Xác nhận thay đổi",
                           `Bạn có chắc muốn ${
@@ -438,8 +472,8 @@ const OptionGroupCreate: React.FC = () => {
                                   // style: "cancel",
                                 },
                               ]
-                        )
-                      }
+                        );
+                      }}
                       containerStyleClasses="w-22 h-10 bg-red-500 bg-white border-2 border-red-400 box-border border-0"
                       textStyleClasses={
                         "text-white text-sm  text-[12px] " +

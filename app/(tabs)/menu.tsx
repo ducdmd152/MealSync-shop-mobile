@@ -19,9 +19,6 @@ const Menu = () => {
   useEffect(() => {
     if (index != menuSessionIndex) setIndex(menuSessionIndex);
   }, [menuSessionIndex]);
-  useEffect(() => {
-    if (index != menuSessionIndex) setMenuSessionIndex(index);
-  }, [index]);
   const counter = useCounterState((state) => state.counter);
   const increment = useCounterState((state) => state.increment);
   const reset = useCounterState((state) => state.reset);
@@ -53,7 +50,11 @@ const Menu = () => {
           />
         </View>
       </View>
-      {index == 0 ? <MenuMainItems /> : <MenuGroupOptions />}
+      {index == 0 ? (
+        <MenuMainItems beforeGo={() => setMenuSessionIndex(index)} />
+      ) : (
+        <MenuGroupOptions beforeGo={() => setMenuSessionIndex(index)} />
+      )}
     </View>
   );
 };

@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import CustomButton from "../custom/CustomButton";
@@ -23,10 +24,11 @@ import ValueResponse from "@/types/responses/ValueReponse";
 import useModelState from "@/hooks/states/useModelState";
 import { useToast } from "react-native-toast-notifications";
 
-const MenuGroupOptions = () => {
+const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
   const toast = useToast();
   const [searchQuery, setSearchQuery] = React.useState("");
   const { notFoundInfo, setNotFoundInfo } = usePathState();
+  const [refreshing, setRefreshing] = useState(false);
   const setOptionGroupModel = useModelState(
     (state) => state.setOptionGroupModel
   );
@@ -175,6 +177,7 @@ const MenuGroupOptions = () => {
         <CustomButton
           title="Thêm nhóm lựa chọn"
           handlePress={() => {
+            beforeGo();
             router.push("/menu/option-group/create");
           }}
           containerStyleClasses="w-[98%] h-[50px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
@@ -209,7 +212,16 @@ const MenuGroupOptions = () => {
             {tmpOptionGroups.length} nhóm lựa chọn có sẵn
           </Text>
         )}
-        <ScrollView style={{ width: "100%", flexGrow: 1 }}>
+        <ScrollView
+          style={{ width: "100%", flexGrow: 1 }}
+          refreshControl={
+            <RefreshControl
+              tintColor={"#FCF450"}
+              refreshing={isOptionGroupsLoading}
+              onRefresh={() => optionGroupsRefetch()}
+            />
+          }
+        >
           <View className="gap-y-2 pb-[240px]">
             <ScrollView style={{ width: "100%", flexGrow: 1 }}>
               <View className="gap-y-1">
@@ -273,6 +285,7 @@ const MenuGroupOptions = () => {
                               ValueResponse<OptionGroupModel>
                             >(`shop-owner/option-group/${item.id}`);
                             setOptionGroupModel(response.data.value);
+                            beforeGo();
                             router.push("/menu/option-group/update");
                             // console.log("Food Detail model: ", foodDetailModel);
                           } catch (error: any) {
@@ -309,6 +322,7 @@ const MenuGroupOptions = () => {
                               ValueResponse<OptionGroupModel>
                             >(`shop-owner/option-group/${item.id}`);
                             setOptionGroupModel(response.data.value);
+                            beforeGo();
                             router.push("/menu/option-group/link");
                             // console.log("Food Detail model: ", foodDetailModel);
                           } catch (error: any) {

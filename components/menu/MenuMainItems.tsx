@@ -46,7 +46,7 @@ interface FoodListQuery {}
 interface ExtendCategoryModel extends ShopCategoryModel {
   isCollapsible: boolean;
 }
-const MenuMainItems = () => {
+const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   const toast = useToast();
   const [query, setQuery] = useState<FoodListQuery>({} as FoodListQuery);
   const [extendCategories, setExtendCategories] = useState<
@@ -162,6 +162,7 @@ const MenuMainItems = () => {
                     ValueResponse<ShopCategoryModel>
                   >(`shop-owner/category/${item.id}`);
                   setShopCategoryModel({ ...response.data.value });
+                  beforeGo();
                   router.push("/menu/category/update");
                   // console.log("Food Detail model: ", foodDetailModel);
                 } catch (error: any) {
@@ -246,6 +247,7 @@ const MenuMainItems = () => {
                           ValueResponse<FoodDetailModel>
                         >(`shop-owner/food/${food.id}/detail`);
                         setFoodDetailModel({ ...response.data.value });
+                        beforeGo();
                         router.push("/menu/food/update");
                         // console.log("Food Detail model: ", foodDetailModel);
                       } catch (error: any) {
@@ -361,6 +363,7 @@ const MenuMainItems = () => {
             className="p-4"
             onPress={() => {
               setIsBottomSheetVisible(false);
+              beforeGo();
               router.push("/menu/food/create");
             }}
           >
@@ -376,6 +379,7 @@ const MenuMainItems = () => {
             className="p-4"
             onPress={() => {
               setIsBottomSheetVisible(false);
+              beforeGo();
               router.push("/menu/category/create");
             }}
           >

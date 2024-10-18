@@ -272,8 +272,27 @@ const OptionGroupUpdate: React.FC = () => {
   };
 
   const handleRemoveOption = (index: number) => {
-    const updatedOptions = options.filter((_, i) => i !== index);
-    setOptions(updatedOptions);
+    if (options.length <= 1) {
+      Alert.alert("Cần tối thiểu ít nhất 1 lựa chọn!");
+      return;
+    }
+    Alert.alert(
+      "Xác nhận thay đổi",
+      `Bạn có chắc muốn bỏ lựa chọn này không?`,
+      [
+        {
+          text: "Hủy",
+          style: "cancel",
+        },
+        {
+          text: "Đồng ý",
+          onPress: () => {
+            const updatedOptions = options.filter((_, i) => i !== index);
+            setOptions(updatedOptions);
+          },
+        },
+      ]
+    );
   };
 
   const handleSubmit = async () => {
@@ -404,7 +423,20 @@ const OptionGroupUpdate: React.FC = () => {
                   <View className="flex-row items-center">
                     <CustomButton
                       title={item.status == 1 ? "Có sẵn" : "Đã ẩn"}
-                      handlePress={() =>
+                      handlePress={() => {
+                        if (
+                          item.status == 1 &&
+                          options.filter((item) => item.status == 1).length <= 1
+                        ) {
+                          Alert.alert(
+                            "Mỗi nhóm lựa chọn cần ít nhất một câu trả lời được bật"
+                          );
+                          return;
+                        }
+                        if (item.status == 1 && item.isDefault) {
+                          Alert.alert("Không thể ẩn lựa chọn mặc định!");
+                          return;
+                        }
                         Alert.alert(
                           "Xác nhận thay đổi",
                           `Bạn có chắc muốn ${
@@ -441,8 +473,8 @@ const OptionGroupUpdate: React.FC = () => {
                                   // style: "cancel",
                                 },
                               ]
-                        )
-                      }
+                        );
+                      }}
                       containerStyleClasses="w-22 h-10 bg-red-500 bg-white border-2 border-red-400 box-border border-0"
                       textStyleClasses={
                         "text-white text-sm  text-[12px] " +
@@ -552,6 +584,44 @@ const OptionGroupUpdate: React.FC = () => {
           textStyleClasses="text-white"
           handlePress={handleSubmit}
           isLoading={isLoading}
+        />
+        <CustomButton
+          title="Xóa nhóm lựa chọn"
+          handlePress={async () => {
+            try {
+              const response = await apiClient.delete(
+                `shop-owner/option-group/${optionGroupModel.id}`,
+                {
+                  data: {
+                    id: optionGroupModel.id,
+                    isConfirm: true,
+                  },
+                }
+              );
+              Alert.alert(
+                "Hoàn tất",
+                `Đã xóa nhóm lựa chọn "${optionGroupModel.title}"!`
+              );
+              router.replace("/menu");
+            } catch (error: any) {
+              console.log(
+                error,
+                `shop-owner/option-group/${optionGroupModel.id}`
+              );
+              if (error.response && error.response.status === 404) {
+                Alert.alert("Oops!", "Nhóm lựa chọn không còn tồn tại!");
+                router.replace("/menu");
+              } else {
+                Alert.alert(
+                  "Oops!",
+                  error?.response?.data?.error?.message ||
+                    "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                );
+              }
+            }
+          }}
+          containerStyleClasses={`mt-2 w-full h-[48px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10 border-secondary bg-white relative `}
+          textStyleClasses={`text-[16px] text-gray-900 ml-1 text-secondary`}
         />
       </View>
     </PageLayoutWrapper>

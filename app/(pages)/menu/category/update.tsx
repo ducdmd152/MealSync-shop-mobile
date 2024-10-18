@@ -90,6 +90,40 @@ const CategoryUpdate = () => {
     }
   };
 
+  const onDelete = async () => {
+    Alert.alert("Xác nhận thay đổi", `Bạn có chắc xóa danh mục này không?`, [
+      {
+        text: "Hủy",
+        style: "cancel",
+      },
+      {
+        text: "Đồng ý",
+        onPress: async () => {
+          try {
+            const response = await apiClient.delete(
+              `shop-owner/category/${shopCategoryModel.id}`
+            );
+            Alert.alert(
+              "Hoàn tất",
+              `Đã xóa danh mục ${shopCategoryModel.name}!`
+            );
+            router.replace("/menu");
+          } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+              Alert.alert("Oops!", "Danh mục này không còn tồn tại!");
+              router.replace("/menu");
+            } else {
+              Alert.alert(
+                "Oops!",
+                error?.response?.data?.error?.message ||
+                  "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+              );
+            }
+          }
+        },
+      },
+    ]);
+  };
   return (
     <PageLayoutWrapper isScroll={false}>
       <View className="flex-1 p-4 justify-between">
@@ -236,30 +270,7 @@ const CategoryUpdate = () => {
           />
           <CustomButton
             title="Xóa danh mục này"
-            handlePress={async () => {
-              try {
-                const response = await apiClient.delete(
-                  `shop-owner/category/${shopCategoryModel.id}`
-                );
-                setShopCategoryModel({ ...response.data.value });
-                Alert.alert(
-                  "Hoàn tất",
-                  `Đã xóa danh mục ${shopCategoryModel.name}!`
-                );
-                router.replace("/menu");
-              } catch (error: any) {
-                if (error.response && error.response.status === 404) {
-                  Alert.alert("Oops!", "Danh mục này không còn tồn tại!");
-                  router.replace("/menu");
-                } else {
-                  Alert.alert(
-                    "Oops!",
-                    error?.response?.data?.error?.message ||
-                      "Hệ thống gặp lỗi, vui lòng thử lại sau!"
-                  );
-                }
-              }
-            }}
+            handlePress={() => onDelete()}
             isDisabled={
               shopCategoryModel.foods && shopCategoryModel.foods?.length > 0
             }
