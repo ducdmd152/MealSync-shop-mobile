@@ -235,10 +235,13 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     return { ...category, foods: updatedFoods };
                   })
                 );
-                toast.show(`Tạm ẩn món ${food.name}!`, {
-                  type: "success",
-                  duration: 2000,
-                });
+                toast.show(
+                  `Tạm ẩn món ${food.name}, món sẽ được ẩn đến khi bạn mở bán trở lại!`,
+                  {
+                    type: "success",
+                    duration: 2000,
+                  }
+                );
 
                 // router.replace("/menu/option-group/link");
               } catch (error: any) {

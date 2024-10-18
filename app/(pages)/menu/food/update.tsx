@@ -610,6 +610,51 @@ const FoodUpdate = () => {
           textStyleClasses="text-white"
           handlePress={formik.handleSubmit}
         />
+        <CustomButton
+          title="Xóa khỏi thực đơn"
+          handlePress={async () => {
+            Alert.alert("Xác nhận xóa", `Bạn có chắc xóa món này không?`, [
+              {
+                text: "Hủy",
+                style: "cancel",
+              },
+              {
+                text: "Đồng ý",
+                onPress: async () => {
+                  try {
+                    const response = await apiClient.delete(
+                      `shop-owner/food/${foodDetailModel.id}`,
+                      {
+                        data: {
+                          id: foodDetailModel.id,
+                          isConfirm: true,
+                        },
+                      }
+                    );
+                    Alert.alert(
+                      "Hoàn tất",
+                      `Đã xóa "${foodDetailModel.name}" khỏi thực đơn!`
+                    );
+                    router.replace("/menu");
+                  } catch (error: any) {
+                    if (error.response && error.response.status === 404) {
+                      Alert.alert("Oops!", "Món không còn tồn tại!");
+                      router.replace("/menu");
+                    } else {
+                      Alert.alert(
+                        "Oops!",
+                        error?.response?.data?.error?.message ||
+                          "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                      );
+                    }
+                  }
+                },
+              },
+            ]);
+          }}
+          containerStyleClasses={`mt-2 w-full h-[48px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10 border-secondary bg-white relative `}
+          textStyleClasses={`text-[16px] text-gray-900 ml-1 text-secondary`}
+        />
       </View>
     </PageLayoutWrapper>
   );
