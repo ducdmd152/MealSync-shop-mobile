@@ -84,7 +84,8 @@ const FoodUpdate = () => {
     string[]
   >(foodDetailModel.operatingSlots.map((item) => item.id.toString()));
 
-  const [isAvailable, setIsAvailable] = useState(foodDetailModel.status == 1);
+  const [status, setStatus] = useState(foodDetailModel.status);
+  const [isSoldOut, setIsSoldOut] = useState(foodDetailModel.isSoldOut);
   const [imageURI, setImageURI] = useState(foodDetailModel.imageUrl);
 
   useEffect(() => {
@@ -98,10 +99,11 @@ const FoodUpdate = () => {
         item.optionGroupId.toString()
       )
     );
+    setStatus(foodDetailModel.status);
+    setIsSoldOut(foodDetailModel.isSoldOut);
     setSelectedOperatingSlots(
       foodDetailModel.operatingSlots.map((item) => item.id.toString())
     );
-    setIsAvailable(foodDetailModel.status == 1);
     setImageURI(foodDetailModel.imageUrl);
   }, [foodDetailModel]);
 
@@ -117,7 +119,32 @@ const FoodUpdate = () => {
     console.log(formik.values);
   }, [selectedPlatformCategory]);
 
-  const onToggleSwitch = () => setIsAvailable(!isAvailable);
+  const onStatusSwitch = () => {
+    if (isSoldOut || status == 2) {
+      setIsSoldOut(false);
+      setStatus(1);
+    } else {
+      Alert.alert(`Xác nhận`, `Bạn muốn chuyển sang tạm ẩn hay tạm hết hàng?`, [
+        {
+          text: "Tạm hết hàng",
+          onPress: async () => {
+            setIsSoldOut(true);
+            setStatus(1);
+          },
+        },
+        {
+          text: "Tạm ẩn món",
+          onPress: async () => {
+            setIsSoldOut(false);
+            setStatus(2);
+          },
+        },
+        {
+          text: "Hủy",
+        },
+      ]);
+    }
+  };
   const {
     data: shopCategories,
     isLoading: isShopCategoriesLoading,
@@ -178,19 +205,19 @@ const FoodUpdate = () => {
         .then((response) => response.data),
     []
   );
-  console.log(
-    "fsdfsf",
-    foodDetailModel.operatingSlots,
-    selectedOperatingSlots,
-    operatingSlots?.value?.map((item: OperatingSlotModel) => ({
-      key: item.id.toString(),
-      value: item.frameFormat,
-    })) || []
-  );
-  console.log(
-    "optionGroups",
-    optionGroups?.value.items.map((item) => item.id + " " + item.title)
-  );
+  // console.log(
+  //   "fsdfsf",
+  //   foodDetailModel.operatingSlots,
+  //   selectedOperatingSlots,
+  //   operatingSlots?.value?.map((item: OperatingSlotModel) => ({
+  //     key: item.id.toString(),
+  //     value: item.frameFormat,
+  //   })) || []
+  // );
+  // console.log(
+  //   "optionGroups",
+  //   optionGroups?.value.items.map((item) => item.id + " " + item.title)
+  // );
   const formik = useFormik({
     initialValues: {
       name: foodDetailModel.name,
@@ -209,7 +236,8 @@ const FoodUpdate = () => {
             ...foodDetailModel,
             ...values,
             imgUrl: imageURI,
-            status: isAvailable ? 1 : 2,
+            status: status,
+            isSoldOut: isSoldOut,
             price: Number(values.price),
             optionGroups: selectedOptionGroups.map((item) =>
               Number(item)
@@ -236,7 +264,7 @@ const FoodUpdate = () => {
           );
         }
       };
-      if (selectedOperatingSlots.length === 0 && isAvailable) {
+      if (selectedOperatingSlots.length === 0 && status == 1) {
         Alert.alert(
           "Vui lòng chọn khung giờ",
           "Để mở bán, bạn cần chọn ít nhất 1 khung giờ cho món",
@@ -252,7 +280,8 @@ const FoodUpdate = () => {
             {
               text: "Tạm tắt món",
               onPress: () => {
-                setIsAvailable(false);
+                setStatus(2);
+                setIsSoldOut(false);
                 toReturn = false;
                 submit();
               },
@@ -551,8 +580,14 @@ const FoodUpdate = () => {
           </View>
           <View className="flex-row items-center justify-start mt-2">
             <FormField
-              title={isAvailable ? "Mở bán" : "Tạm ẩn"}
-              otherStyleClasses="w-[132px]"
+              title={
+                isSoldOut
+                  ? "Tạm hết hàng"
+                  : status == 1
+                  ? "Đang mở bán"
+                  : "Đã tạm ẩn"
+              }
+              otherStyleClasses="w-[142px]"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
               // isRequired={true}
@@ -564,8 +599,8 @@ const FoodUpdate = () => {
             />
             <Switch
               color="#e95137"
-              value={isAvailable}
-              onValueChange={onToggleSwitch}
+              value={!isSoldOut && status == 1}
+              onValueChange={onStatusSwitch}
             />
           </View>
         </View>

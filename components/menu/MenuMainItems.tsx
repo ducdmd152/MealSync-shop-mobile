@@ -185,10 +185,13 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     return { ...category, foods: updatedFoods };
                   })
                 );
-                toast.show(`Tạm hết hàng cho ${food.name}!`, {
-                  type: "success",
-                  duration: 2000,
-                });
+                toast.show(
+                  `Tạm hết hàng cho ${food.name}, món sẽ tự động mở bán trở lại vào ngày mai!`,
+                  {
+                    type: "success",
+                    duration: 3000,
+                  }
+                );
 
                 // router.replace("/menu/option-group/link");
               } catch (error: any) {
