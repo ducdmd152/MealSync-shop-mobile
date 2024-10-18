@@ -54,8 +54,7 @@ const MenuMainItems = () => {
   >([]);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-  const { optionGroupModel: foodDetailModel, setFoodDetailModel } =
-    useModelState();
+  const { setFoodDetailModel, setShopCategoryModel } = useModelState();
   const { notFoundInfo, setNotFoundInfo } = usePathState();
 
   // const [categories, setCategories] = useState(initialCategories);
@@ -152,8 +151,31 @@ const MenuMainItems = () => {
             </View>
             <CustomButton
               title="Chỉnh sửa danh mục"
-              handlePress={() => {
-                router.push("/menu/category/update");
+              handlePress={async () => {
+                setNotFoundInfo(
+                  notFoundInfo.message,
+                  "/menu",
+                  notFoundInfo.linkDesc
+                );
+                try {
+                  const response = await apiClient.get<
+                    ValueResponse<ShopCategoryModel>
+                  >(`shop-owner/category/${item.id}`);
+                  setShopCategoryModel({ ...response.data.value });
+                  router.push("/menu/category/update");
+                  // console.log("Food Detail model: ", foodDetailModel);
+                } catch (error: any) {
+                  if (error.response && error.response.status === 404) {
+                    Alert.alert("Oops!", "Danh mục này không tồn tại!");
+                    refetch();
+                  } else {
+                    Alert.alert(
+                      "Oops!",
+                      error?.response?.data?.error?.message ||
+                        "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                    );
+                  }
+                }
               }}
               containerStyleClasses="bg-white border-gray-200 border-2 h-[26px] px-[8px]"
               textStyleClasses="text-gray-700 text-[10px] mt-[-3.5px] text-[#227B94]"

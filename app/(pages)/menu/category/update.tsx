@@ -1,15 +1,94 @@
-import { View, Text, Image } from "react-native";
-import React from "react";
+import { View, Text, Image, Alert } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import { CRUD } from "@/constants/operations";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import FormField from "@/components/custom/FormFieldCustom";
 import CustomButton from "@/components/custom/CustomButton";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import usePathState from "@/hooks/states/usePathState";
+import useModelState from "@/hooks/states/useModelState";
+import apiClient from "@/services/api-services/api-client";
+import ValueResponse from "@/types/responses/ValueReponse";
+import FoodDetailModel from "@/types/models/FoodDetailModel";
+import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
 
 const CategoryUpdate = () => {
-  const categoryId = usePathState((state) => state.categoryId);
+  const shopCategoryModel = useModelState((state) => state.shopCategoryModel);
+  const [categoryName, setCategoryName] = useState(shopCategoryModel.name);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setFoodDetailModel, setShopCategoryModel } = useModelState();
+  const { notFoundInfo, setNotFoundInfo } = usePathState();
+  const isFirstTime = useRef(true);
+  const refetch = async () => {
+    console.log("refetching...");
+    try {
+      const response = await apiClient.get<ValueResponse<ShopCategoryModel>>(
+        `shop-owner/category/${shopCategoryModel.id}`
+      );
+      setShopCategoryModel({ ...response.data.value });
+    } catch (error: any) {
+      if (error.response && error.response.status === 404) {
+        Alert.alert("Oops!", "Danh mục này không còn tồn tại!");
+        router.replace("/menu");
+      } else {
+        Alert.alert(
+          "Oops!",
+          error?.response?.data?.error?.message ||
+            "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+        );
+      }
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isFirstTime.current) isFirstTime.current = false;
+      else refetch();
+    }, [])
+  );
+  useEffect(() => {
+    setCategoryName(shopCategoryModel.name);
+  }, [shopCategoryModel]);
+
+  const handleUpdateCategory = async () => {
+    if (!categoryName.trim()) {
+      Alert.alert("Lỗi nhập liệu", "Vui lòng nhập tên danh mục");
+      return;
+    }
+
+    const data = {
+      ...shopCategoryModel,
+      name: categoryName,
+    };
+
+    try {
+      setIsSubmitting(true);
+      const response = await apiClient.put(
+        "shop-owner/category/" + shopCategoryModel.id,
+        data
+      );
+      const { value, isSuccess, error } = response.data;
+
+      if (isSuccess) {
+        Alert.alert("Thành công", `Danh mục "${value.name}" đã cập nhật thêm!`);
+        router.replace("/menu");
+      } else {
+        Alert.alert(
+          "Thông báo",
+          error.message || "Có lỗi xảy ra khi thêm danh mục!"
+        );
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Lỗi",
+        error?.response?.data?.error?.message ||
+          "Hệ thống đang bảo trì, vui lòng thử lại sau."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <PageLayoutWrapper isScroll={false}>
@@ -17,77 +96,92 @@ const CategoryUpdate = () => {
         <View>
           <FormField
             title="Tên danh mục"
-            value=""
+            value={categoryName}
             placeholder="Nhập tên danh mục..."
-            handleChangeText={(text) => {}}
+            handleChangeText={(text) => setCategoryName(text)}
             otherStyleClasses=""
             otherInputStyleClasses="border-gray-300 h-14"
           />
           <Text className="text-md text-gray-700 italic mt-3 pb-1">
-            10 sản phẩm thuộc danh mục này
+            {shopCategoryModel.foods?.length} sản phẩm thuộc danh mục này
           </Text>
           <ScrollView style={{ width: "100%", height: "60%" }}>
             <View className="gap-y-2 mt-2">
-              {Array.from({ length: 10 }, (_, j) => (
+              {shopCategoryModel.foods?.map((food) => (
                 <View
-                  key={j}
-                  className="p-2 bg-white border-2 border-gray-300 rounded-lg"
+                  key={food.id}
+                  className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
                 >
                   <View className="flex-row items-start justify-between gap-2">
                     <View className="flex-row justify-start items-start gap-2 flex-1">
                       <Image
                         source={{
-                          uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1200px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg",
+                          uri:
+                            food.imageUrl || "https://via.placeholder.com/40", // Fallback image
                         }}
                         resizeMode="cover"
                         className="h-[36px] w-[40px] rounded-md opacity-85"
                       />
                       <View className="flex-1">
                         <Text
-                          className="text-md font-psemibold mt-[-2px]"
+                          className="text-md font-psemibold mt-[-2px] text-gray-600"
                           numberOfLines={2}
                           ellipsizeMode="tail"
                         >
-                          {j === 0 ? "Cơm tấm Sài Gòn" : "Phở bò"}
+                          {food.name}
                         </Text>
                         <Text className="text-md italic text-gray-500 mt-[-2px]">
-                          {j === 0 ? "120.000đ" : "80.000đ"}
+                          {food.price?.toLocaleString()}đ
                         </Text>
                       </View>
                     </View>
 
-                    <View className="gap-2 items-end">
+                    <View className="flex-row gap-2 items-start">
                       <Text className="bg-blue-100 text-blue-800 text-[12.5px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                        Status
+                        {food.status == 1
+                          ? food.isSoldOut
+                            ? "Hết hàng"
+                            : "Còn hàng"
+                          : "Tạm ẩn"}
                       </Text>
-                      <TouchableOpacity
-                        onPress={() => {}}
-                        className=" bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px] bg-white border-0 py-2"
-                      >
-                        <Text className="text-[14px] text-white text-[#227B94] font-semibold">
-                          Chỉnh sửa
-                        </Text>
-                      </TouchableOpacity>
                     </View>
                   </View>
-                  <View className="flex-row justify-end items-center gap-2">
-                    {/* <Text className="text-gray-500 italic text-[12px]">
-                    100 đơn cần xử lí trong 2h tới
-                  </Text> */}
-                    {/* <TouchableOpacity
-                      onPress={() => {}}
-                      className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px] bg-white border-0"
+                  <View className="flex-row justify-between items-center gap-2 pt-2">
+                    <Text className="text-gray-500 italic text-[12px] text-secondary-200">
+                      100 đơn cần xử lí trong 2h tới
+                    </Text>
+                    <TouchableOpacity
+                      onPress={async () => {
+                        setNotFoundInfo(
+                          notFoundInfo.message,
+                          "/menu",
+                          notFoundInfo.linkDesc
+                        );
+                        try {
+                          const response = await apiClient.get<
+                            ValueResponse<FoodDetailModel>
+                          >(`shop-owner/food/${food.id}/detail`);
+                          setFoodDetailModel({ ...response.data.value });
+                          router.push("/menu/food/update");
+                          // console.log("Food Detail model: ", foodDetailModel);
+                        } catch (error: any) {
+                          if (error.response && error.response.status === 404) {
+                            Alert.alert("Oops!", "Món này không tồn tại!");
+                          } else {
+                            Alert.alert(
+                              "Oops!",
+                              error?.response?.data?.error?.message ||
+                                "Hệ thống đang bảo trì, vui lòng thử lại sau!"
+                            );
+                          }
+                        }
+                      }}
+                      className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                     >
-                      <Text className="text-[13.5px] text-white text-[#227B94] font-semibold">
+                      <Text className="text-[13.5px] text-white">
                         Chỉnh sửa
                       </Text>
-                    </TouchableOpacity> */}
-                    {/* <TouchableOpacity
-                            onPress={() => {}}
-                            className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                          >
-                            <Text className="text-[13.5px]">Chi tiết</Text>
-                          </TouchableOpacity> */}
+                    </TouchableOpacity>
                   </View>
                 </View>
               ))}
@@ -97,7 +191,8 @@ const CategoryUpdate = () => {
         <View className="items-center justify-center pt-1">
           <CustomButton
             title="Hoàn tất chỉnh sửa"
-            handlePress={() => {}}
+            isLoading={isSubmitting}
+            handlePress={() => handleUpdateCategory()}
             containerStyleClasses="w-full h-[52px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
             // iconLeft={
             //   <Ionicons name="add-circle-outline" size={21} color="white" />

@@ -19,6 +19,7 @@ interface CustomButtonProps {
   iconRight?: ReactNode;
   isLoading?: boolean;
   isDisabled?: boolean;
+  flexibleComponent?: ReactNode;
 }
 
 const CustomButton = ({
@@ -32,6 +33,7 @@ const CustomButton = ({
   iconRight,
   isLoading,
   isDisabled,
+  flexibleComponent,
 }: CustomButtonProps) => {
   return (
     <TouchableOpacity
@@ -61,6 +63,7 @@ const CustomButton = ({
           className="ml-2"
         />
       )}
+      {flexibleComponent}
     </TouchableOpacity>
   );
 };
