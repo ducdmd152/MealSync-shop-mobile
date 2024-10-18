@@ -76,7 +76,9 @@ const FoodUpdate = () => {
     foodDetailModel.platformCategoryId
   );
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
-    foodDetailModel.optionGroups.map((item) => item.id.toString())
+    (foodDetailModel.optionGroups || [])?.map((item) =>
+      item.optionGroupId.toString()
+    )
   );
   const [selectedOperatingSlots, setSelectedOperatingSlots] = useState<
     string[]
@@ -92,7 +94,9 @@ const FoodUpdate = () => {
     setSelectedShopCategory(foodDetailModel.shopCategoryId);
     setSelectedPlatformCategory(foodDetailModel.platformCategoryId);
     setSelectedOptionGroups(
-      foodDetailModel.optionGroups.map((item) => item.id.toString())
+      (foodDetailModel.optionGroups || [])?.map((item) =>
+        item.optionGroupId.toString()
+      )
     );
     setSelectedOperatingSlots(
       foodDetailModel.operatingSlots.map((item) => item.id.toString())

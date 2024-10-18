@@ -71,8 +71,8 @@ const CategoryUpdate = () => {
       const { value, isSuccess, error } = response.data;
 
       if (isSuccess) {
-        Alert.alert("Thành công", `Danh mục "${value.name}" đã cập nhật thêm!`);
-        router.replace("/menu");
+        Alert.alert("Thành công", `Danh mục "${value.name}" đã được cập nhật!`);
+        router.push("/menu");
       } else {
         Alert.alert(
           "Thông báo",
@@ -137,16 +137,51 @@ const CategoryUpdate = () => {
                     </View>
 
                     <View className="flex-row gap-2 items-start">
-                      <Text className="bg-blue-100 text-blue-800 text-[12.5px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                      {/* <Text className="bg-blue-100 text-blue-800 text-[12.5px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
                         {food.status == 1
                           ? food.isSoldOut
                             ? "Hết hàng"
                             : "Còn hàng"
                           : "Tạm ẩn"}
-                      </Text>
+                      </Text> */}
+                      <TouchableOpacity
+                        onPress={async () => {
+                          setNotFoundInfo(
+                            notFoundInfo.message,
+                            "/menu",
+                            notFoundInfo.linkDesc
+                          );
+                          try {
+                            const response = await apiClient.get<
+                              ValueResponse<FoodDetailModel>
+                            >(`shop-owner/food/${food.id}/detail`);
+                            setFoodDetailModel({ ...response.data.value });
+                            router.push("/menu/food/update");
+                            // console.log("Food Detail model: ", foodDetailModel);
+                          } catch (error: any) {
+                            if (
+                              error.response &&
+                              error.response.status === 404
+                            ) {
+                              Alert.alert("Oops!", "Món này không tồn tại!");
+                            } else {
+                              Alert.alert(
+                                "Oops!",
+                                error?.response?.data?.error?.message ||
+                                  "Hệ thống đang bảo trì, vui lòng thử lại sau!"
+                              );
+                            }
+                          }
+                        }}
+                        className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      >
+                        <Text className="text-[13.5px] text-white">
+                          Chỉnh sửa
+                        </Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
-                  <View className="flex-row justify-between items-center gap-2 pt-2">
+                  {/* <View className="flex-row justify-between items-center gap-2 pt-2">
                     <Text className="text-gray-500 italic text-[12px] text-secondary-200">
                       100 đơn cần xử lí trong 2h tới
                     </Text>
@@ -182,7 +217,7 @@ const CategoryUpdate = () => {
                         Chỉnh sửa
                       </Text>
                     </TouchableOpacity>
-                  </View>
+                  </View> */}
                 </View>
               ))}
             </View>

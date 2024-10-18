@@ -1,6 +1,9 @@
 import { OperatingSlotModel } from "./OperatingSlotModel";
 import OptionGroupModel from "./OptionGroupModel";
-
+export interface FoodOptionGroupModel {
+  optionGroupId: number;
+  displayOrder: number;
+}
 export default interface FoodDetailModel {
   id: number;
   platformCategoryId: number;
@@ -12,5 +15,5 @@ export default interface FoodDetailModel {
   status: number;
   isSoldOut: boolean;
   operatingSlots: OperatingSlotModel[];
-  optionGroups: OptionGroupModel[];
+  optionGroups?: FoodOptionGroupModel[];
 }
