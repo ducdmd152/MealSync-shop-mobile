@@ -105,6 +105,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   }, [categories]);
 
   const onChangeStatus = (food: FoodModel) => {
+    const oldTmpCategories = tmpCategories;
     if (food.isSoldOut || food.status == 2) {
       Alert.alert(`Xác nhận`, `Bạn có chắc chắn muốn mở bán ${food.name}?`, [
         {
@@ -112,13 +113,6 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
           onPress: async () => {
             setStatusingIdList([...statusingIdList, food.id]);
             try {
-              const response = await apiClient.put(
-                "shop-owner/food/" + food.id + "/status",
-                {
-                  status: 1,
-                  isSoldOut: false,
-                }
-              );
               setTmpCategories(
                 tmpCategories.map((category) => {
                   if (!category.foods) return category;
@@ -131,13 +125,22 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                   return { ...category, foods: updatedFoods };
                 })
               );
+              const response = await apiClient.put(
+                "shop-owner/food/" + food.id + "/status",
+                {
+                  status: 1,
+                  isSoldOut: false,
+                }
+              );
+
               toast.show(`Đã bật mở bán ${food.name}!`, {
-                type: "success",
+                type: "info",
                 duration: 2000,
               });
 
               // router.replace("/menu/option-group/link");
             } catch (error: any) {
+              setTmpCategories(oldTmpCategories);
               if (error.response && error.response.status === 500) {
                 Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
               } else
@@ -164,13 +167,6 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
             onPress: async () => {
               setStatusingIdList([...statusingIdList, food.id]);
               try {
-                const response = await apiClient.put(
-                  "shop-owner/food/" + food.id + "/status",
-                  {
-                    status: 1,
-                    isSoldOut: true,
-                  }
-                );
                 setTmpCategories(
                   tmpCategories.map((category) => {
                     if (!category.foods) return category;
@@ -185,16 +181,24 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     return { ...category, foods: updatedFoods };
                   })
                 );
+                const response = await apiClient.put(
+                  "shop-owner/food/" + food.id + "/status",
+                  {
+                    status: 1,
+                    isSoldOut: true,
+                  }
+                );
                 toast.show(
                   `Tạm hết hàng cho ${food.name}, món sẽ tự động mở bán trở lại vào ngày mai!`,
                   {
-                    type: "success",
+                    type: "info",
                     duration: 3000,
                   }
                 );
 
                 // router.replace("/menu/option-group/link");
               } catch (error: any) {
+                setTmpCategories(oldTmpCategories);
                 if (error.response && error.response.status === 500) {
                   Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
                 } else
@@ -214,13 +218,6 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
             onPress: async () => {
               setStatusingIdList([...statusingIdList, food.id]);
               try {
-                const response = await apiClient.put(
-                  "shop-owner/food/" + food.id + "/status",
-                  {
-                    status: 2,
-                    isSoldOut: false,
-                  }
-                );
                 setTmpCategories(
                   tmpCategories.map((category) => {
                     if (!category.foods) return category;
@@ -235,16 +232,24 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     return { ...category, foods: updatedFoods };
                   })
                 );
+                const response = await apiClient.put(
+                  "shop-owner/food/" + food.id + "/status",
+                  {
+                    status: 2,
+                    isSoldOut: false,
+                  }
+                );
                 toast.show(
                   `Tạm ẩn món ${food.name}, món sẽ được ẩn đến khi bạn mở bán trở lại!`,
                   {
-                    type: "success",
+                    type: "info",
                     duration: 2000,
                   }
                 );
 
                 // router.replace("/menu/option-group/link");
               } catch (error: any) {
+                setTmpCategories(oldTmpCategories);
                 if (error.response && error.response.status === 500) {
                   Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
                 } else
@@ -395,7 +400,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     <Switch
                       className={`scale-75 mt-1 mr-[-6px] ${
                         statusingIdList.some((id) => item.id == id)
-                          ? "opacity-70"
+                          ? "opacity-50"
                           : ""
                       }`}
                       disabled={statusingIdList.some((id) => item.id == id)}
