@@ -1,7 +1,19 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
-import { ActivityIndicator, Searchbar } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Searchbar,
+  TouchableRipple,
+} from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import PagingRequestQuery from "@/types/queries/PagingRequestQuery";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
@@ -16,6 +28,10 @@ import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import sessionService from "@/services/session-service";
 import { RefreshControl } from "react-native-gesture-handler";
+import { BottomSheet } from "@rneui/themed";
+import { BlurView } from "expo-blur";
+import DateTimePicker from "react-native-ui-datepicker";
+import dayjs from "dayjs";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -106,9 +122,13 @@ const filterStatuses = [
   },
 ];
 const Order = () => {
-  (async () => {
-    console.log(await sessionService.getAuthToken());
-  })();
+  // (async () => {
+  //   console.log(await sessionService.getAuthToken());
+  // })();
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isRangePickerVisible, setRangePickerVisibility] = useState(false);
+
   const [searchText, setSearchText] = useState("");
   const [isQueryChanging, setIsQueryChanging] = useState(true);
   const [query, setQuery] = useState<OrderFetchQuery>({
@@ -119,10 +139,10 @@ const Order = () => {
     pageSize: 100_000_000,
     startTime: 0,
     endTime: 2400,
-    intendedRecieveDate: "2024/10/18",
-    // intendedRecieveDate: new Date()
-    //   .toLocaleDateString("sv-SE")
-    //   .replace(/-/g, "/"),
+    // intendedRecieveDate: "2024/10/18",
+    intendedRecieveDate: new Date()
+      .toLocaleDateString("sv-SE")
+      .replace(/-/g, "/"),
   } as OrderFetchQuery);
 
   const {
@@ -172,7 +192,9 @@ const Order = () => {
           " - " +
           formatTime(query.endTime)
         }
-        handlePress={() => {}}
+        handlePress={() => {
+          setIsBottomSheetVisible(true);
+        }}
         containerStyleClasses="h-[32px] px-3 bg-transparent border-2 border-gray-200 absolute bottom-4 right-4 bg-secondary-100 font-psemibold z-10"
         iconLeft={<Ionicons name="filter-outline" size={21} color="white" />}
         textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
@@ -256,7 +278,7 @@ const Order = () => {
               >
                 <View className="flex-row items-center justify-between gap-2">
                   <View className="flex-row items-center">
-                    <Text className="text-[12px] font-psemibold bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-400 dark:text-dark-100">
+                    <Text className="text-[12px] font-psemibold bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
                       MS-{order.id}
                     </Text>
                   </View>
@@ -330,8 +352,170 @@ const Order = () => {
           </View>
         </ScrollView>
       </View>
+      <BottomSheet modalProps={{}} isVisible={isBottomSheetVisible}>
+        <View className="p-4 bg-white rounded-t-lg min-h-[120px]">
+          <TouchableOpacity
+            className="items-center"
+            onPress={() => setIsBottomSheetVisible(false)}
+          >
+            <Ionicons name="chevron-down-outline" size={24} color="gray" />
+          </TouchableOpacity>
+          <View className="flex-row gap-x-1 mt-7">
+            <View className="flex-col relative">
+              <Text className="text-gray-500  text-sm absolute top-[-8px] bg-white z-10 left-5">
+                Ngày
+              </Text>
+              <TouchableRipple
+                onPress={() => {
+                  setDatePickerVisibility(true);
+                }}
+                className="border-2 border-gray-300 p-2 rounded-md"
+              >
+                <View className="flex-row justify-between items-center">
+                  <Text className="text-black mx-2 text-lg">
+                    {formatDate(query.intendedRecieveDate)}
+                  </Text>
+                  <Ionicons name="create-outline" size={21} color="gray-600" />
+                </View>
+              </TouchableRipple>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isDatePickerVisible}
+                onRequestClose={() => setDatePickerVisibility(false)}
+              >
+                <BlurView
+                  intensity={50}
+                  style={styleTimePicker.modalBackground}
+                >
+                  <View style={styleTimePicker.modalContent}>
+                    <DateTimePicker
+                      minDate={dayjs("2024-01-01").toDate()}
+                      maxDate={new Date()}
+                      mode="single"
+                      locale="vi-VN"
+                      date={dayjs(query.intendedRecieveDate).toDate()}
+                      onChange={(params) => {
+                        if (params.date) {
+                          const formattedDate = dayjs(params.date).format(
+                            "YYYY/MM/DD"
+                          );
+                          setQuery({
+                            ...query,
+                            intendedRecieveDate: formattedDate,
+                          });
+                        }
+                        setDatePickerVisibility(false);
+                      }}
+                    />
+                  </View>
+                </BlurView>
+              </Modal>
+            </View>
+
+            <View className="flex-col flex-1 relative">
+              <Text className="text-gray-500  text-sm absolute top-[-8px] bg-white z-10 left-5">
+                Khoảng thời gian
+              </Text>
+              <TouchableRipple
+                onPress={() => {
+                  setRangePickerVisibility(true);
+                }}
+                className="border-2 border-gray-300 p-2 rounded-md"
+              >
+                <View className="flex-row justify-between items-center">
+                  <Text className="text-black mx-2 text-lg">
+                    {formatTime(query.startTime) +
+                      " - " +
+                      formatTime(query.endTime)}
+                  </Text>
+                  <Ionicons name="create-outline" size={21} color="gray-600" />
+                </View>
+              </TouchableRipple>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isRangePickerVisible}
+                onRequestClose={() => setRangePickerVisibility(false)}
+              >
+                <BlurView
+                  intensity={50}
+                  style={styleTimePicker.modalBackground}
+                >
+                  <View style={styleTimePicker.modalContent}>
+                    <Text>7:00-8:00</Text>
+                    {/* <DateTimePicker
+                      minDate={dayjs("2024-01-01").toDate()}
+                      maxDate={new Date()}
+                      mode="single"
+                      locale="vi-VN"
+                      date={dayjs(query.intendedRecieveDate).toDate()}
+                      onChange={(params) => {
+                        if (params.date) {
+                          const formattedDate = dayjs(params.date).format(
+                            "YYYY/MM/DD"
+                          );
+                          setQuery({
+                            ...query,
+                            intendedRecieveDate: formattedDate,
+                          });
+                        }
+                        setRangePickerVisibility(false);
+                      }}
+                    /> */}
+                  </View>
+                </BlurView>
+              </Modal>
+            </View>
+          </View>
+          <CustomButton
+            title="Hoàn tất"
+            handlePress={() => {
+              setIsBottomSheetVisible(false);
+            }}
+            containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-primary font-psemibold z-10"
+            // iconLeft={
+            //   <Ionicons name="filter-outline" size={21} color="white" />
+            // }
+            textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+          />
+        </View>
+      </BottomSheet>
     </View>
   );
 };
 
 export default Order;
+
+const styleTimePicker = StyleSheet.create({
+  drawerText: {
+    color: "white",
+    backgroundColor: "#DF4830",
+  },
+  datePickerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 10,
+  },
+  datePickerButton: {
+    backgroundColor: "#065b1a",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  datePickerText: {
+    color: "white",
+    fontSize: 16,
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+});
