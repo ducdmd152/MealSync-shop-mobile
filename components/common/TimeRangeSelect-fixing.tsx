@@ -77,29 +77,34 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
     index: number,
     isAutoFixEndTime: boolean = true
   ) => {
-    if (isOperatingSlotsLoading || frames.length == 0) return;
-    console.log(index);
+    if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
-    refStart.current && refStart.current.scrollToTargetIndex(selectedIndex);
-    setSelectdStartIndex(selectedIndex);
+    if (selectedStartIndex == selectedIndex) return;
+    console.log("handle start: ", selectedStartIndex, selectedIndex);
     setStartTime(frames[selectedIndex].startTime);
-
-    if (isAutoFixEndTime) handleEndTimeChange(selectedStartIndex);
+    refStart.current && refStart.current.scrollToTargetIndex(selectedIndex);
+    // index handling
+    setSelectdStartIndex(selectedIndex);
+    if (isAutoFixEndTime) handleEndTimeChange(selectedIndex, false);
   };
   const handleEndTimeChange = (
     index: number,
     isAutoFixStartTime: boolean = true
   ) => {
-    if (isOperatingSlotsLoading || frames.length == 0) return;
+    if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
-    refEnd.current && refEnd.current.scrollToTargetIndex(selectedIndex);
-    setSelectdEndIndex(selectedIndex);
+    if (selectedEndIndex == selectedIndex) return;
+    console.log("handle end: ", selectedStartIndex, selectedIndex);
     setEndTime(frames[selectedIndex].endTime);
+    refEnd.current && refEnd.current.scrollToTargetIndex(selectedIndex);
+
+    // index handling
+    setSelectdEndIndex(selectedIndex);
     if (isAutoFixStartTime) {
       if (
-        frames[selectedStartIndex].startTime >= frames[selectedEndIndex].endTime
+        frames[selectedStartIndex].startTime >= frames[selectedIndex].endTime
       ) {
-        handleStartTimeChange(selectedEndIndex);
+        handleStartTimeChange(selectedIndex, false);
       }
     }
   };
@@ -122,35 +127,38 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       operatingSlots?.value.map((item: OperatingSlotModel) => ({
         startTime: item.startTime,
         endTime: item.endTime,
-      })) || [{ startTime: 0, endTime: 2400 }]
+      })) || []
     )
   );
 
   const globalStateMapping = () => {
-    if (isOperatingSlotsLoading || frames.length == 0) return;
+    if (frames.length == 0) return;
     const foundStartIndex = frames.findIndex(
       (item) => item.startTime === startTime
     );
     handleStartTimeChange(foundStartIndex !== -1 ? foundStartIndex : 0, false);
 
     const foundEndIndex = frames.findIndex((item) => item.endTime === endTime);
-    handleEndTimeChange(foundEndIndex !== -1 ? foundEndIndex : 0);
+    handleEndTimeChange(foundEndIndex !== -1 ? foundEndIndex : 0, false);
   };
 
+  useEffect(() => {
+    //   setFrames(
+    //     convertToTimeFrames(
+    //       operatingSlots?.value.map((item: OperatingSlotModel) => ({
+    //         startTime: item.startTime,
+    //         endTime: item.endTime,
+    //       })) || [{ startTime: 0, endTime: 2400 }]
+    //     )
+    //   );
+  }, [operatingSlots?.value]);
   useFocusEffect(
     React.useCallback(() => {
-      setIsRefreshing(true);
-      setFrames(
-        convertToTimeFrames(
-          operatingSlots?.value.map((item: OperatingSlotModel) => ({
-            startTime: item.startTime,
-            endTime: item.endTime,
-          })) || [{ startTime: 0, endTime: 2400 }]
-        )
-      );
+      //   setIsRefreshing(true);
+
       globalStateMapping();
       setTimeout(() => {
-        setIsRefreshing(false);
+        // setIsRefreshing(false);
       }, 0);
     }, [operatingSlots])
   );
@@ -180,29 +188,29 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       <View className="h-[120] flex-row">
         <View className="flex-1">
           <Text className="text-lg font-semibold text-center">Bắt đầu</Text>
-
-          <ScrollPicker
-            ref={refStart}
-            wrapperHeight={100}
-            dataSource={frames.map((range) => range.startTime)}
-            selectedIndex={selectedStartIndex}
-            renderItem={(item, index) => {
-              return (
-                <Text
-                  className={`text-lg text-gray-600 ${
-                    index == selectedStartIndex &&
-                    "font-semibold text-gray-800 "
-                  }`}
-                >
-                  {formatTime(item)}
-                </Text>
-              );
-            }}
-            onValueChange={(item, selectedIndex) => {
-              if (frames.length == 0) return;
-              handleStartTimeChange(selectedIndex);
-            }}
-          />
+          {isRefreshing || (
+            <ScrollPicker
+              ref={refStart}
+              wrapperHeight={100}
+              dataSource={frames.map((range) => range.startTime)}
+              selectedIndex={selectedStartIndex}
+              renderItem={(item, index) => {
+                return (
+                  <Text
+                    className={`text-lg text-gray-600 ${
+                      item == startTime && "font-semibold text-gray-800 "
+                    }`}
+                  >
+                    {formatTime(item)}
+                  </Text>
+                );
+              }}
+              onValueChange={(item, selectedIndex) => {
+                if (frames.length == 0) return;
+                handleStartTimeChange(selectedIndex);
+              }}
+            />
+          )}
         </View>
         <View className="flex-1">
           <Text className="text-lg font-semibold text-center">Kết thúc</Text>
@@ -216,8 +224,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
                 return (
                   <Text
                     className={`text-lg text-gray-600 ${
-                      index == selectedEndIndex &&
-                      "font-semibold text-gray-800 "
+                      item == endTime && "font-semibold text-gray-800 "
                     }`}
                   >
                     {formatTime(item)}

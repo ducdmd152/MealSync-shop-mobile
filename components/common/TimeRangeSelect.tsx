@@ -140,22 +140,22 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
   };
 
   useEffect(() => {
-    //   setFrames(
-    //     convertToTimeFrames(
-    //       operatingSlots?.value.map((item: OperatingSlotModel) => ({
-    //         startTime: item.startTime,
-    //         endTime: item.endTime,
-    //       })) || [{ startTime: 0, endTime: 2400 }]
-    //     )
-    //   );
+    setFrames(
+      convertToTimeFrames(
+        operatingSlots?.value.map((item: OperatingSlotModel) => ({
+          startTime: item.startTime,
+          endTime: item.endTime,
+        })) || [{ startTime: 0, endTime: 2400 }]
+      )
+    );
   }, [operatingSlots?.value]);
   useFocusEffect(
     React.useCallback(() => {
-      //   setIsRefreshing(true);
+      setIsRefreshing(true);
 
       globalStateMapping();
       setTimeout(() => {
-        // setIsRefreshing(false);
+        setIsRefreshing(false);
       }, 0);
     }, [operatingSlots])
   );

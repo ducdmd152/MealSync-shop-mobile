@@ -187,6 +187,11 @@ const Order = () => {
   // }, [orderFetchData, query]);
 
   useEffect(() => {
+    console.log(
+      "globalTimeRangeState.isEditing: ",
+      globalTimeRangeState.isEditing
+    );
+    if (globalTimeRangeState.isEditing) return;
     setQuery({
       ...query,
       startTime: globalTimeRangeState.startTime,
@@ -443,6 +448,7 @@ const Order = () => {
               </Text>
               <TouchableRipple
                 onPress={() => {
+                  globalTimeRangeState.setIsEditing(true);
                   setRangePickerVisibility(true);
                 }}
                 className="border-2 border-gray-300 p-2 rounded-md"
@@ -460,7 +466,10 @@ const Order = () => {
                 animationType="slide"
                 transparent={true}
                 visible={isRangePickerVisible}
-                onRequestClose={() => setRangePickerVisibility(false)}
+                onRequestClose={() => {
+                  setRangePickerVisibility(false);
+                  globalTimeRangeState.setIsEditing(false);
+                }}
               >
                 <BlurView
                   intensity={50}
@@ -472,6 +481,7 @@ const Order = () => {
                       title="Hoàn tất"
                       handlePress={() => {
                         setRangePickerVisibility(false);
+                        globalTimeRangeState.setIsEditing(false);
                       }}
                       containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
                       textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
