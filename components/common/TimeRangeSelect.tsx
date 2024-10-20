@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
@@ -60,9 +60,21 @@ const convertToTimeRanges = (timeRanges: TimeRange[]): TimeRange[] => {
   return result;
 };
 interface Props {
+  header?: ReactNode;
   containerStyleClasses?: string;
+  startTime?: number;
+  onStartTimeChange?: (time: number) => void;
+  endTime?: number;
+  onEndTimeChange?: (time: number) => void;
 }
-const TimeRangeSelect = ({ containerStyleClasses = "" }: Props) => {
+const TimeRangeSelect = ({
+  containerStyleClasses = "",
+  header,
+  startTime,
+  endTime,
+  onStartTimeChange,
+  onEndTimeChange,
+}: Props) => {
   const refStart = useRef<ScrollPickerHandle>(null);
   const refEnd = useRef<ScrollPickerHandle>(null);
   const [selectedStartIndex, setSelectdStartIndex] = useState(0);
@@ -92,6 +104,16 @@ const TimeRangeSelect = ({ containerStyleClasses = "" }: Props) => {
   //     timeRanges.map((range) => range.startTime)
   //   );
   useEffect(() => {
+    const foundStartIndex = timeRanges.findIndex(
+      (item) => item.startTime === startTime
+    );
+    setSelectdEndIndex(foundStartIndex !== -1 ? foundStartIndex : 0);
+    const foundEndIndex = timeRanges.findIndex(
+      (item) => item.endTime === endTime
+    );
+    setSelectdEndIndex(foundEndIndex !== -1 ? foundEndIndex : 0);
+  }, [operatingSlots]);
+  useEffect(() => {
     setSelectdEndIndex(selectedStartIndex);
     refEnd.current && refEnd.current.scrollToTargetIndex(selectedStartIndex);
   }, [selectedStartIndex]);
@@ -107,9 +129,11 @@ const TimeRangeSelect = ({ containerStyleClasses = "" }: Props) => {
   }, [selectedEndIndex]);
   return (
     <View className="w-full containerStyleClasses">
-      <Text className="text-md font-semibold text-center mb-4">
-        Vui lòng chọn khoảng thời gian
-      </Text>
+      {header || (
+        <Text className="text-md font-semibold text-center mb-4">
+          Vui lòng chọn khoảng thời gian
+        </Text>
+      )}
 
       <View className="h-[120] flex-row">
         <View className="flex-1">
@@ -139,6 +163,8 @@ const TimeRangeSelect = ({ containerStyleClasses = "" }: Props) => {
               } else {
                 setSelectdStartIndex(selectedIndex);
               }
+              onStartTimeChange &&
+                onStartTimeChange(timeRanges[selectedStartIndex].startTime);
             }}
           />
         </View>
@@ -168,6 +194,8 @@ const TimeRangeSelect = ({ containerStyleClasses = "" }: Props) => {
               } else {
                 setSelectdEndIndex(selectedIndex);
               }
+              onEndTimeChange &&
+                onEndTimeChange(timeRanges[selectedEndIndex].startTime);
             }}
           />
         </View>
