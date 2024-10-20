@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
+import ScrollPicker from "react-native-wheel-scrollview-picker";
 import {
   ActivityIndicator,
   Searchbar,
@@ -18,7 +19,9 @@ import { Ionicons } from "@expo/vector-icons";
 import PagingRequestQuery from "@/types/queries/PagingRequestQuery";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import FetchResponse from "@/types/responses/FetchResponse";
+import FetchResponse, {
+  FetchOnlyListResponse,
+} from "@/types/responses/FetchResponse";
 import OrderFetchModel, {
   getOrderStatusDescription,
   OrderStatus,
@@ -32,6 +35,9 @@ import { BottomSheet } from "@rneui/themed";
 import { BlurView } from "expo-blur";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+import { useFocusEffect } from "expo-router";
+import TimeRangeSelect from "@/components/common/TimeRangeSelect";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -121,6 +127,7 @@ const filterStatuses = [
     label: "Đơn hủy",
   },
 ];
+
 const Order = () => {
   // (async () => {
   //   console.log(await sessionService.getAuthToken());
@@ -443,26 +450,15 @@ const Order = () => {
                   style={styleTimePicker.modalBackground}
                 >
                   <View style={styleTimePicker.modalContent}>
-                    <Text>7:00-8:00</Text>
-                    {/* <DateTimePicker
-                      minDate={dayjs("2024-01-01").toDate()}
-                      maxDate={new Date()}
-                      mode="single"
-                      locale="vi-VN"
-                      date={dayjs(query.intendedRecieveDate).toDate()}
-                      onChange={(params) => {
-                        if (params.date) {
-                          const formattedDate = dayjs(params.date).format(
-                            "YYYY/MM/DD"
-                          );
-                          setQuery({
-                            ...query,
-                            intendedRecieveDate: formattedDate,
-                          });
-                        }
+                    <TimeRangeSelect />
+                    <CustomButton
+                      title="Hoàn tất"
+                      handlePress={() => {
                         setRangePickerVisibility(false);
                       }}
-                    /> */}
+                      containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+                      textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+                    />
                   </View>
                 </BlurView>
               </Modal>

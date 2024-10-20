@@ -61,6 +61,7 @@
     "react-native-ui-datepicker": "^2.0.4",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.10",
+    "react-native-wheel-scrollview-picker": "^2.0.6",
     "simple-zustand-devtools": "^1.1.0",
     "yup": "^1.4.0",
     "zustand": "^4.5.5"

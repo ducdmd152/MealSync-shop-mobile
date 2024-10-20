@@ -7,6 +7,7 @@ import { endpoints } from "../../services/api-services/api-service-instances";
 import useCounterState from "@/hooks/states/useCounterState";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import ScrollPicker from "react-native-wheel-scrollview-picker";
 
 let times = 0;
 
@@ -33,6 +34,15 @@ const Chatting = () => {
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollPicker
+        dataSource={["1", "2", "3", "4", "5", "6"]}
+        selectedIndex={1}
+        renderItem={(item, index) => {
+          return (
+            <Text className="h-[100px] text-md text-gray-600">{item}</Text>
+          );
+        }}
+      />
       <View style={{ alignItems: "center", marginBottom: 20 }}>
         <Text style={{ fontSize: 24, fontWeight: "bold" }}>
           Vite + React Native
