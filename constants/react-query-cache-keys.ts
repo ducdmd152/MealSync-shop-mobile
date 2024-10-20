@@ -5,6 +5,7 @@ const REACT_QUERY_CACHE_KEYS = {
   PLATFORM_CATEGORY_LIST: ["platform", "category", "list"],
   OPTION_GROUP_LIST: ["option", "group", "list"],
   OPERATING_SLOT_LIST: ["operating-slot", "list"],
+  ORDER_LIST: ["order", "list"],
 };
 
 export default REACT_QUERY_CACHE_KEYS;

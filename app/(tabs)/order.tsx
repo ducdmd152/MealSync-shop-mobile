@@ -1,11 +1,106 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
 import { Searchbar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import PagingRequestQuery from "@/types/queries/PagingRequestQuery";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import FetchResponse from "@/types/responses/FetchResponse";
+import OrderFetchModel, {
+  OrderStatus,
+  sampleOrderFetchList,
+} from "@/types/models/OrderFetchModel";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import sessionService from "@/services/session-service";
 
+interface OrderFetchQuery extends PagingRequestQuery {
+  status: number[];
+  id: string;
+  phoneNumber: string;
+  startTime?: number;
+  endTime?: number;
+  intendedRecieveDate?: string;
+}
+
+const filterStatuses = [
+  {
+    statuses: [0],
+    label: "Tất cả",
+  },
+  {
+    statuses: [OrderStatus.Pending],
+    label: "Chờ xác nhận",
+  },
+  {
+    statuses: [OrderStatus.Confirmed],
+    label: "Đã xác nhận",
+  },
+  {
+    statuses: [OrderStatus.Preparing],
+    label: "Đang chuẩn bị",
+  },
+  {
+    statuses: [OrderStatus.Delivering],
+    label: "Đang giao",
+  },
+  {
+    statuses: [OrderStatus.Delivered],
+    label: "Giao hàng thành công",
+  },
+  {
+    statuses: [OrderStatus.FailDelivery],
+    label: "Giao hàng thành công",
+  },
+  {
+    statuses: [OrderStatus.FailDelivery],
+    label: "Giao hàng thất bại",
+  },
+  {
+    statuses: [OrderStatus.IssueReported, OrderStatus.UnderReview],
+    label: "Đang báo cáo",
+  },
+  {
+    statuses: [OrderStatus.Completed, OrderStatus.Resolved],
+    label: "Hoàn tất",
+  },
+  {
+    statuses: [OrderStatus.Rejected],
+    label: "Đã từ chối",
+  },
+  {
+    statuses: [OrderStatus.Cancelled],
+    label: "Đơn hủy",
+  },
+];
 const Order = () => {
-  const [searchQuery, setSearchQuery] = React.useState("");
+  (async () => {
+    console.log(await sessionService.getAuthToken());
+  })();
+  const [searchText, setSearchText] = useState("");
+  const [query, setQuery] = useState<OrderFetchQuery>({
+    status: filterStatuses[0].statuses,
+    id: "",
+    phoneNumber: "",
+    pageIndex: 1,
+    pageSize: 100_000_000,
+  } as OrderFetchQuery);
+  const {
+    data: orderFetchData,
+    isLoading: isOrderFetchingLoading,
+    error: orderFetchError,
+    refetch: orderFetchRefetch,
+  } = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.ORDER_LIST,
+    (): Promise<FetchResponse<OrderFetchModel>> =>
+      apiClient.get(endpoints.ORDER_LIST).then((response) => response.data),
+    [query]
+  );
+  useEffect(() => {
+    console.log(orderFetchData);
+  }, [isOrderFetchingLoading]);
+
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
       <CustomButton
@@ -26,50 +121,40 @@ const Order = () => {
             }}
             inputStyle={{ minHeight: 0 }}
             placeholder="Nhập mã đơn hoặc số điện thoại..."
-            onChangeText={setSearchQuery}
-            value={searchQuery}
+            onChangeText={(e) => {
+              setQuery({ ...query, id: e, phoneNumber: e });
+              setSearchText(e);
+            }}
+            value={searchText}
           />
         </View>
         <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
           <View className="w-full flex-row gap-2 items-center justify-between pb-2">
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 bg-secondary">
-              Tất cả
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Chờ xác nhận
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Đã xác nhận
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Đã từ chối
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">Đơn hủy</Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Đang chuẩn bị
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">Đang giao</Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Giao hàng thành công
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Giao hàng thất bại
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Đang báo cáo
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">Hoàn tất</Text>
+            {filterStatuses.map((filter, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => setQuery({ ...query, status: filter.statuses })}
+              >
+                <Text
+                  className={`bg-gray-100 rounded-xl px-4 py-2 ${
+                    filter.statuses == query.status ? "bg-secondary" : ""
+                  }`}
+                >
+                  {filter.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </ScrollView>
         <ScrollView style={{ width: "100%", flexGrow: 1 }}>
           <View className="gap-y-2 pb-[154px]">
-            {Array.from({ length: 10 }, (_, i) => (
+            {sampleOrderFetchList.map((order) => (
               <View
-                key={i}
+                key={order.id}
                 className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
               >
                 <View className="flex-row items-center justify-between gap-2">
-                  <Text className="text-md font-psemibold">MS-150</Text>
+                  <Text className="text-md font-psemibold">MS-{order.id}</Text>
                   <View className="flex-row gap-2 items-start">
                     {/* <TouchableOpacity
                       onPress={() => {}}
@@ -86,26 +171,35 @@ const Order = () => {
                   <View className="flex-row justify-start items-center gap-2">
                     <Image
                       source={{
-                        uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1200px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg",
+                        uri: order.foods[0].imageUrl,
                       }}
                       resizeMode="cover"
                       className="h-[36px] w-[40px] rounded-md opacity-85"
                     />
                     <View className="">
                       <Text className="text-md italic text-gray-500">
-                        Cơm tấm sinh viên nhà Cám {" x2"}
+                        {order.foods[0].name}{" "}
+                        {order.foods[0].quantity > 1 &&
+                          " x" + order.foods[0].quantity}
                       </Text>
-                      <Text className="text-md italic text-gray-500">
-                        +2 sản phẩm khác
-                      </Text>
+                      {order.foods.length > 1 && (
+                        <Text className="text-md italic text-gray-500">
+                          +{order.foods.length - 1} sản phẩm khác
+                        </Text>
+                      )}
                     </View>
                   </View>
                   <View className="flex-row justify-between items-end gap-x-2 gap-y-1">
                     <Text className="text-[10px] italic text-gray-500">
-                      Duy Đức đã đặt vào 19:00 19/09/2024
+                      {order.customer.fullName} đã đặt vào{" "}
+                      {new Date(order.orderDate).toLocaleTimeString("vi-VN", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                      {new Date(order.orderDate).toLocaleDateString()}
                     </Text>
                     <Text className="text-md italic text-gray-500">
-                      120.000đ
+                      {order.totalPrice.toLocaleString("vi-VN")}đ
                     </Text>
                   </View>
                 </View>

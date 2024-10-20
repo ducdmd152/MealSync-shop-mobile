@@ -9,6 +9,7 @@ export const endpoints = {
   PLATFORM_CATEGORY_LIST: "platform-category",
   OPTION_GROUP_LIST: "shop-owner/option-group",
   OPERATING_SLOT_LIST: "shop-owner/operating-slot",
+  ORDER_LIST: "shop-owner/order",
 };
 
 export const testApiService = createHttpService<TestModel>(
