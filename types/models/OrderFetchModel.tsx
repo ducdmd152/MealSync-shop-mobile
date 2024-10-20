@@ -47,7 +47,7 @@ export const orderStatusDescMapping = [
   {
     value: OrderStatus.Pending,
     description: "Chờ xác nhận",
-    bgColor: "bg-yellow-300",
+    bgColor: "bg-yellow-400",
   },
   {
     value: OrderStatus.Rejected,
@@ -57,12 +57,12 @@ export const orderStatusDescMapping = [
   {
     value: OrderStatus.Confirmed,
     description: "Đã xác nhận",
-    bgColor: "bg-green-200",
+    bgColor: "bg-green-400",
   },
   {
     value: OrderStatus.Cancelled,
     description: "Đơn hủy",
-    bgColor: "bg-gray-200",
+    bgColor: "bg-gray-400",
   },
   {
     value: OrderStatus.Preparing,

@@ -15,6 +15,7 @@ import OrderFetchModel, {
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import sessionService from "@/services/session-service";
+import { RefreshControl } from "react-native-gesture-handler";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -22,6 +23,20 @@ const formatTime = (time: number): string => {
   const minutes = (time % 100).toString().padStart(2, "0");
   return `${hours}:${minutes}`;
 };
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString.replace(/\//g, "-"));
+  return date.toLocaleDateString("en-GB");
+};
+const areArraysEqual = (arr1: number[], arr2: number[]): boolean => {
+  if (arr1 == arr2) return true;
+  if (arr1.length !== arr2.length) return false;
+
+  const sortedArr1 = [...arr1].sort((a, b) => a - b);
+  const sortedArr2 = [...arr2].sort((a, b) => a - b);
+
+  return sortedArr1.every((value, index) => value === sortedArr2[index]);
+};
+
 interface OrderFetchQuery extends PagingRequestQuery {
   status: number[];
   id: string;
@@ -95,6 +110,7 @@ const Order = () => {
     console.log(await sessionService.getAuthToken());
   })();
   const [searchText, setSearchText] = useState("");
+  const [isQueryChanging, setIsQueryChanging] = useState(true);
   const [query, setQuery] = useState<OrderFetchQuery>({
     status: filterStatuses[0].statuses,
     id: "",
@@ -112,6 +128,7 @@ const Order = () => {
   const {
     data: orderFetchData,
     isLoading: isOrderFetchingLoading,
+    isRefetching: isOrderRefetching,
     error: orderFetchError,
     refetch: orderFetchRefetch,
   } = useFetchWithRQWithFetchFunc(
@@ -138,10 +155,23 @@ const Order = () => {
   //   console.log("RESPONSE: ", orderFetchData);
   // }, [orderFetchData, query]);
 
+  useEffect(() => {
+    setIsQueryChanging(true);
+    setTimeout(() => {
+      setIsQueryChanging(false);
+    }, 1000);
+  }, [query]);
+
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
       <CustomButton
-        title="09/10/2024 | 8:00-8:30"
+        title={
+          formatDate(query.intendedRecieveDate) +
+          " | " +
+          formatTime(query.startTime) +
+          " - " +
+          formatTime(query.endTime)
+        }
         handlePress={() => {}}
         containerStyleClasses="h-[32px] px-3 bg-transparent border-2 border-gray-200 absolute bottom-4 right-4 bg-secondary-100 font-psemibold z-10"
         iconLeft={<Ionicons name="filter-outline" size={21} color="white" />}
@@ -166,12 +196,6 @@ const Order = () => {
           />
         </View>
         <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
-          {isOrderFetchingLoading && (
-            <ActivityIndicator
-              animating={isOrderFetchingLoading}
-              color="#FCF450"
-            />
-          )}
           <View className="w-full flex-row gap-2 items-center justify-between pb-2">
             {filterStatuses.map((filter, index) => (
               <TouchableOpacity
@@ -180,7 +204,9 @@ const Order = () => {
               >
                 <Text
                   className={`bg-gray-100 rounded-xl px-4 py-2 ${
-                    filter.statuses == query.status ? "bg-secondary" : ""
+                    areArraysEqual(filter.statuses, query.status)
+                      ? "bg-secondary"
+                      : ""
                   }`}
                 >
                   {filter.label}
@@ -189,8 +215,40 @@ const Order = () => {
             ))}
           </View>
         </ScrollView>
-        <ScrollView style={{ width: "100%", flexGrow: 1 }}>
+        <ScrollView
+          style={{ width: "100%", flexGrow: 1 }}
+          refreshControl={
+            <RefreshControl
+              tintColor={"#FCF450"}
+              refreshing={isOrderRefetching && !isQueryChanging}
+              onRefresh={() => {
+                setQuery({
+                  status: filterStatuses[0].statuses,
+                  id: "",
+                  phoneNumber: "",
+                  pageIndex: 1,
+                  pageSize: 100_000_000,
+                  startTime: 0,
+                  endTime: 2400,
+                  intendedRecieveDate: "2024/10/18",
+                });
+                orderFetchRefetch();
+              }}
+            />
+          }
+        >
+          {isOrderFetchingLoading && (
+            <ActivityIndicator
+              animating={isOrderFetchingLoading}
+              color="#FCF450"
+            />
+          )}
           <View className="gap-y-2 pb-[154px]">
+            {!orderFetchData?.value.items.length && (
+              <Text className="text-gray-600 text-center pt-8">
+                Không có đơn hàng tương ứng.
+              </Text>
+            )}
             {orderFetchData?.value.items.map((order) => (
               <View
                 key={order.id}
