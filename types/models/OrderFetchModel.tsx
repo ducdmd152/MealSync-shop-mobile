@@ -43,7 +43,74 @@ export enum OrderStatus {
   UnderReview = 11,
   Resolved = 12,
 }
+export const orderStatusDescMapping = [
+  {
+    value: OrderStatus.Pending,
+    description: "Chờ xác nhận",
+    bgColor: "bg-yellow-300",
+  },
+  {
+    value: OrderStatus.Rejected,
+    description: "Đã từ chối",
+    bgColor: "bg-[#fecaca]",
+  },
+  {
+    value: OrderStatus.Confirmed,
+    description: "Đã xác nhận",
+    bgColor: "bg-green-200",
+  },
+  {
+    value: OrderStatus.Cancelled,
+    description: "Đơn hủy",
+    bgColor: "bg-gray-200",
+  },
+  {
+    value: OrderStatus.Preparing,
+    description: "Đang chuẩn bị",
+    bgColor: "bg-blue-200",
+  },
+  {
+    value: OrderStatus.Delivering,
+    description: "Đang giao",
+    bgColor: "bg-orange-200",
+  },
+  {
+    value: OrderStatus.Delivered,
+    description: "Giao thành công",
+    bgColor: "bg-green-300",
+  },
+  {
+    value: OrderStatus.FailDelivery,
+    description: "Giao thất bại",
+    bgColor: "bg-red-300",
+  },
+  {
+    value: OrderStatus.Completed,
+    description: "Hoàn tất",
+    bgColor: "bg-green-100",
+  },
+  {
+    value: OrderStatus.IssueReported,
+    description: "Đang báo cáo",
+    bgColor: "bg-yellow-100",
+  },
+  {
+    value: OrderStatus.UnderReview,
+    description: "Đang xem xét",
+    bgColor: "bg-purple-200",
+  },
+  {
+    value: OrderStatus.Resolved,
+    description: "Đã giải quyết",
+    bgColor: "bg-green-400",
+  },
+];
 
+export const getOrderStatusDescription = (
+  status: number
+): { value: number; description: string; bgColor: string } | undefined => {
+  return orderStatusDescMapping.find((item) => item.value === status);
+};
 export const sampleOrderFetchList: OrderFetchModel[] = [
   {
     id: 7,

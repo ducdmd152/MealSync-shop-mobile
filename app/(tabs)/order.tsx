@@ -8,6 +8,7 @@ import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetc
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import FetchResponse from "@/types/responses/FetchResponse";
 import OrderFetchModel, {
+  getOrderStatusDescription,
   OrderStatus,
   sampleOrderFetchList,
 } from "@/types/models/OrderFetchModel";
@@ -47,11 +48,7 @@ const filterStatuses = [
   },
   {
     statuses: [OrderStatus.Delivered],
-    label: "Giao hàng thành công",
-  },
-  {
-    statuses: [OrderStatus.FailDelivery],
-    label: "Giao hàng thành công",
+    label: "Giao thành công",
   },
   {
     statuses: [OrderStatus.FailDelivery],
@@ -162,8 +159,12 @@ const Order = () => {
                     >
                       <Text className="text-[13.5px]">Chi tiết</Text>
                     </TouchableOpacity> */}
-                    <Text className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                      Status
+                    <Text
+                      className={`text-sm font-medium me-2 px-2.5 py-0.5 rounded ${
+                        getOrderStatusDescription(order.status)?.bgColor
+                      } `}
+                    >
+                      {getOrderStatusDescription(order.status)?.description}
                     </Text>
                   </View>
                 </View>

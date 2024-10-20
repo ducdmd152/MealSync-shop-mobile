@@ -48,9 +48,9 @@ const OptionGroupCreate: React.FC = () => {
   const setOptionGroupModel = useModelState(
     (state) => state.setOptionGroupModel
   );
-  (async () => {
-    console.log(await sessionService.getAuthToken());
-  })();
+  // (async () => {
+  //   console.log(await sessionService.getAuthToken());
+  // })();
   const [isAvailable, setIsAvailable] = React.useState(true);
   const [formError, setFormError] = React.useState({
     title: "",
