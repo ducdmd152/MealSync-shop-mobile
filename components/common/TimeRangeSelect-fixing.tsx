@@ -77,31 +77,29 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
     index: number,
     isAutoFixEndTime: boolean = true
   ) => {
-    if (frames.length == 0) return;
+    if (isOperatingSlotsLoading || frames.length == 0) return;
+    console.log(index);
     const selectedIndex = index == frames.length ? index - 1 : index;
-    if (selectedStartIndex == selectedIndex) return;
-    console.log("handle start: ", selectedStartIndex, selectedIndex);
     refStart.current && refStart.current.scrollToTargetIndex(selectedIndex);
     setSelectdStartIndex(selectedIndex);
     setStartTime(frames[selectedIndex].startTime);
-    if (isAutoFixEndTime) handleEndTimeChange(selectedIndex, false);
+
+    if (isAutoFixEndTime) handleEndTimeChange(selectedStartIndex);
   };
   const handleEndTimeChange = (
     index: number,
     isAutoFixStartTime: boolean = true
   ) => {
-    if (frames.length == 0) return;
+    if (isOperatingSlotsLoading || frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
-    if (selectedEndIndex == selectedIndex) return;
-    console.log("handle end: ", selectedStartIndex, selectedIndex);
     refEnd.current && refEnd.current.scrollToTargetIndex(selectedIndex);
     setSelectdEndIndex(selectedIndex);
     setEndTime(frames[selectedIndex].endTime);
     if (isAutoFixStartTime) {
       if (
-        frames[selectedStartIndex].startTime >= frames[selectedIndex].endTime
+        frames[selectedStartIndex].startTime >= frames[selectedEndIndex].endTime
       ) {
-        handleStartTimeChange(selectedIndex, false);
+        handleStartTimeChange(selectedEndIndex);
       }
     }
   };
@@ -124,38 +122,35 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       operatingSlots?.value.map((item: OperatingSlotModel) => ({
         startTime: item.startTime,
         endTime: item.endTime,
-      })) || []
+      })) || [{ startTime: 0, endTime: 2400 }]
     )
   );
 
   const globalStateMapping = () => {
-    if (frames.length == 0) return;
+    if (isOperatingSlotsLoading || frames.length == 0) return;
     const foundStartIndex = frames.findIndex(
       (item) => item.startTime === startTime
     );
     handleStartTimeChange(foundStartIndex !== -1 ? foundStartIndex : 0, false);
 
     const foundEndIndex = frames.findIndex((item) => item.endTime === endTime);
-    handleEndTimeChange(foundEndIndex !== -1 ? foundEndIndex : 0, false);
+    handleEndTimeChange(foundEndIndex !== -1 ? foundEndIndex : 0);
   };
 
-  useEffect(() => {
-    //   setFrames(
-    //     convertToTimeFrames(
-    //       operatingSlots?.value.map((item: OperatingSlotModel) => ({
-    //         startTime: item.startTime,
-    //         endTime: item.endTime,
-    //       })) || [{ startTime: 0, endTime: 2400 }]
-    //     )
-    //   );
-  }, [operatingSlots?.value]);
   useFocusEffect(
     React.useCallback(() => {
-      //   setIsRefreshing(true);
-
+      setIsRefreshing(true);
+      setFrames(
+        convertToTimeFrames(
+          operatingSlots?.value.map((item: OperatingSlotModel) => ({
+            startTime: item.startTime,
+            endTime: item.endTime,
+          })) || [{ startTime: 0, endTime: 2400 }]
+        )
+      );
       globalStateMapping();
       setTimeout(() => {
-        // setIsRefreshing(false);
+        setIsRefreshing(false);
       }, 0);
     }, [operatingSlots])
   );
@@ -185,30 +180,29 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       <View className="h-[120] flex-row">
         <View className="flex-1">
           <Text className="text-lg font-semibold text-center">Bắt đầu</Text>
-          {isRefreshing || (
-            <ScrollPicker
-              ref={refStart}
-              wrapperHeight={100}
-              dataSource={frames.map((range) => range.startTime)}
-              selectedIndex={selectedStartIndex}
-              renderItem={(item, index) => {
-                return (
-                  <Text
-                    className={`text-lg text-gray-600 ${
-                      index == selectedStartIndex &&
-                      "font-semibold text-gray-800 "
-                    }`}
-                  >
-                    {formatTime(item)}
-                  </Text>
-                );
-              }}
-              onValueChange={(item, selectedIndex) => {
-                if (frames.length == 0) return;
-                handleStartTimeChange(selectedIndex);
-              }}
-            />
-          )}
+
+          <ScrollPicker
+            ref={refStart}
+            wrapperHeight={100}
+            dataSource={frames.map((range) => range.startTime)}
+            selectedIndex={selectedStartIndex}
+            renderItem={(item, index) => {
+              return (
+                <Text
+                  className={`text-lg text-gray-600 ${
+                    index == selectedStartIndex &&
+                    "font-semibold text-gray-800 "
+                  }`}
+                >
+                  {formatTime(item)}
+                </Text>
+              );
+            }}
+            onValueChange={(item, selectedIndex) => {
+              if (frames.length == 0) return;
+              handleStartTimeChange(selectedIndex);
+            }}
+          />
         </View>
         <View className="flex-1">
           <Text className="text-lg font-semibold text-center">Kết thúc</Text>

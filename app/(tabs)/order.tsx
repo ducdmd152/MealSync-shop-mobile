@@ -37,7 +37,10 @@ import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
 import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import { useFocusEffect } from "expo-router";
-import TimeRangeSelect from "@/components/common/TimeRangeSelect";
+import TimeRangeSelect, {
+  TimeRange,
+} from "@/components/common/TimeRangeSelect";
+import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -132,6 +135,7 @@ const Order = () => {
   // (async () => {
   //   console.log(await sessionService.getAuthToken());
   // })();
+  const globalTimeRangeState = useTimeRangeState();
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isRangePickerVisible, setRangePickerVisibility] = useState(false);
@@ -144,7 +148,7 @@ const Order = () => {
     phoneNumber: "",
     pageIndex: 1,
     pageSize: 100_000_000,
-    startTime: 0,
+    startTime: 100,
     endTime: 2400,
     // intendedRecieveDate: "2024/10/18",
     intendedRecieveDate: new Date()
@@ -183,10 +187,19 @@ const Order = () => {
   // }, [orderFetchData, query]);
 
   useEffect(() => {
+    setQuery({
+      ...query,
+      startTime: globalTimeRangeState.startTime,
+      endTime: globalTimeRangeState.endTime,
+    });
+  }, [globalTimeRangeState]);
+
+  useEffect(() => {
     setIsQueryChanging(true);
     setTimeout(() => {
       setIsQueryChanging(false);
     }, 1000);
+    // console.log("Query: ", query);
   }, [query]);
 
   return (
@@ -251,16 +264,16 @@ const Order = () => {
               tintColor={"#FCF450"}
               refreshing={isOrderRefetching && !isQueryChanging}
               onRefresh={() => {
-                setQuery({
-                  status: filterStatuses[0].statuses,
-                  id: "",
-                  phoneNumber: "",
-                  pageIndex: 1,
-                  pageSize: 100_000_000,
-                  startTime: 0,
-                  endTime: 2400,
-                  intendedRecieveDate: "2024/10/18",
-                });
+                // setQuery({
+                //   status: filterStatuses[0].statuses,
+                //   id: "",
+                //   phoneNumber: "",
+                //   pageIndex: 1,
+                //   pageSize: 100_000_000,
+                //   startTime: 0,
+                //   endTime: 2400,
+                //   intendedRecieveDate: "2024/10/18",
+                // });
                 orderFetchRefetch();
               }}
             />
@@ -411,6 +424,10 @@ const Order = () => {
                             ...query,
                             intendedRecieveDate: formattedDate,
                           });
+                          console.log(
+                            "intendedRecieveDate",
+                            query.intendedRecieveDate
+                          );
                         }
                         setDatePickerVisibility(false);
                       }}

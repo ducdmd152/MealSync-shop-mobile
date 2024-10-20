@@ -31,17 +31,24 @@ const Chatting = () => {
   useEffect(() => {
     console.log(fetch);
   }, [fetch.isLoading]);
-
+  const [selected, setSelected] = useState(0);
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
       <ScrollPicker
         dataSource={["1", "2", "3", "4", "5", "6"]}
-        selectedIndex={1}
+        selectedIndex={selected}
         renderItem={(item, index) => {
           return (
-            <Text className="h-[100px] text-md text-gray-600">{item}</Text>
+            <Text
+              className={`h-[100px] text-md text-gray-600 ${
+                index == selected ? "font-semibold text-blue-900" : ""
+              }`}
+            >
+              {item}
+            </Text>
           );
         }}
+        onValueChange={(value, index) => setSelected(index)}
       />
       <View style={{ alignItems: "center", marginBottom: 20 }}>
         <Text style={{ fontSize: 24, fontWeight: "bold" }}>
