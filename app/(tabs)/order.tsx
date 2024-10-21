@@ -339,7 +339,7 @@ const Order = () => {
               </Text>
             )}
             {orderFetchData?.value.items.map((order) => (
-              <View
+              <TouchableOpacity
                 key={order.id}
                 className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
               >
@@ -406,15 +406,59 @@ const Order = () => {
                     </Text>
                   </View>
                 </View>
-                <View className="flex-row justify-end mt-2">
-                  <TouchableOpacity
+                <View className="flex-row justify-end mt-2 gap-x-1">
+                  {order.status == OrderStatus.Pending && (
+                    <View className="flex-row items-center gap-x-1">
+                      <TouchableOpacity
+                        onPress={() => {}}
+                        className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      >
+                        <Text className="text-[13.5px]">Nhận đơn</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {}}
+                        className="bg-white border-[#fda4af] bg-[#fda4af] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      >
+                        <Text className="text-[13.2px]">Từ chối</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  {order.status == OrderStatus.Confirmed && (
+                    <View className="flex-row items-center gap-x-1">
+                      <TouchableOpacity
+                        onPress={() => {}}
+                        className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      >
+                        <Text className="text-[13.5px]">Chuẩn bị</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {}}
+                        className="bg-white border-[#d6d3d1] bg-[#d6d3d1] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      >
+                        <Text className="text-[13.2px]">Hủy</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  {order.status == OrderStatus.Preparing && (
+                    <View className="flex-row items-center gap-x-1">
+                      <TouchableOpacity
+                        onPress={() => {}}
+                        className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      >
+                        <Text className="text-[13.5px]">
+                          Tiến hành giao hàng
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  {/* <TouchableOpacity
                     onPress={() => {}}
-                    className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                    className="bg-white border-[#227B94] border-[1px] rounded-md items-center justify-center px-[6px] py-[0px]"
                   >
                     <Text className="text-[13.5px]">Chi tiết</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </ScrollView>
