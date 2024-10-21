@@ -142,14 +142,33 @@ const Order = () => {
 
   const [searchText, setSearchText] = useState("");
   const [isQueryChanging, setIsQueryChanging] = useState(true);
+  const {
+    data: operatingSlots,
+    isLoading: isOperatingSlotsLoading,
+    error: operatingSlotsError,
+    refetch: operatingSlotsRefetch,
+  } = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST.concat(["order-list"]),
+    (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
+      apiClient
+        .get(endpoints.OPERATING_SLOT_LIST)
+        .then((response) => response.data),
+    []
+  );
   const [query, setQuery] = useState<OrderFetchQuery>({
     status: filterStatuses[0].statuses,
     id: "",
     phoneNumber: "",
     pageIndex: 1,
     pageSize: 100_000_000,
-    startTime: 100,
-    endTime: 2400,
+    startTime:
+      operatingSlots?.value && operatingSlots?.value.length
+        ? operatingSlots.value[0].startTime
+        : 0,
+    endTime:
+      operatingSlots?.value && operatingSlots?.value.length
+        ? operatingSlots.value[operatingSlots.value.length - 1].endTime
+        : 2400,
     // intendedRecieveDate: "2024/10/18",
     intendedRecieveDate: new Date()
       .toLocaleDateString("sv-SE")
@@ -182,6 +201,29 @@ const Order = () => {
         .then((response) => response.data),
     [query]
   );
+  useEffect(() => {
+    setQuery({
+      ...query,
+      startTime:
+        operatingSlots?.value && operatingSlots?.value.length
+          ? operatingSlots.value[0].startTime
+          : 0,
+      endTime:
+        operatingSlots?.value && operatingSlots?.value.length
+          ? operatingSlots.value[operatingSlots.value.length - 1].endTime
+          : 2400,
+    });
+    console.log("fdsfsf ", {
+      startTime:
+        operatingSlots?.value && operatingSlots?.value.length
+          ? operatingSlots.value[0].startTime
+          : 0,
+      endTime:
+        operatingSlots?.value && operatingSlots?.value.length
+          ? operatingSlots.value[operatingSlots.value.length - 1].endTime
+          : 2400,
+    });
+  }, [operatingSlots]);
   // useEffect(() => {
   //   console.log("RESPONSE: ", orderFetchData);
   // }, [orderFetchData, query]);
@@ -322,7 +364,7 @@ const Order = () => {
                     <Text
                       className={`text-[12px] font-medium me-2 px-2.5 py-1 rounded ${
                         getOrderStatusDescription(order.status)?.bgColor
-                      } `}
+                      }`}
                     >
                       {getOrderStatusDescription(order.status)?.description}
                     </Text>

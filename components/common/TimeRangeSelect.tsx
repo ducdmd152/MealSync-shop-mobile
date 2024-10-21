@@ -79,7 +79,11 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
-    if (selectedStartIndex == selectedIndex) return;
+    if (
+      selectedStartIndex == selectedIndex &&
+      startTime == frames[selectedIndex].startTime
+    )
+      return;
     console.log("handle start: ", selectedStartIndex, selectedIndex);
     refStart.current && refStart.current.scrollToTargetIndex(selectedIndex);
     setSelectdStartIndex(selectedIndex);
@@ -92,7 +96,11 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
-    if (selectedEndIndex == selectedIndex) return;
+    if (
+      selectedEndIndex == selectedIndex &&
+      endTime == frames[selectedIndex].endTime
+    )
+      return;
     console.log("handle end: ", selectedStartIndex, selectedIndex);
     refEnd.current && refEnd.current.scrollToTargetIndex(selectedIndex);
     setSelectdEndIndex(selectedIndex);
@@ -112,7 +120,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
     error: operatingSlotsError,
     refetch: operatingSlotsRefetch,
   } = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST,
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST.concat(["order-range-select"]),
     (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
@@ -145,7 +153,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
         operatingSlots?.value.map((item: OperatingSlotModel) => ({
           startTime: item.startTime,
           endTime: item.endTime,
-        })) || [{ startTime: 0, endTime: 2400 }]
+        })) || []
       )
     );
   }, [operatingSlots?.value]);
