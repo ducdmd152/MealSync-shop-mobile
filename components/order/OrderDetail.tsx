@@ -65,7 +65,7 @@ const OrderDetail = ({
 
   return (
     <View
-      className={`items-center justify-center w-full bg-[#f4f4f5] py-2 ${containerStyleClasses}`}
+      className={`items-center justify-center w-full bg-[#f4f4f5] pt-2 ${containerStyleClasses}`}
     >
       {isLoading ? (
         <ActivityIndicator color="#FCF450" />
@@ -150,7 +150,7 @@ const OrderDetail = ({
                       </View>
                       <View>
                         <Text className="font-semibold">
-                          {formatPrice(detail.totalPrice)}đ
+                          {formatPrice(detail.totalPrice)}₫
                         </Text>
                       </View>
                     </View>
@@ -175,6 +175,32 @@ const OrderDetail = ({
                     </View>
                   </View>
                 ))}
+              </View>
+            </View>
+            <View className="mt-2 bg-white p-2">
+              <View className="py-2 gap-y-1">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-[14px] text-gray-700 ">
+                    Tổng tạm tính
+                  </Text>
+                  <Text className="text-[14px] text-gray-700 font-semibold">
+                    {formatPrice(order.totalPrice)} ₫
+                  </Text>
+                </View>
+                <View className="flex-row items-center justify-between ">
+                  <Text className="text-[14px] text-gray-700 ">Khuyến mãi</Text>
+                  <Text className="text-[14px] text-gray-700 font-semibold">
+                    {order.totalPromotion > 0 && "-"}
+                    {formatPrice(order.totalPromotion)} ₫
+                  </Text>
+                </View>
+              </View>
+              <View className="mt-1 border-gray-300 border-[0.3px]" />
+              <View className="py-2 flex-row items-center justify-between ">
+                <Text className="text-[14px] text-gray-700">Tổng tiền:</Text>
+                <Text className="text-[14px] text-gray-700 font-semibold">
+                  {formatPrice(order.totalPrice - order.totalPromotion)} ₫
+                </Text>
               </View>
             </View>
           </ScrollView>
