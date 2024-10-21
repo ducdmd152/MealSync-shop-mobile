@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   StyleSheet,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
@@ -41,6 +42,7 @@ import TimeRangeSelect, {
   TimeRange,
 } from "@/components/common/TimeRangeSelect";
 import useTimeRangeState from "@/hooks/states/useTimeRangeState";
+import OrderDetail from "@/components/order/OrderDetail";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -136,7 +138,13 @@ const Order = () => {
   //   console.log(await sessionService.getAuthToken());
   // })();
   const globalTimeRangeState = useTimeRangeState();
-  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const [isFilterBottomSheetVisible, setIsFilterBottomSheetVisible] =
+    useState(false);
+  const [isDetailBottomSheetVisible, setIsDetailBottomSheetVisible] =
+    useState(false);
+  const [detailBottomSheetDisplay, setDetailBottomSheetDisplay] =
+    useState(true);
+  const [orderDetailId, setOrderDetailId] = useState(0);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isRangePickerVisible, setRangePickerVisibility] = useState(false);
 
@@ -260,7 +268,7 @@ const Order = () => {
           formatTime(query.endTime)
         }
         handlePress={() => {
-          setIsBottomSheetVisible(true);
+          setIsFilterBottomSheetVisible(true);
         }}
         containerStyleClasses="h-[32px] px-3 bg-transparent border-2 border-gray-200 absolute bottom-4 right-4 bg-secondary-100 font-psemibold z-10"
         iconLeft={<Ionicons name="filter-outline" size={21} color="white" />}
@@ -341,6 +349,10 @@ const Order = () => {
             {orderFetchData?.value.items.map((order) => (
               <TouchableOpacity
                 key={order.id}
+                onPress={() => {
+                  setOrderDetailId(order.id);
+                  setIsDetailBottomSheetVisible(true);
+                }}
                 className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
               >
                 <View className="flex-row items-center justify-between gap-2">
@@ -463,11 +475,11 @@ const Order = () => {
           </View>
         </ScrollView>
       </View>
-      <BottomSheet modalProps={{}} isVisible={isBottomSheetVisible}>
+      <BottomSheet modalProps={{}} isVisible={isFilterBottomSheetVisible}>
         <View className="p-4 bg-white rounded-t-lg min-h-[120px]">
           <TouchableOpacity
             className="items-center"
-            onPress={() => setIsBottomSheetVisible(false)}
+            onPress={() => setIsFilterBottomSheetVisible(false)}
           >
             <Ionicons name="chevron-down-outline" size={24} color="gray" />
           </TouchableOpacity>
@@ -580,7 +592,7 @@ const Order = () => {
           <CustomButton
             title="Hoàn tất"
             handlePress={() => {
-              setIsBottomSheetVisible(false);
+              setIsFilterBottomSheetVisible(false);
             }}
             containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-primary font-psemibold z-10"
             // iconLeft={
@@ -589,6 +601,45 @@ const Order = () => {
             textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
           />
         </View>
+      </BottomSheet>
+      <BottomSheet modalProps={{}} isVisible={isDetailBottomSheetVisible}>
+        {detailBottomSheetDisplay && (
+          <View className={`p-4 bg-white rounded-t-lg min-h-[120px] `}>
+            <TouchableOpacity
+              className="items-center"
+              onPress={() => setIsDetailBottomSheetVisible(false)}
+            >
+              <Ionicons name="chevron-down-outline" size={24} color="gray" />
+            </TouchableOpacity>
+            <View className="flex-row gap-x-1 mt-7">
+              <OrderDetail
+                orderId={orderDetailId}
+                onNotFound={() => {
+                  setDetailBottomSheetDisplay(false);
+                  Alert.alert(
+                    `Đơn hàng MS-${orderDetailId} không tồn tại`,
+                    "Vui lòng thử lại!"
+                  );
+                  setTimeout(() => {
+                    setIsDetailBottomSheetVisible(false);
+                    setTimeout(() => setDetailBottomSheetDisplay(true), 1000);
+                  }, 1000);
+                }}
+              />
+            </View>
+            <View className="flex-row gap-x-2 items-center justify-between">
+              <CustomButton
+                title="Hoàn tất"
+                handlePress={() => {}}
+                containerStyleClasses="flex-1 mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-primary font-psemibold z-10"
+                // iconLeft={
+                //   <Ionicons name="filter-outline" size={21} color="white" />
+                // }
+                textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+              />
+            </View>
+          </View>
+        )}
       </BottomSheet>
     </View>
   );
