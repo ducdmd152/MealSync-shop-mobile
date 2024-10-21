@@ -86,6 +86,10 @@ const OrderDetail = ({
                   className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded ${
                     getOrderStatusDescription(order.status)?.bgColor
                   }`}
+                  style={{
+                    backgroundColor: getOrderStatusDescription(order.status)
+                      ?.bgColor,
+                  }}
                 >
                   {getOrderStatusDescription(order.status)?.description}
                 </Text>
@@ -197,8 +201,10 @@ const OrderDetail = ({
               </View>
               <View className="mt-1 border-gray-300 border-[0.3px]" />
               <View className="py-2 flex-row items-center justify-between ">
-                <Text className="text-[14px] text-gray-700">Tổng tiền:</Text>
-                <Text className="text-[14px] text-gray-700 font-semibold">
+                <Text className="text-[15px] text-gray-700 font-semibold">
+                  Tổng tiền:
+                </Text>
+                <Text className="text-[15px] text-gray-700 font-semibold">
                   {formatPrice(order.totalPrice - order.totalPromotion)} ₫
                 </Text>
               </View>

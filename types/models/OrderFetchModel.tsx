@@ -47,62 +47,63 @@ export const orderStatusDescMapping = [
   {
     value: OrderStatus.Pending,
     description: "Chờ xác nhận",
-    bgColor: "bg-yellow-300",
+    bgColor: "#fcd34d",
   },
   {
     value: OrderStatus.Rejected,
     description: "Đã từ chối",
-    bgColor: "bg-[#fecaca]",
+    bgColor: "#fecaca",
   },
   {
     value: OrderStatus.Confirmed,
     description: "Đã xác nhận",
-    bgColor: "bg-green-400",
+    bgColor: "#d9f99d",
   },
   {
     value: OrderStatus.Cancelled,
     description: "Đơn hủy",
-    bgColor: "bg-gray-400",
+    bgColor: "#f5f5f5",
   },
   {
     value: OrderStatus.Preparing,
     description: "Đang chuẩn bị",
-    bgColor: "bg-blue-200",
+    bgColor: "#a5f3fc",
   },
   {
     value: OrderStatus.Delivering,
     description: "Đang giao",
-    bgColor: "bg-orange-200",
+    bgColor: "#22d3ee",
   },
   {
     value: OrderStatus.Delivered,
     description: "Giao thành công",
-    bgColor: "bg-green-300",
+    bgColor: "#34d399",
   },
   {
     value: OrderStatus.FailDelivery,
     description: "Giao thất bại",
-    bgColor: "bg-red-300",
+    bgColor: "#f87171",
   },
   {
     value: OrderStatus.Completed,
     description: "Hoàn tất",
-    bgColor: "bg-green-100",
+    bgColor: "#0891b2",
   },
   {
     value: OrderStatus.IssueReported,
     description: "Đang báo cáo",
-    bgColor: "bg-yellow-100",
+    bgColor: "#fdba74",
   },
   {
     value: OrderStatus.UnderReview,
     description: "Đang xem xét",
-    bgColor: "bg-purple-200",
+    bgColor: "#f59e0b",
   },
   {
     value: OrderStatus.Resolved,
-    description: "Đã giải quyết",
-    bgColor: "bg-green-400",
+    description: "Hoàn tất",
+    // description: "Đã giải quyết",
+    bgColor: "#0891b2",
   },
 ];
 

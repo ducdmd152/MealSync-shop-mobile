@@ -379,6 +379,10 @@ const Order = () => {
                       className={`text-[12px] font-medium me-2 px-2.5 py-1 rounded ${
                         getOrderStatusDescription(order.status)?.bgColor
                       }`}
+                      style={{
+                        backgroundColor: getOrderStatusDescription(order.status)
+                          ?.bgColor,
+                      }}
                     >
                       {getOrderStatusDescription(order.status)?.description}
                     </Text>
