@@ -637,17 +637,6 @@ const Order = () => {
                 }}
               />
             </View>
-            <View className="flex-row gap-x-2 items-center justify-between">
-              <CustomButton
-                title="Hoàn tất"
-                handlePress={() => {}}
-                containerStyleClasses="flex-1 mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-primary font-psemibold z-10"
-                // iconLeft={
-                //   <Ionicons name="filter-outline" size={21} color="white" />
-                // }
-                textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
-              />
-            </View>
           </View>
         )}
       </BottomSheet>

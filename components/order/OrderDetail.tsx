@@ -4,7 +4,11 @@ import apiClient from "@/services/api-services/api-client";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
 import ValueResponse from "@/types/responses/ValueReponse";
 import { ActivityIndicator } from "react-native-paper";
-import { getOrderStatusDescription } from "@/types/models/OrderFetchModel";
+import {
+  getOrderStatusDescription,
+  OrderStatus,
+} from "@/types/models/OrderFetchModel";
+import CustomButton from "../custom/CustomButton";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -209,7 +213,83 @@ const OrderDetail = ({
                 </Text>
               </View>
             </View>
+
+            {/* <View className="mt-2 bg-white p-2">
+              <Text>Khu vực trạng thái giao hàng</Text>
+            </View>
+            <View className="mt-2 bg-white p-2">
+              <Text>Khu vực trạng thái báo cáo</Text>
+            </View> */}
           </ScrollView>
+          <View className="items-center justify-center">
+            {order.status == OrderStatus.Pending && (
+              <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white mr-[-8px]">
+                <CustomButton
+                  title="Nhận đơn"
+                  handlePress={() => {}}
+                  containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#7dd3fc] font-psemibold z-10"
+                  // iconLeft={
+                  //   <Ionicons name="filter-outline" size={21} color="white" />
+                  // }
+                  textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-800"
+                />
+                <CustomButton
+                  title="Từ chối"
+                  handlePress={() => {}}
+                  containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#fda4af] font-psemibold z-10 ml-1 "
+                  // iconLeft={
+                  //   <Ionicons name="filter-outline" size={21} color="white" />
+                  // }
+                  textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-700"
+                />
+              </View>
+            )}
+            {order.status == OrderStatus.Confirmed && (
+              <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white mr-[-8px]">
+                <CustomButton
+                  title="Chuẩn bị"
+                  handlePress={() => {}}
+                  containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#7dd3fc] font-psemibold z-10"
+                  textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-800"
+                />
+                <CustomButton
+                  title="Hủy"
+                  handlePress={() => {}}
+                  containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#d6d3d1] font-psemibold z-10 ml-1"
+                  textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-700"
+                />
+              </View>
+            )}
+            {order.status == OrderStatus.Preparing && (
+              <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white mr-[-8px]">
+                <CustomButton
+                  title="Tiến hành giao hàng"
+                  handlePress={() => {}}
+                  containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+                  textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-800"
+                />
+              </View>
+            )}
+            {order.status == OrderStatus.Delivering && (
+              <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white mr-[-8px]">
+                <CustomButton
+                  title="Giao thành công"
+                  handlePress={() => {}}
+                  containerStyleClasses="flex-1 h-[44px] px-4 bg-transparent border-0 border-gray-200 bg-[#4ade80] font-psemibold z-10"
+                  // iconLeft={
+                  //   <Ionicons name="filter-outline" size={21} color="white" />
+                  // }
+                  textStyleClasses="text-[13.5px] text-gray-900 ml-1 text-white text-gray-800"
+                />
+                <CustomButton
+                  title="Không thành công"
+                  handlePress={() => {}}
+                  containerStyleClasses="flex-1 h-[44px] px-4 bg-transparent border-0 border-gray-200 bg-[#fda4af] font-psemibold z-10 ml-1 "
+                  textStyleClasses="text-[13.5px] text-gray-900 ml-1 text-white text-gray-700"
+                />
+              </View>
+            )}
+          </View>
         </View>
       )}
     </View>
