@@ -611,7 +611,7 @@ const Order = () => {
             >
               <Ionicons name="chevron-down-outline" size={24} color="gray" />
             </TouchableOpacity>
-            <View className="flex-row gap-x-1 mt-7">
+            <View className="flex-row gap-x-1 mt-2">
               <OrderDetail
                 orderId={orderDetailId}
                 onNotFound={() => {
