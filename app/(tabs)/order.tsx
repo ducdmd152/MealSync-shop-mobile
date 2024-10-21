@@ -7,6 +7,7 @@ import {
   Modal,
   StyleSheet,
   Alert,
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
@@ -63,6 +64,7 @@ const areArraysEqual = (arr1: number[], arr2: number[]): boolean => {
 
   return sortedArr1.every((value, index) => value === sortedArr2[index]);
 };
+const detailBottomHeight = Dimensions.get("window").height - 92;
 
 interface OrderFetchQuery extends PagingRequestQuery {
   status: number[];
@@ -604,14 +606,17 @@ const Order = () => {
       </BottomSheet>
       <BottomSheet modalProps={{}} isVisible={isDetailBottomSheetVisible}>
         {detailBottomSheetDisplay && (
-          <View className={`p-4 bg-white rounded-t-lg min-h-[120px] `}>
+          <View
+            className={`p-4 bg-white rounded-t-lg min-h-[120px]`}
+            style={{ height: detailBottomHeight }}
+          >
             <TouchableOpacity
               className="items-center"
               onPress={() => setIsDetailBottomSheetVisible(false)}
             >
               <Ionicons name="chevron-down-outline" size={24} color="gray" />
             </TouchableOpacity>
-            <View className="flex-row gap-x-1 mt-2">
+            <View className="flex-1 mt-2">
               <OrderDetail
                 orderId={orderDetailId}
                 onNotFound={() => {

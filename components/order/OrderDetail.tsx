@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Dimensions, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import apiClient from "@/services/api-services/api-client";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
@@ -27,7 +27,13 @@ const formatDate = (dateString: string): string => {
   const date = new Date(dateString.replace(/\//g, "-"));
   return date.toLocaleDateString("en-GB");
 };
-
+const formatPrice = (value: number) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "decimal",
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+const windowHeight = Dimensions.get("window").height;
 interface Props {
   orderId: number;
   onNotFound?: () => void;
@@ -64,8 +70,8 @@ const OrderDetail = ({
       {isLoading ? (
         <ActivityIndicator color="#FCF450" />
       ) : (
-        <View className="w-full">
-          <View className="px-2 gap-y-3">
+        <View className="w-full h-full">
+          <View className="px-2 gap-y-3 pb-1">
             <View className="flex-row items-center justify-between">
               <Text className="text-[12.5px] text-gray-800 font-semibold mt-1">
                 Đơn hàng MS-{order.id}
@@ -86,8 +92,8 @@ const OrderDetail = ({
               </View>
             </View>
             <View>
-              <Text className="text-[10px] text-gray-500 italic">
-                {order.customer.fullName} đã đặt vào{" "}
+              <Text className="text-[10px] text-gray-500 italic text-right">
+                Được đặt vào{" "}
                 {new Date(order.orderDate).toLocaleTimeString("vi-VN", {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -96,42 +102,82 @@ const OrderDetail = ({
               </Text>
             </View>
           </View>
-          <View className="mt-3 bg-white p-2">
-            <Text className="text-[15px] text-gray-600 font-semibold">
-              Thông tin nhận hàng
-            </Text>
-            <View className="mt-3 border-gray-300 border-[0.5px]" />
-            <View className="py-2">
-              <Text className="text-[14px] text-gray-700 font-semibold">
-                {order.customer.fullName}
+          <ScrollView className="flex-1">
+            <View className="mt-2 bg-white p-2">
+              <Text className="text-[15px] text-gray-600 font-semibold">
+                Thông tin nhận hàng
               </Text>
-              <Text className="text-[14px] text-gray-700 font-semibold">
-                {maskPhoneNumber(order.customer.phoneNumber)}
-              </Text>
-              <Text className="text-[14px] text-gray-700 font-semibold italic">
-                {order.buildingName}
-              </Text>
+              <View className="mt-3 border-gray-300 border-[0.5px]" />
+              <View className="py-2">
+                <Text className="text-[14px] text-gray-700 font-semibold">
+                  {order.customer.fullName}
+                </Text>
+                <Text className="text-[14px] text-gray-700 font-semibold">
+                  {maskPhoneNumber(order.customer.phoneNumber)}
+                </Text>
+                <Text className="text-[14px] text-gray-700 font-semibold italic">
+                  {order.buildingName}
+                </Text>
+              </View>
+              <View className="mt-1 border-gray-300 border-[0.3px]" />
+              <View className="py-2 ">
+                <Text className="text-[14px] text-gray-700">
+                  Khung nhận hàng:
+                </Text>
+                <Text className="text-[14px] text-gray-700 font-semibold">
+                  {formatDate(order.intendedReceiveDate) +
+                    " | " +
+                    formatTime(order.startTime) +
+                    " - " +
+                    formatTime(order.endTime)}
+                </Text>
+              </View>
             </View>
-            <View className="mt-1 border-gray-300 border-[0.3px]" />
-            <View className="py-2 ">
-              <Text className="text-[14px] text-gray-700">
-                Khung nhận hàng:
+            <View className="mt-4 bg-white p-2">
+              <Text className="text-[15px] text-gray-600 font-semibold">
+                Chi tiết đơn hàng
               </Text>
-              <Text className="text-[14px] text-gray-700 font-semibold">
-                {formatDate(order.intendedReceiveDate) +
-                  " | " +
-                  formatTime(order.startTime) +
-                  " - " +
-                  formatTime(order.endTime)}
-              </Text>
+              <View className="mt-3 border-gray-300 border-[0.5px]" />
+              <View className="pt-4 gap-y-2">
+                {order.orderDetails.map((detail) => (
+                  <View>
+                    <View className="flex-row justify-between">
+                      <View className="flex-row gap-x-2">
+                        <Text className="font-semibold w-[28px]">
+                          x{detail.quantity}
+                        </Text>
+                        <Text className="font-semibold">{detail.name}</Text>
+                      </View>
+                      <View>
+                        <Text className="font-semibold">
+                          {formatPrice(detail.totalPrice)}đ
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View className="flex-row gap-x-2">
+                      <Text className="w-[28px]"></Text>
+                      {detail.optionGroups.map((option) => (
+                        <Text className="italic font-gray-500 text-[12px]">
+                          {option.optionGroupTitle}:{" "}
+                          {option.options
+                            .map((item) => item.optionTitle)
+                            .join(", ")}
+                          {" ; "}
+                        </Text>
+                      ))}
+                    </View>
+                    <View className="flex-row gap-x-2 mt-[2px]">
+                      <Text className="w-[28px]"></Text>
+                      <Text className="italic font-gray-500 text-[12px]">
+                        Ghi chú: ...
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
             </View>
-          </View>
-          <View className="mt-4 bg-white p-2">
-            <Text className="text-[15px] text-gray-600 font-semibold">
-              Chi tiết đơn hàng
-            </Text>
-            <View className="mt-3 border-gray-300 border-[0.5px]" />
-          </View>
+          </ScrollView>
         </View>
       )}
     </View>
