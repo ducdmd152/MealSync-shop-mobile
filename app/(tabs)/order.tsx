@@ -134,9 +134,9 @@ const filterStatuses = [
 ];
 
 const Order = () => {
-  // (async () => {
-  //   console.log(await sessionService.getAuthToken());
-  // })();
+  (async () => {
+    console.log(await sessionService.getAuthToken());
+  })();
   const globalTimeRangeState = useTimeRangeState();
   const [isFilterBottomSheetVisible, setIsFilterBottomSheetVisible] =
     useState(false);
@@ -620,6 +620,7 @@ const Order = () => {
                     `Đơn hàng MS-${orderDetailId} không tồn tại`,
                     "Vui lòng thử lại!"
                   );
+                  orderFetchRefetch();
                   setTimeout(() => {
                     setIsDetailBottomSheetVisible(false);
                     setTimeout(() => setDetailBottomSheetDisplay(true), 1000);
