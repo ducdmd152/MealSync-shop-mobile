@@ -44,6 +44,9 @@ import TimeRangeSelect, {
 } from "@/components/common/TimeRangeSelect";
 import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 import OrderDetail from "@/components/order/OrderDetail";
+import orderAPIService from "@/services/api-services/order-api-service";
+import { warning } from "framer-motion";
+import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -140,6 +143,7 @@ const Order = () => {
     console.log(await sessionService.getAuthToken());
   })();
   const globalTimeRangeState = useTimeRangeState();
+  const [cacheOrderList, setCacheOrderList] = useState<OrderFetchModel[]>([]);
   const [isFilterBottomSheetVisible, setIsFilterBottomSheetVisible] =
     useState(false);
   const [isDetailBottomSheetVisible, setIsDetailBottomSheetVisible] =
@@ -223,26 +227,22 @@ const Order = () => {
           ? operatingSlots.value[operatingSlots.value.length - 1].endTime
           : 2400,
     });
-    console.log("fdsfsf ", {
-      startTime:
-        operatingSlots?.value && operatingSlots?.value.length
-          ? operatingSlots.value[0].startTime
-          : 0,
-      endTime:
-        operatingSlots?.value && operatingSlots?.value.length
-          ? operatingSlots.value[operatingSlots.value.length - 1].endTime
-          : 2400,
-    });
+    // console.log("fdsfsf ", {
+    //   startTime:
+    //     operatingSlots?.value && operatingSlots?.value.length
+    //       ? operatingSlots.value[0].startTime
+    //       : 0,
+    //   endTime:
+    //     operatingSlots?.value && operatingSlots?.value.length
+    //       ? operatingSlots.value[operatingSlots.value.length - 1].endTime
+    //       : 2400,
+    // });
   }, [operatingSlots]);
-  // useEffect(() => {
-  //   console.log("RESPONSE: ", orderFetchData);
-  // }, [orderFetchData, query]);
+  useEffect(() => {
+    setCacheOrderList(orderFetchData?.value.items || []);
+  }, [orderFetchData]);
 
   useEffect(() => {
-    console.log(
-      "globalTimeRangeState.isEditing: ",
-      globalTimeRangeState.isEditing
-    );
     if (globalTimeRangeState.isEditing) return;
     setQuery({
       ...query,
@@ -258,6 +258,13 @@ const Order = () => {
     }, 1000);
     // console.log("Query: ", query);
   }, [query]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      orderFetchRefetch();
+      operatingSlotsRefetch();
+    }, [])
+  );
 
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
@@ -343,12 +350,12 @@ const Order = () => {
             />
           )}
           <View className="gap-y-2 pb-[154px]">
-            {!orderFetchData?.value.items.length && (
+            {!cacheOrderList.length && (
               <Text className="text-gray-600 text-center pt-8">
                 Không có đơn hàng tương ứng.
               </Text>
             )}
-            {orderFetchData?.value.items.map((order) => (
+            {cacheOrderList.map((order) => (
               <TouchableOpacity
                 key={order.id}
                 onPress={() => {
@@ -434,7 +441,50 @@ const Order = () => {
                         <Text className="text-[13.5px]">Nhận đơn</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => {}}
+                        onPress={() => {
+                          Alert.alert(
+                            "Xác nhận",
+                            `Bạn chắc chắc từ chối đơn hàng MS-${order.id} không?`,
+                            [
+                              {
+                                text: "Hủy",
+                                style: "cancel",
+                              },
+                              {
+                                text: "Đồng ý",
+                                onPress: async () => {
+                                  orderAPIService.reject(
+                                    order.id,
+                                    () => {
+                                      Alert.alert(
+                                        "Hoàn tất",
+                                        `Đã từ chối đơn hàng MS-${order.id}!`
+                                      );
+                                      setCacheOrderList(
+                                        cacheOrderList.map((item) =>
+                                          item.id != order.id
+                                            ? item
+                                            : {
+                                                ...order,
+                                                status: OrderStatus.Pending,
+                                              }
+                                        )
+                                      );
+                                    },
+                                    (warningInfo: WarningMessageValue) => {},
+                                    (error: any) => {
+                                      Alert.alert(
+                                        "Oops!",
+                                        error?.response?.data?.error?.message ||
+                                          "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                      );
+                                    }
+                                  );
+                                },
+                              },
+                            ]
+                          );
+                        }}
                         className="bg-white border-[#fda4af] bg-[#fda4af] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                       >
                         <Text className="text-[13.2px]">Từ chối</Text>

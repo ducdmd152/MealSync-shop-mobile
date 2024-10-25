@@ -50,6 +50,18 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="delivery-package"
+          options={{
+            title: "Giao hàng",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "cube" : "cube-outline"}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="menu"
           options={{
             title: "Thực đơn",
