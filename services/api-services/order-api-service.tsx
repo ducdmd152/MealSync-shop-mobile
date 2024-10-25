@@ -108,7 +108,7 @@ const orderAPIService = {
     setIsSubmitting: (isSubmitting: boolean) => void = (
       isSubmitting: boolean
     ) => {},
-    isWarning: boolean = false
+    isConfirmWarning: boolean = false
   ) => {
     try {
       setIsSubmitting(true);
@@ -116,7 +116,7 @@ const orderAPIService = {
         `shop-owner/order/${orderId}/cancel`,
         {
           reason: "no-comment",
-          isWarning,
+          isWarning: isConfirmWarning,
         }
       );
       const { value, isSuccess, isWarning, error } = response.data;
