@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 
 const useFetchWithRQWithFetchFunc = <Response,>(
   keyBase: any[],
   fetchFunc: () => Promise<Response>,
-  deps?: any[],
+  deps?: any[]
 ) => {
   const isFirstRender = useRef(true);
 
@@ -19,10 +19,11 @@ const useFetchWithRQWithFetchFunc = <Response,>(
       if (isFirstRender.current) {
         isFirstRender.current = false;
       } else {
+        // console.log("useFetchWithRQWithFetchFunc: refetching...;");
         query.refetch();
       }
     },
-    deps ? [...deps] : [],
+    deps ? [...deps] : []
   );
 
   return query;
