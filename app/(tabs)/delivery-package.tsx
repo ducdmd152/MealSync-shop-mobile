@@ -101,6 +101,9 @@ const DeliveryPackage = () => {
     if (globalTimeRangeState.isEditing) return;
     setQuery({
       ...query,
+      intendedRecieveDate: dayjs(globalTimeRangeState.date).format(
+        "YYYY/MM/DD"
+      ),
       startTime: globalTimeRangeState.startTime,
       endTime: globalTimeRangeState.endTime,
     });
@@ -166,20 +169,12 @@ const DeliveryPackage = () => {
                       }
                       mode="single"
                       locale="vi-VN"
-                      date={dayjs(query.intendedRecieveDate).toDate()}
+                      date={globalTimeRangeState.date}
                       onChange={(params) => {
                         if (params.date) {
-                          const formattedDate = dayjs(params.date).format(
-                            "YYYY/MM/DD"
+                          globalTimeRangeState.setDate(
+                            dayjs(params.date).toDate()
                           );
-                          setQuery({
-                            ...query,
-                            intendedRecieveDate: formattedDate,
-                          });
-                          // console.log(
-                          //   "intendedRecieveDate",
-                          //   query.intendedRecieveDate
-                          // );
                         }
                         setDatePickerVisibility(false);
                       }}

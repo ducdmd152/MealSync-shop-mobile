@@ -5,6 +5,8 @@ interface TimeRangeState {
   startTime: number;
   endTime: number;
   isEditing: boolean;
+  date: Date;
+  setDate: (date: Date) => void;
   setMinTime: (minTime: number) => void;
   setMaxTime: (maxTime: number) => void;
   setStartTime: (startTime: number) => void;
@@ -17,7 +19,12 @@ const useTimeRangeState = create<TimeRangeState>((set) => ({
   maxTime: 2400,
   startTime: 0,
   endTime: 2400,
+  date: new Date(),
   isEditing: false,
+  setDate: (date: Date) =>
+    set({
+      date: date,
+    }),
   setMinTime: (time: number) => set({ minTime: time, startTime: time }),
   setMaxTime: (time: number) => set({ maxTime: time, endTime: time }),
   setStartTime: (time: number) => set({ startTime: time }),
