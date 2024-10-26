@@ -125,6 +125,14 @@ const DeliveryPackage = () => {
         iconLeft={<Ionicons name="filter-outline" size={21} color="white" />}
         textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
       />
+      <View className="w-full gap-2">
+        <Text className="text-center font-bold text-[16px]">
+          Các khung đã được phân chia giao hàng
+        </Text>
+        <Text className="text-center text-gray-500 italic">
+          4 khung giờ đã được tạo gói vận chuyển
+        </Text>
+      </View>
       <BottomSheet modalProps={{}} isVisible={isFilterBottomSheetVisible}>
         <View className="p-4 bg-white rounded-t-lg min-h-[120px]">
           <TouchableOpacity
