@@ -216,6 +216,11 @@ const Order = () => {
         .then((response) => response.data),
     [query]
   );
+
+  useEffect(() => {
+    setCacheOrderList(orderFetchData?.value.items || []);
+    // console.log("New data", orderFetchData?.value.items);
+  }, [orderFetchData?.value.items]);
   useEffect(() => {
     if (
       !isOperatingSlotsLoading &&
