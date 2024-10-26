@@ -148,7 +148,7 @@ const OrderDetail = ({
               <View className="mt-3 border-gray-300 border-[0.5px]" />
               <View className="pt-4 gap-y-2">
                 {order.orderDetails.map((detail) => (
-                  <View>
+                  <View key={detail.id}>
                     <View className="flex-row justify-between">
                       <View className="flex-row gap-x-2">
                         <Text className="font-semibold w-[28px]">

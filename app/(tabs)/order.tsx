@@ -139,9 +139,9 @@ const filterStatuses = [
 ];
 
 const Order = () => {
-  (async () => {
-    console.log(await sessionService.getAuthToken());
-  })();
+  // (async () => {
+  //   console.log(await sessionService.getAuthToken());
+  // })();
   const globalTimeRangeState = useTimeRangeState();
   const [cacheOrderList, setCacheOrderList] = useState<OrderFetchModel[]>([]);
   const [isFilterBottomSheetVisible, setIsFilterBottomSheetVisible] =
@@ -161,8 +161,9 @@ const Order = () => {
     isLoading: isOperatingSlotsLoading,
     error: operatingSlotsError,
     refetch: operatingSlotsRefetch,
+    isRefetching: isOperatingSlotsRefetching,
   } = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST.concat(["order-list"]),
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST.concat(["order-list-page"]),
     (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
@@ -196,7 +197,7 @@ const Order = () => {
     error: orderFetchError,
     refetch: orderFetchRefetch,
   } = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.ORDER_LIST,
+    REACT_QUERY_CACHE_KEYS.ORDER_LIST.concat(["order-list-page"]),
     async (): Promise<FetchResponse<OrderFetchModel>> =>
       apiClient
         .get(
@@ -237,10 +238,10 @@ const Order = () => {
     //       ? operatingSlots.value[operatingSlots.value.length - 1].endTime
     //       : 2400,
     // });
-  }, [operatingSlots]);
+  }, [operatingSlots, isOperatingSlotsLoading, isOperatingSlotsRefetching]);
   useEffect(() => {
     setCacheOrderList(orderFetchData?.value.items || []);
-    console.log("New data", orderFetchData?.value.items);
+    // console.log("New data", orderFetchData?.value.items);
   }, [orderFetchData?.value.items]);
 
   useEffect(() => {
@@ -262,8 +263,8 @@ const Order = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      // orderFetchRefetch();
-      // operatingSlotsRefetch();
+      orderFetchRefetch();
+      operatingSlotsRefetch();
     }, [])
   );
 
@@ -761,10 +762,10 @@ const Order = () => {
                             ...query,
                             intendedRecieveDate: formattedDate,
                           });
-                          console.log(
-                            "intendedRecieveDate",
-                            query.intendedRecieveDate
-                          );
+                          // console.log(
+                          //   "intendedRecieveDate",
+                          //   query.intendedRecieveDate
+                          // );
                         }
                         setDatePickerVisibility(false);
                       }}
