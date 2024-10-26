@@ -15,6 +15,7 @@ export default interface OrderFetchModel {
   id: number;
   status: number;
   buildingId: number;
+  dormitoryId: number;
   buildingName: string;
   totalPromotion: number;
   totalPrice: number;
@@ -116,6 +117,7 @@ export const sampleOrderFetchList: OrderFetchModel[] = [
   {
     id: 7,
     status: OrderStatus.Pending,
+    dormitoryId: 1,
     buildingId: 1,
     buildingName: "Tòa A1 - Ký túc xá Khu A - Đại học Quốc gia TP.HCM",
     totalPromotion: 1000,
@@ -152,6 +154,7 @@ export const sampleOrderFetchList: OrderFetchModel[] = [
   {
     id: 8,
     status: OrderStatus.Rejected,
+    dormitoryId: 1,
     buildingId: 1,
     buildingName: "Tòa A1 - Ký túc xá Khu A - Đại học Quốc gia TP.HCM",
     totalPromotion: 1000,

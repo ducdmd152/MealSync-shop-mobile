@@ -417,13 +417,16 @@ const Order = () => {
                   </View>
                   <View className="flex-row justify-between items-end gap-x-2 gap-y-1">
                     <Text className="text-[10px] italic text-gray-500">
-                      {/* {order.dormId == 1 ? "Giao đến KTX khu A" : "Giao đến KTX khu B"} */}
-                      {order.customer.fullName} đã đặt vào{" "}
+                      {/* Được đặt vào{" "}
                       {new Date(order.orderDate).toLocaleTimeString("vi-VN", {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}{" "}
                       {new Date(order.orderDate).toLocaleDateString()}
+                      {"\n"} */}
+                      {order.dormitoryId == 1
+                        ? "Giao đến KTX khu A"
+                        : "Giao đến KTX khu B"}
                     </Text>
                     <Text className="text-md italic text-gray-500">
                       {order.totalPrice.toLocaleString("vi-VN")}đ

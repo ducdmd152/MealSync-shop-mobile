@@ -217,12 +217,12 @@ const OrderDetail = ({
               </View>
             </View>
 
-            {/* <View className="mt-2 bg-white p-2">
+            <View className="mt-2 bg-white p-2">
               <Text>Khu vực trạng thái giao hàng</Text>
             </View>
             <View className="mt-2 bg-white p-2">
               <Text>Khu vực trạng thái báo cáo</Text>
-            </View> */}
+            </View>
           </ScrollView>
           <View className="items-center justify-center">
             {order.status == OrderStatus.Pending && (
