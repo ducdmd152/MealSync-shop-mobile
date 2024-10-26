@@ -217,32 +217,21 @@ const Order = () => {
     [query]
   );
   useEffect(() => {
-    setQuery({
-      ...query,
-      startTime:
-        operatingSlots?.value && operatingSlots?.value.length
-          ? operatingSlots.value[0].startTime
-          : 0,
-      endTime:
-        operatingSlots?.value && operatingSlots?.value.length
-          ? operatingSlots.value[operatingSlots.value.length - 1].endTime
-          : 2400,
-    });
-    // console.log("fdsfsf ", {
-    //   startTime:
-    //     operatingSlots?.value && operatingSlots?.value.length
-    //       ? operatingSlots.value[0].startTime
-    //       : 0,
-    //   endTime:
-    //     operatingSlots?.value && operatingSlots?.value.length
-    //       ? operatingSlots.value[operatingSlots.value.length - 1].endTime
-    //       : 2400,
-    // });
+    if (
+      !isOperatingSlotsLoading &&
+      !isOperatingSlotsRefetching &&
+      operatingSlots?.value &&
+      operatingSlots?.value.length &&
+      (globalTimeRangeState.minTime != operatingSlots.value[0].startTime ||
+        globalTimeRangeState.maxTime !=
+          operatingSlots.value[operatingSlots.value.length - 1].endTime)
+    ) {
+      globalTimeRangeState.setMinTime(operatingSlots.value[0].startTime);
+      globalTimeRangeState.setMaxTime(
+        operatingSlots.value[operatingSlots.value.length - 1].endTime
+      );
+    }
   }, [operatingSlots, isOperatingSlotsLoading, isOperatingSlotsRefetching]);
-  useEffect(() => {
-    setCacheOrderList(orderFetchData?.value.items || []);
-    // console.log("New data", orderFetchData?.value.items);
-  }, [orderFetchData?.value.items]);
 
   useEffect(() => {
     if (globalTimeRangeState.isEditing) return;
@@ -800,7 +789,9 @@ const Order = () => {
                   <View style={styleTimePicker.modalContent}>
                     <DateTimePicker
                       minDate={dayjs("2024-01-01").toDate()}
-                      maxDate={new Date()}
+                      maxDate={
+                        new Date(new Date().setDate(new Date().getDate() + 1))
+                      }
                       mode="single"
                       locale="vi-VN"
                       date={dayjs(query.intendedRecieveDate).toDate()}
