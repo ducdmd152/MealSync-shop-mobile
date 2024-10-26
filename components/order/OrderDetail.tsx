@@ -166,7 +166,10 @@ const OrderDetail = ({
                     <View className="flex-row gap-x-2">
                       <Text className="w-[28px]"></Text>
                       {detail.optionGroups.map((option) => (
-                        <Text className="italic font-gray-500 text-[12px]">
+                        <Text
+                          className="italic font-gray-500 text-[12px]"
+                          key={detail.id + option.optionGroupTitle}
+                        >
                           {option.optionGroupTitle}:{" "}
                           {option.options
                             .map((item) => item.optionTitle)

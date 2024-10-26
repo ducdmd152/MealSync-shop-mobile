@@ -75,14 +75,16 @@ const orderAPIService = {
     onFailure: (error: any) => void,
     setIsSubmitting: (isSubmitting: boolean) => void = (
       isSubmitting: boolean
-    ) => {}
+    ) => {},
+    isConfirmWarning: boolean = false
   ) => {
     try {
       setIsSubmitting(true);
       const response = await apiClient.put(
-        `shop-owner/order/${orderId}/prepare`,
+        `shop-owner/order/${orderId}/preparing`,
         {
           reason: "no-comment",
+          isConfirm: isConfirmWarning,
         }
       );
       const { value, isSuccess, isWarning, error } = response.data;
@@ -116,7 +118,7 @@ const orderAPIService = {
         `shop-owner/order/${orderId}/cancel`,
         {
           reason: "no-comment",
-          isWarning: isConfirmWarning,
+          isConfirm: isConfirmWarning,
         }
       );
       const { value, isSuccess, isWarning, error } = response.data;

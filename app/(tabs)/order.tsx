@@ -421,6 +421,7 @@ const Order = () => {
                   </View>
                   <View className="flex-row justify-between items-end gap-x-2 gap-y-1">
                     <Text className="text-[10px] italic text-gray-500">
+                      {/* {order.dormId == 1 ? "Giao đến KTX khu A" : "Giao đến KTX khu B"} */}
                       {order.customer.fullName} đã đặt vào{" "}
                       {new Date(order.orderDate).toLocaleTimeString("vi-VN", {
                         hour: "2-digit",
@@ -564,14 +565,64 @@ const Order = () => {
                                         )
                                       );
                                     },
-                                    (warningInfo: WarningMessageValue) => {},
+                                    (warningInfo: WarningMessageValue) => {
+                                      Alert.alert(
+                                        "Xác nhận",
+                                        warningInfo.message,
+                                        [
+                                          {
+                                            text: "Đồng ý",
+                                            onPress: async () => {
+                                              orderAPIService.prepare(
+                                                order.id,
+                                                () => {
+                                                  Alert.alert(
+                                                    "Hoàn tất",
+                                                    `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
+                                                  );
+                                                  setCacheOrderList(
+                                                    cacheOrderList.map((item) =>
+                                                      item.id != order.id
+                                                        ? item
+                                                        : {
+                                                            ...order,
+                                                            status:
+                                                              OrderStatus.Preparing,
+                                                          }
+                                                    )
+                                                  );
+                                                },
+                                                (
+                                                  warningInfo: WarningMessageValue
+                                                ) => {},
+                                                (error: any) => {
+                                                  Alert.alert(
+                                                    "Oops!",
+                                                    error?.response?.data?.error
+                                                      ?.message ||
+                                                      "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                                  );
+                                                },
+                                                (isSubmitting: boolean) => {},
+                                                true
+                                              );
+                                            },
+                                          },
+                                          {
+                                            text: "Hủy",
+                                          },
+                                        ]
+                                      );
+                                    },
                                     (error: any) => {
                                       Alert.alert(
                                         "Oops!",
                                         error?.response?.data?.error?.message ||
                                           "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                                       );
-                                    }
+                                    },
+                                    (isSubmitting: boolean) => {},
+                                    false
                                   );
                                 },
                               },
@@ -592,11 +643,11 @@ const Order = () => {
                             `Bạn chắc chắn hủy đơn hàng MS-${order.id} không?`,
                             [
                               {
-                                text: "Hủy",
-                                style: "cancel",
+                                text: "Không",
+                                // style: "cancel",
                               },
                               {
-                                text: "Đồng ý",
+                                text: "Xác nhận hủy",
                                 onPress: async () => {
                                   orderAPIService.cancel(
                                     order.id,
@@ -623,11 +674,11 @@ const Order = () => {
                                           `Đơn hàng MS-${order.id} đã gần đến giờ đi giao (<=1h), bạn sẽ bị đánh cảnh cáo nếu tiếp tục hủy?`,
                                         [
                                           {
-                                            text: "Thoát",
-                                            style: "cancel",
+                                            text: "Không",
+                                            // style: "cancel",
                                           },
                                           {
-                                            text: "Đồng ý hủy",
+                                            text: "Xác nhận hủy",
                                             onPress: async () => {
                                               orderAPIService.cancel(
                                                 order.id,
