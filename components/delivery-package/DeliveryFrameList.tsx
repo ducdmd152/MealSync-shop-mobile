@@ -42,21 +42,34 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
           )} */}
           {Array.from({ length: 5 }).map((_, index) => (
             <TouchableOpacity className="p-3 drop-shadow-md rounded-lg shadow border-[0.5px] border-gray-200">
-              <View className="flex-row">
-                <Text className="font-psemibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
-                  {utilService.formatTime(600) +
-                    " - " +
-                    utilService.formatTime(630)}
-                </Text>
-                <Text className="ml-2 bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
-                  {utilService.formatDate("2024/10/28")}
-                </Text>
+              <View className="flex-row items-center justify-between gap-2">
+                <View className="flex-row items-center">
+                  <Text className="text-[12px] font-psemibold bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
+                    PKG-{123 + index}
+                  </Text>
+                </View>
+                <View className="flex-row">
+                  <Text className="font-psemibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
+                    {utilService.formatTime(600) +
+                      " - " +
+                      utilService.formatTime(630)}
+                  </Text>
+                  <Text className="ml-2 bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
+                    {utilService.formatDate("2024/10/28")}
+                  </Text>
+                </View>
               </View>
 
               <View key={index} className="gap-y-2 mt-2 ml-1">
-                <Text>Văn Hoàng - 12 đơn (4A, 5B)</Text>
-                <Text>Xuân Minh - 12 đơn (6A, 4B)</Text>
-                <Text>Xuân Minh - 12 đơn (7A, 5B)</Text>
+                <Text className="text-[12px] text-gray-800">
+                  Văn Hoàng - 12 đơn (4A, 5B)
+                </Text>
+                <Text className="text-[12px] text-gray-800">
+                  Xuân Minh - 12 đơn (6A, 4B)
+                </Text>
+                <Text className="text-[12px] text-gray-800">
+                  Xuân Minh - 12 đơn (7A, 5B)
+                </Text>
               </View>
             </TouchableOpacity>
           ))}
