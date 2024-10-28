@@ -30,6 +30,8 @@ import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
 import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 import TimeRangeSelect from "@/components/common/TimeRangeSelect";
+import DeliveryFrameList from "@/components/delivery-package/DeliveryFrameList";
+import MyDeliveryPackageList from "@/components/delivery-package/MyDeliveryPackageList";
 interface DeliveryPackageFetchQuery extends PagingRequestQuery {
   status: number[];
   id: string;
@@ -114,7 +116,7 @@ const DeliveryPackage = () => {
     (state) => state.deliveryPackageIndex
   );
   const setDeliveryPackageIndex = usePathState(
-    (state) => state.deliveryPackageIndex
+    (state) => state.setDeliveryPackageIndex
   );
   useEffect(() => {
     if (index != deliveryPackageIndex) setIndex(deliveryPackageIndex);
@@ -146,11 +148,13 @@ const DeliveryPackage = () => {
           />
         </View>
       </View>
-      {/* {index == 0 ? (
+      {index == 0 ? (
         <DeliveryFrameList beforeGo={() => setDeliveryPackageIndex(index)} />
       ) : (
-        <MyDeliveryPackageList beforeGo={() => setDeliveryPackageIndex(index)} />
-      )} */}
+        <MyDeliveryPackageList
+          beforeGo={() => setDeliveryPackageIndex(index)}
+        />
+      )}
     </View>
   );
 };
