@@ -294,9 +294,31 @@ const Order = () => {
             margin: 20,
           }}
         >
-          <Text className="font-semibold">
-            Chọn người đi giao cho đơn hàng MS-25
-          </Text>
+          <Text className="font-semibold">Giao đơn hàng MS-25</Text>
+          <Text className="italic mt-2">Khung giờ 6:30-7:00 | 26/10/2024</Text>
+          <Text className="italic mt-2">5 nhân viên đang hoạt động</Text>
+          <View className="mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md">
+            <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2"></View>
+            <Text className="font-semibold">
+              Bạn{" "}
+              <Text className="text-gray-700 text-[11px]">
+                (12 đơn chưa giao/hoàn thành)
+              </Text>
+            </Text>
+          </View>
+          <View className="">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <View className="mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md">
+                <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2"></View>
+                <Text className="font-semibold">
+                  Văn Tuấn{" "}
+                  <Text className="text-gray-700 text-[11px]">
+                    (12 đơn chưa giao/hoàn thành)
+                  </Text>
+                </Text>
+              </View>
+            ))}
+          </View>
           <CustomButton
             title="Hoàn tất"
             handlePress={() => {}}
