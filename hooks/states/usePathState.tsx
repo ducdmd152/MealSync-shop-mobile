@@ -2,6 +2,8 @@ import { Href } from "expo-router";
 import { create } from "zustand";
 
 interface PathState {
+  deliveryPackageIndex: number;
+  setDeliveryPackageIndex: (index: number) => void;
   menuSessionIndex: number;
   setMenuSessionIndex: (index: number) => void;
   categoryId: number;
@@ -17,6 +19,9 @@ interface PathState {
 const usePathState = create<PathState>((set) => ({
   menuSessionIndex: 0,
   setMenuSessionIndex: (index: number) => set({ menuSessionIndex: index }),
+  deliveryPackageIndex: 0,
+  setDeliveryPackageIndex: (index: number) =>
+    set({ deliveryPackageIndex: index }),
   categoryId: 0,
   notFoundInfo: {
     message: "Không tìm thấy trang tương ứng!",
