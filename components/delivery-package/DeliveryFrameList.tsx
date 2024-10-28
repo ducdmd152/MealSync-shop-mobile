@@ -3,18 +3,19 @@ import React from "react";
 import CustomButton from "../custom/CustomButton";
 import { ScrollView } from "react-native-gesture-handler";
 import utilService from "@/services/util-service";
+import { Ionicons } from "@expo/vector-icons";
 
 const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
   return (
-    <View className="w-full h-full bg-white text-black  relative">
-      <View className="absolute w-full items-center justify-center bottom-28 left-0 z-10">
+    <View className="w-full flex-1 bg-white text-black relative">
+      <View className="absolute w-full items-end justify-center bottom-12 right-2 z-10">
         <CustomButton
           title="Tạo mới"
           handlePress={() => {}}
-          containerStyleClasses="w-[98%] h-[50px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
-          // iconLeft={
-          //   <Ionicons name="add-circle-outline" size={21} color="white" />
-          // }
+          containerStyleClasses="h-[36px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
+          iconLeft={
+            <Ionicons name="add-circle-outline" size={21} color="white" />
+          }
           textStyleClasses="text-[15px] text-gray-900 ml-1 text-white"
         />
       </View>
@@ -35,7 +36,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
           /> */}
         </View>
 
-        <View className="gap-y-2 pb-[250px]">
+        <ScrollView className="gap-y-2 pb-[250px]">
           {/* {isLoading && (
             <ActivityIndicator animating={isLoading} color="#FCF450" />
           )} */}
@@ -59,7 +60,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
               </View>
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
       </View>
     </View>
   );

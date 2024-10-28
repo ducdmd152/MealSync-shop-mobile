@@ -122,7 +122,143 @@ const DeliveryPackage = () => {
     if (index != deliveryPackageIndex) setIndex(deliveryPackageIndex);
   }, [deliveryPackageIndex]);
   return (
-    <View className="bg-white">
+    <View className="w-full h-full bg-white text-black p-2 relative">
+      <CustomButton
+        title={
+          formatDate(query.intendedRecieveDate) +
+          " | " +
+          formatTime(query.startTime) +
+          " - " +
+          formatTime(query.endTime)
+        }
+        handlePress={() => {
+          setIsFilterBottomSheetVisible(true);
+        }}
+        containerStyleClasses="h-[32px] px-3 bg-transparent border-2 border-gray-200 absolute bottom-4 right-4 bg-secondary-100 font-psemibold z-10"
+        iconLeft={<Ionicons name="filter-outline" size={21} color="white" />}
+        textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
+      />
+      <BottomSheet modalProps={{}} isVisible={isFilterBottomSheetVisible}>
+        <View className="p-4 bg-white rounded-t-lg min-h-[120px]">
+          <TouchableOpacity
+            className="items-center"
+            onPress={() => setIsFilterBottomSheetVisible(false)}
+          >
+            <Ionicons name="chevron-down-outline" size={24} color="gray" />
+          </TouchableOpacity>
+          <View className="flex-row gap-x-1 mt-7">
+            <View className="flex-col relative">
+              <Text className="text-gray-500  text-sm absolute top-[-8px] bg-white z-10 left-5">
+                Ngày
+              </Text>
+              <TouchableRipple
+                onPress={() => {
+                  setDatePickerVisibility(true);
+                }}
+                className="border-2 border-gray-300 p-2 rounded-md"
+              >
+                <View className="flex-row justify-between items-center">
+                  <Text className="text-black mx-2 text-lg">
+                    {formatDate(query.intendedRecieveDate)}
+                  </Text>
+                  <Ionicons name="create-outline" size={21} color="gray-600" />
+                </View>
+              </TouchableRipple>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isDatePickerVisible}
+                onRequestClose={() => setDatePickerVisibility(false)}
+              >
+                <BlurView
+                  intensity={50}
+                  style={styleTimePicker.modalBackground}
+                >
+                  <View style={styleTimePicker.modalContent}>
+                    <DateTimePicker
+                      minDate={dayjs("2024-01-01").toDate()}
+                      maxDate={
+                        new Date(new Date().setDate(new Date().getDate() + 1))
+                      }
+                      mode="single"
+                      locale="vi-VN"
+                      date={globalTimeRangeState.date}
+                      onChange={(params) => {
+                        if (params.date) {
+                          globalTimeRangeState.setDate(
+                            dayjs(params.date).toDate()
+                          );
+                        }
+                        setDatePickerVisibility(false);
+                      }}
+                    />
+                  </View>
+                </BlurView>
+              </Modal>
+            </View>
+
+            <View className="flex-col flex-1 relative">
+              <Text className="text-gray-500  text-sm absolute top-[-8px] bg-white z-10 left-5">
+                Khoảng thời gian
+              </Text>
+              <TouchableRipple
+                onPress={() => {
+                  globalTimeRangeState.setIsEditing(true);
+                  setRangePickerVisibility(true);
+                }}
+                className="border-2 border-gray-300 p-2 rounded-md"
+              >
+                <View className="flex-row justify-between items-center">
+                  <Text className="text-black mx-2 text-lg">
+                    {formatTime(query.startTime) +
+                      " - " +
+                      formatTime(query.endTime)}
+                  </Text>
+                  <Ionicons name="create-outline" size={21} color="gray-600" />
+                </View>
+              </TouchableRipple>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isRangePickerVisible}
+                onRequestClose={() => {
+                  setRangePickerVisibility(false);
+                  globalTimeRangeState.setIsEditing(false);
+                }}
+              >
+                <BlurView
+                  intensity={50}
+                  style={styleTimePicker.modalBackground}
+                >
+                  <View style={styleTimePicker.modalContent}>
+                    <TimeRangeSelect />
+                    <CustomButton
+                      title="Hoàn tất"
+                      handlePress={() => {
+                        setRangePickerVisibility(false);
+                        globalTimeRangeState.setIsEditing(false);
+                      }}
+                      containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+                      textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+                    />
+                  </View>
+                </BlurView>
+              </Modal>
+            </View>
+          </View>
+          <CustomButton
+            title="Hoàn tất"
+            handlePress={() => {
+              setIsFilterBottomSheetVisible(false);
+            }}
+            containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-primary font-psemibold z-10"
+            // iconLeft={
+            //   <Ionicons name="filter-outline" size={21} color="white" />
+            // }
+            textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+          />
+        </View>
+      </BottomSheet>
       <View className="p-2 pb-0">
         <View className="flex-row items-center justify-center border-2 border-gray-200 rounded-md">
           <CustomButton
