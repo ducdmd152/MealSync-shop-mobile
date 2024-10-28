@@ -661,7 +661,7 @@ const Order = () => {
                                             ? item
                                             : {
                                                 ...order,
-                                                status: OrderStatus.Rejected,
+                                                status: OrderStatus.Cancelled,
                                               }
                                         )
                                       );
@@ -693,7 +693,7 @@ const Order = () => {
                                                         : {
                                                             ...order,
                                                             status:
-                                                              OrderStatus.Rejected,
+                                                              OrderStatus.Cancelled,
                                                           }
                                                     )
                                                   );

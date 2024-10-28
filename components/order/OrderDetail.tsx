@@ -1,4 +1,4 @@
-import { View, Text, Dimensions, ScrollView } from "react-native";
+import { View, Text, Dimensions, ScrollView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import apiClient from "@/services/api-services/api-client";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
@@ -9,6 +9,8 @@ import {
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
 import CustomButton from "../custom/CustomButton";
+import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import orderAPIService from "@/services/api-services/order-api-service";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -229,7 +231,43 @@ const OrderDetail = ({
               <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white mr-[-8px]">
                 <CustomButton
                   title="Nhận đơn"
-                  handlePress={() => {}}
+                  handlePress={() => {
+                    Alert.alert(
+                      "Xác nhận",
+                      `Xác nhận đơn hàng MS-${order.id}?`,
+                      [
+                        {
+                          text: "Đồng ý",
+                          onPress: async () => {
+                            orderAPIService.confirm(
+                              order.id,
+                              () => {
+                                Alert.alert(
+                                  "Hoàn tất",
+                                  `Đơn hàng MS-${order.id} đã được xác nhận!`
+                                );
+                                setOrder({
+                                  ...order,
+                                  status: OrderStatus.Confirmed,
+                                });
+                              },
+                              (warningInfo: WarningMessageValue) => {},
+                              (error: any) => {
+                                Alert.alert(
+                                  "Oops!",
+                                  error?.response?.data?.error?.message ||
+                                    "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                );
+                              }
+                            );
+                          },
+                        },
+                        {
+                          text: "Hủy",
+                        },
+                      ]
+                    );
+                  }}
                   containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#7dd3fc] font-psemibold z-10"
                   // iconLeft={
                   //   <Ionicons name="filter-outline" size={21} color="white" />
@@ -238,7 +276,44 @@ const OrderDetail = ({
                 />
                 <CustomButton
                   title="Từ chối"
-                  handlePress={() => {}}
+                  handlePress={() => {
+                    Alert.alert(
+                      "Xác nhận",
+                      `Bạn chắc chắn từ chối đơn hàng MS-${order.id} không?`,
+                      [
+                        {
+                          text: "Hủy",
+                          style: "cancel",
+                        },
+                        {
+                          text: "Đồng ý",
+                          onPress: async () => {
+                            orderAPIService.reject(
+                              order.id,
+                              () => {
+                                Alert.alert(
+                                  "Hoàn tất",
+                                  `Đã từ chối đơn hàng MS-${order.id}!`
+                                );
+                                setOrder({
+                                  ...order,
+                                  status: OrderStatus.Rejected,
+                                });
+                              },
+                              (warningInfo: WarningMessageValue) => {},
+                              (error: any) => {
+                                Alert.alert(
+                                  "Oops!",
+                                  error?.response?.data?.error?.message ||
+                                    "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                );
+                              }
+                            );
+                          },
+                        },
+                      ]
+                    );
+                  }}
                   containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#fda4af] font-psemibold z-10 ml-1 "
                   // iconLeft={
                   //   <Ionicons name="filter-outline" size={21} color="white" />
@@ -251,13 +326,168 @@ const OrderDetail = ({
               <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white mr-[-8px]">
                 <CustomButton
                   title="Chuẩn bị"
-                  handlePress={() => {}}
+                  handlePress={() => {
+                    Alert.alert(
+                      "Xác nhận",
+                      `Bắt đầu chuẩn bị đơn hàng MS-${order.id}?`,
+                      [
+                        {
+                          text: "Đồng ý",
+                          onPress: async () => {
+                            orderAPIService.prepare(
+                              order.id,
+                              () => {
+                                Alert.alert(
+                                  "Hoàn tất",
+                                  `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
+                                );
+                                setOrder({
+                                  ...order,
+                                  status: OrderStatus.Preparing,
+                                });
+                              },
+                              (warningInfo: WarningMessageValue) => {
+                                Alert.alert("Xác nhận", warningInfo.message, [
+                                  {
+                                    text: "Đồng ý",
+                                    onPress: async () => {
+                                      orderAPIService.prepare(
+                                        order.id,
+                                        () => {
+                                          Alert.alert(
+                                            "Hoàn tất",
+                                            `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
+                                          );
+                                          setOrder({
+                                            ...order,
+                                            status: OrderStatus.Preparing,
+                                          });
+                                        },
+                                        (
+                                          warningInfo: WarningMessageValue
+                                        ) => {},
+                                        (error: any) => {
+                                          Alert.alert(
+                                            "Oops!",
+                                            error?.response?.data?.error
+                                              ?.message ||
+                                              "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                          );
+                                        },
+                                        (isSubmitting: boolean) => {},
+                                        true
+                                      );
+                                    },
+                                  },
+                                  {
+                                    text: "Hủy",
+                                  },
+                                ]);
+                              },
+                              (error: any) => {
+                                Alert.alert(
+                                  "Oops!",
+                                  error?.response?.data?.error?.message ||
+                                    "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                );
+                              },
+                              (isSubmitting: boolean) => {},
+                              false
+                            );
+                          },
+                        },
+                        {
+                          text: "Hủy",
+                        },
+                      ]
+                    );
+                  }}
                   containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#7dd3fc] font-psemibold z-10"
                   textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-800"
                 />
                 <CustomButton
                   title="Hủy"
-                  handlePress={() => {}}
+                  handlePress={() => {
+                    Alert.alert(
+                      "Xác nhận",
+                      `Bạn chắc chắn hủy đơn hàng MS-${order.id} không?`,
+                      [
+                        {
+                          text: "Không",
+                          // style: "cancel",
+                        },
+                        {
+                          text: "Xác nhận hủy",
+                          onPress: async () => {
+                            orderAPIService.cancel(
+                              order.id,
+                              () => {
+                                Alert.alert(
+                                  "Hoàn tất",
+                                  `Đã hủy đơn hàng MS-${order.id}!`
+                                );
+                                setOrder({
+                                  ...order,
+                                  status: OrderStatus.Cancelled,
+                                });
+                              },
+                              (warningInfo: WarningMessageValue) => {
+                                Alert.alert(
+                                  "Xác nhận",
+                                  warningInfo?.message ||
+                                    `Đơn hàng MS-${order.id} đã gần đến giờ đi giao (<=1h), bạn sẽ bị đánh cảnh cáo nếu tiếp tục hủy?`,
+                                  [
+                                    {
+                                      text: "Không",
+                                      // style: "cancel",
+                                    },
+                                    {
+                                      text: "Xác nhận hủy",
+                                      onPress: async () => {
+                                        orderAPIService.cancel(
+                                          order.id,
+                                          () => {
+                                            Alert.alert(
+                                              "Hoàn tất",
+                                              `Đã hủy đơn hàng MS-${order.id}!`
+                                            );
+                                            setOrder({
+                                              ...order,
+                                              status: OrderStatus.Cancelled,
+                                            });
+                                          },
+                                          (
+                                            warningInfo: WarningMessageValue
+                                          ) => {},
+                                          (error: any) => {
+                                            Alert.alert(
+                                              "Oops!",
+                                              error?.response?.data?.error
+                                                ?.message ||
+                                                "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                            );
+                                          }
+                                        );
+                                      },
+                                    },
+                                  ]
+                                );
+                              },
+                              (error: any) => {
+                                Alert.alert(
+                                  "Oops!",
+                                  error?.response?.data?.error?.message ||
+                                    "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                );
+                              },
+                              (value: boolean) => {},
+                              true
+                            );
+                          },
+                        },
+                      ]
+                    );
+                  }}
                   containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#d6d3d1] font-psemibold z-10 ml-1"
                   textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-700"
                 />
