@@ -14,8 +14,10 @@ import CustomButton from "@/components/custom/CustomButton";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 import {
   ActivityIndicator,
+  Portal,
   Searchbar,
   TouchableRipple,
+  Modal as ModalPaper,
 } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import PagingRequestQuery from "@/types/queries/PagingRequestQuery";
@@ -153,6 +155,7 @@ const Order = () => {
   const [orderDetailId, setOrderDetailId] = useState(0);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isRangePickerVisible, setRangePickerVisibility] = useState(false);
+  const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
 
   const [searchText, setSearchText] = useState("");
   const [isQueryChanging, setIsQueryChanging] = useState(true);
@@ -263,7 +266,7 @@ const Order = () => {
       operatingSlotsRefetch();
     }, [])
   );
-
+  const containerStyle = { backgroundColor: "white", padding: 20 };
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
       <CustomButton
@@ -281,6 +284,28 @@ const Order = () => {
         iconLeft={<Ionicons name="filter-outline" size={21} color="white" />}
         textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
       />
+      <Portal>
+        <ModalPaper
+          visible={isOpenOrderAssign}
+          onDismiss={() => setIsOpenOrderAssign(false)}
+          contentContainerStyle={{
+            backgroundColor: "white",
+            padding: 20,
+            margin: 20,
+          }}
+        >
+          <Text className="font-semibold">
+            Chọn người đi giao cho đơn hàng MS-25
+          </Text>
+          <CustomButton
+            title="Hoàn tất"
+            handlePress={() => {}}
+            containerStyleClasses="mt-5 h-[36px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+            textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+          />
+        </ModalPaper>
+      </Portal>
+
       <View className="w-full gap-2">
         <View className="w-full">
           <Searchbar
@@ -740,102 +765,13 @@ const Order = () => {
                     <View className="flex-row items-center gap-x-1">
                       <TouchableOpacity
                         onPress={() => {
-                          Alert.alert(
-                            "Xác nhận",
-                            `Bắt đầu giao đơn hàng MS-${order.id}?`,
-                            [
-                              {
-                                text: "Đồng ý",
-                                onPress: async () => {
-                                  orderAPIService.delivery(
-                                    order.id,
-                                    () => {
-                                      Alert.alert(
-                                        "Hoàn tất",
-                                        `Đơn hàng MS-${order.id} đã chuyển sang trạng thái giao hàng!`
-                                      );
-                                      setCacheOrderList(
-                                        cacheOrderList.map((item) =>
-                                          item.id != order.id
-                                            ? item
-                                            : {
-                                                ...order,
-                                                status: OrderStatus.Delivering,
-                                              }
-                                        )
-                                      );
-                                    },
-                                    (warningInfo: WarningMessageValue) => {
-                                      Alert.alert(
-                                        "Xác nhận",
-                                        warningInfo.message,
-                                        [
-                                          {
-                                            text: "Đồng ý",
-                                            onPress: async () => {
-                                              orderAPIService.delivery(
-                                                order.id,
-                                                () => {
-                                                  Alert.alert(
-                                                    "Hoàn tất",
-                                                    `Đơn hàng MS-${order.id} đã chuyển sang trạng thái giao hàng!`
-                                                  );
-                                                  setCacheOrderList(
-                                                    cacheOrderList.map((item) =>
-                                                      item.id != order.id
-                                                        ? item
-                                                        : {
-                                                            ...order,
-                                                            status:
-                                                              OrderStatus.Delivering,
-                                                          }
-                                                    )
-                                                  );
-                                                },
-                                                (
-                                                  warningInfo: WarningMessageValue
-                                                ) => {},
-                                                (error: any) => {
-                                                  Alert.alert(
-                                                    "Oops!",
-                                                    error?.response?.data?.error
-                                                      ?.message ||
-                                                      "Hệ thống gặp lỗi, vui lòng thử lại sau!"
-                                                  );
-                                                },
-                                                (isSubmitting: boolean) => {},
-                                                true
-                                              );
-                                            },
-                                          },
-                                          {
-                                            text: "Hủy",
-                                          },
-                                        ]
-                                      );
-                                    },
-                                    (error: any) => {
-                                      Alert.alert(
-                                        "Oops!",
-                                        error?.response?.data?.error?.message ||
-                                          "Hệ thống gặp lỗi, vui lòng thử lại sau!"
-                                      );
-                                    },
-                                    (isSubmitting: boolean) => {},
-                                    false
-                                  );
-                                },
-                              },
-                              {
-                                text: "Hủy",
-                              },
-                            ]
-                          );
+                          setIsOpenOrderAssign(true);
                         }}
+                        // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                         className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                       >
                         <Text className="text-[13.5px]">
-                          Tiến hành giao hàng
+                          Chọn nhân viên giao
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -1041,5 +977,20 @@ const styleTimePicker = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+  },
+});
+
+const styleAssignModal = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    width: "84%",
+    height: "70%",
+    backgroundColor: "white",
+    padding: 16,
+    borderRadius: 8,
   },
 });

@@ -496,7 +496,7 @@ const OrderDetail = ({
             {order.status == OrderStatus.Preparing && (
               <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white mr-[-8px]">
                 <CustomButton
-                  title="Tiến hành giao hàng"
+                  title="Chọn nhân viên giao"
                   handlePress={() => {}}
                   containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
                   textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-800"

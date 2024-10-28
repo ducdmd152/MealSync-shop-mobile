@@ -61,14 +61,14 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
               </View>
 
               <View key={index} className="gap-y-2 mt-2 ml-1">
-                <Text className="text-[12px] text-gray-800">
-                  Văn Hoàng - 12 đơn (4A, 5B)
+                <Text className="text-[11.5px] text-gray-800">
+                  Văn Hoàng - 12 đơn (4A, 5B) - Hoàn tất 11/12
                 </Text>
-                <Text className="text-[12px] text-gray-800">
-                  Xuân Minh - 12 đơn (6A, 4B)
+                <Text className="text-[11.5px] text-gray-800">
+                  Xuân Minh - 10 đơn (6A, 4B) - Hoàn tất 9/10
                 </Text>
-                <Text className="text-[12px] text-gray-800">
-                  Xuân Minh - 12 đơn (7A, 5B)
+                <Text className="text-[11.5px] text-gray-800">
+                  Xuân Anh - 12 đơn (7A, 5B) - Hoàn tất 12/12
                 </Text>
               </View>
             </TouchableOpacity>
