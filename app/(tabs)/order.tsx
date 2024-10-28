@@ -296,9 +296,9 @@ const Order = () => {
         >
           <Text className="font-semibold">Giao đơn hàng MS-25</Text>
           <Text className="italic mt-2">Khung giờ 6:30-7:00 | 26/10/2024</Text>
-          <Text className="italic mt-2">5 nhân viên đang hoạt động</Text>
+
           <View className="mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md">
-            <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2"></View>
+            <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2 rounded-full"></View>
             <Text className="font-semibold">
               Bạn{" "}
               <Text className="text-gray-700 text-[11px]">
@@ -306,10 +306,11 @@ const Order = () => {
               </Text>
             </Text>
           </View>
+          <Text className="italic mt-2">5 nhân viên đang hoạt động</Text>
           <View className="">
             {Array.from({ length: 5 }).map((_, index) => (
               <View className="mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md">
-                <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2"></View>
+                <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2 rounded-full"></View>
                 <Text className="font-semibold">
                   Văn Tuấn{" "}
                   <Text className="text-gray-700 text-[11px]">
@@ -321,7 +322,9 @@ const Order = () => {
           </View>
           <CustomButton
             title="Hoàn tất"
-            handlePress={() => {}}
+            handlePress={() => {
+              setIsOpenOrderAssign(false);
+            }}
             containerStyleClasses="mt-5 h-[36px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
             textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
           />
