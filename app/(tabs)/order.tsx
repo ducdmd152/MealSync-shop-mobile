@@ -739,7 +739,99 @@ const Order = () => {
                   {order.status == OrderStatus.Preparing && (
                     <View className="flex-row items-center gap-x-1">
                       <TouchableOpacity
-                        onPress={() => {}}
+                        onPress={() => {
+                          Alert.alert(
+                            "Xác nhận",
+                            `Bắt đầu giao đơn hàng MS-${order.id}?`,
+                            [
+                              {
+                                text: "Đồng ý",
+                                onPress: async () => {
+                                  orderAPIService.delivery(
+                                    order.id,
+                                    () => {
+                                      Alert.alert(
+                                        "Hoàn tất",
+                                        `Đơn hàng MS-${order.id} đã chuyển sang trạng thái giao hàng!`
+                                      );
+                                      setCacheOrderList(
+                                        cacheOrderList.map((item) =>
+                                          item.id != order.id
+                                            ? item
+                                            : {
+                                                ...order,
+                                                status: OrderStatus.Delivering,
+                                              }
+                                        )
+                                      );
+                                    },
+                                    (warningInfo: WarningMessageValue) => {
+                                      Alert.alert(
+                                        "Xác nhận",
+                                        warningInfo.message,
+                                        [
+                                          {
+                                            text: "Đồng ý",
+                                            onPress: async () => {
+                                              orderAPIService.delivery(
+                                                order.id,
+                                                () => {
+                                                  Alert.alert(
+                                                    "Hoàn tất",
+                                                    `Đơn hàng MS-${order.id} đã chuyển sang trạng thái giao hàng!`
+                                                  );
+                                                  setCacheOrderList(
+                                                    cacheOrderList.map((item) =>
+                                                      item.id != order.id
+                                                        ? item
+                                                        : {
+                                                            ...order,
+                                                            status:
+                                                              OrderStatus.Delivering,
+                                                          }
+                                                    )
+                                                  );
+                                                },
+                                                (
+                                                  warningInfo: WarningMessageValue
+                                                ) => {},
+                                                (error: any) => {
+                                                  Alert.alert(
+                                                    "Oops!",
+                                                    error?.response?.data?.error
+                                                      ?.message ||
+                                                      "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                                  );
+                                                },
+                                                (isSubmitting: boolean) => {},
+                                                true
+                                              );
+                                            },
+                                          },
+                                          {
+                                            text: "Hủy",
+                                          },
+                                        ]
+                                      );
+                                    },
+                                    (error: any) => {
+                                      Alert.alert(
+                                        "Oops!",
+                                        error?.response?.data?.error?.message ||
+                                          "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                      );
+                                    },
+                                    (isSubmitting: boolean) => {},
+                                    false
+                                  );
+                                },
+                              },
+                              {
+                                text: "Hủy",
+                              },
+                            ]
+                          );
+                        }}
                         className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                       >
                         <Text className="text-[13.5px]">
