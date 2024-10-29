@@ -55,7 +55,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                       utilService.formatTime(630)}
                   </Text>
                   <Text className="ml-2 bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
-                    {utilService.formatDate("2024/10/28")}
+                    {utilService.formatDateDdMmYyyy("2024/10/28")}
                   </Text>
                 </View>
               </View>

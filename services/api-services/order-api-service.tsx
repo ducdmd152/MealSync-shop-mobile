@@ -73,10 +73,10 @@ const orderAPIService = {
     onSuccess: () => void,
     onWarning: (warningInfo: WarningMessageValue) => void,
     onFailure: (error: any) => void,
+    isConfirmWarning: boolean = false,
     setIsSubmitting: (isSubmitting: boolean) => void = (
       isSubmitting: boolean
-    ) => {},
-    isConfirmWarning: boolean = false
+    ) => {}
   ) => {
     try {
       setIsSubmitting(true);
@@ -107,10 +107,10 @@ const orderAPIService = {
     onSuccess: () => void,
     onWarning: (warningInfo: WarningMessageValue) => void,
     onFailure: (error: any) => void,
+    isConfirmWarning: boolean = false,
     setIsSubmitting: (isSubmitting: boolean) => void = (
       isSubmitting: boolean
-    ) => {},
-    isConfirmWarning: boolean = false
+    ) => {}
   ) => {
     try {
       setIsSubmitting(true);
@@ -127,6 +127,47 @@ const orderAPIService = {
         onSuccess();
       } else if (isWarning) {
         onWarning(value as WarningMessageValue);
+      } else {
+        onFailure(error);
+      }
+    } catch (error: any) {
+      onFailure(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  },
+  assign: async (
+    orderId: number,
+    staffId: number,
+    onSuccess: () => void,
+    onWarning: (warningInfo: WarningMessageValue) => void,
+    onFailure: (error: any) => void,
+    isConfirmWarning: boolean = false,
+    setIsSubmitting: (isSubmitting: boolean) => void = (
+      isSubmitting: boolean
+    ) => {}
+  ) => {
+    try {
+      setIsSubmitting(true);
+      // const response = await apiClient.put(
+      //   `shop-owner/order/${orderId}/assign`,
+      //   {
+      //     shopDeliveryStaffId: staffId == 0 ? null : staffId,
+      //     isConfirm: isConfirmWarning,
+      //     reason: "no-comment",
+      //   }
+      // );
+      // const { value, isSuccess, isWarning, error } = response.data;
+      const { isSuccess, isWarning, error } = {
+        isSuccess: true,
+        isWarning: false,
+        error: false,
+      };
+
+      if (isSuccess) {
+        onSuccess();
+      } else if (isWarning) {
+        // onWarning(value as WarningMessageValue);
       } else {
         onFailure(error);
       }

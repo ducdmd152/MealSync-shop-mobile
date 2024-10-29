@@ -49,6 +49,8 @@ import OrderDetail from "@/components/order/OrderDetail";
 import orderAPIService from "@/services/api-services/order-api-service";
 import { warning } from "framer-motion";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import OrderDeliveryAssign from "@/components/delivery-package/OrderDeliveryAssign";
+import OrderDetailModel from "@/types/models/OrderDetailModel";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -60,6 +62,7 @@ const formatDate = (dateString: string): string => {
   const date = new Date(dateString.replace(/\//g, "-"));
   return date.toLocaleDateString("en-GB");
 };
+
 const areArraysEqual = (arr1: number[], arr2: number[]): boolean => {
   if (arr1 == arr2) return true;
   if (arr1.length !== arr2.length) return false;
@@ -141,10 +144,11 @@ const filterStatuses = [
 ];
 
 const Order = () => {
-  // (async () => {
-  //   console.log(await sessionService.getAuthToken());
-  // })();
+  (async () => {
+    console.log(await sessionService.getAuthToken());
+  })();
   const globalTimeRangeState = useTimeRangeState();
+  const [order, setOrder] = useState<OrderFetchModel>({} as OrderFetchModel);
   const [cacheOrderList, setCacheOrderList] = useState<OrderFetchModel[]>([]);
   const [isFilterBottomSheetVisible, setIsFilterBottomSheetVisible] =
     useState(false);
@@ -294,39 +298,11 @@ const Order = () => {
             margin: 20,
           }}
         >
-          <Text className="font-semibold">Giao đơn hàng MS-25</Text>
-          <Text className="italic mt-2">Khung giờ 6:30-7:00 | 26/10/2024</Text>
-
-          <View className="mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md">
-            <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2 rounded-full"></View>
-            <Text className="font-semibold">
-              Bạn{" "}
-              <Text className="text-gray-700 text-[11px]">
-                (12 đơn chưa giao/hoàn thành)
-              </Text>
-            </Text>
-          </View>
-          <Text className="italic mt-2">5 nhân viên đang hoạt động</Text>
-          <View className="">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <View className="mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md">
-                <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2 rounded-full"></View>
-                <Text className="font-semibold">
-                  Văn Tuấn{" "}
-                  <Text className="text-gray-700 text-[11px]">
-                    (12 đơn chưa giao/hoàn thành)
-                  </Text>
-                </Text>
-              </View>
-            ))}
-          </View>
-          <CustomButton
-            title="Hoàn tất"
-            handlePress={() => {
+          <OrderDeliveryAssign
+            onComplete={() => {
               setIsOpenOrderAssign(false);
             }}
-            containerStyleClasses="mt-5 h-[36px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
-            textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+            order={order}
           />
         </ModalPaper>
       </Portal>
@@ -407,7 +383,8 @@ const Order = () => {
               <TouchableOpacity
                 key={order.id}
                 onPress={() => {
-                  setOrderDetailId(order.id);
+                  // setOrderDetailId(order.id);
+                  setOrder(order);
                   setIsDetailBottomSheetVisible(true);
                 }}
                 className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
@@ -652,7 +629,6 @@ const Order = () => {
                                                       "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                                                   );
                                                 },
-                                                (isSubmitting: boolean) => {},
                                                 true
                                               );
                                             },
@@ -670,7 +646,6 @@ const Order = () => {
                                           "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                                       );
                                     },
-                                    (isSubmitting: boolean) => {},
                                     false
                                   );
                                 },
@@ -758,7 +733,8 @@ const Order = () => {
                                                       ?.message ||
                                                       "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                                                   );
-                                                }
+                                                },
+                                                true
                                               );
                                             },
                                           },
@@ -772,8 +748,7 @@ const Order = () => {
                                           "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                                       );
                                     },
-                                    (value: boolean) => {},
-                                    true
+                                    false
                                   );
                                 },
                               },
@@ -790,6 +765,7 @@ const Order = () => {
                     <View className="flex-row items-center gap-x-1">
                       <TouchableOpacity
                         onPress={() => {
+                          setOrderDetailId(order.id);
                           setIsOpenOrderAssign(true);
                         }}
                         // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
