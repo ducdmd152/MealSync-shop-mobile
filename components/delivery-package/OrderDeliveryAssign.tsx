@@ -26,11 +26,13 @@ interface Props {
   defaultStaffId?: number;
   onComplete: (shopDeliveryStaff: ShopDeliveryStaff) => void;
   order: OrderFetchModel | OrderDetailModel;
+  isNeedForReconfimation?: boolean;
 }
 const OrderDeliveryAssign = ({
   onComplete,
   order,
   defaultStaffId = -1,
+  isNeedForReconfimation = true,
 }: Props) => {
   const toast = useToast();
   const [staffInfo, setStaffInfo] = useState({
@@ -67,7 +69,7 @@ const OrderDeliveryAssign = ({
     []
   );
 
-  // console.log(staffInfoListData);
+  console.log(staffInfoListData?.value);
   const onAssign = () => {
     if (staffInfo.id < 0) {
       Alert.alert(
@@ -157,7 +159,7 @@ const OrderDeliveryAssign = ({
                     "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                 );
               },
-              false,
+              !isNeedForReconfimation,
               setIsSubmitting
             );
           },
@@ -172,7 +174,11 @@ const OrderDeliveryAssign = ({
   return (
     <View>
       <Text className="font-semibold">Giao đơn hàng MS-25</Text>
-      <Text className="italic mt-2">Khung giờ 6:30-7:00 | 26/10/2024</Text>
+      <Text className="italic mt-2">
+        Khung giờ {utilService.formatTime(order.startTime)}-
+        {utilService.formatTime(order.endTime)} |{" "}
+        {utilService.formatDateDdMmYyyy(order.intendedReceiveDate)}
+      </Text>
       {isStaffInfoListLoading ? (
         <ActivityIndicator animating={isStaffInfoListLoading} color="#FCF450" />
       ) : staffInfoListData?.isFailure ||

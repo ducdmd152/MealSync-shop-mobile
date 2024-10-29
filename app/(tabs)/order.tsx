@@ -320,6 +320,7 @@ const Order = () => {
               });
             }}
             order={order}
+            defaultStaffId={order.shopDeliveryStaff?.id || -1}
           />
         </ModalPaper>
       </Portal>
@@ -475,7 +476,7 @@ const Order = () => {
                       </Text>
                       <Text className="text-[10px] italic text-gray-500">
                         {order.shopDeliveryStaff &&
-                          "Giao bởi " +
+                          "Người đi giao: " +
                             utilService.shortenName(
                               order.shopDeliveryStaff?.fullName || ""
                             )}
@@ -793,13 +794,16 @@ const Order = () => {
                       <TouchableOpacity
                         onPress={() => {
                           setOrderDetailId(order.id);
+                          setOrder(order);
                           setIsOpenOrderAssign(true);
                         }}
                         // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                         className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                       >
                         <Text className="text-[13.5px]">
-                          Chọn nhân viên giao
+                          {order.shopDeliveryStaff
+                            ? "Thay đổi người giao"
+                            : "Chọn người giao hàng"}
                         </Text>
                       </TouchableOpacity>
                     </View>
