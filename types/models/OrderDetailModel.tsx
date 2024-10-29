@@ -1,3 +1,5 @@
+import { ShopDeliveryStaff } from "./StaffInfoModel";
+
 // Interface for customer details
 export interface OrderDetailCustomerModel {
   id: number;
@@ -55,4 +57,5 @@ export default interface OrderDetailModel {
   promotion: string | null;
   deliveryPackage: string | null;
   orderDetails: OrderDetailFoodModel[];
+  shopDeliveryStaff: ShopDeliveryStaff | null;
 }

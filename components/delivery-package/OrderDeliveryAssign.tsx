@@ -1,5 +1,5 @@
 import { View, Text, Touchable, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomButton from "../custom/CustomButton";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
@@ -21,9 +21,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import orderAPIService from "@/services/api-services/order-api-service";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import { useToast } from "react-native-toast-notifications";
+import { useFocusEffect } from "expo-router";
 
 interface Props {
-  defaultStaffId?: number;
   onComplete: (shopDeliveryStaff: ShopDeliveryStaff) => void;
   order: OrderFetchModel | OrderDetailModel;
   isNeedForReconfimation?: boolean;
@@ -31,13 +31,16 @@ interface Props {
 const OrderDeliveryAssign = ({
   onComplete,
   order,
-  defaultStaffId = -1,
   isNeedForReconfimation = true,
 }: Props) => {
   const toast = useToast();
-  const [staffInfo, setStaffInfo] = useState({
-    id: defaultStaffId,
-  } as StaffInfoModel);
+  const [staffInfo, setStaffInfo] = useState(
+    order.shopDeliveryStaff
+      ? order.shopDeliveryStaff
+      : ({
+          id: -1,
+        } as StaffInfoModel)
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -69,7 +72,18 @@ const OrderDeliveryAssign = ({
     []
   );
 
-  console.log(staffInfoListData?.value);
+  useFocusEffect(
+    React.useCallback(() => {
+      staffInfoListRefetch();
+      setStaffInfo(
+        order.shopDeliveryStaff
+          ? order.shopDeliveryStaff
+          : ({
+              id: -1,
+            } as StaffInfoModel)
+      );
+    }, [])
+  );
   const onAssign = () => {
     if (staffInfo.id < 0) {
       Alert.alert(

@@ -320,7 +320,6 @@ const Order = () => {
               });
             }}
             order={order}
-            defaultStaffId={order.shopDeliveryStaff?.id || -1}
             isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
           />
         </ModalPaper>

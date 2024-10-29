@@ -45,7 +45,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
               <View className="flex-row items-center justify-between gap-2">
                 <View className="flex-row items-center">
                   <Text className="text-[12px] font-psemibold bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
-                    PKG-{123 + index}
+                    GPKG-{123 + index}
                   </Text>
                 </View>
                 <View className="flex-row">
@@ -61,13 +61,13 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
               </View>
 
               <View key={index} className="gap-y-2 mt-2 ml-1">
-                <Text className="text-[11.5px] text-gray-800">
+                <Text className="text-[11.5px] text-gray-700 font-semibold">
                   Văn Hoàng - 12 đơn (4A, 5B) - Hoàn tất 11/12
                 </Text>
-                <Text className="text-[11.5px] text-gray-800">
+                <Text className="text-[11.5px] text-gray-700 font-semibold">
                   Xuân Minh - 10 đơn (6A, 4B) - Hoàn tất 9/10
                 </Text>
-                <Text className="text-[11.5px] text-gray-800">
+                <Text className="text-[11.5px] text-gray-700 font-semibold">
                   Xuân Anh - 12 đơn (7A, 5B) - Hoàn tất 12/12
                 </Text>
               </View>
