@@ -4,6 +4,7 @@ import CustomButton from "../custom/CustomButton";
 import { ScrollView } from "react-native-gesture-handler";
 import utilService from "@/services/util-service";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
   return (
@@ -11,7 +12,9 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
       <View className="absolute w-full items-end justify-center bottom-12 right-2 z-10">
         <CustomButton
           title="Tạo mới"
-          handlePress={() => {}}
+          handlePress={() => {
+            router.push("/delivery-package-group/create");
+          }}
           containerStyleClasses="h-[36px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
           iconLeft={
             <Ionicons name="add-circle-outline" size={21} color="white" />

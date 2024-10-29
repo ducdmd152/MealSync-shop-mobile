@@ -69,6 +69,10 @@ const PageLayout = () => {
           name="menu/option-group/link"
           options={{ headerTitle: "Liên kết thực đơn chính" }}
         />
+        <Stack.Screen
+          name="delivery-package-group/create"
+          options={{ headerTitle: "Tạo phân công giao hàng" }}
+        />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
     </>

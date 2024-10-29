@@ -1,3 +1,7 @@
+export type TimeRange = {
+  startTime: number;
+  endTime: number;
+};
 const utilService = {
   formatTime: (time: number): string => {
     const hours = Math.floor(time / 100)
@@ -33,6 +37,38 @@ const utilService = {
     const lastTwoParts = nameParts.slice(-2).join(" ");
 
     return `${shortenedParts} ${lastTwoParts}`;
+  },
+  convertToTimeFrames: (timeRanges: TimeRange[]): TimeRange[] => {
+    const result: TimeRange[] = [];
+
+    const convertToMinutes = (time: number): number => {
+      const hours = Math.floor(time / 100);
+      const minutes = time % 100;
+      return hours * 60 + minutes;
+    };
+
+    const convertToHHMM = (minutes: number): number => {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      return hours * 100 + mins; // Định dạng lại thành hh:mm
+    };
+
+    timeRanges.forEach(({ startTime, endTime }) => {
+      const startMinutes = convertToMinutes(startTime);
+      const endMinutes = convertToMinutes(endTime);
+
+      for (let time = startMinutes; time < endMinutes; time += 30) {
+        const nextTime = time + 30;
+        if (nextTime <= endMinutes) {
+          result.push({
+            startTime: convertToHHMM(time),
+            endTime: convertToHHMM(nextTime),
+          });
+        }
+      }
+    });
+
+    return result;
   },
 };
 
