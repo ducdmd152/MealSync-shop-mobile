@@ -2,6 +2,7 @@ import { FetchResponseValue } from "@/types/responses/FetchResponse";
 import apiClient from "./api-client";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
 
 const orderAPIService = {
   confirm: async (
@@ -139,7 +140,7 @@ const orderAPIService = {
   assign: async (
     orderId: number,
     staffId: number,
-    onSuccess: () => void,
+    onSuccess: (shopDeliveryStaff: ShopDeliveryStaff) => void,
     onWarning: (warningInfo: WarningMessageValue) => void,
     onFailure: (error: any) => void,
     isConfirmWarning: boolean = false,
@@ -149,25 +150,21 @@ const orderAPIService = {
   ) => {
     try {
       setIsSubmitting(true);
-      // const response = await apiClient.put(
-      //   `shop-owner/order/${orderId}/assign`,
-      //   {
-      //     shopDeliveryStaffId: staffId == 0 ? null : staffId,
-      //     isConfirm: isConfirmWarning,
-      //     reason: "no-comment",
-      //   }
-      // );
-      // const { value, isSuccess, isWarning, error } = response.data;
-      const { isSuccess, isWarning, error } = {
-        isSuccess: true,
-        isWarning: false,
-        error: false,
-      };
+      const response = await apiClient.put(
+        `shop-owner/order/${orderId}/assign`,
+        {
+          shopDeliveryStaffId: staffId == 0 ? null : staffId,
+          isConfirm: isConfirmWarning,
+          reason: "no-comment",
+        }
+      );
+      const { value, isSuccess, isWarning, error } = response.data;
 
       if (isSuccess) {
-        onSuccess();
+        console.log("Success: ", response.data, value);
+        onSuccess(value as ShopDeliveryStaff);
       } else if (isWarning) {
-        // onWarning(value as WarningMessageValue);
+        onWarning(value as WarningMessageValue);
       } else {
         onFailure(error);
       }

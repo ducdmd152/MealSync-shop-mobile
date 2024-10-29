@@ -7,6 +7,14 @@ export interface StaffInfoModel {
   isShopOwner: boolean;
 }
 
+export interface ShopDeliveryStaff {
+  deliveryPackageId: number;
+  id: number;
+  fullName: string;
+  avatarUrl: string;
+  isShopOwnerShip: boolean;
+}
+
 export interface FrameStaffInfoModel {
   total: number;
   waiting: number;

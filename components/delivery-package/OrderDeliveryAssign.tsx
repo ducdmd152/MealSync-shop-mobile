@@ -7,8 +7,9 @@ import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import {
   FrameStaffInfoModel,
+  ShopDeliveryStaff,
   StaffInfoModel,
-} from "@/types/models/FrameStaffInfoModel";
+} from "@/types/models/StaffInfoModel";
 import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
 import sessionService from "@/services/session-service";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
@@ -22,12 +23,20 @@ import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import { useToast } from "react-native-toast-notifications";
 
 interface Props {
-  onComplete: () => void;
+  defaultStaffId?: number;
+  onComplete: (shopDeliveryStaff: ShopDeliveryStaff) => void;
   order: OrderFetchModel | OrderDetailModel;
 }
-const OrderDeliveryAssign = ({ onComplete, order }: Props) => {
+const OrderDeliveryAssign = ({
+  onComplete,
+  order,
+  defaultStaffId = -1,
+}: Props) => {
   const toast = useToast();
-  const [staffInfo, setStaffInfo] = useState({ id: -1 } as StaffInfoModel);
+  const [staffInfo, setStaffInfo] = useState({
+    id: defaultStaffId,
+  } as StaffInfoModel);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     data: staffInfoListData,
@@ -79,7 +88,7 @@ const OrderDeliveryAssign = ({ onComplete, order }: Props) => {
             orderAPIService.assign(
               order.id,
               staffInfo.id,
-              () => {
+              (shopDeliveryStaff: ShopDeliveryStaff) => {
                 toast.show(
                   `Đơn hàng MS-${order.id} sẽ được giao bởi ${
                     staffInfo.id == 0 ? "bạn" : staffInfo.fullName
@@ -95,7 +104,7 @@ const OrderDeliveryAssign = ({ onComplete, order }: Props) => {
                 //     staffInfo.id == 0 ? "bạn" : staffInfo.fullName
                 //   }!`
                 // );
-                onComplete();
+                onComplete(shopDeliveryStaff);
               },
               (warningInfo: WarningMessageValue) => {
                 Alert.alert("Xác nhận", warningInfo.message, [
@@ -105,7 +114,7 @@ const OrderDeliveryAssign = ({ onComplete, order }: Props) => {
                       orderAPIService.assign(
                         order.id,
                         staffInfo.id,
-                        () => {
+                        (shopDeliveryStaff: ShopDeliveryStaff) => {
                           toast.show(
                             `Đơn hàng MS-${order.id} sẽ được giao bởi ${
                               staffInfo.id == 0 ? "bạn" : staffInfo.fullName
@@ -121,7 +130,7 @@ const OrderDeliveryAssign = ({ onComplete, order }: Props) => {
                           //     staffInfo.id == 0 ? "bạn" : staffInfo.fullName
                           //   }!`
                           // );
-                          onComplete();
+                          onComplete(shopDeliveryStaff);
                         },
                         (warningInfo: WarningMessageValue) => {},
                         (error: any) => {
@@ -131,7 +140,8 @@ const OrderDeliveryAssign = ({ onComplete, order }: Props) => {
                               "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                           );
                         },
-                        true
+                        true,
+                        setIsSubmitting
                       );
                     },
                   },
@@ -147,7 +157,8 @@ const OrderDeliveryAssign = ({ onComplete, order }: Props) => {
                     "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                 );
               },
-              false
+              false,
+              setIsSubmitting
             );
           },
         },
@@ -203,6 +214,7 @@ const OrderDeliveryAssign = ({ onComplete, order }: Props) => {
               .filter((item) => item.staffInfor.id != 0)
               .map((staff) => (
                 <TouchableOpacity
+                  key={staff.staffInfor.id}
                   className="mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md"
                   onPress={() => setStaffInfo(staff.staffInfor)}
                 >
@@ -235,6 +247,7 @@ const OrderDeliveryAssign = ({ onComplete, order }: Props) => {
         handlePress={() => {
           onAssign();
         }}
+        isLoading={isSubmitting}
         containerStyleClasses="mt-5 h-[36px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
         textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
       />

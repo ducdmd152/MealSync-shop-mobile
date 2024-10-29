@@ -29,7 +29,6 @@ import FetchResponse, {
 import OrderFetchModel, {
   getOrderStatusDescription,
   OrderStatus,
-  sampleOrderFetchList,
 } from "@/types/models/OrderFetchModel";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
@@ -51,6 +50,11 @@ import { warning } from "framer-motion";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import OrderDeliveryAssign from "@/components/delivery-package/OrderDeliveryAssign";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
+import {
+  ShopDeliveryStaff,
+  StaffInfoModel,
+} from "@/types/models/StaffInfoModel";
+import utilService from "@/services/util-service";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -270,7 +274,16 @@ const Order = () => {
       operatingSlotsRefetch();
     }, [])
   );
-  const containerStyle = { backgroundColor: "white", padding: 20 };
+  const setCacheOrderInList = (order: OrderFetchModel) =>
+    setCacheOrderList(
+      cacheOrderList.map((item) =>
+        item.id != order.id
+          ? item
+          : {
+              ...order,
+            }
+      )
+    );
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
       <CustomButton
@@ -299,8 +312,12 @@ const Order = () => {
           }}
         >
           <OrderDeliveryAssign
-            onComplete={() => {
+            onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
               setIsOpenOrderAssign(false);
+              setCacheOrderInList({
+                ...order,
+                shopDeliveryStaff: shopDeliveryStaff,
+              });
             }}
             order={order}
           />
@@ -443,18 +460,28 @@ const Order = () => {
                     </View>
                   </View>
                   <View className="flex-row justify-between items-end gap-x-2 gap-y-1">
-                    <Text className="text-[10px] italic text-gray-500">
-                      {/* Được đặt vào{" "}
+                    <View>
+                      <Text className="text-[10px] italic text-gray-500">
+                        {/* Được đặt vào{" "}
                       {new Date(order.orderDate).toLocaleTimeString("vi-VN", {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}{" "}
                       {new Date(order.orderDate).toLocaleDateString()}
                       {"\n"} */}
-                      {order.dormitoryId == 1
-                        ? "Giao đến KTX khu A"
-                        : "Giao đến KTX khu B"}
-                    </Text>
+                        {order.dormitoryId == 1
+                          ? "Giao đến KTX khu A"
+                          : "Giao đến KTX khu B"}
+                      </Text>
+                      <Text className="text-[10px] italic text-gray-500">
+                        {order.shopDeliveryStaff &&
+                          "Giao bởi " +
+                            utilService.shortenName(
+                              order.shopDeliveryStaff?.fullName || ""
+                            )}
+                      </Text>
+                    </View>
+
                     <Text className="text-md italic text-gray-500">
                       {order.totalPrice.toLocaleString("vi-VN")}đ
                     </Text>
