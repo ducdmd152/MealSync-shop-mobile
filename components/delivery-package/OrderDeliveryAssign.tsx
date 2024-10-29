@@ -187,7 +187,7 @@ const OrderDeliveryAssign = ({
   };
   return (
     <View>
-      <Text className="font-semibold">Giao đơn hàng MS-25</Text>
+      <Text className="font-semibold">Giao đơn hàng MS-{order.id}</Text>
       <Text className="italic mt-2">
         Khung giờ {utilService.formatTime(order.startTime)}-
         {utilService.formatTime(order.endTime)} |{" "}
