@@ -401,7 +401,7 @@ const Order = () => {
               <TouchableOpacity
                 key={order.id}
                 onPress={() => {
-                  // setOrderDetailId(order.id);
+                  setOrderDetailId(order.id);
                   setOrder(order);
                   setIsDetailBottomSheetVisible(true);
                 }}

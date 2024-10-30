@@ -12,12 +12,12 @@ import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import { useFocusEffect } from "expo-router";
 import utilService from "@/services/util-service";
-import DateTimeFrameSelect from "@/components/common/DateTimeFrameSelect";
+import GPKGDateTimeFrameSelect from "@/components/common/GPKGDateTimeFrameSelect";
 
 const DeliveryPackageGroupCreate = () => {
   return (
     <PageLayoutWrapper isScroll={false}>
-      <DateTimeFrameSelect />
+      <GPKGDateTimeFrameSelect />
     </PageLayoutWrapper>
   );
 };

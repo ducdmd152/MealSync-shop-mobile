@@ -7,6 +7,7 @@ const REACT_QUERY_CACHE_KEYS = {
   OPERATING_SLOT_LIST: ["operating-slot", "list"],
   ORDER_LIST: ["order", "list"],
   FRAME_STAFF_INFO_LIST: ["frame-staff-info", "list"],
+  UNCREATED_GPKG_FRAME_LIST: ["uncreated-gpkg-frame", "list"],
 };
 
 export default REACT_QUERY_CACHE_KEYS;

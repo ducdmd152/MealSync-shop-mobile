@@ -11,6 +11,7 @@ export const endpoints = {
   OPERATING_SLOT_LIST: "shop-owner/operating-slot",
   ORDER_LIST: "shop-owner/order",
   FRAME_STAFF_INFO_LIST: "shop/shop-delivery-staff/available",
+  UNCREATED_GPKG_FRAME_LIST: "shop-owner/delivery-package/time-frame/un-assign",
 };
 
 export const testApiService = createHttpService<TestModel>(

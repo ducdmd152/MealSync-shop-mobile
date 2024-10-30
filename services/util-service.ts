@@ -10,6 +10,9 @@ const utilService = {
     const minutes = (time % 100).toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   },
+  formatFrameTime: (start: number, end: number): string => {
+    return `${utilService.formatTime(start)} - ${utilService.formatTime(end)}`;
+  },
   formatDateDdMmYyyy: (dateString: string): string => {
     const date = new Date(dateString.replace(/\//g, "-"));
     return date.toLocaleDateString("en-GB");

@@ -11,4 +11,7 @@ type FetchResponse<T> = APICommonResponse & {
 export type FetchOnlyListResponse<T> = APICommonResponse & {
   value: T[];
 };
+export type FetchValueResponse<T> = APICommonResponse & {
+  value: T;
+};
 export default FetchResponse;
