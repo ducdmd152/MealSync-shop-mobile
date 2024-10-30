@@ -114,7 +114,7 @@ const GPKGDateTimeFrameSelect = ({
       apiClient
         .get(
           endpoints.ORDER_LIST +
-            `status=${Number(OrderStatus.Confirmed)}&status=${Number(
+            `?status=${Number(OrderStatus.Confirmed)}&status=${Number(
               OrderStatus.Preparing
             )}`,
           {

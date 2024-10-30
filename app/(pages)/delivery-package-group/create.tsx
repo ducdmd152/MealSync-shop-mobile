@@ -20,6 +20,7 @@ import { UseQueryResult } from "@tanstack/react-query";
 import { ScrollView } from "react-native-gesture-handler";
 import { FrameStaffInfoModel } from "@/types/models/StaffInfoModel";
 import sessionService from "@/services/session-service";
+import CustomButton from "@/components/custom/CustomButton";
 interface GPKGCreateRequest {
   isConfirm: boolean;
   deliveryPackages: {
@@ -93,6 +94,11 @@ const DeliveryPackageGroupCreate = () => {
     return allOrders.filter((order) => assignedOrderIds.has(order.id));
   }
 
+  console.log(
+    "getUnassignedOrders(): ",
+    getUnassignedOrders(),
+    orderFetchResult?.data?.value.items || []
+  );
   const deliveryPersonSelectArea = (
     <View>
       {deliveryPersonFetchResult.data?.value && (
@@ -133,6 +139,21 @@ const DeliveryPackageGroupCreate = () => {
       </View>
     </View>
   );
+  const currentPersonArea = (
+    <View className="border-2 border-gray-300 flex-1"></View>
+  );
+  const unAssignOrdersArea = (
+    <View className="border-2 border-gray-300 flex-1 mt-2 p-2">
+      <Text className="italic text-gray-700 text-center">
+        Danh sách đơn hàng đang trống
+      </Text>
+      <View>
+        {getUnassignedOrders().map((order) => (
+          <Text>{order.buildingName}</Text>
+        ))}
+      </View>
+    </View>
+  );
   return (
     <PageLayoutWrapper isScroll={false}>
       <GPKGDateTimeFrameSelect
@@ -143,7 +164,17 @@ const DeliveryPackageGroupCreate = () => {
         setOrderFetchResult={setOrderFetchResult}
       />
       {isAnyUnCreatedFrame && (
-        <View className="px-4 py-2 flex-1">{deliveryPersonSelectArea}</View>
+        <View className="px-4 py-2 flex-1">
+          {deliveryPersonSelectArea}
+          {currentPersonArea}
+          {unAssignOrdersArea}
+          <CustomButton
+            title="Hoàn tất"
+            handlePress={() => {}}
+            containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+            textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+          />
+        </View>
       )}
     </PageLayoutWrapper>
   );
