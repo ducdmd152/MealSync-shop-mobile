@@ -48,7 +48,7 @@ import TimeRangeSelect from "@/components/common/TimeRangeSelect";
 import DeliveryFrameList from "@/components/delivery-package/DeliveryFrameList";
 import MyDeliveryPackageList from "@/components/delivery-package/MyDeliveryPackageList";
 import sessionService from "@/services/session-service";
-import OrderFetchModel from "@/types/models/OrderFetchModel";
+import OrderFetchModel, { OrderStatus } from "@/types/models/OrderFetchModel";
 import { UseQueryResult } from "@tanstack/react-query";
 export interface GPKGQuery {
   startTime: number;
@@ -67,11 +67,17 @@ interface GPKGListValueOfResponse {
 }
 
 interface Props {
+  isAnyUnCreatedFrame: boolean;
+  setIsAnyUnCreatedFrame: (value: boolean) => void;
   setOrderFetchResult: (
     result: UseQueryResult<FetchResponse<OrderFetchModel>, Error>
   ) => void;
 }
-const GPKGDateTimeFrameSelect = ({ setOrderFetchResult }: Props) => {
+const GPKGDateTimeFrameSelect = ({
+  isAnyUnCreatedFrame,
+  setIsAnyUnCreatedFrame,
+  setOrderFetchResult,
+}: Props) => {
   // (async () => {
   //   console.log(await sessionService.getAuthToken());
   // })();
@@ -79,7 +85,8 @@ const GPKGDateTimeFrameSelect = ({ setOrderFetchResult }: Props) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedFrameIndex, setSelectedFrameIndex] = useState(0);
   const [isFramePickerVisible, setFramePickerVisibility] = useState(false);
-  const [isAnyUnCreatedFrame, setIsAnyUnCreatedFrame] = useState(true);
+
+  const [frames, setFrames] = useState<GPKG[]>([]);
   const [query, setQuery] = useState<GPKGQuery>({
     startTime: 0,
     endTime: 30,
@@ -103,9 +110,35 @@ const GPKGDateTimeFrameSelect = ({ setOrderFetchResult }: Props) => {
             query.intendedRecieveDate
         )
         .then((response) => response.data),
-    []
+    [query]
   );
-  const [frames, setFrames] = useState<GPKG[]>([]);
+
+  const orderFetchResult = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.ORDER_LIST.concat(["gpkg-create-page"]),
+    async (): Promise<FetchResponse<OrderFetchModel>> =>
+      apiClient
+        .get(
+          endpoints.ORDER_LIST +
+            `status=${Number(OrderStatus.Confirmed)}&status=${Number(
+              OrderStatus.Preparing
+            )}`,
+          {
+            headers: {
+              Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+            },
+            params: {
+              ...query,
+              id: "",
+              phoneNumber: "",
+              pageIndex: 1,
+              pageSize: 100_000_000,
+            },
+          }
+        )
+        .then((response) => response.data),
+    [query]
+  );
+  // console.log("orderFetchData: ", orderFetchData?.value.items);
   useEffect(() => {
     if (!isGPKGFrameListLoading && !isGPKGFrameListRefetching) {
       setFrames(
@@ -149,13 +182,15 @@ const GPKGDateTimeFrameSelect = ({ setOrderFetchResult }: Props) => {
       endTime: frames[index].endTime,
     });
   };
+  useEffect(() => {
+    setOrderFetchResult(orderFetchResult);
+  }, [orderFetchResult.isFetching]);
   useFocusEffect(
     React.useCallback(() => {
       gPKGFrameListRefetch();
     }, [])
   );
-
-  console.log("gPKGFrameListData: ", frames);
+  // console.log("gPKGFrameListData: ", frames);
   const frameSelect = (
     <View className="items-center justify-center  overflow-hidden">
       <Text className="mb-2 text-center">
@@ -231,12 +266,11 @@ const GPKGDateTimeFrameSelect = ({ setOrderFetchResult }: Props) => {
                     date={dayjs(query.intendedRecieveDate).toDate()}
                     onChange={(params) => {
                       if (params.date) {
-                        console.log("params.date: ", params.date);
                         setQuery({
                           ...query,
                           intendedRecieveDate:
                             utilService.formatDateTimeToYyyyMmDd(
-                              dayjs(query.intendedRecieveDate).toISOString()
+                              params.date.toLocaleString()
                             ),
                         });
                       }
