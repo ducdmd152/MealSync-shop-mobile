@@ -340,7 +340,9 @@ const GPKGDateTimeFrameSelect = ({
             }`}
             disabled={!isAnyUnCreatedFrame}
           >
-            <Text className="text-[10px] text-white mr-1">Chia tự động</Text>
+            <Text className="text-[10px] text-white text-center">
+              Chia tự động
+            </Text>
             {/* <Ionicons name="chevron-up-outline" size={14} color="white" /> */}
           </TouchableOpacity>
         </View>

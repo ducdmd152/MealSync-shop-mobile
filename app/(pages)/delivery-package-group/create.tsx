@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import ScrollPicker, {
@@ -26,6 +26,7 @@ import sessionService from "@/services/session-service";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-toast-notifications";
+import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 interface GPKGCreateRequest {
   isConfirm: boolean;
   deliveryPackages: {
@@ -47,6 +48,7 @@ const DeliveryPackageGroupCreate = () => {
       .toLocaleDateString("sv-SE")
       .replace(/-/g, "/"),
   } as GPKGQuery);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderFetchResult, setOrderFetchResult] =
     useState<UseQueryResult<FetchResponse<OrderFetchModel>, Error>>();
   const [gpkgCreateRequest, setGPKGCreateRequest] = useState<GPKGCreateRequest>(
@@ -74,10 +76,7 @@ const DeliveryPackageGroupCreate = () => {
         .then((response) => response.data),
     [query]
   );
-  console.log(
-    "deliveryPersonFetchResult: ",
-    deliveryPersonFetchResult.data?.value
-  );
+
   function getUnassignedOrders(): OrderFetchModel[] {
     const allOrders = orderFetchResult?.data?.value.items || [];
     const requestData = gpkgCreateRequest;
@@ -151,11 +150,67 @@ const DeliveryPackageGroupCreate = () => {
     );
   };
 
-  console.log(
-    "getAssignedOrdersOf: ",
-    getAssignedOrdersOf(currentDeliveryPersonId),
-    orderFetchResult?.data?.value.items || []
-  );
+  const onRequest = async (requestData: GPKGCreateRequest) => {
+    try {
+      setIsSubmitting(true);
+      const response = await apiClient.post(
+        `shop-owner/delivery-package`,
+        requestData
+      );
+      const { value, isSuccess, isWarning, error } = response.data;
+
+      if (isSuccess) {
+        Alert.alert(
+          "Hoàn tất",
+          `Tạo phân công thành công cho khung giờ ${
+            utilService.formatTime(query.startTime) +
+            " - " +
+            utilService.formatTime(query.endTime)
+          } ngày ${utilService.formatDateDdMmYyyy(query.intendedRecieveDate)}`
+        );
+      } else if (isWarning) {
+        if (requestData.isConfirm) return;
+        const warningInfo = value as WarningMessageValue;
+        Alert.alert("Xác nhận", warningInfo.message, [
+          {
+            text: "Đồng ý",
+            onPress: async () => {
+              onRequest({ ...requestData, isConfirm: true });
+            },
+          },
+          {
+            text: "Hủy",
+          },
+        ]);
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Oops!",
+        error?.response?.data?.error?.message ||
+          "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const onSubmit = async () => {
+    if (gpkgCreateRequest.deliveryPackages.length == 0) {
+      Alert.alert(
+        "Oops!",
+        "Bạn cần phân công ít nhất một đơn hàng để hoàn tất!"
+      );
+      return;
+    }
+    onRequest({
+      isConfirm: false,
+      deliveryPackages: gpkgCreateRequest.deliveryPackages.map((pkg) => ({
+        ...pkg,
+        shopDeliveryStaffId:
+          pkg.shopDeliveryStaffId === 0 ? undefined : pkg.shopDeliveryStaffId,
+      })),
+    });
+  };
+
   const deliveryPersonSelectArea = (
     <View>
       {deliveryPersonFetchResult.data?.value && (
@@ -385,7 +440,10 @@ const DeliveryPackageGroupCreate = () => {
           {unAssignOrdersArea}
           <CustomButton
             title="Hoàn tất"
-            handlePress={() => {}}
+            isLoading={isSubmitting}
+            handlePress={() => {
+              onSubmit();
+            }}
             containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
             textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
           />
