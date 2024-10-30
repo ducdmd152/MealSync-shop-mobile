@@ -15,12 +15,16 @@ import { endpoints } from "@/services/api-services/api-service-instances";
 import { useFocusEffect } from "expo-router";
 import utilService from "@/services/util-service";
 import GPKGDateTimeFrameSelect from "@/components/common/GPKGDateTimeFrameSelect";
-import OrderFetchModel from "@/types/models/OrderFetchModel";
+import OrderFetchModel, {
+  getOrderStatusDescription,
+  OrderStatus,
+} from "@/types/models/OrderFetchModel";
 import { UseQueryResult } from "@tanstack/react-query";
 import { ScrollView } from "react-native-gesture-handler";
 import { FrameStaffInfoModel } from "@/types/models/StaffInfoModel";
 import sessionService from "@/services/session-service";
 import CustomButton from "@/components/custom/CustomButton";
+import { Ionicons } from "@expo/vector-icons";
 interface GPKGCreateRequest {
   isConfirm: boolean;
   deliveryPackages: {
@@ -102,7 +106,7 @@ const DeliveryPackageGroupCreate = () => {
   const deliveryPersonSelectArea = (
     <View>
       {deliveryPersonFetchResult.data?.value && (
-        <Text>
+        <Text className="italic text-gray-600 text-[10px]">
           Bạn và{" "}
           {deliveryPersonFetchResult.data?.value.length == 0
             ? 0
@@ -115,12 +119,12 @@ const DeliveryPackageGroupCreate = () => {
           <View className="w-full flex-row gap-2 items-center justify-between pb-2">
             {deliveryPersonFetchResult.data?.value.map((person, index) => (
               <TouchableOpacity
+                key={person.staffInfor.id}
                 className={`flex-row items-center gap-x-1 bg-gray-100 rounded-xl px-2 py-2 ${
                   currentDeliveryPersonId == person.staffInfor.id
                     ? "bg-secondary"
                     : ""
                 }`}
-                key={index}
                 onPress={() => setCurrentDeliveryPersonId(person.staffInfor.id)}
               >
                 <Image
@@ -144,14 +148,78 @@ const DeliveryPackageGroupCreate = () => {
   );
   const unAssignOrdersArea = (
     <View className="border-2 border-gray-300 flex-1 mt-2 p-2">
-      <Text className="italic text-gray-700 text-center">
+      <Text className="italic text-gray-700 text-center mb-1 text-[10px]">
         Danh sách đơn hàng đang trống
       </Text>
-      <View>
-        {getUnassignedOrders().map((order) => (
-          <Text>{order.buildingName}</Text>
-        ))}
-      </View>
+      <ScrollView>
+        <View className="gap-y-[4px]">
+          {getUnassignedOrders().map((order) => (
+            <TouchableOpacity
+              key={order.id}
+              onPress={() => {
+                // setOrderDetailId(order.id);
+                // setOrder(order);
+                // setIsDetailBottomSheetVisible(true);
+              }}
+              className="p-2 pt-3 bg-white border-2 border-gray-300 rounded-lg"
+            >
+              <View className="flex-row items-center justify-between gap-2">
+                <View className="flex-row items-center">
+                  <Text className="text-[10px] font-psemibold bg-gray-100 text-gray-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
+                    MS-{order.id}
+                  </Text>
+                </View>
+                <View className="flex-row gap-x-1 items-center">
+                  <Text className="ml-2  font-psemibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
+                    {order.dormitoryId == 1 ? "Đến KTX khu A" : "Đến KTX khu B"}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {}}
+                    className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
+                    disabled={order.status != OrderStatus.Preparing}
+                  >
+                    <Text className="text-[12px] text-white mr-1">
+                      Phân công
+                    </Text>
+                    <Ionicons
+                      name="chevron-up-outline"
+                      size={14}
+                      color="white"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View className="flex-row justify-between items-center mt-[4px]">
+                <View className="flex-1 flex-row justify-start items-center gap-2">
+                  <Image
+                    source={{
+                      uri: order.foods[0].imageUrl,
+                    }}
+                    resizeMode="cover"
+                    className="h-[12px] w-[12px] rounded-md opacity-85"
+                  />
+                  <View className="">
+                    <Text className="text-xs italic text-gray-500">
+                      {order.foods[0].name}{" "}
+                      {order.foods[0].quantity > 1 &&
+                        " x" + order.foods[0].quantity}
+                      {order.foods.length > 1 &&
+                        " +" + (order.foods.length - 1) + " món khác"}
+                    </Text>
+                  </View>
+                </View>
+                <View className="flex-row gap-x-1 items-center">
+                  <Text
+                    className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
+                  >
+                    {getOrderStatusDescription(order.status)?.description}
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
   return (
@@ -164,7 +232,7 @@ const DeliveryPackageGroupCreate = () => {
         setOrderFetchResult={setOrderFetchResult}
       />
       {isAnyUnCreatedFrame && (
-        <View className="px-4 py-2 flex-1">
+        <View className="px-4 pb-2 mt-[-8px] flex-1">
           {deliveryPersonSelectArea}
           {currentPersonArea}
           {unAssignOrdersArea}

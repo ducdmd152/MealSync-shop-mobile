@@ -113,10 +113,7 @@ const GPKGDateTimeFrameSelect = ({
     async (): Promise<FetchResponse<OrderFetchModel>> =>
       apiClient
         .get(
-          endpoints.ORDER_LIST +
-            `?status=${Number(OrderStatus.Confirmed)}&status=${Number(
-              OrderStatus.Preparing
-            )}`,
+          endpoints.ORDER_LIST + `?status=${Number(OrderStatus.Preparing)}`,
           {
             headers: {
               Authorization: `Bearer ${await sessionService.getAuthToken()}`,
@@ -337,28 +334,20 @@ const GPKGDateTimeFrameSelect = ({
             </Modal>
           </View>
         </View>
-        {!isAnyUnCreatedFrame &&
-          (gPKGFrameListData?.value.totalOrder == 0 ? (
-            <View>
-              <Text>Chưa khung giờ nào nhận đơn hàng vào hôm nay</Text>
-              <TouchableOpacity>
-                <Text>Trở về</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text>Tải lại</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View>
-              <Text>Các khung giờ có đơn hàng đều đã được tạo phân công</Text>
-              <TouchableOpacity>
-                <Text>Đi đến các khung đã tạo</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text>Tải lại</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+        {!isAnyUnCreatedFrame && (
+          <View>
+            <Text>
+              Không khung giờ nào có đơn hàng đang chuẩn bị chưa được tạo khung
+              phân công giao hàng
+            </Text>
+            <TouchableOpacity>
+              <Text>Trở về</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text>Tải lại</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );
