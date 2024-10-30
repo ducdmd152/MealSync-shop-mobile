@@ -25,6 +25,7 @@ import { FrameStaffInfoModel } from "@/types/models/StaffInfoModel";
 import sessionService from "@/services/session-service";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
+import { useToast } from "react-native-toast-notifications";
 interface GPKGCreateRequest {
   isConfirm: boolean;
   deliveryPackages: {
@@ -38,6 +39,7 @@ export interface GPKGQuery {
   intendedRecieveDate: string;
 }
 const DeliveryPackageGroupCreate = () => {
+  const toast = useToast();
   const [query, setQuery] = useState<GPKGQuery>({
     startTime: 0,
     endTime: 30,
@@ -97,10 +99,61 @@ const DeliveryPackageGroupCreate = () => {
 
     return allOrders.filter((order) => assignedOrderIds.has(order.id));
   }
+  function assign(personId: number, orderId: number): void {
+    setGPKGCreateRequest((prevRequest) => {
+      const deliveryPackages = [...prevRequest.deliveryPackages];
+      const deliveryPackage = deliveryPackages.find(
+        (pkg) => pkg.shopDeliveryStaffId === personId
+      );
+
+      if (deliveryPackage) {
+        if (!deliveryPackage.orderIds.includes(orderId)) {
+          deliveryPackage.orderIds = [...deliveryPackage.orderIds, orderId];
+        }
+      } else {
+        deliveryPackages.push({
+          shopDeliveryStaffId: personId,
+          orderIds: [orderId],
+        });
+      }
+
+      return {
+        ...prevRequest,
+        deliveryPackages,
+      };
+    });
+  }
+
+  function remove(personId: number, orderId: number): void {
+    setGPKGCreateRequest((prevRequest) => {
+      const deliveryPackages = prevRequest.deliveryPackages
+        .map((pkg) => {
+          if (pkg.shopDeliveryStaffId === personId) {
+            return {
+              ...pkg,
+              orderIds: pkg.orderIds.filter((id) => id !== orderId),
+            };
+          }
+          return pkg;
+        })
+        .filter((pkg) => pkg.orderIds.length > 0);
+
+      return {
+        ...prevRequest,
+        deliveryPackages,
+      };
+    });
+  }
+
+  const getCurrentPerson = () => {
+    return deliveryPersonFetchResult.data?.value.find(
+      (person) => person.staffInfor.id == currentDeliveryPersonId
+    );
+  };
 
   console.log(
-    "getUnassignedOrders(): ",
-    getUnassignedOrders(),
+    "getAssignedOrdersOf: ",
+    getAssignedOrdersOf(currentDeliveryPersonId),
     orderFetchResult?.data?.value.items || []
   );
   const deliveryPersonSelectArea = (
@@ -144,12 +197,91 @@ const DeliveryPackageGroupCreate = () => {
     </View>
   );
   const currentPersonArea = (
-    <View className="border-2 border-gray-300 flex-1"></View>
+    <View className="border-2 border-gray-300 flex-1 p-2">
+      <ScrollView>
+        <View className="gap-y-[4px]">
+          {getAssignedOrdersOf(currentDeliveryPersonId).map((order) => (
+            <TouchableOpacity
+              key={order.id}
+              onPress={() => {
+                // setOrderDetailId(order.id);
+                // setOrder(order);
+                // setIsDetailBottomSheetVisible(true);
+              }}
+              className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
+            >
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center">
+                  <Text className="text-[10px] font-psemibold bg-gray-100 text-gray-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
+                    MS-{order.id}
+                  </Text>
+                </View>
+                <View className="flex-row gap-x-1 items-center">
+                  <Text className="ml-2  font-psemibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
+                    {order.dormitoryId == 1 ? "Đến KTX khu A" : "Đến KTX khu B"}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      remove(currentDeliveryPersonId, order.id);
+                      // toast.show(
+                      //   `Đơn hàng MS-${order.id} chuyển về chưa phân công giao hàng.`,
+                      //   {
+                      //     type: "info",
+                      //     duration: 1500,
+                      //   }
+                      // );
+                    }}
+                    className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-gray-400`}
+                    disabled={order.status != OrderStatus.Preparing}
+                  >
+                    <Text className="text-[12px] text-white mr-1">
+                      Bỏ phân công
+                    </Text>
+                    <Ionicons
+                      name="chevron-down-outline"
+                      size={14}
+                      color="white"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View className="flex-row justify-between items-center mt-[4px]">
+                <View className="flex-1 flex-row justify-start items-center gap-2">
+                  <Image
+                    source={{
+                      uri: order.foods[0].imageUrl,
+                    }}
+                    resizeMode="cover"
+                    className="h-[12px] w-[12px] rounded-md opacity-85"
+                  />
+                  <View className="">
+                    <Text className="text-xs italic text-gray-500">
+                      {order.foods[0].name}{" "}
+                      {order.foods[0].quantity > 1 &&
+                        " x" + order.foods[0].quantity}
+                      {order.foods.length > 1 &&
+                        " +" + (order.foods.length - 1) + " món khác"}
+                    </Text>
+                  </View>
+                </View>
+                <View className="flex-row gap-x-1 items-center">
+                  <Text
+                    className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
+                  >
+                    {getOrderStatusDescription(order.status)?.description}
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
   const unAssignOrdersArea = (
-    <View className="border-2 border-gray-300 flex-1 mt-2 p-2">
+    <View className="border-2 border-gray-300 mt-2 p-2 mb-[-14px]">
       <Text className="italic text-gray-700 text-center mb-1 text-[10px]">
-        Danh sách đơn hàng đang trống
+        Danh sách đơn hàng đang trống ({getUnassignedOrders().length} đơn hàng)
       </Text>
       <ScrollView>
         <View className="gap-y-[4px]">
@@ -161,7 +293,7 @@ const DeliveryPackageGroupCreate = () => {
                 // setOrder(order);
                 // setIsDetailBottomSheetVisible(true);
               }}
-              className="p-2 pt-3 bg-white border-2 border-gray-300 rounded-lg"
+              className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
             >
               <View className="flex-row items-center justify-between gap-2">
                 <View className="flex-row items-center">
@@ -174,7 +306,22 @@ const DeliveryPackageGroupCreate = () => {
                     {order.dormitoryId == 1 ? "Đến KTX khu A" : "Đến KTX khu B"}
                   </Text>
                   <TouchableOpacity
-                    onPress={() => {}}
+                    onPress={() => {
+                      assign(currentDeliveryPersonId, order.id);
+                      // toast.show(
+                      //   `Đơn MS-${
+                      //     order.id
+                      //   } được phân công giao hàng cho ${utilService.shortenName(
+                      //     getCurrentPerson()?.staffInfor.fullName || ""
+                      //   )}${
+                      //     getCurrentPerson()?.staffInfor.id == 0 && " (bạn)"
+                      //   }.`,
+                      //   {
+                      //     type: "info",
+                      //     duration: 1500,
+                      //   }
+                      // );
+                    }}
                     className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
                     disabled={order.status != OrderStatus.Preparing}
                   >
@@ -239,7 +386,7 @@ const DeliveryPackageGroupCreate = () => {
           <CustomButton
             title="Hoàn tất"
             handlePress={() => {}}
-            containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+            containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
             textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
           />
         </View>

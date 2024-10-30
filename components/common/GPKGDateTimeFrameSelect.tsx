@@ -222,7 +222,7 @@ const GPKGDateTimeFrameSelect = ({
       <View className="p-4 bg-white">
         <View className="flex-row gap-x-1">
           <View className="flex-col relative">
-            <Text className="text-gray-500  text-sm absolute top-[-8px] bg-white z-10 left-5">
+            <Text className="text-gray-500  text-sm absolute top-[-8px] bg-white z-10 left-5 ">
               Ngày
             </Text>
             <TouchableRipple
@@ -232,10 +232,10 @@ const GPKGDateTimeFrameSelect = ({
               className="border-2 border-gray-300 p-2 rounded-md"
             >
               <View className="flex-row justify-between items-center">
-                <Text className="text-black mx-2 text-lg">
+                <Text className="text-black mr-2 text-md">
                   {utilService.formatDateDdMmYyyy(query.intendedRecieveDate)}
                 </Text>
-                <Ionicons name="create-outline" size={21} color="gray-600" />
+                <Ionicons name="create-outline" size={18} color="gray-600" />
               </View>
             </TouchableRipple>
             <Modal
@@ -286,7 +286,7 @@ const GPKGDateTimeFrameSelect = ({
               className="border-2 border-gray-300 p-2 rounded-md"
             >
               <View className="flex-row justify-between items-center">
-                <Text className="text-black mx-2 text-lg">
+                <Text className="text-black mr-2 text-md">
                   {isGPKGFrameListLoading || isGPKGFrameListRefetching ? (
                     <ActivityIndicator animating={true} color="#FCF450" />
                   ) : isAnyUnCreatedFrame ? (
@@ -297,7 +297,7 @@ const GPKGDateTimeFrameSelect = ({
                     "-- -- : -- --"
                   )}
                 </Text>
-                <Ionicons name="create-outline" size={21} color="gray-600" />
+                <Ionicons name="create-outline" size={18} color="gray-600" />
               </View>
             </TouchableRipple>
             <Modal
@@ -333,6 +333,16 @@ const GPKGDateTimeFrameSelect = ({
               </BlurView>
             </Modal>
           </View>
+          <TouchableOpacity
+            onPress={() => {}}
+            className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94] ${
+              !isAnyUnCreatedFrame ? "opacity-50" : ""
+            }`}
+            disabled={!isAnyUnCreatedFrame}
+          >
+            <Text className="text-[10px] text-white mr-1">Chia tự động</Text>
+            {/* <Ionicons name="chevron-up-outline" size={14} color="white" /> */}
+          </TouchableOpacity>
         </View>
         {!isAnyUnCreatedFrame && (
           <View>
