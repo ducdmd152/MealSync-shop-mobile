@@ -50,11 +50,8 @@ import MyDeliveryPackageList from "@/components/delivery-package/MyDeliveryPacka
 import sessionService from "@/services/session-service";
 import OrderFetchModel, { OrderStatus } from "@/types/models/OrderFetchModel";
 import { UseQueryResult } from "@tanstack/react-query";
-export interface GPKGQuery {
-  startTime: number;
-  endTime: number;
-  intendedRecieveDate: string;
-}
+import { GPKGQuery } from "@/app/(pages)/delivery-package-group/create";
+
 interface GPKG {
   startTime: number;
   endTime: number;
@@ -67,6 +64,8 @@ interface GPKGListValueOfResponse {
 }
 
 interface Props {
+  query: GPKGQuery;
+  setQuery: (query: GPKGQuery) => void;
   isAnyUnCreatedFrame: boolean;
   setIsAnyUnCreatedFrame: (value: boolean) => void;
   setOrderFetchResult: (
@@ -74,6 +73,8 @@ interface Props {
   ) => void;
 }
 const GPKGDateTimeFrameSelect = ({
+  query,
+  setQuery,
   isAnyUnCreatedFrame,
   setIsAnyUnCreatedFrame,
   setOrderFetchResult,
@@ -87,13 +88,7 @@ const GPKGDateTimeFrameSelect = ({
   const [isFramePickerVisible, setFramePickerVisibility] = useState(false);
 
   const [frames, setFrames] = useState<GPKG[]>([]);
-  const [query, setQuery] = useState<GPKGQuery>({
-    startTime: 0,
-    endTime: 30,
-    intendedRecieveDate: new Date()
-      .toLocaleDateString("sv-SE")
-      .replace(/-/g, "/"),
-  } as GPKGQuery);
+
   const {
     data: gPKGFrameListData,
     isLoading: isGPKGFrameListLoading,
