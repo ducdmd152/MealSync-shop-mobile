@@ -122,7 +122,7 @@ const DeliveryPackage = () => {
     if (index != deliveryPackageIndex) setIndex(deliveryPackageIndex);
   }, [deliveryPackageIndex]);
   return (
-    <View className="w-full h-full bg-white text-black p-2 relative">
+    <View className="w-full h-full bg-white text-black relative">
       <CustomButton
         title={
           formatDate(query.intendedRecieveDate) +
