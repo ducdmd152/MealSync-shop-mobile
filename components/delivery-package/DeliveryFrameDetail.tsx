@@ -224,6 +224,25 @@ const DeliveryFrameDetail = ({
                                       ?.description
                                   }
                                 </Text>
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    setOrder(order);
+                                    setIsOpenOrderAssign(true);
+                                  }}
+                                  className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
+                                  disabled={
+                                    order.status != OrderStatus.Preparing
+                                  }
+                                >
+                                  <Text className="text-[12px] text-white mr-1">
+                                    Thay đổi
+                                  </Text>
+                                  <Ionicons
+                                    name="person-outline"
+                                    size={12}
+                                    color="white"
+                                  />
+                                </TouchableOpacity>
                               </View>
                             </View>
                             <View className="flex-row justify-between items-center mt-[4px]">
@@ -384,7 +403,7 @@ const DeliveryFrameDetail = ({
         contentContainerStyle={{
           backgroundColor: "white",
           padding: 20,
-          margin: 20,
+          margin: 5,
           zIndex: 1000,
         }}
       >
