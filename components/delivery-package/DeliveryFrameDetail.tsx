@@ -1,5 +1,12 @@
-import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
-import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+  Alert,
+} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import { FrameDateTime } from "@/types/models/TimeModel";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
 import apiClient from "@/services/api-services/api-client";
@@ -25,10 +32,12 @@ import {
 } from "react-native-paper";
 import OrderDeliveryAssign from "./OrderDeliveryAssign";
 import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
+import { router } from "expo-router";
 interface Props {
   query: FrameDateTime;
   onNotFound?: () => void;
   containerStyleClasses?: string;
+  onClose: () => void;
 }
 const initExtend = false;
 const detailBottomHeight = Dimensions.get("window").height - 220;
@@ -36,7 +45,9 @@ const DeliveryFrameDetail = ({
   query,
   onNotFound = () => {},
   containerStyleClasses = "",
+  onClose,
 }: Props) => {
+  const [isEditable, setIsEditable] = useState(true);
   const [gPKGDetails, setGPKGDetails] =
     useState<DeliveryPackageGroupDetailsModel>(
       {} as DeliveryPackageGroupDetailsModel
@@ -68,8 +79,9 @@ const DeliveryFrameDetail = ({
   };
   useEffect(() => {
     getGPKGDetails();
+    setIsEditable(utilService.isCurrentTimeGreaterThanEndTime(query));
   }, [query]);
-
+  // console.log("getCurrentUTCDate", utilService.getCurrentUTCDate());
   const getIsExtendPGK = (index: number) => {
     if (!gPKGDetails?.deliveryPackageGroups) return !initExtend;
     if (extendPKGs.length < gPKGDetails?.deliveryPackageGroups.length) {
@@ -224,25 +236,27 @@ const DeliveryFrameDetail = ({
                                       ?.description
                                   }
                                 </Text>
-                                <TouchableOpacity
-                                  onPress={() => {
-                                    setOrder(order);
-                                    setIsOpenOrderAssign(true);
-                                  }}
-                                  className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
-                                  disabled={
-                                    order.status != OrderStatus.Preparing
-                                  }
-                                >
-                                  <Text className="text-[12px] text-white mr-1">
-                                    Thay đổi
-                                  </Text>
-                                  <Ionicons
-                                    name="person-outline"
-                                    size={12}
-                                    color="white"
-                                  />
-                                </TouchableOpacity>
+                                {isEditable && (
+                                  <TouchableOpacity
+                                    onPress={() => {
+                                      setOrder(order);
+                                      setIsOpenOrderAssign(true);
+                                    }}
+                                    className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
+                                    disabled={
+                                      order.status != OrderStatus.Preparing
+                                    }
+                                  >
+                                    <Text className="text-[12px] text-white mr-1">
+                                      Thay đổi
+                                    </Text>
+                                    <Ionicons
+                                      name="person-outline"
+                                      size={12}
+                                      color="white"
+                                    />
+                                  </TouchableOpacity>
+                                )}
                               </View>
                             </View>
                             <View className="flex-row justify-between items-center mt-[4px]">
@@ -316,23 +330,25 @@ const DeliveryFrameDetail = ({
                           ? "Đến KTX khu A"
                           : "Đến KTX khu B"}
                       </Text>
-                      <TouchableOpacity
-                        onPress={() => {
-                          setOrder(order);
-                          setIsOpenOrderAssign(true);
-                        }}
-                        className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
-                        disabled={order.status != OrderStatus.Preparing}
-                      >
-                        <Text className="text-[12px] text-white mr-1">
-                          Phân công
-                        </Text>
-                        <Ionicons
-                          name="person-add-outline"
-                          size={12}
-                          color="white"
-                        />
-                      </TouchableOpacity>
+                      {isEditable && (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setOrder(order);
+                            setIsOpenOrderAssign(true);
+                          }}
+                          className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
+                          disabled={order.status != OrderStatus.Preparing}
+                        >
+                          <Text className="text-[12px] text-white mr-1">
+                            Phân công
+                          </Text>
+                          <Ionicons
+                            name="person-add-outline"
+                            size={12}
+                            color="white"
+                          />
+                        </TouchableOpacity>
+                      )}
                       {/* <Text
                         className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
                           getOrderStatusDescription(order.status)?.bgColor
@@ -387,15 +403,24 @@ const DeliveryFrameDetail = ({
           </View>
         </View>
       </ScrollView>
-      <CustomButton
-        title="Chỉnh sửa"
-        //   isLoading={isSubmitting}
-        handlePress={() => {
-          // onSubmit();
-        }}
-        containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold"
-        textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
-      />
+      {isEditable && (
+        <CustomButton
+          title="Chỉnh sửa"
+          //   isLoading={isSubmitting}
+          handlePress={() => {
+            if (!utilService.isCurrentTimeGreaterThanEndTime(query)) {
+              Alert.alert("Oops!", "Đã quá thời gian cho phép chỉnh sửa!");
+              setIsEditable(false);
+              return;
+            }
+            onClose();
+            router.push("/delivery-package-group/update");
+          }}
+          containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold"
+          textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+        />
+      )}
+
       {/* <Portal> */}
       <ModalPaper
         visible={isOpenOrderAssign}

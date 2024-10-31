@@ -1,3 +1,5 @@
+import { FrameDateTime } from "@/types/models/TimeModel";
+
 export type TimeRange = {
   startTime: number;
   endTime: number;
@@ -78,6 +80,34 @@ const utilService = {
     });
 
     return result;
+  },
+  getCurrentUTCDate: (): Date => {
+    return new Date(new Date().toISOString());
+  },
+  toUTCDate: (date: Date): Date => {
+    return new Date(date.toISOString());
+  },
+  isCurrentTimeGreaterThanEndTime: (frame: FrameDateTime): boolean => {
+    // Current time in UTC
+    const currentUTCDate = utilService.getCurrentUTCDate();
+    // Offset +7 hours
+    const timezoneOffset = 7 * 60 * 60 * 1000;
+
+    // Create frame end time with intendedReceiveDate and endTime
+    let [year, month, day] = frame.intendedReceiveDate.split("/");
+    let frameEndDateTime = new Date(
+      Number(year),
+      Number(month) - 1,
+      Number(day)
+    );
+    // frameEndDateTime.setHours(Math.floor(frame.endTime / 100));
+    // frameEndDateTime.setMinutes(frame.endTime % 100);
+    // frameEndDateTime = utilService.toUTCDate(frameEndDateTime);
+    console.log("query: ", frame);
+    console.log("currentUTCDate: ", currentUTCDate);
+    console.log("frameEndDateTime: ", frameEndDateTime);
+
+    return currentUTCDate > frameEndDateTime;
   },
 };
 

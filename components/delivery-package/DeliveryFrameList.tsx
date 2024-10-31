@@ -131,7 +131,9 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                   setDetailQuery({
                     startTime: gPKG.startTime,
                     endTime: gPKG.endTime,
-                    intendedReceiveDate: gPKG.intendedReceiveDate,
+                    intendedReceiveDate: utilService.formatDateTimeToYyyyMmDd(
+                      gPKG.intendedReceiveDate
+                    ),
                   });
                   setIsDetailBottomSheetVisible(true);
                 }}
@@ -200,6 +202,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
             </TouchableOpacity>
             <View className="flex-1 mt-2">
               <DeliveryFrameDetail
+                onClose={() => setIsDetailBottomSheetVisible(false)}
                 query={detailQuery}
                 onNotFound={() => {
                   setDetailBottomSheetDisplay(false);
