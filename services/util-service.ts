@@ -25,6 +25,12 @@ const utilService = {
 
     return `${year}/${month}/${day}`;
   },
+  formatPrice: (value: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "decimal",
+      maximumFractionDigits: 0,
+    }).format(value);
+  },
   shortenName: (fullName: string): string => {
     const nameParts = fullName.trim().split(" ");
 
