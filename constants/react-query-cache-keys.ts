@@ -8,6 +8,7 @@ const REACT_QUERY_CACHE_KEYS = {
   ORDER_LIST: ["order", "list"],
   FRAME_STAFF_INFO_LIST: ["frame-staff-info", "list"],
   UNCREATED_GPKG_FRAME_LIST: ["uncreated-gpkg-frame", "list"],
+  DELIVERY_PACKAGE_GROUP_LIST: ["delivery-package-group", "list"],
 };
 
 export default REACT_QUERY_CACHE_KEYS;

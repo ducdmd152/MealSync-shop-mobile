@@ -13,7 +13,7 @@ import FetchResponse, {
 import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
-import { useFocusEffect } from "expo-router";
+import { Link, router, useFocusEffect } from "expo-router";
 import utilService from "@/services/util-service";
 import {
   View,
@@ -186,7 +186,7 @@ const GPKGDateTimeFrameSelect = ({
   const frameSelect = (
     <View className="items-center justify-center  overflow-hidden">
       <Text className="mb-2 text-center">
-        Các khung giờ chưa tạo bất kì phân công hàng nào trong ngày{" "}
+        Các khung giờ có đơn chưa tạo bất kì phân công hàng nào trong ngày{" "}
         {utilService.formatDateDdMmYyyy(query.intendedRecieveDate)}
       </Text>
       <View className="w-full h-[100]">
@@ -346,18 +346,33 @@ const GPKGDateTimeFrameSelect = ({
             {/* <Ionicons name="chevron-up-outline" size={14} color="white" /> */}
           </TouchableOpacity>
         </View>
+        {(isGPKGFrameListLoading || isGPKGFrameListRefetching) && (
+          <View className="mt-2">
+            <ActivityIndicator animating={true} color="#FCF450" />
+          </View>
+        )}
         {!isAnyUnCreatedFrame && (
-          <View>
-            <Text>
-              Không khung giờ nào có đơn hàng đang chuẩn bị chưa được tạo khung
+          <View className="items-center">
+            <Text className="mt-3 text-center italic">
+              Không khung giờ đang diễn ra hay sắp tới {"\n"} cần được tạo khung
               phân công giao hàng
             </Text>
-            <TouchableOpacity>
-              <Text>Trở về</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text>Tải lại</Text>
-            </TouchableOpacity>
+            <View className="flex-row items-center gap-x-2">
+              <TouchableOpacity onPress={() => router.back()}>
+                <Text className="text-[#227B94] text-[14px] font-semibold p-2">
+                  Trở về
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  gPKGFrameListRefetch();
+                }}
+              >
+                <Text className="text-secondary text-[14px] font-semibold p-2">
+                  Tải lại
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </View>

@@ -12,6 +12,7 @@ export const endpoints = {
   ORDER_LIST: "shop-owner/order",
   FRAME_STAFF_INFO_LIST: "shop/shop-delivery-staff/available",
   UNCREATED_GPKG_FRAME_LIST: "shop-owner/delivery-package/time-frame/un-assign",
+  DELIVERY_PACKAGE_GROUP_LIST: "shop-owner/delivery-package-group/interval",
 };
 
 export const testApiService = createHttpService<TestModel>(
