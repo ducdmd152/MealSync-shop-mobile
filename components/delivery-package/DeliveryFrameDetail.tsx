@@ -12,19 +12,25 @@ import utilService from "@/services/util-service";
 import sessionService from "@/services/session-service";
 import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import CustomButton from "../custom/CustomButton";
-import {
+import OrderFetchModel, {
   getOrderStatusDescription,
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
 import { Ionicons } from "@expo/vector-icons";
 import { boolean } from "yup";
-import { ActivityIndicator } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Portal,
+  Modal as ModalPaper,
+} from "react-native-paper";
+import OrderDeliveryAssign from "./OrderDeliveryAssign";
+import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
 interface Props {
   query: FrameDateTime;
   onNotFound?: () => void;
   containerStyleClasses?: string;
 }
-const initExtend = true;
+const initExtend = false;
 const detailBottomHeight = Dimensions.get("window").height - 220;
 const DeliveryFrameDetail = ({
   query,
@@ -37,7 +43,10 @@ const DeliveryFrameDetail = ({
     );
   const [extendPKGs, setExtendPKGs] = useState<boolean[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [order, setOrder] = useState<OrderFetchModel>({} as OrderFetchModel);
+  const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
   const getGPKGDetails = async () => {
+    setIsLoading(true);
     try {
       const response = await apiClient.get<
         FetchValueResponse<DeliveryPackageGroupDetailsModel>
@@ -290,20 +299,8 @@ const DeliveryFrameDetail = ({
                       </Text>
                       <TouchableOpacity
                         onPress={() => {
-                          //   assign(currentDeliveryPersonId, order.id);
-                          // toast.show(
-                          //   `Đơn MS-${
-                          //     order.id
-                          //   } được phân công giao hàng cho ${utilService.shortenName(
-                          //     getCurrentPerson()?.staffInfor.fullName || ""
-                          //   )}${
-                          //     getCurrentPerson()?.staffInfor.id == 0 && " (bạn)"
-                          //   }.`,
-                          //   {
-                          //     type: "info",
-                          //     duration: 1500,
-                          //   }
-                          // );
+                          setOrder(order);
+                          setIsOpenOrderAssign(true);
                         }}
                         className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
                         disabled={order.status != OrderStatus.Preparing}
@@ -377,9 +374,30 @@ const DeliveryFrameDetail = ({
         handlePress={() => {
           // onSubmit();
         }}
-        containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+        containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold"
         textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
       />
+      {/* <Portal> */}
+      <ModalPaper
+        visible={isOpenOrderAssign}
+        onDismiss={() => setIsOpenOrderAssign(false)}
+        contentContainerStyle={{
+          backgroundColor: "white",
+          padding: 20,
+          margin: 20,
+          zIndex: 1000,
+        }}
+      >
+        <OrderDeliveryAssign
+          onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
+            setIsOpenOrderAssign(false);
+            getGPKGDetails();
+          }}
+          order={order}
+          isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
+        />
+      </ModalPaper>
+      {/* </Portal> */}
     </View>
   );
 };

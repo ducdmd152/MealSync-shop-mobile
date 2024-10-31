@@ -73,7 +73,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
             beforeGo();
             router.push("/delivery-package-group/create");
           }}
-          containerStyleClasses="h-[36px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
+          containerStyleClasses="mb-1 mr-2 h-[36px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
           iconLeft={
             <Ionicons name="add-circle-outline" size={21} color="white" />
           }
@@ -180,7 +180,13 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
             ))}
         </ScrollView>
       </View>
-      <BottomSheet modalProps={{}} isVisible={isDetailBottomSheetVisible}>
+      <BottomSheet
+        containerStyle={{
+          zIndex: 11,
+        }}
+        modalProps={{}}
+        isVisible={isDetailBottomSheetVisible}
+      >
         {detailBottomSheetDisplay && (
           <View
             className={`p-4 bg-white rounded-t-lg min-h-[120px] bottom-0`}
