@@ -84,7 +84,7 @@ interface OrderFetchQuery extends PagingRequestQuery {
   phoneNumber: string;
   startTime: number;
   endTime: number;
-  intendedRecieveDate: string;
+  intendedReceiveDate: string;
 }
 
 const filterStatuses = [
@@ -195,8 +195,8 @@ const Order = () => {
       operatingSlots?.value && operatingSlots?.value.length
         ? operatingSlots.value[operatingSlots.value.length - 1].endTime
         : 2400,
-    // intendedRecieveDate: "2024/10/18",
-    intendedRecieveDate: new Date()
+    // intendedReceiveDate: "2024/10/18",
+    intendedReceiveDate: new Date()
       .toLocaleDateString("sv-SE")
       .replace(/-/g, "/"),
   } as OrderFetchQuery);
@@ -252,7 +252,7 @@ const Order = () => {
     if (globalTimeRangeState.isEditing) return;
     setQuery({
       ...query,
-      intendedRecieveDate: dayjs(globalTimeRangeState.date).format(
+      intendedReceiveDate: dayjs(globalTimeRangeState.date).format(
         "YYYY/MM/DD"
       ),
       startTime: globalTimeRangeState.startTime,
@@ -288,7 +288,7 @@ const Order = () => {
     <View className="w-full h-full bg-white text-black p-4 relative">
       <CustomButton
         title={
-          formatDate(query.intendedRecieveDate) +
+          formatDate(query.intendedReceiveDate) +
           " | " +
           formatTime(query.startTime) +
           " - " +
@@ -378,7 +378,7 @@ const Order = () => {
                 //   pageSize: 100_000_000,
                 //   startTime: 0,
                 //   endTime: 2400,
-                //   intendedRecieveDate: "2024/10/18",
+                //   intendedReceiveDate: "2024/10/18",
                 // });
                 orderFetchRefetch();
               }}
@@ -841,7 +841,7 @@ const Order = () => {
               >
                 <View className="flex-row justify-between items-center">
                   <Text className="text-black mx-2 text-lg">
-                    {formatDate(query.intendedRecieveDate)}
+                    {formatDate(query.intendedReceiveDate)}
                   </Text>
                   <Ionicons name="create-outline" size={21} color="gray-600" />
                 </View>

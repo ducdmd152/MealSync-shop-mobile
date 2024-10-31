@@ -37,14 +37,14 @@ interface GPKGCreateRequest {
 export interface GPKGQuery {
   startTime: number;
   endTime: number;
-  intendedRecieveDate: string;
+  intendedReceiveDate: string;
 }
 const DeliveryPackageGroupCreate = () => {
   const toast = useToast();
   const [query, setQuery] = useState<GPKGQuery>({
     startTime: 0,
     endTime: 30,
-    intendedRecieveDate: new Date()
+    intendedReceiveDate: new Date()
       .toLocaleDateString("sv-SE")
       .replace(/-/g, "/"),
   } as GPKGQuery);
@@ -166,7 +166,7 @@ const DeliveryPackageGroupCreate = () => {
             utilService.formatTime(query.startTime) +
             " - " +
             utilService.formatTime(query.endTime)
-          } ngày ${utilService.formatDateDdMmYyyy(query.intendedRecieveDate)}`
+          } ngày ${utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}`
         );
       } else if (isWarning) {
         if (requestData.isConfirm) return;

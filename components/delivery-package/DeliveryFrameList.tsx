@@ -43,7 +43,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
           params: {
             startTime: globalTimeRangeFilter.startTime,
             endTime: globalTimeRangeFilter.endTime,
-            intendedRecieveDate: globalTimeRangeFilter.date,
+            intendedReceiveDate: globalTimeRangeFilter.date,
           },
         })
         .then((response) => response.data),
@@ -131,7 +131,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                   setDetailQuery({
                     startTime: gPKG.startTime,
                     endTime: gPKG.endTime,
-                    intendedRecieveDate: gPKG.intendedReceiveDate,
+                    intendedReceiveDate: gPKG.intendedReceiveDate,
                   });
                   setIsDetailBottomSheetVisible(true);
                 }}

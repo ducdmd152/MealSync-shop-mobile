@@ -37,7 +37,7 @@ interface DeliveryPackageFetchQuery extends PagingRequestQuery {
   id: string;
   startTime: number;
   endTime: number;
-  intendedRecieveDate: string;
+  intendedReceiveDate: string;
 }
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
@@ -79,7 +79,7 @@ const DeliveryPackage = () => {
     pageSize: 100_000_000,
     startTime: globalTimeRangeState.startTime,
     endTime: globalTimeRangeState.endTime,
-    intendedRecieveDate: new Date()
+    intendedReceiveDate: new Date()
       .toLocaleDateString("sv-SE")
       .replace(/-/g, "/"),
   } as DeliveryPackageFetchQuery);
@@ -103,7 +103,7 @@ const DeliveryPackage = () => {
     if (globalTimeRangeState.isEditing) return;
     setQuery({
       ...query,
-      intendedRecieveDate: dayjs(globalTimeRangeState.date).format(
+      intendedReceiveDate: dayjs(globalTimeRangeState.date).format(
         "YYYY/MM/DD"
       ),
       startTime: globalTimeRangeState.startTime,
@@ -125,7 +125,7 @@ const DeliveryPackage = () => {
     <View className="w-full h-full bg-white text-black relative">
       <CustomButton
         title={
-          formatDate(query.intendedRecieveDate) +
+          formatDate(query.intendedReceiveDate) +
           " | " +
           formatTime(query.startTime) +
           " - " +
@@ -159,7 +159,7 @@ const DeliveryPackage = () => {
               >
                 <View className="flex-row justify-between items-center">
                   <Text className="text-black mx-2 text-lg">
-                    {formatDate(query.intendedRecieveDate)}
+                    {formatDate(query.intendedReceiveDate)}
                   </Text>
                   <Ionicons name="create-outline" size={21} color="gray-600" />
                 </View>

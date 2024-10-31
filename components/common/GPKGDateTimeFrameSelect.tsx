@@ -101,8 +101,8 @@ const GPKGDateTimeFrameSelect = ({
       apiClient
         .get(
           endpoints.UNCREATED_GPKG_FRAME_LIST +
-            "?IntendedRecieveDate=" +
-            query.intendedRecieveDate
+            "?intendedReceiveDate=" +
+            query.intendedReceiveDate
         )
         .then((response) => response.data),
     [query]
@@ -187,7 +187,7 @@ const GPKGDateTimeFrameSelect = ({
     <View className="items-center justify-center  overflow-hidden">
       <Text className="mb-2 text-center">
         Các khung giờ có đơn chưa tạo bất kì phân công hàng nào trong ngày{" "}
-        {utilService.formatDateDdMmYyyy(query.intendedRecieveDate)}
+        {utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}
       </Text>
       <View className="w-full h-[100]">
         <ScrollPicker
@@ -233,7 +233,7 @@ const GPKGDateTimeFrameSelect = ({
             >
               <View className="flex-row justify-between items-center">
                 <Text className="text-black mr-2 text-md">
-                  {utilService.formatDateDdMmYyyy(query.intendedRecieveDate)}
+                  {utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}
                 </Text>
                 <Ionicons name="create-outline" size={18} color="gray-600" />
               </View>
@@ -255,12 +255,12 @@ const GPKGDateTimeFrameSelect = ({
                     }
                     mode="single"
                     locale="vi-VN"
-                    date={dayjs(query.intendedRecieveDate).toDate()}
+                    date={dayjs(query.intendedReceiveDate).toDate()}
                     onChange={(params) => {
                       if (params.date) {
                         setQuery({
                           ...query,
-                          intendedRecieveDate:
+                          intendedReceiveDate:
                             utilService.formatDateTimeToYyyyMmDd(
                               params.date.toLocaleString()
                             ),

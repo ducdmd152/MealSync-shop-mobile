@@ -18,6 +18,7 @@ import {
 } from "@/types/models/OrderFetchModel";
 import { Ionicons } from "@expo/vector-icons";
 import { boolean } from "yup";
+import { ActivityIndicator } from "react-native-paper";
 interface Props {
   query: FrameDateTime;
   onNotFound?: () => void;
@@ -61,10 +62,10 @@ const DeliveryFrameDetail = ({
   }, [query]);
 
   const getIsExtendPGK = (index: number) => {
-    if (!gPKGDetails?.deliverPackageGroup) return !initExtend;
-    if (extendPKGs.length < gPKGDetails?.deliverPackageGroup.length) {
+    if (!gPKGDetails?.deliveryPackageGroups) return !initExtend;
+    if (extendPKGs.length < gPKGDetails?.deliveryPackageGroups.length) {
       setExtendPKGs(
-        Array(gPKGDetails.deliverPackageGroup.length).fill(initExtend)
+        Array(gPKGDetails.deliveryPackageGroups.length).fill(initExtend)
       );
       return true;
     }
@@ -78,7 +79,7 @@ const DeliveryFrameDetail = ({
     });
   };
 
-  console.log(gPKGDetails);
+  //   console.log(gPKGDetails);
   return (
     <View className="flex-1">
       <View className="flex-row items-center justify-between gap-2">
@@ -92,13 +93,13 @@ const DeliveryFrameDetail = ({
               utilService.formatTime(query.endTime)}
           </Text>
           <Text className="ml-2 bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
-            {utilService.formatDateDdMmYyyy(query.intendedRecieveDate)}
+            {utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}
           </Text>
         </View>
       </View>
-      {gPKGDetails?.deliverPackageGroup?.length && (
+      {gPKGDetails?.deliveryPackageGroups?.length && (
         <Text className="mt-2 text-[14px] text-gray-700 italic text-right">
-          {gPKGDetails?.deliverPackageGroup.length} gói hàng được phân công
+          {gPKGDetails?.deliveryPackageGroups.length} gói hàng được phân công
         </Text>
       )}
       <ScrollView
@@ -118,7 +119,7 @@ const DeliveryFrameDetail = ({
             minHeight: detailBottomHeight,
           }}
         >
-          {gPKGDetails?.deliverPackageGroup?.map((pkg, index) => (
+          {gPKGDetails?.deliveryPackageGroups?.map((pkg, index) => (
             <View
               key={pkg.deliveryPackageId}
               className="p-2 border-2 border-gray-200 rounded-md"
@@ -256,9 +257,13 @@ const DeliveryFrameDetail = ({
           ))}
           <View className="p-1 border-2 border-gray-200 rounded-md">
             <Text className="mt-1 italic text-gray-700 text-center mb-1 text-[10px]">
-              Danh sách đơn hàng đang trống (
-              {gPKGDetails?.unassignOrders?.length || 0} đơn hàng)
+              Danh sách đơn hàng đang trống{" "}
+              {!isLoading &&
+                `(${gPKGDetails?.unassignOrders?.length || 0} đơn hàng)`}
             </Text>
+            {isLoading && (
+              <ActivityIndicator animating={true} color="#FCF450" />
+            )}
             {gPKGDetails?.unassignOrders
               // .filter((order) => order.dormitoryId == dorm.id)
               ?.map((order) => (
@@ -278,12 +283,41 @@ const DeliveryFrameDetail = ({
                       </Text>
                     </View>
                     <View className="flex-row gap-x-1 items-center">
-                      {/* <Text className="ml-2   bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded ">
-                                {order.dormitoryId == 1
-                                  ? "Đến KTX khu A"
-                                  : "Đến KTX khu B"}
-                              </Text> */}
-                      <Text
+                      <Text className="ml-2   bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded ">
+                        {order.dormitoryId == 1
+                          ? "Đến KTX khu A"
+                          : "Đến KTX khu B"}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          //   assign(currentDeliveryPersonId, order.id);
+                          // toast.show(
+                          //   `Đơn MS-${
+                          //     order.id
+                          //   } được phân công giao hàng cho ${utilService.shortenName(
+                          //     getCurrentPerson()?.staffInfor.fullName || ""
+                          //   )}${
+                          //     getCurrentPerson()?.staffInfor.id == 0 && " (bạn)"
+                          //   }.`,
+                          //   {
+                          //     type: "info",
+                          //     duration: 1500,
+                          //   }
+                          // );
+                        }}
+                        className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
+                        disabled={order.status != OrderStatus.Preparing}
+                      >
+                        <Text className="text-[12px] text-white mr-1">
+                          Phân công
+                        </Text>
+                        <Ionicons
+                          name="person-add-outline"
+                          size={12}
+                          color="white"
+                        />
+                      </TouchableOpacity>
+                      {/* <Text
                         className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
                           getOrderStatusDescription(order.status)?.bgColor
                         }`}
@@ -294,7 +328,7 @@ const DeliveryFrameDetail = ({
                         }}
                       >
                         {getOrderStatusDescription(order.status)?.description}
-                      </Text>
+                      </Text> */}
                     </View>
                   </View>
                   <View className="flex-row justify-between items-center mt-[4px]">
@@ -314,7 +348,7 @@ const DeliveryFrameDetail = ({
                           " +" + (order.foods.length - 1) + " món khác"}
                       </Text>
                     </View>
-                    <View className="flex-row gap-x-1 items-center">
+                    {/* <View className="flex-row gap-x-1 items-center">
                       <Text
                         className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
                       >
@@ -322,6 +356,13 @@ const DeliveryFrameDetail = ({
                           order.totalPrice - order.totalPromotion
                         )}{" "}
                         ₫
+                      </Text>
+                    </View> */}
+                    <View className="flex-row gap-x-1 items-center">
+                      <Text
+                        className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
+                      >
+                        {getOrderStatusDescription(order.status)?.description}
                       </Text>
                     </View>
                   </View>

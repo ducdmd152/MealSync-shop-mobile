@@ -24,14 +24,12 @@ export interface DeliveryPackageModel {
 }
 
 export interface DeliveryPackageGroupModel
-  extends DeliveryPackageGroupDetailsModel {
+  extends DeliveryPackageGroupDetailsModel {}
+
+export interface DeliveryPackageGroupDetailsModel {
   intendedReceiveDate: string;
   startTime: number;
   endTime: number;
   deliveryPackageGroups: DeliveryPackageModel[];
-}
-
-export interface DeliveryPackageGroupDetailsModel {
-  deliverPackageGroup: DeliveryPackageModel[];
   unassignOrders: OrderFetchModel[];
 }

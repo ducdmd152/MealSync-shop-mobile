@@ -1,5 +1,5 @@
 export interface FrameDateTime {
-  intendedRecieveDate: string;
+  intendedReceiveDate: string;
   startTime: number;
   endTime: number;
 }
