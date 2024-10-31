@@ -33,6 +33,7 @@ import {
 import OrderDeliveryAssign from "./OrderDeliveryAssign";
 import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
 import { router } from "expo-router";
+import useGPKGState from "@/hooks/states/useGPKGState";
 interface Props {
   query: FrameDateTime;
   onNotFound?: () => void;
@@ -47,6 +48,7 @@ const DeliveryFrameDetail = ({
   containerStyleClasses = "",
   onClose,
 }: Props) => {
+  const globalGPKGState = useGPKGState();
   const [isEditable, setIsEditable] = useState(true);
   const [gPKGDetails, setGPKGDetails] =
     useState<DeliveryPackageGroupDetailsModel>(
@@ -414,6 +416,7 @@ const DeliveryFrameDetail = ({
               return;
             }
             onClose();
+            globalGPKGState.setQuery({ ...query });
             router.push("/delivery-package-group/update");
           }}
           containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold"

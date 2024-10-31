@@ -8,11 +8,12 @@ import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetc
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import FetchResponse, {
   FetchOnlyListResponse,
+  FetchValueResponse,
 } from "@/types/responses/FetchResponse";
 import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import utilService from "@/services/util-service";
 import GPKGDateTimeFrameSelect from "@/components/common/GPKGDateTimeFrameSelect";
 import OrderFetchModel, {
@@ -27,6 +28,9 @@ import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-toast-notifications";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import useGPKGState from "@/hooks/states/useGPKGState";
+import { DeliveryPackageGroupDetailsModel } from "@/types/models/DeliveryPackageModel";
+import { ActivityIndicator, TouchableRipple } from "react-native-paper";
 interface GPKGCreateRequest {
   isConfirm: boolean;
   deliveryPackages: {
@@ -41,25 +45,61 @@ export interface GPKGQuery {
 }
 const DeliveryPackageGroupUpdate = () => {
   const toast = useToast();
-  const [query, setQuery] = useState<GPKGQuery>({
-    startTime: 0,
-    endTime: 30,
-    intendedReceiveDate: new Date()
-      .toLocaleDateString("sv-SE")
-      .replace(/-/g, "/"),
-  } as GPKGQuery);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [orderFetchResult, setOrderFetchResult] =
-    useState<UseQueryResult<FetchResponse<OrderFetchModel>, Error>>();
+  const { query, setQuery } = useGPKGState();
+  const [isEditable, setIsEditable] = useState(true);
+
+  const [isDetailsLoading, setIsDetailsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [gPKGDetails, setGPKGDetails] =
+    useState<DeliveryPackageGroupDetailsModel>(
+      {} as DeliveryPackageGroupDetailsModel
+    );
+
+  const orders =
+    gPKGDetails.deliveryPackageGroups
+      ?.flatMap((group) => group.orders)
+      ?.concat(gPKGDetails.unassignOrders) || [];
   const [gpkgCreateRequest, setGPKGCreateRequest] = useState<GPKGCreateRequest>(
     {
       isConfirm: false,
       deliveryPackages: [],
     }
   );
-  const [currentDeliveryPersonId, setCurrentDeliveryPersonId] = useState(0);
-  const [isAnyUnCreatedFrame, setIsAnyUnCreatedFrame] = useState(true);
 
+  const getGPKGDetails = async () => {
+    setErrorMsg("");
+    setIsDetailsLoading(true);
+    try {
+      const response = await apiClient.get<
+        FetchValueResponse<DeliveryPackageGroupDetailsModel>
+      >(`shop-owner/delivery-package-group`, {
+        headers: {
+          Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+        },
+        params: {
+          ...query,
+        },
+      });
+      setGPKGDetails({ ...response.data.value });
+      setGPKGCreateRequest({
+        isConfirm: false,
+        deliveryPackages:
+          response.data.value.deliveryPackageGroups?.map((group) => {
+            return {
+              shopDeliveryStaffId: group.shopDeliveryStaff?.id,
+              orderIds: group.orders.map((order) => order.id),
+            };
+          }) || [],
+      });
+    } catch (error: any) {
+      setErrorMsg(
+        error?.response?.data?.error?.message ||
+          "Hệ thống gặp lỗi, vui lòng thử lại!"
+      );
+    } finally {
+      setIsDetailsLoading(false);
+    }
+  };
   const deliveryPersonFetchResult = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.FRAME_STAFF_INFO_LIST.concat(["gpkg-create-page"]),
     async (): Promise<FetchOnlyListResponse<FrameStaffInfoModel>> =>
@@ -76,9 +116,30 @@ const DeliveryPackageGroupUpdate = () => {
         .then((response) => response.data),
     [query]
   );
+  const checkIsLoading = () =>
+    isDetailsLoading || deliveryPersonFetchResult.isFetching;
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsEditable(!utilService.isCurrentTimeGreaterThanEndTime(query));
+      // if (!utilService.isCurrentTimeGreaterThanEndTime(query))
+      getGPKGDetails();
+    }, [])
+  );
+  // useEffect(() => {
+  //   if (isEditable == false) {
+  //     Alert.alert(
+  //       "Oops!",
+  //       "Khung giờ này đã quá thời hạn để chỉnh sửa phân công!"
+  //     );
+  //     router.replace("/delivery-package");
+  //   }
+  // }, [isEditable]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [currentDeliveryPersonId, setCurrentDeliveryPersonId] = useState(0);
 
   function getUnassignedOrders(): OrderFetchModel[] {
-    const allOrders = orderFetchResult?.data?.value.items || [];
+    const allOrders = orders;
     const requestData = gpkgCreateRequest;
     const assignedOrderIds = new Set(
       requestData.deliveryPackages.flatMap((pkg) => pkg.orderIds)
@@ -88,7 +149,7 @@ const DeliveryPackageGroupUpdate = () => {
   }
 
   function getAssignedOrdersOf(shopDeliveryStaffId: number): OrderFetchModel[] {
-    const allOrders = orderFetchResult?.data?.value.items || [];
+    const allOrders = orders;
     const requestData = gpkgCreateRequest;
     const assignedOrderIds = new Set(
       requestData.deliveryPackages
@@ -153,8 +214,8 @@ const DeliveryPackageGroupUpdate = () => {
   const onRequest = async (requestData: GPKGCreateRequest) => {
     try {
       setIsSubmitting(true);
-      const response = await apiClient.post(
-        `shop-owner/delivery-package`,
+      const response = await apiClient.put(
+        `shop-owner/delivery-package-group`,
         requestData
       );
       const { value, isSuccess, isWarning, error } = response.data;
@@ -162,7 +223,7 @@ const DeliveryPackageGroupUpdate = () => {
       if (isSuccess) {
         Alert.alert(
           "Hoàn tất",
-          `Tạo phân công thành công cho khung giờ ${
+          `Cập nhật phân công thành công cho khung giờ ${
             utilService.formatTime(query.startTime) +
             " - " +
             utilService.formatTime(query.endTime)
@@ -184,6 +245,7 @@ const DeliveryPackageGroupUpdate = () => {
         ]);
       }
     } catch (error: any) {
+      console.log("Error", error);
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
@@ -426,29 +488,68 @@ const DeliveryPackageGroupUpdate = () => {
   );
   return (
     <PageLayoutWrapper isScroll={false}>
-      <GPKGDateTimeFrameSelect
-        query={query}
-        setQuery={setQuery}
-        isAnyUnCreatedFrame={isAnyUnCreatedFrame}
-        setIsAnyUnCreatedFrame={setIsAnyUnCreatedFrame}
-        setOrderFetchResult={setOrderFetchResult}
-      />
-      {isAnyUnCreatedFrame && (
-        <View className="px-4 pb-2 mt-[-8px] flex-1">
-          {deliveryPersonSelectArea}
-          {currentPersonArea}
-          {unAssignOrdersArea}
-          <CustomButton
-            title="Hoàn tất"
-            isLoading={isSubmitting}
-            handlePress={() => {
-              onSubmit();
-            }}
-            containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
-            textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
-          />
+      <View className="px-4 pb-2 flex-1">
+        <View className="flex-row gap-x-1 my-2 ">
+          <View className="flex-col relative">
+            <Text className="text-gray-500  text-sm absolute top-[-8px] bg-white z-10 left-5 ">
+              Ngày
+            </Text>
+            <TouchableRipple
+              onPress={() => {}}
+              className="border-2 border-gray-300 p-2 rounded-md"
+            >
+              <View className="flex-row justify-between items-center">
+                <Text className="text-black mr-2 text-[16px]">
+                  {utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}
+                </Text>
+                {/* <Ionicons name="create-outline" size={18} color="gray-600" /> */}
+              </View>
+            </TouchableRipple>
+          </View>
+
+          <View className="flex-col flex-1 relative">
+            <Text className="text-gray-500  text-sm absolute top-[-8px] bg-white z-10 left-5">
+              Khung giờ
+            </Text>
+            <TouchableRipple
+              disabled={true}
+              onPress={() => {}}
+              className="border-2 border-gray-300 p-2 rounded-md"
+            >
+              <View className="flex-row justify-between items-center">
+                <Text className="text-black mr-2 text-[16px]">
+                  {utilService.formatTime(query.startTime) +
+                    " - " +
+                    utilService.formatTime(query.endTime)}
+                </Text>
+                {/* <Ionicons name="create-outline" size={18} color="gray-600" /> */}
+              </View>
+            </TouchableRipple>
+          </View>
+          <TouchableOpacity
+            onPress={() => {}}
+            className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94] opacity-50`}
+            disabled={true}
+          >
+            <Text className="text-[10px] text-white text-center">
+              Chia tự động
+            </Text>
+            {/* <Ionicons name="chevron-up-outline" size={14} color="white" /> */}
+          </TouchableOpacity>
         </View>
-      )}
+        {deliveryPersonSelectArea}
+        {currentPersonArea}
+        {unAssignOrdersArea}
+        <CustomButton
+          title="Hoàn tất"
+          isLoading={isSubmitting}
+          handlePress={() => {
+            onSubmit();
+          }}
+          containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+          textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+        />
+      </View>
     </PageLayoutWrapper>
   );
 };
