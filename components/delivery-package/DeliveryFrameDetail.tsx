@@ -235,6 +235,80 @@ const DeliveryFrameDetail = ({
               )}
             </View>
           ))}
+          <View className="p-1 border-2 border-gray-200 rounded-md">
+            <Text className="mt-1 italic text-gray-700 text-center mb-1 text-[10px]">
+              Danh sách đơn hàng đang trống (
+              {gPKGDetails?.unassignOrders?.length || 0} đơn hàng)
+            </Text>
+            {gPKGDetails?.unassignOrders
+              // .filter((order) => order.dormitoryId == dorm.id)
+              ?.map((order) => (
+                <TouchableOpacity
+                  key={order.id}
+                  onPress={() => {
+                    // setOrderDetailId(order.id);
+                    // setOrder(order);
+                    // setIsDetailBottomSheetVisible(true);
+                  }}
+                  className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
+                >
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-center">
+                      <Text className="text-[10px] bg-gray-100 text-gray-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
+                        MS-{order.id}
+                      </Text>
+                    </View>
+                    <View className="flex-row gap-x-1 items-center">
+                      {/* <Text className="ml-2   bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded ">
+                                {order.dormitoryId == 1
+                                  ? "Đến KTX khu A"
+                                  : "Đến KTX khu B"}
+                              </Text> */}
+                      <Text
+                        className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
+                          getOrderStatusDescription(order.status)?.bgColor
+                        }`}
+                        style={{
+                          backgroundColor: getOrderStatusDescription(
+                            order.status
+                          )?.bgColor,
+                        }}
+                      >
+                        {getOrderStatusDescription(order.status)?.description}
+                      </Text>
+                    </View>
+                  </View>
+                  <View className="flex-row justify-between items-center mt-[4px]">
+                    <View className="flex-1 flex-row justify-start items-center gap-2">
+                      <Image
+                        source={{
+                          uri: order.foods[0].imageUrl,
+                        }}
+                        resizeMode="cover"
+                        className="h-[12px] w-[12px] rounded-md opacity-85"
+                      />
+                      <Text className="text-xs italic text-gray-500">
+                        {order.foods[0].name}{" "}
+                        {order.foods[0].quantity > 1 &&
+                          " x" + order.foods[0].quantity}
+                        {order.foods.length > 1 &&
+                          " +" + (order.foods.length - 1) + " món khác"}
+                      </Text>
+                    </View>
+                    <View className="flex-row gap-x-1 items-center">
+                      <Text
+                        className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
+                      >
+                        {utilService.formatPrice(
+                          order.totalPrice - order.totalPromotion
+                        )}{" "}
+                        ₫
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+          </View>
         </View>
       </ScrollView>
       <CustomButton
