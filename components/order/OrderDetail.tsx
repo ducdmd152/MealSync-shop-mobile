@@ -374,8 +374,8 @@ const OrderDetail = ({
                                               "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                                           );
                                         },
-                                        (isSubmitting: boolean) => {},
-                                        true
+                                        true,
+                                        (isSubmitting: boolean) => {}
                                       );
                                     },
                                   },
@@ -391,8 +391,8 @@ const OrderDetail = ({
                                     "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                                 );
                               },
-                              (isSubmitting: boolean) => {},
-                              false
+                              false,
+                              (isSubmitting: boolean) => {}
                             );
                           },
                         },
@@ -480,8 +480,8 @@ const OrderDetail = ({
                                     "Hệ thống gặp lỗi, vui lòng thử lại sau!"
                                 );
                               },
-                              (value: boolean) => {},
-                              true
+                              true,
+                              (value: boolean) => {}
                             );
                           },
                         },

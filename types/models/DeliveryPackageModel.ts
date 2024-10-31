@@ -23,9 +23,15 @@ export interface DeliveryPackageModel {
   orders: OrderFetchModel[];
 }
 
-export interface DeliveryPackageGroupModel {
+export interface DeliveryPackageGroupModel
+  extends DeliveryPackageGroupDetailsModel {
   intendedReceiveDate: string;
   startTime: number;
   endTime: number;
   deliveryPackageGroups: DeliveryPackageModel[];
+}
+
+export interface DeliveryPackageGroupDetailsModel {
+  deliverPackageGroup: DeliveryPackageModel[];
+  unassignOrders: OrderFetchModel[];
 }

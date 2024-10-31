@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React, { useCallback, useEffect, useRef } from "react";
+import { View, Text, TouchableOpacity, Dimensions, Alert } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import CustomButton from "../custom/CustomButton";
 import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import utilService from "@/services/util-service";
@@ -14,10 +14,22 @@ import { endpoints } from "@/services/api-services/api-service-instances";
 import sessionService from "@/services/session-service";
 import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 import { ActivityIndicator } from "react-native-paper";
+import { FrameDateTime } from "@/types/models/TimeModel";
+import { BottomSheet } from "@rneui/themed";
+import DeliveryFrameDetail from "./DeliveryFrameDetail";
+
+const detailBottomHeight = Dimensions.get("window").height - 100;
 
 const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
   const isFocused = useRef(false);
   const globalTimeRangeFilter = useTimeRangeState();
+  const [isDetailBottomSheetVisible, setIsDetailBottomSheetVisible] =
+    useState(false);
+  const [detailBottomSheetDisplay, setDetailBottomSheetDisplay] =
+    useState(true);
+  const [detailQuery, setDetailQuery] = useState<FrameDateTime>(
+    {} as FrameDateTime
+  );
   const gpkgFetchResult = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.DELIVERY_PACKAGE_GROUP_LIST.concat([
       "delivery-frame-list",
@@ -115,6 +127,14 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
             Array.isArray(gpkgFetchResult.data?.value) &&
             gpkgFetchResult.data?.value.map((gPKG, index) => (
               <TouchableOpacity
+                onPress={() => {
+                  setDetailQuery({
+                    startTime: gPKG.startTime,
+                    endTime: gPKG.endTime,
+                    intendedRecieveDate: gPKG.intendedReceiveDate,
+                  });
+                  setIsDetailBottomSheetVisible(true);
+                }}
                 key={(Math.random() % 100_000_000) + index}
                 className="p-3 drop-shadow-md rounded-lg shadow border-[0.5px] border-gray-200"
               >
@@ -160,6 +180,38 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
             ))}
         </ScrollView>
       </View>
+      <BottomSheet modalProps={{}} isVisible={isDetailBottomSheetVisible}>
+        {detailBottomSheetDisplay && (
+          <View
+            className={`p-4 bg-white rounded-t-lg min-h-[120px] bottom-0`}
+            style={{ height: detailBottomHeight }}
+          >
+            <TouchableOpacity
+              className="items-center"
+              onPress={() => setIsDetailBottomSheetVisible(false)}
+            >
+              <Ionicons name="chevron-down-outline" size={24} color="gray" />
+            </TouchableOpacity>
+            <View className="flex-1 mt-2">
+              <DeliveryFrameDetail
+                query={detailQuery}
+                onNotFound={() => {
+                  setDetailBottomSheetDisplay(false);
+                  Alert.alert(
+                    `Khung phân công vừa chọn không tồn tại.`,
+                    "Vui lòng thử lại!"
+                  );
+                  gpkgFetchResult.refetch();
+                  setTimeout(() => {
+                    setIsDetailBottomSheetVisible(false);
+                    setTimeout(() => setDetailBottomSheetDisplay(true), 1000);
+                  }, 1000);
+                }}
+              />
+            </View>
+          </View>
+        )}
+      </BottomSheet>
     </View>
   );
 };
