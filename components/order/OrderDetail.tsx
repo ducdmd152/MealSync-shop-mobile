@@ -11,6 +11,7 @@ import {
 import CustomButton from "../custom/CustomButton";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import orderAPIService from "@/services/api-services/order-api-service";
+import { RefreshControl } from "react-native-gesture-handler";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -52,7 +53,9 @@ const OrderDetail = ({
 }: Props) => {
   const [order, setOrder] = useState<OrderDetailModel>({} as OrderDetailModel);
   const [isLoading, setIsLoading] = useState(true);
-  const getOrderDetail = async () => {
+  const [isReloading, setIsReloading] = useState(false);
+  const getOrderDetail = async (isRefetching = false) => {
+    if (isRefetching) setIsReloading(true);
     try {
       const response = await apiClient.get<ValueResponse<OrderDetailModel>>(
         `shop-owner/order/${orderId}`
@@ -63,6 +66,7 @@ const OrderDetail = ({
       onNotFound();
     } finally {
       setIsLoading(false);
+      setIsReloading(false);
     }
   };
   useEffect(() => {
@@ -112,7 +116,18 @@ const OrderDetail = ({
               </Text>
             </View>
           </View>
-          <ScrollView className="flex-1">
+          <ScrollView
+            className="flex-1"
+            refreshControl={
+              <RefreshControl
+                tintColor={"#FCF450"}
+                refreshing={isReloading}
+                onRefresh={() => {
+                  getOrderDetail();
+                }}
+              />
+            }
+          >
             <View className="mt-2 bg-white p-2">
               <Text className="text-[15px] text-gray-600 font-semibold">
                 Thông tin nhận hàng
