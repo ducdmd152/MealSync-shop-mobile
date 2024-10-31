@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import { FrameDateTime } from "@/types/models/TimeModel";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
@@ -10,7 +10,7 @@ import {
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import utilService from "@/services/util-service";
 import sessionService from "@/services/session-service";
-import { ScrollView } from "react-native-gesture-handler";
+import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import CustomButton from "../custom/CustomButton";
 import {
   getOrderStatusDescription,
@@ -23,6 +23,8 @@ interface Props {
   onNotFound?: () => void;
   containerStyleClasses?: string;
 }
+const initExtend = true;
+const detailBottomHeight = Dimensions.get("window").height - 220;
 const DeliveryFrameDetail = ({
   query,
   onNotFound = () => {},
@@ -34,7 +36,7 @@ const DeliveryFrameDetail = ({
     );
   const [extendPKGs, setExtendPKGs] = useState<boolean[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const getOrderDetail = async () => {
+  const getGPKGDetails = async () => {
     try {
       const response = await apiClient.get<
         FetchValueResponse<DeliveryPackageGroupDetailsModel>
@@ -55,16 +57,18 @@ const DeliveryFrameDetail = ({
     }
   };
   useEffect(() => {
-    getOrderDetail();
+    getGPKGDetails();
   }, [query]);
 
   const getIsExtendPGK = (index: number) => {
-    if (!gPKGDetails?.deliverPackageGroup) return false;
+    if (!gPKGDetails?.deliverPackageGroup) return !initExtend;
     if (extendPKGs.length < gPKGDetails?.deliverPackageGroup.length) {
-      setExtendPKGs(Array(gPKGDetails.deliverPackageGroup.length).fill(true));
+      setExtendPKGs(
+        Array(gPKGDetails.deliverPackageGroup.length).fill(initExtend)
+      );
       return true;
     }
-    return index < extendPKGs.length ? extendPKGs[index] : false;
+    return index < extendPKGs.length ? extendPKGs[index] : !initExtend;
   };
   const setIsExtendPKGAtIndex = (index: number, value: boolean) => {
     setExtendPKGs((prevExtendPKGs) => {
@@ -97,8 +101,23 @@ const DeliveryFrameDetail = ({
           {gPKGDetails?.deliverPackageGroup.length} gói hàng được phân công
         </Text>
       )}
-      <ScrollView style={{ flexGrow: 1 }}>
-        <View className="gap-y-2 mt-[2px] ml-1">
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            tintColor={"#FCF450"}
+            refreshing={isLoading}
+            onRefresh={() => {
+              getGPKGDetails();
+            }}
+          />
+        }
+      >
+        <View
+          className="gap-y-2 mt-[2px] ml-1"
+          style={{
+            minHeight: detailBottomHeight,
+          }}
+        >
           {gPKGDetails?.deliverPackageGroup?.map((pkg, index) => (
             <View
               key={pkg.deliveryPackageId}
