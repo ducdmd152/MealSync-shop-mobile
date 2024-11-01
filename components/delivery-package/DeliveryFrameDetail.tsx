@@ -73,7 +73,6 @@ const DeliveryFrameDetail = ({
       });
       setGPKGDetails({ ...response.data.value });
     } catch (error: any) {
-      console.log("ERROR: ", error);
       onNotFound();
     } finally {
       setIsLoading(false);
@@ -120,7 +119,7 @@ const DeliveryFrameDetail = ({
           </Text>
         </View>
       </View>
-      {gPKGDetails?.deliveryPackageGroups?.length && (
+      {gPKGDetails?.deliveryPackageGroups?.length > 0 && (
         <Text className="mt-2 text-[14px] text-gray-700 italic text-right">
           {gPKGDetails?.deliveryPackageGroups.length} gói hàng được phân công
         </Text>

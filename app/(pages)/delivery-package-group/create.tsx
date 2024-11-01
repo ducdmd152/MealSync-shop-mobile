@@ -12,7 +12,7 @@ import FetchResponse, {
 import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import utilService from "@/services/util-service";
 import GPKGDateTimeFrameSelect from "@/components/common/GPKGDateTimeFrameSelect";
 import OrderFetchModel, {
@@ -168,6 +168,7 @@ const DeliveryPackageGroupCreate = () => {
             utilService.formatTime(query.endTime)
           } ngày ${utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}`
         );
+        router.replace("/delivery-package");
       } else if (isWarning) {
         if (requestData.isConfirm) return;
         const warningInfo = value as WarningMessageValue;

@@ -100,12 +100,6 @@ const utilService = {
       Number(month) - 1,
       Number(day)
     );
-    // frameEndDateTime.setHours(Math.floor(frame.endTime / 100));
-    // frameEndDateTime.setMinutes(frame.endTime % 100);
-    // frameEndDateTime = utilService.toUTCDate(frameEndDateTime);
-    console.log("query: ", frame);
-    console.log("currentUTCDate: ", currentUTCDate);
-    console.log("frameEndDateTime: ", frameEndDateTime);
 
     return currentUTCDate > frameEndDateTime;
   },

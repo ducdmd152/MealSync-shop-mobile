@@ -17,6 +17,7 @@ import { ActivityIndicator } from "react-native-paper";
 import { FrameDateTime } from "@/types/models/TimeModel";
 import { BottomSheet } from "@rneui/themed";
 import DeliveryFrameDetail from "./DeliveryFrameDetail";
+import dayjs from "dayjs";
 
 const detailBottomHeight = Dimensions.get("window").height - 100;
 
@@ -43,7 +44,9 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
           params: {
             startTime: globalTimeRangeFilter.startTime,
             endTime: globalTimeRangeFilter.endTime,
-            intendedReceiveDate: globalTimeRangeFilter.date,
+            intendedReceiveDate: dayjs(globalTimeRangeFilter.date).format(
+              "YYYY/MM/DD"
+            ),
           },
         })
         .then((response) => response.data),
