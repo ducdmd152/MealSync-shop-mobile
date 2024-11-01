@@ -90,17 +90,14 @@ const utilService = {
   isCurrentTimeGreaterThanEndTime: (frame: FrameDateTime): boolean => {
     // Current time in UTC
     const currentUTCDate = utilService.getCurrentUTCDate();
-    // Offset +7 hours
-    const timezoneOffset = 7 * 60 * 60 * 1000;
-
-    // Create frame end time with intendedReceiveDate and endTime
     let [year, month, day] = frame.intendedReceiveDate.split("/");
     let frameEndDateTime = new Date(
       Number(year),
       Number(month) - 1,
-      Number(day)
+      Number(day),
+      Math.floor(frame.endTime / 100),
+      frame.endTime % 100
     );
-
     return currentUTCDate > frameEndDateTime;
   },
 };

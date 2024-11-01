@@ -80,7 +80,7 @@ const DeliveryFrameDetail = ({
   };
   useEffect(() => {
     getGPKGDetails();
-    setIsEditable(utilService.isCurrentTimeGreaterThanEndTime(query));
+    setIsEditable(!utilService.isCurrentTimeGreaterThanEndTime(query));
   }, [query]);
   // console.log("getCurrentUTCDate", utilService.getCurrentUTCDate());
   const getIsExtendPGK = (index: number) => {
@@ -240,6 +240,18 @@ const DeliveryFrameDetail = ({
                                 {isEditable && (
                                   <TouchableOpacity
                                     onPress={() => {
+                                      if (
+                                        utilService.isCurrentTimeGreaterThanEndTime(
+                                          query
+                                        )
+                                      ) {
+                                        Alert.alert(
+                                          "Oops!",
+                                          "Đã quá thời gian cho phép chỉnh sửa!"
+                                        );
+                                        setIsEditable(false);
+                                        return;
+                                      }
                                       setOrder(order);
                                       setIsOpenOrderAssign(true);
                                     }}
@@ -334,6 +346,16 @@ const DeliveryFrameDetail = ({
                       {isEditable && (
                         <TouchableOpacity
                           onPress={() => {
+                            if (
+                              utilService.isCurrentTimeGreaterThanEndTime(query)
+                            ) {
+                              Alert.alert(
+                                "Oops!",
+                                "Đã quá thời gian cho phép chỉnh sửa!"
+                              );
+                              setIsEditable(false);
+                              return;
+                            }
                             setOrder(order);
                             setIsOpenOrderAssign(true);
                           }}
@@ -409,7 +431,7 @@ const DeliveryFrameDetail = ({
           title="Chỉnh sửa"
           //   isLoading={isSubmitting}
           handlePress={() => {
-            if (!utilService.isCurrentTimeGreaterThanEndTime(query)) {
+            if (utilService.isCurrentTimeGreaterThanEndTime(query)) {
               Alert.alert("Oops!", "Đã quá thời gian cho phép chỉnh sửa!");
               setIsEditable(false);
               return;

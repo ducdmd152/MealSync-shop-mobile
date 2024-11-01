@@ -125,15 +125,15 @@ const DeliveryPackageGroupUpdate = () => {
       getGPKGDetails();
     }, [])
   );
-  // useEffect(() => {
-  //   if (isEditable == false) {
-  //     Alert.alert(
-  //       "Oops!",
-  //       "Khung giờ này đã quá thời hạn để chỉnh sửa phân công!"
-  //     );
-  //     router.replace("/delivery-package");
-  //   }
-  // }, [isEditable]);
+  useEffect(() => {
+    if (isEditable == false) {
+      Alert.alert(
+        "Oops!",
+        "Khung giờ này đã quá thời hạn để chỉnh sửa phân công!"
+      );
+      router.replace("/delivery-package");
+    }
+  }, [isEditable]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [currentDeliveryPersonId, setCurrentDeliveryPersonId] = useState(0);
@@ -229,6 +229,7 @@ const DeliveryPackageGroupUpdate = () => {
             utilService.formatTime(query.endTime)
           } ngày ${utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}`
         );
+        router.replace("/delivery-package");
       } else if (isWarning) {
         if (requestData.isConfirm) return;
         const warningInfo = value as WarningMessageValue;
@@ -255,6 +256,10 @@ const DeliveryPackageGroupUpdate = () => {
     }
   };
   const onSubmit = async () => {
+    if (utilService.isCurrentTimeGreaterThanEndTime(query)) {
+      setIsEditable(false);
+      return;
+    }
     if (gpkgCreateRequest.deliveryPackages.length == 0) {
       Alert.alert(
         "Oops!",

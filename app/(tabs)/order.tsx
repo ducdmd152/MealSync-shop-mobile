@@ -460,7 +460,7 @@ const Order = () => {
                       )}
                     </View>
                   </View>
-                  <View className="flex-row justify-between items-end gap-x-2 gap-y-1">
+                  <View className="flex-row justify-between items-center gap-x-2 gap-y-1">
                     <View>
                       <Text className="text-[10px] italic text-gray-500">
                         {/* Được đặt vào{" "}
@@ -474,17 +474,21 @@ const Order = () => {
                           ? "Giao đến KTX khu A"
                           : "Giao đến KTX khu B"}
                       </Text>
-                      <Text className="text-[10px] italic text-gray-500">
-                        {order.shopDeliveryStaff &&
-                          "Người đi giao: " +
-                            utilService.shortenName(
-                              order.shopDeliveryStaff?.fullName || ""
-                            )}
-                      </Text>
+                      {order.shopDeliveryStaff && (
+                        <Text className="text-[10px] italic text-gray-500">
+                          Người đi giao:{" "}
+                          {utilService.shortenName(
+                            order.shopDeliveryStaff?.fullName || ""
+                          )}
+                        </Text>
+                      )}
                     </View>
 
                     <Text className="text-md italic text-gray-500">
-                      {order.totalPrice.toLocaleString("vi-VN")}đ
+                      {utilService.formatPrice(
+                        order.totalPrice - order.totalPromotion
+                      )}{" "}
+                      ₫
                     </Text>
                   </View>
                 </View>
