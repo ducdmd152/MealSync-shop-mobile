@@ -13,6 +13,7 @@ export const endpoints = {
   FRAME_STAFF_INFO_LIST: "shop/shop-delivery-staff/available",
   UNCREATED_GPKG_FRAME_LIST: "shop-owner/delivery-package/time-frame/un-assign",
   DELIVERY_PACKAGE_GROUP_LIST: "shop-owner/delivery-package-group/interval",
+  SHOP_PROFILE_FULL_INFO: "shop-owner/full-infor",
 };
 
 export const testApiService = createHttpService<TestModel>(
