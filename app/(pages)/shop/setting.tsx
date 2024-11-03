@@ -75,6 +75,74 @@ const Setting = () => {
     if (isReceivingOrderPaused) return "Tạm ngưng nhận hàng";
     if (status == 2) return "Đang mở bán";
   };
+  const operatingSlotSetting = (
+    <View
+      className={`p-4 bg-white rounded-t-lg bottom-0 h-max`}
+      style={{
+        maxHeight: detailBottomHeight,
+        height: shopProfile.data?.value.operatingSlots?.length
+          ? Math.max(
+              (shopProfile.data?.value.operatingSlots?.length || 0) * 100 + 50,
+              200
+            )
+          : 240,
+      }}
+    >
+      <TouchableOpacity
+        className="items-center"
+        onPress={() => setIsOperatingSlotSettingBottomSheetVisible(false)}
+      >
+        <Ionicons name="chevron-down-outline" size={24} color="gray" />
+      </TouchableOpacity>
+      <View className="flex-1 mt-3">
+        <Text className="text-md text-gray-800 text-center mb-4">
+          Các khoảng thời gian hoạt động trong ngày
+        </Text>
+        {!shopProfile.data?.value.operatingSlots.length && (
+          <Text className="text-[11px] italic text-gray-700 text-center ">
+            Chưa có bất kì khoảng hoạt động nào
+          </Text>
+        )}
+        <View className="justify-stretch">
+          {shopProfile.data?.value.operatingSlots.map((slot, index) => (
+            <View key={slot.id} className="w-full">
+              <View className="border-2 p-2 border-gray-200 rounded flex-row items-center justify-center">
+                <Text className="text-[16px] italic text-gray-800 text-center flex-1">
+                  {slot.title} : {slot.timeSlot}
+                </Text>
+                <View className="mx-2 flex-row items-center">
+                  <TouchableOpacity>
+                    <Ionicons name="create-outline" size={24} color="#227B94" />
+                  </TouchableOpacity>
+                  <TouchableOpacity className="ml-1">
+                    <Ionicons name="trash-outline" size={22} color="#FF9001" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* {index !=
+            shopProfile.data?.value.operatingSlots.length - 1 && (
+            <View className="h-[1px] bg-gray-200 mt-2 mb-2" />
+          )} */}
+            </View>
+          ))}
+        </View>
+      </View>
+      <CustomButton
+        title="Thêm mới"
+        containerStyleClasses="mt-5 bg-white border-2 border-secondary-100  h-[40px]"
+        textStyleClasses="text-white text-sm text-secondary-100"
+        iconLeft={
+          <View className="mr-1">
+            <Ionicons name="add-circle-outline" size={16} color="#FF9001" />
+          </View>
+        }
+        handlePress={() => {
+          // setIsOperatingSlotSettingBottomSheetVisible(false);
+        }}
+      />
+    </View>
+  );
   return (
     <PageLayoutWrapper>
       <View className="p-4 gap-y-8">
@@ -255,81 +323,7 @@ const Setting = () => {
         modalProps={{}}
         isVisible={isOperatingSlotSettingBottomSheetVisible}
       >
-        <View
-          className={`p-4 bg-white rounded-t-lg bottom-0 h-max`}
-          style={{
-            maxHeight: detailBottomHeight,
-            height: shopProfile.data?.value.operatingSlots?.length
-              ? Math.max(
-                  (shopProfile.data?.value.operatingSlots?.length || 0) * 100 +
-                    50,
-                  200
-                )
-              : 240,
-          }}
-        >
-          <TouchableOpacity
-            className="items-center"
-            onPress={() => setIsOperatingSlotSettingBottomSheetVisible(false)}
-          >
-            <Ionicons name="chevron-down-outline" size={24} color="gray" />
-          </TouchableOpacity>
-          <View className="flex-1 mt-3">
-            <Text className="text-md text-gray-800 text-center mb-4">
-              Các khoảng thời gian hoạt động trong ngày
-            </Text>
-            {!shopProfile.data?.value.operatingSlots.length && (
-              <Text className="text-[11px] italic text-gray-700 text-center ">
-                Chưa có bất kì khoảng hoạt động nào
-              </Text>
-            )}
-            <View className="justify-stretch">
-              {shopProfile.data?.value.operatingSlots.map((slot, index) => (
-                <View key={slot.id} className="w-full">
-                  <View className="border-2 p-2 border-gray-200 rounded flex-row items-center justify-center">
-                    <Text className="text-[16px] italic text-gray-800 text-center flex-1">
-                      {slot.title} : {slot.timeSlot}
-                    </Text>
-                    <View className="mx-2 flex-row items-center">
-                      <TouchableOpacity>
-                        <Ionicons
-                          name="create-outline"
-                          size={24}
-                          color="#227B94"
-                        />
-                      </TouchableOpacity>
-                      <TouchableOpacity className="ml-1">
-                        <Ionicons
-                          name="trash-outline"
-                          size={22}
-                          color="#FF9001"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-
-                  {/* {index !=
-                    shopProfile.data?.value.operatingSlots.length - 1 && (
-                    <View className="h-[1px] bg-gray-200 mt-2 mb-2" />
-                  )} */}
-                </View>
-              ))}
-            </View>
-          </View>
-          <CustomButton
-            title="Thêm mới"
-            containerStyleClasses="mt-5 bg-white border-2 border-secondary-100  h-[40px]"
-            textStyleClasses="text-white text-sm text-secondary-100"
-            iconLeft={
-              <View className="mr-1">
-                <Ionicons name="add-circle-outline" size={16} color="#FF9001" />
-              </View>
-            }
-            handlePress={() => {
-              // setIsOperatingSlotSettingBottomSheetVisible(false);
-            }}
-          />
-        </View>
+        {operatingSlotSetting}
       </BottomSheet>
     </PageLayoutWrapper>
   );
