@@ -103,12 +103,12 @@ const Setting = () => {
       const { value, isSuccess, isWarning, error } = response.data;
 
       if (isSuccess) {
+        setIsSlotModalOpening(false);
+        shopProfile.refetch();
         Alert.alert(
           "Hoàn tất",
           `Đã thêm khoảng hoạt động ${request.operatingSlot.title} : ${request.operatingSlot.timeSlot}`
         );
-        setIsSlotModalOpening(false);
-        shopProfile.refetch();
       } else if (isWarning) {
         if (request.isConfirm) return;
         const warningInfo = value as WarningMessageValue;
@@ -163,7 +163,7 @@ const Setting = () => {
         maxHeight: detailBottomHeight,
         height: shopProfile.data?.value.operatingSlots?.length
           ? Math.max(
-              (shopProfile.data?.value.operatingSlots?.length || 0) * 82 + 50,
+              (shopProfile.data?.value.operatingSlots?.length || 0) * 70 + 50,
               200
             )
           : 240,
