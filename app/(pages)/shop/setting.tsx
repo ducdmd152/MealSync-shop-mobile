@@ -23,6 +23,9 @@ import FormFieldCustom from "@/components/custom/FormFieldCustom";
 import AnyTimeRangeSelect from "@/components/common/AnyTimeRangeSelect";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import { useToast } from "react-native-toast-notifications";
+import AutoConfirmTimeRangeSelect, {
+  autoConfirmTimeFormat,
+} from "@/components/common/AutoConfirmTimeRangeSelect";
 function formatTimeRanges(timeRanges: string[]): string {
   const length = timeRanges.length;
 
@@ -62,8 +65,13 @@ const Setting = () => {
   const toast = useToast();
   const [isSlotModalOpening, setIsSlotModalOpening] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [autoConfirmSettingMode, setAutoConfirmSettingMode] = React.useState(0);
   const [operatingSlot, setOperatingSlot] =
     React.useState<OperatingSlotModel>(initOperatingSlot);
+  const [autoConfirmMinMax, setAutoConfirmMinMax] = React.useState<{
+    maxOrderHoursInAdvance: number;
+    minOrderHoursInAdvance: number;
+  }>({ maxOrderHoursInAdvance: 6, minOrderHoursInAdvance: 1 });
 
   const [
     isOperatingSlotSettingBottomSheetVisible,
@@ -106,7 +114,6 @@ const Setting = () => {
 
       if (isSuccess) {
         setIsSlotModalOpening(false);
-        shopProfile.refetch();
         onSuccess();
       } else if (isWarning) {
         if (request.isConfirm) return;
@@ -148,6 +155,137 @@ const Setting = () => {
         isConfirm: false,
       },
       onSuccess
+    );
+  };
+  const onChangeIsAcceptingOrderNextDayRequest = async (
+    request: {
+      isAcceptingOrderNextDay: boolean;
+      isConfirm: boolean;
+    },
+    onSuccess: () => void
+  ) => {
+    try {
+      setIsSubmitting(true);
+      const response = await apiClient.put(
+        `shop-owner/is-accept-order-next-day`,
+        request
+      );
+      const { value, isSuccess, isWarning, error } = response.data;
+
+      if (isSuccess) {
+        setIsSlotModalOpening(false);
+
+        onSuccess();
+      } else if (isWarning) {
+        if (request.isConfirm) return;
+        const warningInfo = value as WarningMessageValue;
+        Alert.alert("Xác nhận", warningInfo.message, [
+          {
+            text: "Đồng ý",
+            onPress: async () => {
+              onChangeIsAcceptingOrderNextDayRequest(
+                { ...request, isConfirm: true },
+                onSuccess
+              );
+            },
+          },
+          {
+            text: "Hủy",
+          },
+        ]);
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Oops!",
+        error?.response?.data?.error?.message ||
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const onChangeIsAcceptingOrderNextDaySubmit = async (
+    isAcceptingOrderNextDay: boolean,
+    onSuccess: () => void
+  ) => {
+    onChangeIsAcceptingOrderNextDayRequest(
+      {
+        isAcceptingOrderNextDay,
+        isConfirm: false,
+      },
+      onSuccess
+    );
+  };
+  const onChangeIsAutoOrderConfirmationRequest = async (
+    request: {
+      isAutoOrderConfirmation: boolean;
+      maxOrderHoursInAdvance: number;
+      minOrderHoursInAdvance: number;
+      isConfirm: boolean;
+    },
+    onSuccess: () => void,
+    statusOnly: boolean = false
+  ) => {
+    request = {
+      ...request,
+      maxOrderHoursInAdvance: Math.round(request.maxOrderHoursInAdvance),
+      minOrderHoursInAdvance: Math.round(request.minOrderHoursInAdvance),
+    };
+    try {
+      setIsSubmitting(true);
+      const response = statusOnly
+        ? await apiClient.put(`shop-owner/is-auto-confirm`, request)
+        : await apiClient.put(`shop-owner/is-auto-confirm-condition`, request);
+      const { value, isSuccess, isWarning, error } = response.data;
+
+      if (isSuccess) {
+        setIsSlotModalOpening(false);
+
+        onSuccess();
+      } else if (isWarning) {
+        if (request.isConfirm) return;
+        const warningInfo = value as WarningMessageValue;
+        Alert.alert("Xác nhận", warningInfo.message, [
+          {
+            text: "Đồng ý",
+            onPress: async () => {
+              onChangeIsAutoOrderConfirmationRequest(
+                { ...request, isConfirm: true },
+                onSuccess
+              );
+            },
+          },
+          {
+            text: "Hủy",
+          },
+        ]);
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Oops!",
+        error?.response?.data?.error?.message ||
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const onChangeIsAutoOrderConfirmationSubmit = async (
+    isAutoOrderConfirmation: boolean,
+    maxOrderHoursInAdvance: number,
+    minOrderHoursInAdvance: number,
+    onSuccess: () => void,
+    isStatusOnly: boolean = false
+  ) => {
+    onChangeIsAutoOrderConfirmationRequest(
+      {
+        isAutoOrderConfirmation,
+        maxOrderHoursInAdvance,
+        minOrderHoursInAdvance,
+        isConfirm: false,
+      },
+      onSuccess,
+      isStatusOnly
     );
   };
   const onOperatingSlotRequest = async (request: {
@@ -299,7 +437,6 @@ const Setting = () => {
     if (isReceivingOrderPaused) return "Tạm ngưng nhận đơn";
     if (status == 2) return "Đang mở bán";
   };
-
   const operatingSlotSetting = (
     <View
       className={`p-4 bg-white rounded-t-lg bottom-0 h-max`}
@@ -376,6 +513,7 @@ const Setting = () => {
           />
         </View>
       </CustomModal>
+
       <TouchableOpacity
         className="items-center"
         onPress={() => setIsOperatingSlotSettingBottomSheetVisible(false)}
@@ -610,7 +748,7 @@ const Setting = () => {
               <View className="flex-row gap-x-2">
                 {/* <Ionicons size={20} name="chevron-forward-outline" /> */}
                 <Text className={`font-medium text-md text-gray-600`}>
-                  Cho phép đặt hàng cho ngày mai
+                  Cho phép đặt hàng cho ngày hôm sau
                 </Text>
               </View>
               {shopProfile.isLoading ? (
@@ -624,7 +762,39 @@ const Setting = () => {
                       shopProfile.data?.value.isReceivingOrderPaused == false &&
                       shopProfile.data?.value.isAcceptingOrderNextDay
                     }
-                    onValueChange={onToggleIsOvernight}
+                    onValueChange={(value) => {
+                      Alert.alert(
+                        `Xác nhận`,
+                        `${
+                          value ? "Bật" : "Tắt"
+                        } cho phép đặt hàng cho ngày hôm sau?`,
+                        [
+                          {
+                            text: "Đồng ý",
+                            onPress: async () => {
+                              onChangeIsAcceptingOrderNextDaySubmit(
+                                value,
+                                () => {
+                                  shopProfile.refetch();
+                                  toast.show(
+                                    `Đã ${
+                                      value ? "bật" : "tắt"
+                                    } cho phép đặt hàng cho ngày hôm sau.`,
+                                    {
+                                      type: value ? "success" : "info",
+                                      duration: 1500,
+                                    }
+                                  );
+                                }
+                              );
+                            },
+                          },
+                          {
+                            text: "Hủy",
+                          },
+                        ]
+                      );
+                    }}
                     disabled={
                       shopProfile.isRefetching ||
                       shopProfile.data?.value.status == 3 ||
@@ -639,6 +809,82 @@ const Setting = () => {
         </View>
 
         <View className="">
+          <CustomModal
+            isOpen={autoConfirmSettingMode != 0}
+            setIsOpen={(value) => {}}
+            close={() => setAutoConfirmSettingMode(0)}
+            title={
+              autoConfirmSettingMode == 1
+                ? "Bật tính năng tự động xác nhận đơn"
+                : "Tự động xác nhận đơn"
+            }
+            titleStyleClasses="text-[14px] font-semibold"
+          >
+            <View className="">
+              <View className="mt-2">
+                <AutoConfirmTimeRangeSelect
+                  header={<Text></Text>}
+                  endTime={Math.round(autoConfirmMinMax.maxOrderHoursInAdvance)}
+                  startTime={Math.round(
+                    autoConfirmMinMax.minOrderHoursInAdvance
+                  )}
+                  setEndTime={(time) => {
+                    setAutoConfirmMinMax({
+                      ...autoConfirmMinMax,
+                      maxOrderHoursInAdvance: time,
+                    });
+                  }}
+                  setStartTime={(time) => {
+                    setAutoConfirmMinMax({
+                      ...autoConfirmMinMax,
+                      minOrderHoursInAdvance: time,
+                    });
+                  }}
+                />
+                <Text
+                  className={`italic text-[11px] text-gray-600 mt-2 text-center`}
+                >
+                  Lưu ý *: tính năng này chỉ hoạt động trong thời gian hoạt động
+                  của cửa hàng
+                </Text>
+              </View>
+              <CustomButton
+                title={autoConfirmSettingMode == 1 ? "Xác nhận" : "Cập nhật"}
+                containerStyleClasses="mt-5 bg-secondary border-2 border-secondary-100  h-[40px]"
+                textStyleClasses="text-white text-sm "
+                // iconLeft={
+                //   <View className="mr-1">
+                //     <Ionicons name="add-circle-outline" size={16} color="#FF9001" />
+                //   </View>
+                // }
+                handlePress={() => {
+                  onChangeIsAutoOrderConfirmationRequest(
+                    {
+                      isAutoOrderConfirmation: true,
+                      ...autoConfirmMinMax,
+                      isConfirm: false,
+                    },
+                    () => {
+                      setAutoConfirmSettingMode(0);
+                      shopProfile.refetch();
+                      toast.show(
+                        `Đã ${
+                          autoConfirmSettingMode == 1
+                            ? "bật tính năng tự động xác nhận đơn."
+                            : "cập nhật khoảng thời gian tự động xác nhận đơn."
+                        }`,
+                        {
+                          type: "success",
+                          duration: 2000,
+                        }
+                      );
+                    }
+                  );
+                }}
+                isLoading={isSubmitting}
+              />
+            </View>
+          </CustomModal>
           <Text className="font-psemibold text-gray-600">
             TỰ ĐỘNG XÁC NHẬN ĐƠN HÀNG
           </Text>
@@ -646,11 +892,16 @@ const Setting = () => {
             {shopProfile.isFetching ? (
               <ActivityIndicator animating={true} color="#FCF450" />
             ) : (
-              <TouchableOpacity className="flex-row p-1 justify-between items-center mt-1">
+              <TouchableOpacity
+                className="flex-row p-1 justify-between items-center mt-1"
+                disabled={true}
+              >
                 <View className="flex-row gap-x-2 flex-1">
                   {/* <Ionicons size={20} name="chevron-forward-outline" /> */}
                   <Text className={`font-medium italic text-md text-gray-600`}>
-                    {shopProfile.data?.value.isAutoOrderConfirmation
+                    {shopProfile.data?.value.status == 2 &&
+                    shopProfile.data?.value.isReceivingOrderPaused == false &&
+                    shopProfile.data?.value.isAutoOrderConfirmation
                       ? "Đang bật tự động xác nhận đơn"
                       : "Đã tắt tự động xác nhận đơn"}
                   </Text>
@@ -664,7 +915,50 @@ const Setting = () => {
                       shopProfile.data?.value.isReceivingOrderPaused == false &&
                       shopProfile.data?.value.isAutoOrderConfirmation
                     }
-                    onValueChange={onToggleIsAutoconfirm}
+                    onValueChange={(value) => {
+                      if (value) {
+                        setAutoConfirmSettingMode(1);
+                        setAutoConfirmMinMax({
+                          maxOrderHoursInAdvance:
+                            shopProfile.data?.value.maxOrderHoursInAdvance || 6,
+                          minOrderHoursInAdvance:
+                            shopProfile.data?.value.minOrderHoursInAdvance || 1,
+                        });
+                        return;
+                      }
+                      Alert.alert(
+                        `Xác nhận`,
+                        `Tắt tính năng tự động xác nhận đơn hàng?`,
+                        [
+                          {
+                            text: "Đồng ý",
+                            onPress: async () => {
+                              onChangeIsAutoOrderConfirmationRequest(
+                                {
+                                  ...autoConfirmMinMax,
+                                  isAutoOrderConfirmation: false,
+                                  isConfirm: false,
+                                },
+                                () => {
+                                  setAutoConfirmSettingMode(0);
+                                  shopProfile.refetch();
+                                  toast.show(
+                                    `Đã tắt tự động tính năng xác nhận đơn hàng.`,
+                                    {
+                                      type: "info",
+                                      duration: 1500,
+                                    }
+                                  );
+                                }
+                              );
+                            },
+                          },
+                          {
+                            text: "Hủy",
+                          },
+                        ]
+                      );
+                    }}
                     disabled={
                       shopProfile.isRefetching ||
                       shopProfile.data?.value.status == 3 ||
@@ -677,17 +971,32 @@ const Setting = () => {
             )}
             {!shopProfile.isFetching &&
               shopProfile.data?.value.isAutoOrderConfirmation && (
-                <TouchableOpacity className="flex-row p-1 justify-between items-center mt-1">
+                <TouchableOpacity
+                  className="flex-row p-1 justify-between items-center mt-1"
+                  onPress={() => {
+                    setAutoConfirmSettingMode(2);
+                    setAutoConfirmMinMax({
+                      maxOrderHoursInAdvance:
+                        shopProfile.data?.value.maxOrderHoursInAdvance || 6,
+                      minOrderHoursInAdvance:
+                        shopProfile.data?.value.minOrderHoursInAdvance || 1,
+                    });
+                  }}
+                >
                   <View className="flex-row gap-x-2 flex-1">
                     {/* <Ionicons size={20} name="chevron-forward-outline" /> */}
                     <Text
                       className={`font-medium italic text-md text-gray-600`}
                     >
-                      {shopProfile.data?.value.maxOrderHoursInAdvance}
                       Tự động xác nhận đơn hàng trong khoảng trước{" "}
-                      {shopProfile.data?.value.maxOrderHoursInAdvance}h đến{" "}
-                      {shopProfile.data?.value.minOrderHoursInAdvance}h trước
-                      khung giao hàng
+                      {autoConfirmTimeFormat(
+                        shopProfile.data?.value.maxOrderHoursInAdvance
+                      )}{" "}
+                      đến{" "}
+                      {autoConfirmTimeFormat(
+                        shopProfile.data?.value.minOrderHoursInAdvance
+                      )}{" "}
+                      trước khung giao hàng
                     </Text>
                   </View>
                   <View className="ml-2">
@@ -697,6 +1006,7 @@ const Setting = () => {
               )}
             <TouchableOpacity
               onPress={() => {}}
+              disabled
               className="flex-row p-1 justify-between items-center mt-1"
             >
               <View className="flex-row gap-x-2 flex-1">

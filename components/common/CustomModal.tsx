@@ -7,6 +7,7 @@ interface Props {
   title: string;
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
+  close?: () => void;
   children: ReactNode;
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -18,6 +19,7 @@ const CustomModal = ({
   children,
   containerStyleClasses = "",
   titleStyleClasses = "",
+  close,
 }: Props) => {
   return (
     <Modal isVisible={isOpen}>
@@ -32,7 +34,7 @@ const CustomModal = ({
             <Text className={titleStyleClasses}>{title}</Text>
             <TouchableOpacity
               onPress={() => {
-                setIsOpen(false);
+                (close || setIsOpen)(false);
               }}
             >
               <Ionicons name="close-outline" size={24} color="gray" />
