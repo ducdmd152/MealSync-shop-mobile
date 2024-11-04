@@ -100,6 +100,9 @@ const utilService = {
     );
     return currentUTCDate > frameEndDateTime;
   },
+  parseFormattedNumber: (formattedValue: string) => {
+    return Number(formattedValue.replace(/\./g, ""));
+  },
 };
 
 export default utilService;

@@ -29,6 +29,7 @@ import PromotionModel, {
   promotionStatuses,
 } from "@/types/models/PromotionModel";
 import sessionService from "@/services/session-service";
+import { router, useFocusEffect } from "expo-router";
 
 const STATUSES = [
   { label: "Tất cả", value: 0 },
@@ -71,12 +72,18 @@ const Promotion = () => {
   const toggleToDatePicker = () => {
     setToDatePickerVisibility(!isToDatePickerVisible);
   };
-
+  useFocusEffect(
+    React.useCallback(() => {
+      promotions.refetch();
+    }, [])
+  );
   return (
     <PageLayoutWrapper isScroll={false}>
       <CustomButton
         title="Thêm mới"
-        handlePress={() => {}}
+        handlePress={() => {
+          router.push("promotion/create");
+        }}
         containerStyleClasses="h-[48px] px-4 bg-transparent border-0 border-gray-200 absolute bottom-8 right-5 bg-primary font-psemibold z-10"
         iconLeft={
           <Ionicons name="add-circle-outline" size={21} color="white" />

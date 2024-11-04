@@ -124,7 +124,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           resizeMode="cover"
           className="h-full w-full "
           source={{
-            uri: isChangeMode ? cacheUri : uri,
+            uri:
+              (isChangeMode ? cacheUri : uri) || CONSTANTS.url.noImageAvailable,
           }}
         />
         {/* Đổi avatar thành image */}

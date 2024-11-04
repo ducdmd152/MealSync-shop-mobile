@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export default interface PromotionModel {
   id: number;
   title: string;
@@ -37,3 +39,22 @@ export enum PromotionStatus {
   UnActive = 2,
   Deleted = 3,
 }
+
+export const initPromotionSampleObject = {
+  id: 0,
+  title: "",
+  description: "",
+  bannerUrl:
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5UW3VOtxCrPlSPnHEWVi_OndZbv7IzamS6g&s",
+  amountRate: 0,
+  minimumOrderValue: 1000,
+  maximumApplyValue: 40000,
+  amountValue: 0,
+  applyType: PromotionApplyType.RateApply,
+  status: PromotionStatus.Active,
+  startDate: dayjs(new Date()).format("YYYY/MM/DD"),
+  endDate: dayjs(new Date()).format("YYYY/MM/DD"),
+  usageLimit: 100,
+  numberOfUsed: 0,
+  promotionType: 1,
+} as PromotionModel;
