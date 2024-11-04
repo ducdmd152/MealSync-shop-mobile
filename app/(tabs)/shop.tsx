@@ -1,16 +1,28 @@
 import {
+  Alert,
   StyleSheet,
   Text,
   Touchable,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import AvatarImage from "react-native-paper/lib/typescript/components/Avatar/AvatarImage";
-import { Avatar, Switch } from "react-native-paper";
+import { ActivityIndicator, Avatar, Switch } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
+import { Link, router, useFocusEffect } from "expo-router";
 import sessionService from "@/services/session-service";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import {
+  OperatingSlotModel,
+  ShopProfileGetModel,
+} from "@/types/models/ShopProfileModel";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import { useToast } from "react-native-toast-notifications";
 const redirections = {
   shop: [
     {
@@ -78,28 +90,223 @@ const redirections = {
   ] as LinkItem[],
 };
 const Shop = () => {
+  const toast = useToast();
   const [isSwitchOn, setIsSwitchOn] = React.useState(true);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+  const shopProfile = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO.concat(["gpkg-create-page"]),
+    async (): Promise<FetchValueResponse<ShopProfileGetModel>> =>
+      apiClient
+        .get(endpoints.SHOP_PROFILE_FULL_INFO)
+        .then((response) => response.data),
+    []
+  );
+  const [cache, setCache] = useState<ShopProfileGetModel>({
+    status: 2,
+    isAcceptingOrderNextDay: false,
+    isReceivingOrderPaused: false,
+    isAutoOrderConfirmation: false,
+    operatingSlots: [] as OperatingSlotModel[],
+  } as ShopProfileGetModel);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      shopProfile.refetch();
+    }, [])
+  );
+  useEffect(() => {
+    if (!shopProfile.isFetching && shopProfile.isSuccess)
+      setCache({ ...(shopProfile.data?.value || cache) });
+  }, [shopProfile.data?.value]);
+  const getShopStatusDescription = (
+    status: number,
+    isReceivingOrderPaused: boolean
+  ) => {
+    if (status === 0) return "";
+    if (status == 1) return "Chưa được phê duyệt";
+    if (status == 3) return "Tạm đóng cửa hàng";
+    if (isReceivingOrderPaused) return "Tạm ngưng nhận đơn";
+    if (status == 2) return "Đang mở bán";
+  };
+  const onChangeShopStatusRequest = async (
+    request: {
+      status: number;
+      isReceivingOrderPaused: boolean;
+      isConfirm: boolean;
+    },
+    onSuccess: () => void
+  ) => {
+    try {
+      setIsSubmitting(true);
+      const response = await apiClient.put(
+        `shop-owner/shop-owner/active-inactive`,
+        request
+      );
+      const { value, isSuccess, isWarning, error } = response.data;
+
+      if (isSuccess) {
+        onSuccess();
+      } else if (isWarning) {
+        if (request.isConfirm) return;
+        const warningInfo = value as WarningMessageValue;
+        Alert.alert("Xác nhận", warningInfo.message, [
+          {
+            text: "Đồng ý",
+            onPress: async () => {
+              onChangeShopStatusRequest(
+                { ...request, isConfirm: true },
+                onSuccess
+              );
+            },
+          },
+          {
+            text: "Hủy",
+          },
+        ]);
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Oops!",
+        error?.response?.data?.error?.message ||
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const onChangeShopStatusSubmit = async (
+    status: number,
+    isReceivingOrderPaused: boolean,
+    onSuccess: () => void
+  ) => {
+    onChangeShopStatusRequest(
+      {
+        status,
+        isReceivingOrderPaused,
+        isConfirm: false,
+      },
+      onSuccess
+    );
+  };
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
       <TouchableOpacity className="flex-row justify-between items-center gap-x-2 pb-4">
         <View className="flex-row justify-start items-center gap-x-2">
-          <Avatar.Image
-            size={48}
-            source={{
-              uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTV5-FEuyxb-HMUB41PwAEX_yopAjz0KgMAbg&s",
-            }}
-          />
-          <Text className="text-lg italic text-gray text-primary font-pmedium ">
-            Tiệm ăn tháng năm
-          </Text>
+          {cache.bannerUrl ? (
+            <Avatar.Image
+              size={48}
+              source={{
+                uri: cache.bannerUrl,
+              }}
+            />
+          ) : (
+            <ActivityIndicator animating={true} color="#FCF450" />
+          )}
+
+          <View className="gap-y-0">
+            {cache.name ? (
+              <Text className="text-lg italic text-gray text-primary font-medium mb-[-4px]">
+                {cache.name}
+              </Text>
+            ) : (
+              <ActivityIndicator animating={true} color="#FCF450" />
+            )}
+
+            <Text className="text-[11px] italic text-gray text-primary font-medium ">
+              {getShopStatusDescription(
+                cache.status ? cache.status : 0,
+                cache.isReceivingOrderPaused || false
+              )}
+            </Text>
+          </View>
         </View>
-        <Switch
-          color="#e95137"
-          value={isSwitchOn}
-          onValueChange={onToggleSwitch}
-        />
+
+        <View className="scale-100">
+          <Switch
+            color="#e95137"
+            value={cache.status == 2 && cache.isReceivingOrderPaused == false}
+            onValueChange={(value) => {
+              if (value) {
+                Alert.alert(
+                  `Xác nhận`,
+                  `Bạn có muốn ${
+                    cache.isReceivingOrderPaused
+                      ? "mở nhận đơn trở lại"
+                      : "mở cửa hàng trở lại"
+                  }?`,
+                  [
+                    {
+                      text: "Đồng ý",
+                      onPress: async () => {
+                        onChangeShopStatusSubmit(2, false, () => {
+                          shopProfile.refetch();
+                          toast.show(
+                            `Cửa hàng đã ${
+                              cache.isReceivingOrderPaused
+                                ? "mở nhận đơn trở lại."
+                                : "mở hoạt động trở lại."
+                            }`,
+                            {
+                              type: "success",
+                              duration: 2000,
+                            }
+                          );
+                        });
+                      },
+                    },
+                    {
+                      text: "Hủy",
+                    },
+                  ]
+                );
+              } else {
+                Alert.alert(
+                  `Xác nhận`,
+                  `Bạn muốn tạm ngưng nhận đơn hay tạm dừng hoạt động của cửa hàng?`,
+                  [
+                    {
+                      text: "Tạm ngưng nhận đơn",
+                      onPress: async () => {
+                        onChangeShopStatusSubmit(2, true, () => {
+                          shopProfile.refetch();
+                          toast.show(`Cửa hàng của bạn đã tạm ngưng nhận đơn`, {
+                            type: "info",
+                            duration: 2000,
+                          });
+                        });
+                      },
+                    },
+                    {
+                      text: "Tạm dừng hoạt động",
+                      onPress: async () => {
+                        onChangeShopStatusSubmit(3, false, () => {
+                          shopProfile.refetch();
+                          toast.show(
+                            `Cửa hàng của bạn đã chuyển sang trạng thái tạm dừng hoạt động`,
+                            {
+                              type: "info",
+                              duration: 2000,
+                            }
+                          );
+                        });
+                      },
+                    },
+                    {
+                      text: "Hủy",
+                    },
+                  ]
+                );
+              }
+            }}
+            disabled={
+              shopProfile.isRefetching ||
+              (cache.status != 2 && cache.status != 3) ||
+              isSubmitting
+            }
+          />
+        </View>
       </TouchableOpacity>
       <View className="border-b-2 border-gray-300"></View>
 

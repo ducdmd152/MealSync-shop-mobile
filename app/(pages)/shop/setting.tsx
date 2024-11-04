@@ -82,7 +82,7 @@ const Setting = () => {
   const onToggleIsAutoconfirm = () => {};
 
   const shopProfile = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.FRAME_STAFF_INFO_LIST.concat(["gpkg-create-page"]),
+    REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO.concat(["gpkg-create-page"]),
     async (): Promise<FetchValueResponse<ShopProfileGetModel>> =>
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
@@ -124,7 +124,6 @@ const Setting = () => {
       const { value, isSuccess, isWarning, error } = response.data;
 
       if (isSuccess) {
-        setIsSlotModalOpening(false);
         onSuccess();
       } else if (isWarning) {
         if (request.isConfirm) return;
@@ -184,8 +183,6 @@ const Setting = () => {
       const { value, isSuccess, isWarning, error } = response.data;
 
       if (isSuccess) {
-        setIsSlotModalOpening(false);
-
         onSuccess();
       } else if (isWarning) {
         if (request.isConfirm) return;
@@ -250,8 +247,6 @@ const Setting = () => {
       const { value, isSuccess, isWarning, error } = response.data;
 
       if (isSuccess) {
-        setIsSlotModalOpening(false);
-
         onSuccess();
       } else if (isWarning) {
         if (request.isConfirm) return;
