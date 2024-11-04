@@ -11,27 +11,60 @@ import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "react-native-elements";
-import { Searchbar, TouchableRipple } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Searchbar,
+  TouchableRipple,
+} from "react-native-paper";
 import { Dropdown } from "react-native-element-dropdown";
 import dayjs from "dayjs";
 import { BlurView } from "expo-blur";
 import DateTimePicker from "react-native-ui-datepicker";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import apiClient from "@/services/api-services/api-client";
+import FetchResponse from "@/types/responses/FetchResponse";
+import PromotionModel, {
+  promotionStatuses,
+} from "@/types/models/PromotionModel";
+import sessionService from "@/services/session-service";
 
 const STATUSES = [
-  { label: "Tất cả", value: "0" },
-  { label: "Khả dụng", value: "1" },
-  { label: "Đã tắt", value: "2" },
+  { label: "Tất cả", value: 0 },
+  { label: "Khả dụng", value: 1 },
+  { label: "Đã tắt", value: 2 },
 ];
 
 const Promotion = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [status, setStatus] = useState("0");
+  const [searchValue, setSearchValue] = useState("");
+  const [status, setStatus] = useState(0);
   const [fromDate, setFromDate] = useState(dayjs(dayjs("2024-01-01")));
   const [toDate, setToDate] = useState(dayjs(Date.now()));
   const [isFromDatePickerVisible, setFromDatePickerVisibility] =
     useState(false);
   const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
 
+  const promotions = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.PROMOTION_LIST.concat(["gpkg-create-page"]),
+    async (): Promise<FetchResponse<PromotionModel>> =>
+      apiClient
+        .get(endpoints.SHOP_PROFILE_FULL_INFO, {
+          headers: {
+            Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+          },
+          params: {
+            status: status == 0 ? undefined : status,
+            searchValue,
+            startDate: fromDate.toISOString(),
+            endDate: toDate.toISOString(),
+            pageIndex: 1,
+            pageSize: 100_000_000,
+          },
+        })
+        .then((response) => response.data),
+    [searchValue, status, fromDate, toDate]
+  );
   const toggleFromDatePicker = () => {
     setFromDatePickerVisibility(!isFromDatePickerVisible);
   };
@@ -59,30 +92,33 @@ const Promotion = () => {
               }}
               inputStyle={{ minHeight: 0 }}
               placeholder="Nhập tiêu đề khuyến mãi..."
-              onChangeText={setSearchQuery}
-              value={searchQuery}
+              onChangeText={setSearchValue}
+              value={searchValue}
             />
           </View>
 
-          <ScrollView
+          {/* <ScrollView
             style={{ width: "100%", flexShrink: 0 }}
             horizontal={true}
-          >
-            <View className="w-full flex-row gap-2 items-center justify-between pb-2">
-              <Text className=" bg-gray-100 rounded-xl px-4 py-2 bg-secondary text-center">
-                Tất cả
-              </Text>
-              <Text className=" bg-gray-100 rounded-xl px-4 py-2 text-center">
-                Khả dụng
-              </Text>
-              <Text className="bg-gray-100 rounded-xl px-4 py-2 text-center">
-                Hết hạn
-              </Text>
-              <Text className=" bg-gray-100 rounded-xl px-4 py-2 text-center">
-                Đã tắt
-              </Text>
+          > */}
+          <View className="w-full">
+            <View className="w-full flex-row gap-x-2 items-center justify-between pb-2 px-2">
+              {STATUSES.map((sts) => (
+                <TouchableOpacity
+                  key={sts.value}
+                  className={`flex-1 bg-gray-100 rounded-lg py-2   ${
+                    sts.value == status ? "bg-secondary" : "bg-gray-100"
+                  }`}
+                  onPress={() => {
+                    setStatus(sts.value);
+                  }}
+                >
+                  <Text className="text-center">{sts.label}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
-          </ScrollView>
+          </View>
+          {/* </ScrollView> */}
 
           {/* TIME FILTERING */}
           <View className="flex-row justify-between mb-1">
@@ -173,11 +209,19 @@ const Promotion = () => {
               </BlurView>
             </Modal>
           </View>
+          {promotions.isFetching && (
+            <ActivityIndicator animating={true} color="#FCF450" />
+          )}
+          {!promotions.isFetching && !promotions.data?.value.items?.length && (
+            <Text className="text-gray-600 text-center mt-[-12px]">
+              Không tìm thấy khuyến mãi tương ứng
+            </Text>
+          )}
           <ScrollView style={{ width: "100%", flexGrow: 1 }}>
             <View className="gap-y-2 pb-[154px]">
-              {Array.from({ length: 10 }, (_, i) => (
+              {(promotions.data?.value.items || []).map((promotion, index) => (
                 <View
-                  key={i}
+                  key={promotion.id}
                   className="p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow"
                 >
                   <View className="flex-row items-start justify-between gap-2">
@@ -185,7 +229,7 @@ const Promotion = () => {
                       <View className="self-stretch">
                         <Image
                           source={{
-                            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdcArSQUEt5D7oqzkUhMpP-PIQK6g6BtbFow&s",
+                            uri: promotion.bannerUrl,
                           }}
                           resizeMode="cover"
                           className="h-[52px] w-[62px] rounded-md opacity-85"
@@ -197,15 +241,18 @@ const Promotion = () => {
                           numberOfLines={2}
                           ellipsizeMode="tail"
                         >
-                          Khuyến mãi 5k đơn hàng trên 40k
+                          {promotion.bannerUrl}
                         </Text>
                         <Text className="text-[12px] italic text-gray-500 mt-[-2px]">
-                          12/10/2024 - 20/10/2024
+                          {dayjs(promotion.startDate).format("DD/MM/YY")} -{" "}
+                          {dayjs(promotion.endDate).format("DD/MM/YY")}
                         </Text>
                       </View>
                     </View>
                     <Text className="bg-blue-100 text-blue-800 text-[12px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                      Status
+                      {promotionStatuses.find(
+                        (item) => item.key === promotion.status
+                      )?.label || "------"}
                     </Text>
                   </View>
                   <View className="flex-row justify-end gap-2 pt-4">

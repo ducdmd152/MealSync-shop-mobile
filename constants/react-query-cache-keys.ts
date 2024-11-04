@@ -10,6 +10,7 @@ const REACT_QUERY_CACHE_KEYS = {
   UNCREATED_GPKG_FRAME_LIST: ["uncreated-gpkg-frame", "list"],
   DELIVERY_PACKAGE_GROUP_LIST: ["delivery-package-group", "list"],
   SHOP_PROFILE_FULL_INFO: ["shop-owner/full-infor"],
+  PROMOTION_LIST: ["shop-owner/promotion"],
 };
 
 export default REACT_QUERY_CACHE_KEYS;

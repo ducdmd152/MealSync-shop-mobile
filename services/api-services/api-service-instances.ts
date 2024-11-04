@@ -14,6 +14,7 @@ export const endpoints = {
   UNCREATED_GPKG_FRAME_LIST: "shop-owner/delivery-package/time-frame/un-assign",
   DELIVERY_PACKAGE_GROUP_LIST: "shop-owner/delivery-package-group/interval",
   SHOP_PROFILE_FULL_INFO: "shop-owner/full-infor",
+  PROMOTION_LIST: "shop-owner/promotion",
 };
 
 export const testApiService = createHttpService<TestModel>(
