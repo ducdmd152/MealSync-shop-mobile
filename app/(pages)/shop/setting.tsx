@@ -595,16 +595,26 @@ const Setting = () => {
         <View className="">
           <TouchableOpacity className="flex-row justify-between items-center gap-x-2 pb-4">
             <View className="flex-row justify-start items-center gap-x-2">
-              <Avatar.Image
-                size={48}
-                source={{
-                  uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTV5-FEuyxb-HMUB41PwAEX_yopAjz0KgMAbg&s",
-                }}
-              />
+              {cache.bannerUrl ? (
+                <Avatar.Image
+                  size={48}
+                  source={{
+                    uri: cache.bannerUrl,
+                  }}
+                />
+              ) : (
+                <ActivityIndicator animating={true} color="#FCF450" />
+              )}
+
               <View className="gap-y-0">
-                <Text className="text-lg italic text-gray text-primary font-medium mb-[-4px]">
-                  Tiệm ăn tháng năm
-                </Text>
+                {cache.name ? (
+                  <Text className="text-lg italic text-gray text-primary font-medium mb-[-4px]">
+                    {cache.name}
+                  </Text>
+                ) : (
+                  <ActivityIndicator animating={true} color="#FCF450" />
+                )}
+
                 <Text className="text-[11px] italic text-gray text-primary font-medium ">
                   {getShopStatusDescription(
                     cache.status ? cache.status : 0,
