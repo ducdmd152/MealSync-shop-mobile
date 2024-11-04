@@ -151,6 +151,80 @@ const Setting = () => {
     });
   };
 
+  const onDeleteRequest = async (request: {
+    operatingSlot: OperatingSlotModel;
+    isConfirm: boolean;
+  }) => {
+    request.operatingSlot = {
+      ...request.operatingSlot,
+      title: request.operatingSlot.title.trim(),
+    };
+    try {
+      setIsSubmitting(true);
+      const response = await apiClient.delete(
+        `shop-owner/operating-slot/${request.operatingSlot.id}`,
+        {
+          data: {
+            id: request.operatingSlot.id,
+            isConfirm: request.isConfirm,
+          },
+        }
+      );
+      const { value, isSuccess, isWarning, error } = response.data;
+
+      if (isSuccess) {
+        setIsSlotModalOpening(false);
+        shopProfile.refetch();
+        Alert.alert(
+          "Hoàn tất",
+          `Đã xóa khoảng hoạt động ${request.operatingSlot.title} : ${request.operatingSlot.timeSlot}`
+        );
+      } else if (isWarning) {
+        if (request.isConfirm) return;
+        const warningInfo = value as WarningMessageValue;
+        Alert.alert("Xác nhận", warningInfo.message, [
+          {
+            text: "Đồng ý",
+            onPress: async () => {
+              onRequest({ ...request, isConfirm: true });
+            },
+          },
+          {
+            text: "Hủy",
+          },
+        ]);
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Oops!",
+        error?.response?.data?.error?.message ||
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const onDelete = async (operatingSlot: OperatingSlotModel) => {
+    Alert.alert(
+      "Xác nhận",
+      `Xác nhận xóa khoảng hoạt động "${operatingSlot.title} : ${operatingSlot.timeSlot}"`,
+      [
+        {
+          text: "Xác nhận",
+          onPress: async () => {
+            onDeleteRequest({
+              operatingSlot,
+              isConfirm: false,
+            });
+          },
+        },
+        {
+          text: "Hủy",
+        },
+      ]
+    );
+  };
+
   const getShopStatusDescription = (
     status: number,
     isReceivingOrderPaused: boolean
@@ -169,8 +243,8 @@ const Setting = () => {
         maxHeight: detailBottomHeight,
         height: shopProfile.data?.value.operatingSlots?.length
           ? Math.max(
-              (shopProfile.data?.value.operatingSlots?.length || 0) * 70 + 50,
-              200
+              (shopProfile.data?.value.operatingSlots?.length || 0) * 62 + 100,
+              240
             )
           : 240,
       }}
@@ -257,8 +331,9 @@ const Setting = () => {
           {shopProfile.data?.value.operatingSlots.map((slot, index) => (
             <View key={slot.id} className="w-full">
               <View className="border-2 p-2 border-gray-200 rounded flex-row items-center justify-center">
-                <Text className="text-[16px] italic text-gray-800 text-center flex-1">
-                  {slot.title} : {slot.timeSlot}
+                <Text className="text-[16px] italic text-gray-800 text-center flex-1 font-semibold">
+                  {slot.title} :{" "}
+                  <Text className="font-semibold">{slot.timeSlot}</Text>
                 </Text>
                 <View className="mx-2 flex-row items-center">
                   <TouchableOpacity
@@ -269,7 +344,12 @@ const Setting = () => {
                   >
                     <Ionicons name="create-outline" size={24} color="#227B94" />
                   </TouchableOpacity>
-                  <TouchableOpacity className="ml-1">
+                  <TouchableOpacity
+                    className="ml-1"
+                    onPress={() => {
+                      onDelete({ ...slot });
+                    }}
+                  >
                     <Ionicons name="trash-outline" size={22} color="#FF9001" />
                   </TouchableOpacity>
                 </View>
