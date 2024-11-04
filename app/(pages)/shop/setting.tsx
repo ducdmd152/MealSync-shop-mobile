@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Dimensions, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import { Ionicons } from "@expo/vector-icons";
 import { ActivityIndicator, Avatar, Switch } from "react-native-paper";
@@ -89,12 +89,23 @@ const Setting = () => {
         .then((response) => response.data),
     []
   );
+  const [cache, setCache] = useState<ShopProfileGetModel>({
+    status: 2,
+    isAcceptingOrderNextDay: false,
+    isReceivingOrderPaused: false,
+    isAutoOrderConfirmation: false,
+    operatingSlots: [] as OperatingSlotModel[],
+  } as ShopProfileGetModel);
 
   useFocusEffect(
     React.useCallback(() => {
       shopProfile.refetch();
     }, [])
   );
+  useEffect(() => {
+    if (!shopProfile.isFetching && shopProfile.isSuccess)
+      setCache({ ...(shopProfile.data?.value || cache) });
+  }, [shopProfile.data?.value]);
 
   const onChangeShopStatusRequest = async (
     request: {
@@ -442,11 +453,8 @@ const Setting = () => {
       className={`p-4 bg-white rounded-t-lg bottom-0 h-max`}
       style={{
         maxHeight: detailBottomHeight,
-        height: shopProfile.data?.value.operatingSlots?.length
-          ? Math.max(
-              (shopProfile.data?.value.operatingSlots?.length || 0) * 62 + 100,
-              240
-            )
+        height: cache.operatingSlots?.length
+          ? Math.max((cache.operatingSlots?.length || 0) * 62 + 100, 240)
           : 240,
       }}
     >
@@ -524,13 +532,13 @@ const Setting = () => {
         <Text className="text-md text-gray-800 text-center mb-4">
           Các khoảng thời gian hoạt động trong ngày
         </Text>
-        {!shopProfile.data?.value.operatingSlots.length && (
+        {!cache.operatingSlots.length && (
           <Text className="text-[11px] italic text-gray-700 text-center ">
             Chưa có bất kì khoảng hoạt động nào
           </Text>
         )}
         <View className="justify-stretch">
-          {shopProfile.data?.value.operatingSlots.map((slot, index) => (
+          {cache.operatingSlots.map((slot, index) => (
             <View key={slot.id} className="w-full">
               <View className="border-2 p-2 border-gray-200 rounded flex-row items-center justify-center">
                 <Text className="text-[16px] italic text-gray-800 text-center flex-1 font-semibold">
@@ -558,7 +566,7 @@ const Setting = () => {
               </View>
 
               {/* {index !=
-            shopProfile.data?.value.operatingSlots.length - 1 && (
+            cache.operatingSlots.length - 1 && (
             <View className="h-[1px] bg-gray-200 mt-2 mb-2" />
           )} */}
             </View>
@@ -599,110 +607,102 @@ const Setting = () => {
                 </Text>
                 <Text className="text-[11px] italic text-gray text-primary font-medium ">
                   {getShopStatusDescription(
-                    shopProfile.data?.value.status
-                      ? shopProfile.data?.value.status
-                      : 0,
-                    shopProfile.data?.value.isReceivingOrderPaused || false
+                    cache.status ? cache.status : 0,
+                    cache.isReceivingOrderPaused || false
                   )}
                 </Text>
               </View>
             </View>
-            {shopProfile.isFetching ? (
-              <ActivityIndicator animating={true} color="#FCF450" />
-            ) : (
-              <View className="scale-100">
-                <Switch
-                  color="#e95137"
-                  value={
-                    shopProfile.data?.value.status == 2 &&
-                    shopProfile.data?.value.isReceivingOrderPaused == false
+
+            <View className="scale-100">
+              <Switch
+                color="#e95137"
+                value={
+                  cache.status == 2 && cache.isReceivingOrderPaused == false
+                }
+                onValueChange={(value) => {
+                  if (value) {
+                    Alert.alert(
+                      `Xác nhận`,
+                      `Bạn có muốn ${
+                        cache.isReceivingOrderPaused
+                          ? "mở nhận đơn trở lại"
+                          : "mở cửa hàng trở lại"
+                      }?`,
+                      [
+                        {
+                          text: "Đồng ý",
+                          onPress: async () => {
+                            onChangeShopStatusSubmit(2, false, () => {
+                              shopProfile.refetch();
+                              toast.show(
+                                `Cửa hàng đã ${
+                                  cache.isReceivingOrderPaused
+                                    ? "mở nhận đơn trở lại."
+                                    : "mở hoạt động trở lại."
+                                }`,
+                                {
+                                  type: "success",
+                                  duration: 2000,
+                                }
+                              );
+                            });
+                          },
+                        },
+                        {
+                          text: "Hủy",
+                        },
+                      ]
+                    );
+                  } else {
+                    Alert.alert(
+                      `Xác nhận`,
+                      `Bạn muốn tạm ngưng nhận đơn hay tạm dừng hoạt động của cửa hàng?`,
+                      [
+                        {
+                          text: "Tạm ngưng nhận đơn",
+                          onPress: async () => {
+                            onChangeShopStatusSubmit(2, true, () => {
+                              shopProfile.refetch();
+                              toast.show(
+                                `Cửa hàng của bạn đã tạm ngưng nhận đơn`,
+                                {
+                                  type: "info",
+                                  duration: 2000,
+                                }
+                              );
+                            });
+                          },
+                        },
+                        {
+                          text: "Tạm dừng hoạt động",
+                          onPress: async () => {
+                            onChangeShopStatusSubmit(3, false, () => {
+                              shopProfile.refetch();
+                              toast.show(
+                                `Cửa hàng của bạn đã chuyển sang trạng thái tạm dừng hoạt động`,
+                                {
+                                  type: "info",
+                                  duration: 2000,
+                                }
+                              );
+                            });
+                          },
+                        },
+                        {
+                          text: "Hủy",
+                        },
+                      ]
+                    );
                   }
-                  onValueChange={(value) => {
-                    if (value) {
-                      Alert.alert(
-                        `Xác nhận`,
-                        `Bạn có muốn ${
-                          shopProfile.data?.value.isReceivingOrderPaused
-                            ? "mở nhận đơn trở lại"
-                            : "mở cửa hàng trở lại"
-                        }?`,
-                        [
-                          {
-                            text: "Đồng ý",
-                            onPress: async () => {
-                              onChangeShopStatusSubmit(2, false, () => {
-                                shopProfile.refetch();
-                                toast.show(
-                                  `Cửa hàng đã ${
-                                    shopProfile.data?.value
-                                      .isReceivingOrderPaused
-                                      ? "mở nhận đơn trở lại."
-                                      : "mở hoạt động trở lại."
-                                  }`,
-                                  {
-                                    type: "success",
-                                    duration: 2000,
-                                  }
-                                );
-                              });
-                            },
-                          },
-                          {
-                            text: "Hủy",
-                          },
-                        ]
-                      );
-                    } else {
-                      Alert.alert(
-                        `Xác nhận`,
-                        `Bạn muốn tạm ngưng nhận đơn hay tạm dừng hoạt động của cửa hàng?`,
-                        [
-                          {
-                            text: "Tạm ngưng nhận đơn",
-                            onPress: async () => {
-                              onChangeShopStatusSubmit(2, true, () => {
-                                shopProfile.refetch();
-                                toast.show(
-                                  `Cửa hàng của bạn đã tạm ngưng nhận đơn`,
-                                  {
-                                    type: "info",
-                                    duration: 2000,
-                                  }
-                                );
-                              });
-                            },
-                          },
-                          {
-                            text: "Tạm dừng hoạt động",
-                            onPress: async () => {
-                              onChangeShopStatusSubmit(3, false, () => {
-                                shopProfile.refetch();
-                                toast.show(
-                                  `Cửa hàng của bạn đã chuyển sang trạng thái tạm dừng hoạt động`,
-                                  {
-                                    type: "info",
-                                    duration: 2000,
-                                  }
-                                );
-                              });
-                            },
-                          },
-                          {
-                            text: "Hủy",
-                          },
-                        ]
-                      );
-                    }
-                  }}
-                  disabled={
-                    shopProfile.isRefetching ||
-                    (shopProfile.data?.value.status != 2 &&
-                      shopProfile.data?.value.status != 3) ||
-                    isSubmitting
-                  }
-                />
-              </View>
-            )}
+                }}
+                disabled={
+                  shopProfile.isRefetching ||
+                  (cache.status != 2 && cache.status != 3) ||
+                  isSubmitting
+                }
+              />
+            </View>
           </TouchableOpacity>
           <View className="border-b-2 border-gray-300"></View>
         </View>
@@ -721,15 +721,13 @@ const Setting = () => {
             >
               <View className="flex-row gap-x-2">
                 {/* <Ionicons size={20} name="chevron-forward-outline" /> */}
-                {shopProfile.isLoading && (
+                {/* {shopProfile.isLoading && (
                   <ActivityIndicator animating={true} color="#FCF450" />
-                )}
+                )} */}
 
                 <Text className={`font-psemibold text-md text-gray-600`}>
                   {formatTimeRanges(
-                    (shopProfile.data?.value.operatingSlots || []).map(
-                      (slot) => slot.timeSlot
-                    )
+                    (cache.operatingSlots || []).map((slot) => slot.timeSlot)
                   )}
                 </Text>
               </View>
@@ -751,59 +749,53 @@ const Setting = () => {
                   Cho phép đặt hàng cho ngày hôm sau
                 </Text>
               </View>
-              {shopProfile.isLoading ? (
-                <ActivityIndicator animating={true} color="#FCF450" />
-              ) : (
-                <View className="scale-75">
-                  <Switch
-                    color="#e95137"
-                    value={
-                      shopProfile.data?.value.status == 2 &&
-                      shopProfile.data?.value.isReceivingOrderPaused == false &&
-                      shopProfile.data?.value.isAcceptingOrderNextDay
-                    }
-                    onValueChange={(value) => {
-                      Alert.alert(
-                        `Xác nhận`,
-                        `${
-                          value ? "Bật" : "Tắt"
-                        } cho phép đặt hàng cho ngày hôm sau?`,
-                        [
-                          {
-                            text: "Đồng ý",
-                            onPress: async () => {
-                              onChangeIsAcceptingOrderNextDaySubmit(
-                                value,
-                                () => {
-                                  shopProfile.refetch();
-                                  toast.show(
-                                    `Đã ${
-                                      value ? "bật" : "tắt"
-                                    } cho phép đặt hàng cho ngày hôm sau.`,
-                                    {
-                                      type: value ? "success" : "info",
-                                      duration: 1500,
-                                    }
-                                  );
+
+              <View className="scale-75">
+                <Switch
+                  color="#e95137"
+                  value={
+                    cache.status == 2 &&
+                    cache.isReceivingOrderPaused == false &&
+                    cache.isAcceptingOrderNextDay
+                  }
+                  onValueChange={(value) => {
+                    Alert.alert(
+                      `Xác nhận`,
+                      `${
+                        value ? "Bật" : "Tắt"
+                      } cho phép đặt hàng cho ngày hôm sau?`,
+                      [
+                        {
+                          text: "Đồng ý",
+                          onPress: async () => {
+                            onChangeIsAcceptingOrderNextDaySubmit(value, () => {
+                              shopProfile.refetch();
+                              toast.show(
+                                `Đã ${
+                                  value ? "bật" : "tắt"
+                                } cho phép đặt hàng cho ngày hôm sau.`,
+                                {
+                                  type: value ? "success" : "info",
+                                  duration: 1500,
                                 }
                               );
-                            },
+                            });
                           },
-                          {
-                            text: "Hủy",
-                          },
-                        ]
-                      );
-                    }}
-                    disabled={
-                      shopProfile.isRefetching ||
-                      shopProfile.data?.value.status == 3 ||
-                      shopProfile.data?.value.isReceivingOrderPaused == true ||
-                      isSubmitting
-                    }
-                  />
-                </View>
-              )}
+                        },
+                        {
+                          text: "Hủy",
+                        },
+                      ]
+                    );
+                  }}
+                  disabled={
+                    shopProfile.isRefetching ||
+                    cache.status == 3 ||
+                    cache.isReceivingOrderPaused == true ||
+                    isSubmitting
+                  }
+                />
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -889,121 +881,109 @@ const Setting = () => {
             TỰ ĐỘNG XÁC NHẬN ĐƠN HÀNG
           </Text>
           <View className="text-gray-700">
-            {shopProfile.isFetching ? (
-              <ActivityIndicator animating={true} color="#FCF450" />
-            ) : (
+            <TouchableOpacity
+              className="flex-row p-1 justify-between items-center mt-1"
+              disabled={true}
+            >
+              <View className="flex-row gap-x-2 flex-1">
+                {/* <Ionicons size={20} name="chevron-forward-outline" /> */}
+                <Text className={`font-medium italic text-md text-gray-600`}>
+                  {cache.status == 2 &&
+                  cache.isReceivingOrderPaused == false &&
+                  cache.isAutoOrderConfirmation
+                    ? "Đang bật tự động xác nhận đơn"
+                    : "Đã tắt tự động xác nhận đơn"}
+                </Text>
+              </View>
+
+              <View className="scale-75 ml-2">
+                <Switch
+                  color="#e95137"
+                  value={
+                    cache.status == 2 &&
+                    cache.isReceivingOrderPaused == false &&
+                    cache.isAutoOrderConfirmation
+                  }
+                  onValueChange={(value) => {
+                    if (value) {
+                      setAutoConfirmSettingMode(1);
+                      setAutoConfirmMinMax({
+                        maxOrderHoursInAdvance:
+                          cache.maxOrderHoursInAdvance || 6,
+                        minOrderHoursInAdvance:
+                          cache.minOrderHoursInAdvance || 1,
+                      });
+                      return;
+                    }
+                    Alert.alert(
+                      `Xác nhận`,
+                      `Tắt tính năng tự động xác nhận đơn hàng?`,
+                      [
+                        {
+                          text: "Đồng ý",
+                          onPress: async () => {
+                            onChangeIsAutoOrderConfirmationRequest(
+                              {
+                                ...autoConfirmMinMax,
+                                isAutoOrderConfirmation: false,
+                                isConfirm: false,
+                              },
+                              () => {
+                                setAutoConfirmSettingMode(0);
+                                shopProfile.refetch();
+                                toast.show(
+                                  `Đã tắt tự động tính năng xác nhận đơn hàng.`,
+                                  {
+                                    type: "info",
+                                    duration: 1500,
+                                  }
+                                );
+                              },
+                              true
+                            );
+                          },
+                        },
+                        {
+                          text: "Hủy",
+                        },
+                      ]
+                    );
+                  }}
+                  disabled={
+                    shopProfile.isRefetching ||
+                    cache.status == 3 ||
+                    cache.isReceivingOrderPaused == true ||
+                    isSubmitting
+                  }
+                />
+              </View>
+            </TouchableOpacity>
+
+            {cache.isAutoOrderConfirmation && (
               <TouchableOpacity
                 className="flex-row p-1 justify-between items-center mt-1"
-                disabled={true}
+                onPress={() => {
+                  setAutoConfirmSettingMode(2);
+                  setAutoConfirmMinMax({
+                    maxOrderHoursInAdvance: cache.maxOrderHoursInAdvance || 6,
+                    minOrderHoursInAdvance: cache.minOrderHoursInAdvance || 1,
+                  });
+                }}
               >
                 <View className="flex-row gap-x-2 flex-1">
                   {/* <Ionicons size={20} name="chevron-forward-outline" /> */}
                   <Text className={`font-medium italic text-md text-gray-600`}>
-                    {shopProfile.data?.value.status == 2 &&
-                    shopProfile.data?.value.isReceivingOrderPaused == false &&
-                    shopProfile.data?.value.isAutoOrderConfirmation
-                      ? "Đang bật tự động xác nhận đơn"
-                      : "Đã tắt tự động xác nhận đơn"}
+                    Tự động xác nhận đơn hàng trong khoảng trước{" "}
+                    {autoConfirmTimeFormat(cache.maxOrderHoursInAdvance)} đến{" "}
+                    {autoConfirmTimeFormat(cache.minOrderHoursInAdvance)} trước
+                    khung giao hàng
                   </Text>
                 </View>
-
-                <View className="scale-75 ml-2">
-                  <Switch
-                    color="#e95137"
-                    value={
-                      shopProfile.data?.value.status == 2 &&
-                      shopProfile.data?.value.isReceivingOrderPaused == false &&
-                      shopProfile.data?.value.isAutoOrderConfirmation
-                    }
-                    onValueChange={(value) => {
-                      if (value) {
-                        setAutoConfirmSettingMode(1);
-                        setAutoConfirmMinMax({
-                          maxOrderHoursInAdvance:
-                            shopProfile.data?.value.maxOrderHoursInAdvance || 6,
-                          minOrderHoursInAdvance:
-                            shopProfile.data?.value.minOrderHoursInAdvance || 1,
-                        });
-                        return;
-                      }
-                      Alert.alert(
-                        `Xác nhận`,
-                        `Tắt tính năng tự động xác nhận đơn hàng?`,
-                        [
-                          {
-                            text: "Đồng ý",
-                            onPress: async () => {
-                              onChangeIsAutoOrderConfirmationRequest(
-                                {
-                                  ...autoConfirmMinMax,
-                                  isAutoOrderConfirmation: false,
-                                  isConfirm: false,
-                                },
-                                () => {
-                                  setAutoConfirmSettingMode(0);
-                                  shopProfile.refetch();
-                                  toast.show(
-                                    `Đã tắt tự động tính năng xác nhận đơn hàng.`,
-                                    {
-                                      type: "info",
-                                      duration: 1500,
-                                    }
-                                  );
-                                }
-                              );
-                            },
-                          },
-                          {
-                            text: "Hủy",
-                          },
-                        ]
-                      );
-                    }}
-                    disabled={
-                      shopProfile.isRefetching ||
-                      shopProfile.data?.value.status == 3 ||
-                      shopProfile.data?.value.isReceivingOrderPaused == true ||
-                      isSubmitting
-                    }
-                  />
+                <View className="ml-2">
+                  <Ionicons size={20} name="chevron-forward-outline" />
                 </View>
               </TouchableOpacity>
             )}
-            {!shopProfile.isFetching &&
-              shopProfile.data?.value.isAutoOrderConfirmation && (
-                <TouchableOpacity
-                  className="flex-row p-1 justify-between items-center mt-1"
-                  onPress={() => {
-                    setAutoConfirmSettingMode(2);
-                    setAutoConfirmMinMax({
-                      maxOrderHoursInAdvance:
-                        shopProfile.data?.value.maxOrderHoursInAdvance || 6,
-                      minOrderHoursInAdvance:
-                        shopProfile.data?.value.minOrderHoursInAdvance || 1,
-                    });
-                  }}
-                >
-                  <View className="flex-row gap-x-2 flex-1">
-                    {/* <Ionicons size={20} name="chevron-forward-outline" /> */}
-                    <Text
-                      className={`font-medium italic text-md text-gray-600`}
-                    >
-                      Tự động xác nhận đơn hàng trong khoảng trước{" "}
-                      {autoConfirmTimeFormat(
-                        shopProfile.data?.value.maxOrderHoursInAdvance
-                      )}{" "}
-                      đến{" "}
-                      {autoConfirmTimeFormat(
-                        shopProfile.data?.value.minOrderHoursInAdvance
-                      )}{" "}
-                      trước khung giao hàng
-                    </Text>
-                  </View>
-                  <View className="ml-2">
-                    <Ionicons size={20} name="chevron-forward-outline" />
-                  </View>
-                </TouchableOpacity>
-              )}
             <TouchableOpacity
               onPress={() => {}}
               disabled

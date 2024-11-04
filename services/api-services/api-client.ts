@@ -7,7 +7,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   async (config) => {
-    console.log("Request Config:", config);
+    // console.log("Request Config:", config);
     if (!config.headers.Authorization) {
       const token = await sessionService.getAuthToken();
       if (token) {

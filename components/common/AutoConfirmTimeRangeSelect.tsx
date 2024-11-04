@@ -198,7 +198,7 @@ const AutoConfirmTimeRangeSelect = ({
 
       <View className="h-[120] flex-row">
         <View className="flex-1">
-          <Text className="text-lg font-semibold text-center">
+          <Text className="text-sm font-semibold text-center">
             Khoảng từ trước
           </Text>
           {isRefreshing || (
@@ -227,7 +227,7 @@ const AutoConfirmTimeRangeSelect = ({
           )}
         </View>
         <View className="flex-1">
-          <Text className="text-lg font-semibold text-center">Đến trước</Text>
+          <Text className="text-sm font-semibold text-center">Đến trước</Text>
 
           {isRefreshing || (
             <ScrollPicker
@@ -258,7 +258,6 @@ const AutoConfirmTimeRangeSelect = ({
           )}
         </View>
       </View>
-
       <Text className={` italic text-md text-gray-600 mt-2 text-center`}>
         Tự động xác nhận đơn hàng trong khoảng từ trước{" "}
         <Text className="font-medium">{autoConfirmTimeFormat(endTime)}</Text>{" "}
