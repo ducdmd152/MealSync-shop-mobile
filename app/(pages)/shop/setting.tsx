@@ -96,10 +96,16 @@ const Setting = () => {
     };
     try {
       setIsSubmitting(true);
-      const response = await apiClient.post(
-        `shop-owner/operating-slot`,
-        request.operatingSlot
-      );
+      const response =
+        operatingSlot.id == 0
+          ? await apiClient.post(
+              `shop-owner/operating-slot`,
+              request.operatingSlot
+            )
+          : await apiClient.put(
+              `shop-owner/operating-slot/${request.operatingSlot.id}`,
+              request.operatingSlot
+            );
       const { value, isSuccess, isWarning, error } = response.data;
 
       if (isSuccess) {
@@ -228,6 +234,7 @@ const Setting = () => {
             handlePress={() => {
               onSubmit(operatingSlot);
             }}
+            isLoading={isSubmitting}
           />
         </View>
       </CustomModal>
