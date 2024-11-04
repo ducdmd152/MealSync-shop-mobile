@@ -10,14 +10,23 @@ import apiClient from "@/services/api-services/api-client";
 import ValueResponse from "@/types/responses/ValueReponse";
 import { useToast } from "react-native-toast-notifications";
 import { router } from "expo-router";
-import { Switch } from "react-native-paper";
+import { Switch, TouchableRipple } from "react-native-paper";
 import DateTimePicker from "react-native-ui-datepicker";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import ImageUpload from "@/components/common/ImageUpload";
 import CustomButton from "@/components/custom/CustomButton";
 import { SelectList } from "react-native-dropdown-select-list";
 import utilService from "@/services/util-service";
+import { Ionicons } from "@expo/vector-icons";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+// Initialize the timezone plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
+// Set the default timezone to Vietnam (UTC+7)
+const vietnamTz = "Asia/Ho_Chi_Minh";
 const PromotionCreate = () => {
   const toast = useToast();
   const isAnyRequestSubmit = useRef(false);
@@ -25,6 +34,19 @@ const PromotionCreate = () => {
     ...initPromotionSampleObject,
     bannerUrl: "",
   });
+  const [fromDate, setFromDate] = useState(dayjs(dayjs("2024-01-01")));
+  const [toDate, setToDate] = useState(dayjs(Date.now()));
+  const [isFromDatePickerVisible, setFromDatePickerVisibility] =
+    useState(false);
+  const [isFromTimePickerVisible, setFromTimePickerVisibility] =
+    useState(false);
+  const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
+  const toggleFromDatePicker = () => {
+    setFromDatePickerVisibility(!isFromDatePickerVisible);
+  };
+  const toggleToDatePicker = () => {
+    setToDatePickerVisibility(!isToDatePickerVisible);
+  };
 
   const [errors, setErrors] = useState<any>({});
   const validate = (promotion: PromotionModel) => {
@@ -92,10 +114,10 @@ const PromotionCreate = () => {
       ...prevPromotion,
       [name]: newValue,
     }));
-    console.log({
-      ...promotion,
-      [name]: newValue,
-    });
+    // console.log({
+    //   ...promotion,
+    //   [name]: newValue,
+    // });
   };
   const handleSubmit = () => {
     isAnyRequestSubmit.current = true;
@@ -132,11 +154,11 @@ const PromotionCreate = () => {
       Alert.alert("Oops!", "Vui lòng hoàn thành thông tin một cách hợp lệ");
     }
   };
-  console.log(
-    "promotion.applyType",
-    promotion.applyType,
-    promotion.applyType == PromotionApplyType.RateApply
-  );
+  //   console.log(
+  //     "promotion.applyType",
+  //     promotion.applyType,
+  //     promotion.applyType == PromotionApplyType.RateApply
+  //   );
   return (
     <PageLayoutWrapper>
       <View className="p-4 bg-gray">
@@ -171,17 +193,117 @@ const PromotionCreate = () => {
             {/* </View> */}
 
             {/* <View className="flex-1 flex flex-col gap-4"> */}
-            <View className="flex flex-row gap-2">
-              <View className="flex-1">
-                <Text className="font-bold">Thời gian bắt đầu</Text>
-                {/* <DateTimePicker
-                date={new Date(promotion.startDate)}
-                mode="single"
-                onChange={(params) =>
-                  params.date &&
-                  handleChange("startDate", dayjs(params.date).toISOString())
-                }
-              /> */}
+            <View className="flex gap-y-2">
+              <Text className="font-bold">Thời gian bắt đầu</Text>
+              <View className="flex-row px-1 relative">
+                <TouchableRipple
+                  onPress={() => {
+                    setFromDatePickerVisibility(true);
+                    console.log(
+                      "promotion.startDate: ",
+                      promotion.startDate,
+                      dayjs(promotion.startDate).add(7, "hour").toDate()
+                    );
+                  }}
+                  className="flex-1 border-2 border-gray-300 p-1 rounded-md"
+                >
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-black mx-2 text-[16px]">
+                      {dayjs(promotion.startDate).local().format("DD/MM/YYYY")}
+                    </Text>
+
+                    <Ionicons
+                      name="create-outline"
+                      size={21}
+                      color="gray-600"
+                    />
+
+                    <DateTimePickerModal
+                      isVisible={isFromDatePickerVisible}
+                      mode="date"
+                      locale="vi-VN"
+                      timeZoneName="GMT"
+                      confirmTextIOS="Hoàn tất"
+                      cancelTextIOS="Hủy"
+                      date={dayjs(promotion.startDate).add(7, "hour").toDate()}
+                      onConfirm={(date: Date) => {
+                        // date = dayjs(date).add(7, "hour").toDate();
+                        const updatedDate = dayjs(date)
+                          .subtract(7, "hour")
+                          .toDate();
+
+                        console.log(
+                          "StartTime : Date update updatedDate: ",
+                          date.toISOString(),
+                          dayjs(date).day(),
+                          updatedDate.toISOString()
+                        );
+                        setPromotion({
+                          ...promotion,
+                          startDate: updatedDate.toISOString(),
+                        });
+                        setFromDatePickerVisibility(false);
+                      }}
+                      onCancel={() => setFromDatePickerVisibility(false)}
+                    />
+                  </View>
+                </TouchableRipple>
+
+                <TouchableRipple
+                  onPress={() => {
+                    setFromTimePickerVisibility(true);
+                    console.log(
+                      "promotion.startDate: ",
+                      promotion.startDate,
+                      dayjs(promotion.startDate).add(7, "hour").toDate()
+                    );
+                  }}
+                  className="flex-1 border-2 border-gray-300 p-1 rounded-md"
+                >
+                  <View className="flex-row justify-between items-center">
+                    {promotion.startDate && (
+                      <Text className="text-black mx-2 text-[16px]">
+                        {dayjs(promotion.startDate).local().format("HH:mm")}
+                      </Text>
+                    )}
+
+                    <Ionicons
+                      name="create-outline"
+                      size={21}
+                      color="gray-600"
+                    />
+
+                    <DateTimePickerModal
+                      isVisible={isFromTimePickerVisible}
+                      mode="time"
+                      locale="vi-VN"
+                      timeZoneName="GMT"
+                      confirmTextIOS="Hoàn tất"
+                      cancelTextIOS="Hủy"
+                      date={dayjs(promotion.startDate).add(7, "hour").toDate()}
+                      onConfirm={(date: Date) => {
+                        // Update only the time part and keep date part unchanged in UTC+7
+                        const updatedTime = dayjs(promotion.startDate)
+                          .set("hour", dayjs(date).hour())
+                          .set("minute", dayjs(date).minute())
+                          .subtract(7, "hour")
+                          .toDate();
+
+                        console.log(
+                          "StartTime : Time update updatedDate: ",
+                          date.toISOString(),
+                          updatedTime.toISOString()
+                        );
+                        setPromotion({
+                          ...promotion,
+                          startDate: updatedTime.toISOString(),
+                        });
+                        setFromTimePickerVisibility(false);
+                      }}
+                      onCancel={() => setFromTimePickerVisibility(false)}
+                    />
+                  </View>
+                </TouchableRipple>
               </View>
 
               <View className="flex-1">
