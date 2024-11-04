@@ -194,130 +194,138 @@ const PromotionCreate = () => {
             {/* </View> */}
 
             {/* <View className="flex-1 flex flex-col gap-4"> */}
-            <View className="flex gap-y-2">
-              <Text className="font-bold">Thời gian bắt đầu</Text>
-              <View className="flex-row px-1 relative">
-                <TouchableRipple
-                  onPress={() => {
-                    setFromDatePickerVisibility(true);
-                    // console.log(
-                    //   "promotion.startDate: ",
-                    //   promotion.startDate,
-                    //   dayjs(promotion.startDate).add(7, "hour").toDate()
-                    // );
-                  }}
-                  className="flex-1 border-2 border-gray-300 p-1 rounded-md"
-                >
-                  <View className="flex-row justify-between items-center">
-                    <Text className="text-black mx-2 text-[16px]">
-                      {dayjs(promotion.startDate).local().format("DD/MM/YYYY")}
-                    </Text>
-
-                    <Ionicons
-                      name="create-outline"
-                      size={21}
-                      color="gray-600"
-                    />
-
-                    <DateTimePickerModal
-                      isVisible={isFromDatePickerVisible}
-                      mode="date"
-                      locale="vi-VN"
-                      timeZoneName="GMT"
-                      confirmTextIOS="Hoàn tất"
-                      cancelTextIOS="Hủy"
-                      date={dayjs(promotion.startDate).add(7, "hour").toDate()}
-                      onConfirm={(date: Date) => {
-                        // date = dayjs(date).add(7, "hour").toDate();
-                        const updatedDate = dayjs(date)
-                          .subtract(7, "hour")
-                          .toDate();
-
-                        // console.log(
-                        //   "StartTime : Date update updatedDate: ",
-                        //   date.toISOString(),
-                        //   dayjs(date).day(),
-                        //   updatedDate.toISOString()
-                        // );
-                        setPromotion({
-                          ...promotion,
-                          startDate: updatedDate.toISOString(),
-                          endDate:
-                            updatedDate > new Date(promotion.endDate)
-                              ? updatedDate.toISOString()
-                              : promotion.endDate,
-                        });
-                        setFromDatePickerVisibility(false);
-                      }}
-                      onCancel={() => setFromDatePickerVisibility(false)}
-                    />
-                  </View>
-                </TouchableRipple>
-
-                <TouchableRipple
-                  onPress={() => {
-                    setFromTimePickerVisibility(true);
-                    // console.log(
-                    //   "promotion.startDate: ",
-                    //   promotion.startDate,
-                    //   dayjs(promotion.startDate).add(7, "hour").toDate()
-                    // );
-                  }}
-                  className="flex-1 border-2 border-gray-300 p-1 rounded-md"
-                >
-                  <View className="flex-row justify-between items-center">
-                    {promotion.startDate && (
+            <View className="flex mt-2">
+              <View className="flex-1">
+                <Text className="font-bold">Thời gian bắt đầu</Text>
+                <View className="flex-row px-1 relative mt-2 gap-x-2">
+                  <TouchableRipple
+                    onPress={() => {
+                      setFromDatePickerVisibility(true);
+                      // console.log(
+                      //   "promotion.startDate: ",
+                      //   promotion.startDate,
+                      //   dayjs(promotion.startDate).add(7, "hour").toDate()
+                      // );
+                    }}
+                    className="flex-1 border-2 border-gray-300 p-1 rounded-md"
+                  >
+                    <View className="flex-row justify-between items-center">
                       <Text className="text-black mx-2 text-[16px]">
-                        {dayjs(promotion.startDate).local().format("HH:mm")}
+                        {dayjs(promotion.startDate)
+                          .local()
+                          .format("DD/MM/YYYY")}
                       </Text>
-                    )}
 
-                    <Ionicons
-                      name="create-outline"
-                      size={21}
-                      color="gray-600"
-                    />
+                      <Ionicons
+                        name="create-outline"
+                        size={21}
+                        color="gray-600"
+                      />
 
-                    <DateTimePickerModal
-                      isVisible={isFromTimePickerVisible}
-                      mode="time"
-                      locale="vi-VN"
-                      timeZoneName="GMT"
-                      confirmTextIOS="Hoàn tất"
-                      cancelTextIOS="Hủy"
-                      date={dayjs(promotion.startDate).add(7, "hour").toDate()}
-                      onConfirm={(date: Date) => {
-                        // Update only the time part and keep date part unchanged in UTC+7
-                        const updatedTime = dayjs(promotion.startDate)
-                          .set("hour", dayjs(date).hour())
-                          .set("minute", dayjs(date).minute())
-                          .subtract(7, "hour")
-                          .toDate();
+                      <DateTimePickerModal
+                        isVisible={isFromDatePickerVisible}
+                        mode="date"
+                        locale="vi-VN"
+                        timeZoneName="GMT"
+                        confirmTextIOS="Hoàn tất"
+                        cancelTextIOS="Hủy"
+                        date={dayjs(promotion.startDate)
+                          .add(7, "hour")
+                          .toDate()}
+                        onConfirm={(date: Date) => {
+                          // date = dayjs(date).add(7, "hour").toDate();
+                          const updatedDate = dayjs(date)
+                            .subtract(7, "hour")
+                            .toDate();
 
-                        // console.log(
-                        //   "StartTime : Time update updatedDate: ",
-                        //   date.toISOString(),
-                        //   updatedTime.toISOString()
-                        // );
-                        setPromotion({
-                          ...promotion,
-                          startDate: updatedTime.toISOString(),
-                          endDate:
-                            updatedTime > new Date(promotion.endDate)
-                              ? updatedTime.toISOString()
-                              : promotion.endDate,
-                        });
-                        setFromTimePickerVisibility(false);
-                      }}
-                      onCancel={() => setFromTimePickerVisibility(false)}
-                    />
-                  </View>
-                </TouchableRipple>
+                          // console.log(
+                          //   "StartTime : Date update updatedDate: ",
+                          //   date.toISOString(),
+                          //   dayjs(date).day(),
+                          //   updatedDate.toISOString()
+                          // );
+                          setPromotion({
+                            ...promotion,
+                            startDate: updatedDate.toISOString(),
+                            endDate:
+                              updatedDate > new Date(promotion.endDate)
+                                ? updatedDate.toISOString()
+                                : promotion.endDate,
+                          });
+                          setFromDatePickerVisibility(false);
+                        }}
+                        onCancel={() => setFromDatePickerVisibility(false)}
+                      />
+                    </View>
+                  </TouchableRipple>
+
+                  <TouchableRipple
+                    onPress={() => {
+                      setFromTimePickerVisibility(true);
+                      // console.log(
+                      //   "promotion.startDate: ",
+                      //   promotion.startDate,
+                      //   dayjs(promotion.startDate).add(7, "hour").toDate()
+                      // );
+                    }}
+                    className="flex-1 border-2 border-gray-300 p-1 rounded-md"
+                  >
+                    <View className="flex-row justify-between items-center">
+                      {promotion.startDate && (
+                        <Text className="text-black mx-2 text-[16px]">
+                          {dayjs(promotion.startDate).local().format("HH:mm")}
+                        </Text>
+                      )}
+
+                      <Ionicons
+                        name="create-outline"
+                        size={21}
+                        color="gray-600"
+                      />
+
+                      <DateTimePickerModal
+                        isVisible={isFromTimePickerVisible}
+                        mode="time"
+                        locale="vi-VN"
+                        timeZoneName="GMT"
+                        confirmTextIOS="Hoàn tất"
+                        cancelTextIOS="Hủy"
+                        date={dayjs(promotion.startDate)
+                          .add(7, "hour")
+                          .toDate()}
+                        onConfirm={(date: Date) => {
+                          // Update only the time part and keep date part unchanged in UTC+7
+                          const updatedTime = dayjs(promotion.startDate)
+                            .set("hour", dayjs(date).hour())
+                            .set("minute", dayjs(date).minute())
+                            .subtract(7, "hour")
+                            .toDate();
+
+                          // console.log(
+                          //   "StartTime : Time update updatedDate: ",
+                          //   date.toISOString(),
+                          //   updatedTime.toISOString()
+                          // );
+                          setPromotion({
+                            ...promotion,
+                            startDate: updatedTime.toISOString(),
+                            endDate:
+                              updatedTime > new Date(promotion.endDate)
+                                ? updatedTime.toISOString()
+                                : promotion.endDate,
+                          });
+                          setFromTimePickerVisibility(false);
+                        }}
+                        onCancel={() => setFromTimePickerVisibility(false)}
+                      />
+                    </View>
+                  </TouchableRipple>
+                </View>
               </View>
 
-              <View className="flex-1">
+              <View className="flex-1 mt-2">
                 <Text className="font-bold">Thời gian kết thúc</Text>
-                <View className="flex-row px-1 relative">
+                <View className="flex-row px-1 relative mt-2 gap-x-2">
                   <TouchableRipple
                     onPress={() => {
                       setToDatePickerVisibility(true);
