@@ -124,25 +124,29 @@ const FoodUpdate = () => {
       setIsSoldOut(false);
       setStatus(1);
     } else {
-      Alert.alert(`Xác nhận`, `Bạn muốn chuyển sang tạm ẩn hay tạm hết hàng?`, [
-        {
-          text: "Tạm hết hàng",
-          onPress: async () => {
-            setIsSoldOut(true);
-            setStatus(1);
+      Alert.alert(
+        `Xác nhận`,
+        `Bạn muốn chuyển sang ẩn món hay tạm hết hàng hôm nay?`,
+        [
+          {
+            text: "Tạm hết hàng hôm nay",
+            onPress: async () => {
+              setIsSoldOut(true);
+              setStatus(1);
+            },
           },
-        },
-        {
-          text: "Tạm ẩn món",
-          onPress: async () => {
-            setIsSoldOut(false);
-            setStatus(2);
+          {
+            text: "Ẩn món này",
+            onPress: async () => {
+              setIsSoldOut(false);
+              setStatus(2);
+            },
           },
-        },
-        {
-          text: "Hủy",
-        },
-      ]);
+          {
+            text: "Hủy",
+          },
+        ]
+      );
     }
   };
   const {

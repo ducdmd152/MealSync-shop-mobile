@@ -22,6 +22,7 @@ import FormField from "@/components/custom/FormFieldCustom";
 import FormFieldCustom from "@/components/custom/FormFieldCustom";
 import AnyTimeRangeSelect from "@/components/common/AnyTimeRangeSelect";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import { useToast } from "react-native-toast-notifications";
 function formatTimeRanges(timeRanges: string[]): string {
   const length = timeRanges.length;
 
@@ -58,6 +59,7 @@ const Setting = () => {
   // (async () => {
   //   console.log(await sessionService.getAuthToken());
   // })();
+  const toast = useToast();
   const [isSlotModalOpening, setIsSlotModalOpening] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [operatingSlot, setOperatingSlot] =
@@ -86,7 +88,69 @@ const Setting = () => {
     }, [])
   );
 
-  const onRequest = async (request: {
+  const onChangeShopStatusRequest = async (
+    request: {
+      status: number;
+      isReceivingOrderPaused: boolean;
+      isConfirm: boolean;
+    },
+    onSuccess: () => void
+  ) => {
+    try {
+      setIsSubmitting(true);
+      const response = await apiClient.put(
+        `shop-owner/shop-owner/active-inactive`,
+        request
+      );
+      const { value, isSuccess, isWarning, error } = response.data;
+
+      if (isSuccess) {
+        setIsSlotModalOpening(false);
+        shopProfile.refetch();
+        onSuccess();
+      } else if (isWarning) {
+        if (request.isConfirm) return;
+        const warningInfo = value as WarningMessageValue;
+        Alert.alert("Xác nhận", warningInfo.message, [
+          {
+            text: "Đồng ý",
+            onPress: async () => {
+              onChangeShopStatusRequest(
+                { ...request, isConfirm: true },
+                onSuccess
+              );
+            },
+          },
+          {
+            text: "Hủy",
+          },
+        ]);
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Oops!",
+        error?.response?.data?.error?.message ||
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const onChangeShopStatusSubmit = async (
+    status: number,
+    isReceivingOrderPaused: boolean,
+    onSuccess: () => void
+  ) => {
+    onChangeShopStatusRequest(
+      {
+        status,
+        isReceivingOrderPaused,
+        isConfirm: false,
+      },
+      onSuccess
+    );
+  };
+  const onOperatingSlotRequest = async (request: {
     operatingSlot: OperatingSlotModel;
     isConfirm: boolean;
   }) => {
@@ -122,7 +186,7 @@ const Setting = () => {
           {
             text: "Đồng ý",
             onPress: async () => {
-              onRequest({ ...request, isConfirm: true });
+              onOperatingSlotRequest({ ...request, isConfirm: true });
             },
           },
           {
@@ -140,18 +204,18 @@ const Setting = () => {
       setIsSubmitting(false);
     }
   };
-  const onSubmit = async (operatingSlot: OperatingSlotModel) => {
+  const onOpeartingSlotSubmit = async (operatingSlot: OperatingSlotModel) => {
     if (operatingSlot.title.trim().length == 0) {
       Alert.alert("Oops!", "Vui lòng nhập mô tả!");
       return;
     }
-    onRequest({
+    onOperatingSlotRequest({
       operatingSlot,
       isConfirm: false,
     });
   };
 
-  const onDeleteRequest = async (request: {
+  const onOperatingSlotDeleteRequest = async (request: {
     operatingSlot: OperatingSlotModel;
     isConfirm: boolean;
   }) => {
@@ -186,7 +250,7 @@ const Setting = () => {
           {
             text: "Đồng ý",
             onPress: async () => {
-              onRequest({ ...request, isConfirm: true });
+              onOperatingSlotRequest({ ...request, isConfirm: true });
             },
           },
           {
@@ -204,7 +268,7 @@ const Setting = () => {
       setIsSubmitting(false);
     }
   };
-  const onDelete = async (operatingSlot: OperatingSlotModel) => {
+  const onOperatingSlotDelete = async (operatingSlot: OperatingSlotModel) => {
     Alert.alert(
       "Xác nhận",
       `Xác nhận xóa khoảng hoạt động "${operatingSlot.title} : ${operatingSlot.timeSlot}"`,
@@ -212,7 +276,7 @@ const Setting = () => {
         {
           text: "Xác nhận",
           onPress: async () => {
-            onDeleteRequest({
+            onOperatingSlotDeleteRequest({
               operatingSlot,
               isConfirm: false,
             });
@@ -232,7 +296,7 @@ const Setting = () => {
     if (status === 0) return "";
     if (status == 1) return "Chưa được phê duyệt";
     if (status == 3) return "Tạm đóng cửa hàng";
-    if (isReceivingOrderPaused) return "Tạm ngưng nhận hàng";
+    if (isReceivingOrderPaused) return "Tạm ngưng nhận đơn";
     if (status == 2) return "Đang mở bán";
   };
 
@@ -306,7 +370,7 @@ const Setting = () => {
             //   </View>
             // }
             handlePress={() => {
-              onSubmit(operatingSlot);
+              onOpeartingSlotSubmit(operatingSlot);
             }}
             isLoading={isSubmitting}
           />
@@ -347,7 +411,7 @@ const Setting = () => {
                   <TouchableOpacity
                     className="ml-1"
                     onPress={() => {
-                      onDelete({ ...slot });
+                      onOperatingSlotDelete({ ...slot });
                     }}
                   >
                     <Ionicons name="trash-outline" size={22} color="#FF9001" />
@@ -415,8 +479,89 @@ const Setting = () => {
                     shopProfile.data?.value.status == 2 &&
                     shopProfile.data?.value.isReceivingOrderPaused == false
                   }
-                  onValueChange={onToggleIsOvernight}
-                  disabled={shopProfile.isRefetching}
+                  onValueChange={(value) => {
+                    if (value) {
+                      Alert.alert(
+                        `Xác nhận`,
+                        `Bạn có muốn ${
+                          shopProfile.data?.value.isReceivingOrderPaused
+                            ? "mở nhận đơn trở lại"
+                            : "mở cửa hàng trở lại"
+                        }?`,
+                        [
+                          {
+                            text: "Đồng ý",
+                            onPress: async () => {
+                              onChangeShopStatusSubmit(2, false, () => {
+                                shopProfile.refetch();
+                                toast.show(
+                                  `Cửa hàng đã ${
+                                    shopProfile.data?.value
+                                      .isReceivingOrderPaused
+                                      ? "mở nhận đơn trở lại."
+                                      : "mở hoạt động trở lại."
+                                  }`,
+                                  {
+                                    type: "success",
+                                    duration: 2000,
+                                  }
+                                );
+                              });
+                            },
+                          },
+                          {
+                            text: "Hủy",
+                          },
+                        ]
+                      );
+                    } else {
+                      Alert.alert(
+                        `Xác nhận`,
+                        `Bạn muốn tạm ngưng nhận đơn hay tạm dừng hoạt động của cửa hàng?`,
+                        [
+                          {
+                            text: "Tạm ngưng nhận đơn",
+                            onPress: async () => {
+                              onChangeShopStatusSubmit(2, true, () => {
+                                shopProfile.refetch();
+                                toast.show(
+                                  `Cửa hàng của bạn đã tạm ngưng nhận đơn`,
+                                  {
+                                    type: "info",
+                                    duration: 2000,
+                                  }
+                                );
+                              });
+                            },
+                          },
+                          {
+                            text: "Tạm dừng hoạt động",
+                            onPress: async () => {
+                              onChangeShopStatusSubmit(3, false, () => {
+                                shopProfile.refetch();
+                                toast.show(
+                                  `Cửa hàng của bạn đã chuyển sang trạng thái tạm dừng hoạt động`,
+                                  {
+                                    type: "info",
+                                    duration: 2000,
+                                  }
+                                );
+                              });
+                            },
+                          },
+                          {
+                            text: "Hủy",
+                          },
+                        ]
+                      );
+                    }
+                  }}
+                  disabled={
+                    shopProfile.isRefetching ||
+                    (shopProfile.data?.value.status != 2 &&
+                      shopProfile.data?.value.status != 3) ||
+                    isSubmitting
+                  }
                 />
               </View>
             )}
@@ -465,7 +610,7 @@ const Setting = () => {
               <View className="flex-row gap-x-2">
                 {/* <Ionicons size={20} name="chevron-forward-outline" /> */}
                 <Text className={`font-medium text-md text-gray-600`}>
-                  Cho phép đặt hàng vào ngày mai
+                  Cho phép đặt hàng cho ngày mai
                 </Text>
               </View>
               {shopProfile.isLoading ? (
@@ -474,9 +619,18 @@ const Setting = () => {
                 <View className="scale-75">
                   <Switch
                     color="#e95137"
-                    value={shopProfile.data?.value.isAcceptingOrderNextDay}
+                    value={
+                      shopProfile.data?.value.status == 2 &&
+                      shopProfile.data?.value.isReceivingOrderPaused == false &&
+                      shopProfile.data?.value.isAcceptingOrderNextDay
+                    }
                     onValueChange={onToggleIsOvernight}
-                    disabled={shopProfile.isRefetching}
+                    disabled={
+                      shopProfile.isRefetching ||
+                      shopProfile.data?.value.status == 3 ||
+                      shopProfile.data?.value.isReceivingOrderPaused == true ||
+                      isSubmitting
+                    }
                   />
                 </View>
               )}
@@ -505,9 +659,18 @@ const Setting = () => {
                 <View className="scale-75 ml-2">
                   <Switch
                     color="#e95137"
-                    value={shopProfile.data?.value.isAutoOrderConfirmation}
+                    value={
+                      shopProfile.data?.value.status == 2 &&
+                      shopProfile.data?.value.isReceivingOrderPaused == false &&
+                      shopProfile.data?.value.isAutoOrderConfirmation
+                    }
                     onValueChange={onToggleIsAutoconfirm}
-                    disabled={shopProfile.isRefetching}
+                    disabled={
+                      shopProfile.isRefetching ||
+                      shopProfile.data?.value.status == 3 ||
+                      shopProfile.data?.value.isReceivingOrderPaused == true ||
+                      isSubmitting
+                    }
                   />
                 </View>
               </TouchableOpacity>
