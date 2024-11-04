@@ -196,7 +196,7 @@ const PromotionCreate = () => {
             {/* <View className="flex-1 flex flex-col gap-4"> */}
             <View className="flex mt-2">
               <View className="flex-1">
-                <Text className="font-bold">Thời gian bắt đầu</Text>
+                <Text className="font-bold">Thời gian bắt đầu *</Text>
                 <View className="flex-row px-1 relative mt-2 gap-x-2">
                   <TouchableRipple
                     onPress={() => {
@@ -324,7 +324,7 @@ const PromotionCreate = () => {
               </View>
 
               <View className="flex-1 mt-2">
-                <Text className="font-bold">Thời gian kết thúc</Text>
+                <Text className="font-bold">Thời gian kết thúc *</Text>
                 <View className="flex-row px-1 relative mt-2 gap-x-2">
                   <TouchableRipple
                     onPress={() => {
@@ -451,7 +451,7 @@ const PromotionCreate = () => {
             )}
 
             <View className="mb-2">
-              <Text className="font-bold mb-1">Loại áp dụng</Text>
+              <Text className="font-bold mb-1">Loại áp dụng *</Text>
               <SelectList
                 setSelected={(value: string | number) =>
                   setPromotion({ ...promotion, applyType: Number(value) })
@@ -472,7 +472,7 @@ const PromotionCreate = () => {
 
             {promotion.applyType == PromotionApplyType.RateApply ? (
               <View className="mb-2">
-                <Text className="font-bold">Tỷ lệ giảm giá (%)</Text>
+                <Text className="font-bold">Tỷ lệ giảm giá (%) *</Text>
                 <View className="relative">
                   <TextInput
                     className="border border-gray-300 mt-1 p-2 rounded"
@@ -482,7 +482,7 @@ const PromotionCreate = () => {
                     keyboardType="numeric"
                     placeholderTextColor="#888"
                   />
-                  {/* <Text className="absolute right-2 top-2 text-[12px] italic">
+                  {/* <Text className="absolute right-2 top-4 text-[12px] italic">
                     đồng
                   </Text> */}
                 </View>
@@ -495,7 +495,7 @@ const PromotionCreate = () => {
               </View>
             ) : (
               <View className="mb-2">
-                <Text className="font-bold">Giá trị giảm giá</Text>
+                <Text className="font-bold">Giá trị giảm giá *</Text>
                 <View className="relative">
                   <TextInput
                     className="border border-gray-300 mt-1 p-2 rounded"
@@ -505,7 +505,7 @@ const PromotionCreate = () => {
                     keyboardType="numeric"
                     placeholderTextColor="#888"
                   />
-                  <Text className="absolute right-2 top-2 text-[12px] italic">
+                  <Text className="absolute right-2 top-4 text-[12px] italic">
                     đồng
                   </Text>
                 </View>
@@ -519,7 +519,7 @@ const PromotionCreate = () => {
             )}
 
             <View className="mb-2">
-              <Text className="font-bold">Giá trị đơn hàng tối thiểu</Text>
+              <Text className="font-bold">Giá trị đơn hàng tối thiểu *</Text>
               <View className="relative">
                 <TextInput
                   className="border border-gray-300 mt-1 p-2 rounded"
@@ -531,7 +531,7 @@ const PromotionCreate = () => {
                   keyboardType="numeric"
                   placeholderTextColor="#888"
                 />
-                <Text className="absolute right-2 top-2 text-[12px] italic">
+                <Text className="absolute right-2 top-4 text-[12px] italic">
                   đồng
                 </Text>
               </View>
@@ -542,42 +542,48 @@ const PromotionCreate = () => {
                 </Text>
               )}
             </View>
-            <View className="mb-2">
-              <Text className="font-bold">Giá trị khuyến mãi tối đa</Text>
-              <View className="relative">
-                <TextInput
-                  className={`border border-gray-300 mt-1 p-2 rounded ${
-                    promotion.applyType == PromotionApplyType.AmountApply
-                      ? "opacity-50"
-                      : ""
-                  }`}
-                  placeholder="Nhập giá trị khuyến mãi tối đa"
-                  value={utilService.formatPrice(
-                    promotion.applyType == PromotionApplyType.AmountApply
-                      ? promotion.amountValue
-                      : promotion.maximumApplyValue
-                  )}
-                  onChangeText={(text) =>
-                    handleChange("maximumApplyValue", text)
-                  }
-                  keyboardType="numeric"
-                  placeholderTextColor="#888"
-                  readOnly={
-                    promotion.applyType == PromotionApplyType.AmountApply
-                  }
-                />
-                <Text className="absolute right-2 top-2 text-[12px] italic">
-                  đồng
+            {promotion.applyType != PromotionApplyType.AmountApply && (
+              <View className="mb-2">
+                <Text className="font-bold">
+                  Giá trị khuyến mãi tối đa{" "}
+                  {promotion.applyType != PromotionApplyType.AmountApply && "*"}
                 </Text>
+                <View className="relative">
+                  <TextInput
+                    className={`border border-gray-300 mt-1 p-2 rounded ${
+                      promotion.applyType == PromotionApplyType.AmountApply
+                        ? "opacity-50"
+                        : ""
+                    }`}
+                    placeholder="Nhập giá trị khuyến mãi tối đa"
+                    value={utilService.formatPrice(
+                      promotion.applyType == PromotionApplyType.AmountApply
+                        ? promotion.amountValue
+                        : promotion.maximumApplyValue
+                    )}
+                    onChangeText={(text) =>
+                      handleChange("maximumApplyValue", text)
+                    }
+                    keyboardType="numeric"
+                    placeholderTextColor="#888"
+                    readOnly={
+                      promotion.applyType == PromotionApplyType.AmountApply
+                    }
+                  />
+                  <Text className="absolute right-2 top-4 text-[12px] italic">
+                    đồng
+                  </Text>
+                </View>
+                {errors.minimumOrderValue && (
+                  <Text className="text-red-500 text-xs">
+                    {errors.minimumOrderValue}
+                  </Text>
+                )}
               </View>
-              {errors.minimumOrderValue && (
-                <Text className="text-red-500 text-xs">
-                  {errors.minimumOrderValue}
-                </Text>
-              )}
-            </View>
+            )}
+
             <View className="mb-2">
-              <Text className="font-bold">Giới hạn lượt sử dụng</Text>
+              <Text className="font-bold">Giới hạn lượt sử dụng *</Text>
               <TextInput
                 className="border border-gray-300 mt-1 p-2 rounded"
                 placeholder="Nhập số lần sử dụng tối đa"
