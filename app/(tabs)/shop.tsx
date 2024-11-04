@@ -300,11 +300,7 @@ const Shop = () => {
                 );
               }
             }}
-            disabled={
-              shopProfile.isRefetching ||
-              (cache.status != 2 && cache.status != 3) ||
-              isSubmitting
-            }
+            disabled={(cache.status != 2 && cache.status != 3) || isSubmitting}
           />
         </View>
       </TouchableOpacity>
