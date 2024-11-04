@@ -263,7 +263,7 @@ const AutoConfirmTimeRangeSelect = ({
         <Text className="font-medium">{autoConfirmTimeFormat(endTime)}</Text>{" "}
         đến{" "}
         <Text className="font-medium">{autoConfirmTimeFormat(startTime)}</Text>{" "}
-        {"\n"} trước thời điểm bắt khung đặt hàng
+        {"\n"} trước thời điểm bắt đầu khung đặt hàng
       </Text>
     </View>
   );

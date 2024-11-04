@@ -57,6 +57,8 @@ const initOperatingSlot = {
   startTime: 30,
   endTime: 2330,
   timeSlot: "",
+  isActive: true,
+  isReceivingOrderPaused: false,
 };
 const Setting = () => {
   // (async () => {
@@ -294,10 +296,13 @@ const Setting = () => {
       isStatusOnly
     );
   };
-  const onOperatingSlotRequest = async (request: {
-    operatingSlot: OperatingSlotModel;
-    isConfirm: boolean;
-  }) => {
+  const onOperatingSlotRequest = async (
+    request: {
+      operatingSlot: OperatingSlotModel;
+      isConfirm: boolean;
+    },
+    onSuccess: () => void = () => {}
+  ) => {
     request.operatingSlot = {
       ...request.operatingSlot,
       title: request.operatingSlot.title.trim(),
@@ -319,10 +324,7 @@ const Setting = () => {
       if (isSuccess) {
         setIsSlotModalOpening(false);
         shopProfile.refetch();
-        Alert.alert(
-          "Hoàn tất",
-          `Đã thêm khoảng hoạt động ${request.operatingSlot.title} : ${request.operatingSlot.timeSlot}`
-        );
+        onSuccess();
       } else if (isWarning) {
         if (request.isConfirm) return;
         const warningInfo = value as WarningMessageValue;
@@ -348,15 +350,21 @@ const Setting = () => {
       setIsSubmitting(false);
     }
   };
-  const onOpeartingSlotSubmit = async (operatingSlot: OperatingSlotModel) => {
+  const onOpeartingSlotSubmit = async (
+    operatingSlot: OperatingSlotModel,
+    onSuccess: () => void = () => {}
+  ) => {
     if (operatingSlot.title.trim().length == 0) {
       Alert.alert("Oops!", "Vui lòng nhập mô tả!");
       return;
     }
-    onOperatingSlotRequest({
-      operatingSlot,
-      isConfirm: false,
-    });
+    onOperatingSlotRequest(
+      {
+        operatingSlot,
+        isConfirm: false,
+      },
+      onSuccess
+    );
   };
 
   const onOperatingSlotDeleteRequest = async (request: {
@@ -449,7 +457,7 @@ const Setting = () => {
       style={{
         maxHeight: detailBottomHeight,
         height: cache.operatingSlots?.length
-          ? Math.max((cache.operatingSlots?.length || 0) * 62 + 100, 240)
+          ? Math.max((cache.operatingSlots?.length || 0) * 100 + 100, 240)
           : 240,
       }}
     >
@@ -510,7 +518,21 @@ const Setting = () => {
             //   </View>
             // }
             handlePress={() => {
-              onOpeartingSlotSubmit(operatingSlot);
+              onOpeartingSlotSubmit(operatingSlot, () => {
+                operatingSlot.id == 0
+                  ? Alert.alert(
+                      "Hoàn tất",
+                      `Đã thêm khoảng hoạt động ${operatingSlot.title.trim()} : ${
+                        operatingSlot.timeSlot
+                      }`
+                    )
+                  : Alert.alert(
+                      "Hoàn tất",
+                      `Đã cập nhật khoảng hoạt động ${operatingSlot.title.trim()} : ${
+                        operatingSlot.timeSlot
+                      }`
+                    );
+              });
             }}
             isLoading={isSubmitting}
           />
@@ -534,30 +556,177 @@ const Setting = () => {
         )}
         <View className="justify-stretch">
           {cache.operatingSlots.map((slot, index) => (
-            <View key={slot.id} className="w-full">
-              <View className="border-2 p-2 border-gray-200 rounded flex-row items-center justify-center">
-                <Text className="text-[16px] italic text-gray-800 text-center flex-1 font-semibold">
+            <View
+              key={slot.id}
+              className="w-full border-[1px] border-gray-200 px-2 py-1 "
+            >
+              <View
+                className=" me-2 px-2.5 py-1 rounded flex-row items-center justify-between"
+                style={{
+                  backgroundColor:
+                    slot.isActive && !slot.isReceivingOrderPaused
+                      ? "#99f6e4"
+                      : !slot.isActive
+                      ? "#e5e7eb"
+                      : "#fef08a",
+                }}
+              >
+                <Text className={`text-[12px] font-medium flex-1`}>
+                  {slot.isActive && !slot.isReceivingOrderPaused
+                    ? "Đang hoạt động"
+                    : !slot.isActive
+                    ? "Đã tắt hoạt động"
+                    : "Tạm ngưng nhận hàng hôm nay"}
+                </Text>
+                <View className="scale-50 h-5 items-center justify-center">
+                  <Switch
+                    color="#e95137"
+                    value={slot.isActive && !slot.isReceivingOrderPaused}
+                    onValueChange={(value) => {
+                      if (value) {
+                        Alert.alert(
+                          `Xác nhận`,
+                          `Bạn muốn ${
+                            slot.isReceivingOrderPaused
+                              ? "mở nhận đơn trở lại cho khung giờ " +
+                                slot.timeSlot +
+                                " (" +
+                                slot.title +
+                                ")"
+                              : "mở hoạt động trở lại cho khung giờ " +
+                                slot.timeSlot +
+                                " (" +
+                                slot.title +
+                                ")"
+                          }?`,
+                          [
+                            {
+                              text: "Đồng ý",
+                              onPress: async () => {
+                                onOpeartingSlotSubmit(
+                                  {
+                                    ...slot,
+                                    isActive: true,
+                                    isReceivingOrderPaused: false,
+                                  },
+                                  () => {
+                                    shopProfile.refetch();
+                                    toast.show(
+                                      `Đã ${
+                                        slot.isReceivingOrderPaused
+                                          ? "mở nhận đơn trở lại cho khung giờ " +
+                                            slot.timeSlot +
+                                            " (" +
+                                            slot.title +
+                                            ")"
+                                          : "mở hoạt động trở lại cho khung giờ " +
+                                            slot.timeSlot +
+                                            " (" +
+                                            slot.title +
+                                            ")"
+                                      }`,
+                                      {
+                                        type: "success",
+                                        duration: 2000,
+                                      }
+                                    );
+                                  }
+                                );
+                              },
+                            },
+                            {
+                              text: "Hủy",
+                            },
+                          ]
+                        );
+                      } else {
+                        Alert.alert(
+                          `Xác nhận`,
+                          `Bạn muốn tạm ngưng nhận đơn hôm nay hay tắt hoạt động cho khung giờ ${
+                            slot.timeSlot + " (" + slot.title + ")"
+                          }?`,
+                          [
+                            {
+                              text: "Ngưng nhận đơn hôm nay",
+                              onPress: async () => {
+                                onOpeartingSlotSubmit(
+                                  {
+                                    ...slot,
+                                    isActive: true,
+                                    isReceivingOrderPaused: true,
+                                  },
+                                  () => {
+                                    shopProfile.refetch();
+                                    toast.show(
+                                      `Đã ngưng nhận đơn hôm nay cho khung giờ ${
+                                        slot.timeSlot + " (" + slot.title + ")"
+                                      }.`,
+                                      {
+                                        type: "success",
+                                        duration: 2000,
+                                      }
+                                    );
+                                  }
+                                );
+                              },
+                            },
+                            {
+                              text: "Tạm dừng hoạt động",
+                              onPress: async () => {
+                                onOpeartingSlotSubmit(
+                                  {
+                                    ...slot,
+                                    isActive: false,
+                                    isReceivingOrderPaused: false,
+                                  },
+                                  () => {
+                                    shopProfile.refetch();
+                                    toast.show(
+                                      `Đã tắt hoạt động cho khung giờ ${
+                                        slot.timeSlot + " (" + slot.title + ")"
+                                      }.`,
+                                      {
+                                        type: "success",
+                                        duration: 2000,
+                                      }
+                                    );
+                                  }
+                                );
+                              },
+                            },
+                            {
+                              text: "Hủy",
+                            },
+                          ]
+                        );
+                      }
+                    }}
+                    disabled={shopProfile.isRefetching || isSubmitting}
+                  />
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    setOperatingSlot({ ...slot });
+                    setIsSlotModalOpening(true);
+                  }}
+                >
+                  <Ionicons name="create-outline" size={24} color="#227B94" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="ml-1"
+                  onPress={() => {
+                    onOperatingSlotDelete({ ...slot });
+                  }}
+                >
+                  <Ionicons name="trash-outline" size={22} color="#FF9001" />
+                </TouchableOpacity>
+              </View>
+              <View className="border-gray-200 rounded flex-row items-center justify-center">
+                <Text className="text-[16px] italic text-gray-800 text-center flex-1 font-semibold mt-2">
                   {slot.title} :{" "}
                   <Text className="font-semibold">{slot.timeSlot}</Text>
                 </Text>
-                <View className="mx-2 flex-row items-center">
-                  <TouchableOpacity
-                    onPress={() => {
-                      setOperatingSlot({ ...slot });
-                      setIsSlotModalOpening(true);
-                    }}
-                  >
-                    <Ionicons name="create-outline" size={24} color="#227B94" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    className="ml-1"
-                    onPress={() => {
-                      onOperatingSlotDelete({ ...slot });
-                    }}
-                  >
-                    <Ionicons name="trash-outline" size={22} color="#FF9001" />
-                  </TouchableOpacity>
-                </View>
+                <View className="mx-2 flex-row items-center"></View>
               </View>
 
               {/* {index !=
@@ -629,7 +798,7 @@ const Setting = () => {
                   if (value) {
                     Alert.alert(
                       `Xác nhận`,
-                      `Bạn có muốn ${
+                      `Bạn muốn ${
                         cache.isReceivingOrderPaused
                           ? "mở nhận đơn trở lại"
                           : "mở cửa hàng trở lại"

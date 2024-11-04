@@ -16,6 +16,8 @@ export interface OperatingSlotModel {
   startTime: number;
   endTime: number;
   timeSlot: string;
+  isActive: boolean;
+  isReceivingOrderPaused: boolean;
 }
 
 export interface ShopProfileGetModel {
