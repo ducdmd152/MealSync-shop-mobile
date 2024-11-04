@@ -13,6 +13,9 @@ import { ShopProfileGetModel } from "@/types/models/ShopProfileModel";
 import { useFocusEffect } from "expo-router";
 import { BottomSheet } from "@rneui/themed";
 import CustomButton from "@/components/custom/CustomButton";
+import Modal from "react-native-modal";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+import CustomModal from "@/components/common/CustomModal";
 function formatTimeRanges(timeRanges: string[]): string {
   const length = timeRanges.length;
 
@@ -37,11 +40,19 @@ function formatTimeRanges(timeRanges: string[]): string {
   }
 }
 const detailBottomHeight = Dimensions.get("window").height - 100;
+
 const Setting = () => {
   (async () => {
     console.log(await sessionService.getAuthToken());
   })();
-  const [isSwitchOn, setIsSwitchOn] = React.useState(true);
+  const [isSlotModalOpening, setIsSlotModalOpening] = React.useState(false);
+  const [operatingSlot, setOperatingSlot] = React.useState<OperatingSlotModel>({
+    id: 0,
+    title: "",
+    startTime: 0,
+    endTime: 0,
+  });
+
   const [
     isOperatingSlotSettingBottomSheetVisible,
     setIsOperatingSlotSettingBottomSheetVisible,
@@ -88,6 +99,25 @@ const Setting = () => {
           : 240,
       }}
     >
+      <CustomModal
+        isOpen={isSlotModalOpening}
+        setIsOpen={setIsSlotModalOpening}
+        title={
+          operatingSlot.id == 0
+            ? "Thêm mới khoảng hoạt động"
+            : "Cập nhật thời gian hoạt động"
+        }
+        titleStyleClasses="text-[14px] font-semibold"
+      >
+        <View
+          style={{ flex: 1, zIndex: 100 }}
+          className="justify-center items-center"
+        >
+          <View className="bg-white p-4 rounded-lg w-80">
+            <Text></Text>
+          </View>
+        </View>
+      </CustomModal>
       <TouchableOpacity
         className="items-center"
         onPress={() => setIsOperatingSlotSettingBottomSheetVisible(false)}
@@ -138,7 +168,7 @@ const Setting = () => {
           </View>
         }
         handlePress={() => {
-          // setIsOperatingSlotSettingBottomSheetVisible(false);
+          setIsSlotModalOpening(true);
         }}
       />
     </View>

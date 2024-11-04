@@ -51,6 +51,7 @@
     "react-native-element-dropdown": "^2.12.1",
     "react-native-flash-message": "^0.4.2",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-modal": "^13.0.1",
     "react-native-otp-textinput": "^1.1.6",
     "react-native-paper": "^5.12.5",
     "react-native-radio-buttons-group": "^3.1.0",
