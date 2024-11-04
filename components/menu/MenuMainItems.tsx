@@ -80,11 +80,11 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
     } catch (error: any) {
       setExtendCategories(prevExtendCategories);
       refetch();
-      toast.show("Hệ thống gặp lỗi, vui lòng thử lại.", {
+      toast.show("Yêu cầu bị từ chối, vui lòng thử lại.", {
         type: "danger",
         duration: 5000,
       });
-      // Alert.alert("Lỗi", "Hệ thống gặp lỗi, vui lòng thử lại.");
+      // Alert.alert("Lỗi", "Yêu cầu bị từ chối, vui lòng thử lại.");
     } finally {
     }
   };
@@ -349,7 +349,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     Alert.alert(
                       "Oops!",
                       error?.response?.data?.error?.message ||
-                        "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                     );
                   }
                 }

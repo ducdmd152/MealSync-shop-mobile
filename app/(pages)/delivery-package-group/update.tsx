@@ -94,7 +94,7 @@ const DeliveryPackageGroupUpdate = () => {
     } catch (error: any) {
       setErrorMsg(
         error?.response?.data?.error?.message ||
-          "Hệ thống gặp lỗi, vui lòng thử lại!"
+          "Yêu cầu bị từ chối, vui lòng thử lại!"
       );
     } finally {
       setIsDetailsLoading(false);

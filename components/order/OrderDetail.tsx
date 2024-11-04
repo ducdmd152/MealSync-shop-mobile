@@ -271,7 +271,7 @@ const OrderDetail = ({
                                 Alert.alert(
                                   "Oops!",
                                   error?.response?.data?.error?.message ||
-                                    "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                 );
                               }
                             );
@@ -320,7 +320,7 @@ const OrderDetail = ({
                                 Alert.alert(
                                   "Oops!",
                                   error?.response?.data?.error?.message ||
-                                    "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                 );
                               }
                             );
@@ -386,7 +386,7 @@ const OrderDetail = ({
                                             "Oops!",
                                             error?.response?.data?.error
                                               ?.message ||
-                                              "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                           );
                                         },
                                         true,
@@ -403,7 +403,7 @@ const OrderDetail = ({
                                 Alert.alert(
                                   "Oops!",
                                   error?.response?.data?.error?.message ||
-                                    "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                 );
                               },
                               false,
@@ -479,7 +479,7 @@ const OrderDetail = ({
                                               "Oops!",
                                               error?.response?.data?.error
                                                 ?.message ||
-                                                "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                                "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                             );
                                           }
                                         );
@@ -492,7 +492,7 @@ const OrderDetail = ({
                                 Alert.alert(
                                   "Oops!",
                                   error?.response?.data?.error?.message ||
-                                    "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                 );
                               },
                               true,

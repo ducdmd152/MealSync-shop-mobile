@@ -527,7 +527,7 @@ const Order = () => {
                                       Alert.alert(
                                         "Oops!",
                                         error?.response?.data?.error?.message ||
-                                          "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                       );
                                     }
                                   );
@@ -579,7 +579,7 @@ const Order = () => {
                                       Alert.alert(
                                         "Oops!",
                                         error?.response?.data?.error?.message ||
-                                          "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                       );
                                     }
                                   );
@@ -658,7 +658,7 @@ const Order = () => {
                                                     "Oops!",
                                                     error?.response?.data?.error
                                                       ?.message ||
-                                                      "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                                      "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                                   );
                                                 },
                                                 true
@@ -675,7 +675,7 @@ const Order = () => {
                                       Alert.alert(
                                         "Oops!",
                                         error?.response?.data?.error?.message ||
-                                          "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                       );
                                     },
                                     false
@@ -763,7 +763,7 @@ const Order = () => {
                                                     "Oops!",
                                                     error?.response?.data?.error
                                                       ?.message ||
-                                                      "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                                      "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                                   );
                                                 },
                                                 true
@@ -777,7 +777,7 @@ const Order = () => {
                                       Alert.alert(
                                         "Oops!",
                                         error?.response?.data?.error?.message ||
-                                          "Hệ thống gặp lỗi, vui lòng thử lại sau!"
+                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                       );
                                     },
                                     false

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Dimensions, Alert } from "react-native";
 import React, { useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,13 +9,19 @@ import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
-import { ShopProfileGetModel } from "@/types/models/ShopProfileModel";
-import { useFocusEffect } from "expo-router";
+import {
+  OperatingSlotModel,
+  ShopProfileGetModel,
+} from "@/types/models/ShopProfileModel";
+import { Slot, useFocusEffect } from "expo-router";
 import { BottomSheet } from "@rneui/themed";
 import CustomButton from "@/components/custom/CustomButton";
 import Modal from "react-native-modal";
-import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import CustomModal from "@/components/common/CustomModal";
+import FormField from "@/components/custom/FormFieldCustom";
+import FormFieldCustom from "@/components/custom/FormFieldCustom";
+import AnyTimeRangeSelect from "@/components/common/AnyTimeRangeSelect";
+import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 function formatTimeRanges(timeRanges: string[]): string {
   const length = timeRanges.length;
 
@@ -41,17 +47,21 @@ function formatTimeRanges(timeRanges: string[]): string {
 }
 const detailBottomHeight = Dimensions.get("window").height - 100;
 
+const initOperatingSlot = {
+  id: 0,
+  title: "",
+  startTime: 30,
+  endTime: 2330,
+  timeSlot: "",
+};
 const Setting = () => {
-  (async () => {
-    console.log(await sessionService.getAuthToken());
-  })();
+  // (async () => {
+  //   console.log(await sessionService.getAuthToken());
+  // })();
   const [isSlotModalOpening, setIsSlotModalOpening] = React.useState(false);
-  const [operatingSlot, setOperatingSlot] = React.useState<OperatingSlotModel>({
-    id: 0,
-    title: "",
-    startTime: 0,
-    endTime: 0,
-  });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [operatingSlot, setOperatingSlot] =
+    React.useState<OperatingSlotModel>(initOperatingSlot);
 
   const [
     isOperatingSlotSettingBottomSheetVisible,
@@ -76,6 +86,65 @@ const Setting = () => {
     }, [])
   );
 
+  const onRequest = async (request: {
+    operatingSlot: OperatingSlotModel;
+    isConfirm: boolean;
+  }) => {
+    request.operatingSlot = {
+      ...request.operatingSlot,
+      title: request.operatingSlot.title.trim(),
+    };
+    try {
+      setIsSubmitting(true);
+      const response = await apiClient.post(
+        `shop-owner/operating-slot`,
+        request.operatingSlot
+      );
+      const { value, isSuccess, isWarning, error } = response.data;
+
+      if (isSuccess) {
+        Alert.alert(
+          "Hoàn tất",
+          `Đã thêm khoảng hoạt động ${request.operatingSlot.title} : ${request.operatingSlot.timeSlot}`
+        );
+        setIsSlotModalOpening(false);
+        shopProfile.refetch();
+      } else if (isWarning) {
+        if (request.isConfirm) return;
+        const warningInfo = value as WarningMessageValue;
+        Alert.alert("Xác nhận", warningInfo.message, [
+          {
+            text: "Đồng ý",
+            onPress: async () => {
+              onRequest({ ...request, isConfirm: true });
+            },
+          },
+          {
+            text: "Hủy",
+          },
+        ]);
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Oops!",
+        error?.response?.data?.error?.message ||
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const onSubmit = async (operatingSlot: OperatingSlotModel) => {
+    if (operatingSlot.title.trim().length == 0) {
+      Alert.alert("Oops!", "Vui lòng nhập mô tả!");
+      return;
+    }
+    onRequest({
+      operatingSlot,
+      isConfirm: false,
+    });
+  };
+
   const getShopStatusDescription = (
     status: number,
     isReceivingOrderPaused: boolean
@@ -86,6 +155,7 @@ const Setting = () => {
     if (isReceivingOrderPaused) return "Tạm ngưng nhận hàng";
     if (status == 2) return "Đang mở bán";
   };
+
   const operatingSlotSetting = (
     <View
       className={`p-4 bg-white rounded-t-lg bottom-0 h-max`}
@@ -93,7 +163,7 @@ const Setting = () => {
         maxHeight: detailBottomHeight,
         height: shopProfile.data?.value.operatingSlots?.length
           ? Math.max(
-              (shopProfile.data?.value.operatingSlots?.length || 0) * 100 + 50,
+              (shopProfile.data?.value.operatingSlots?.length || 0) * 82 + 50,
               200
             )
           : 240,
@@ -109,13 +179,56 @@ const Setting = () => {
         }
         titleStyleClasses="text-[14px] font-semibold"
       >
-        <View
-          style={{ flex: 1, zIndex: 100 }}
-          className="justify-center items-center"
-        >
-          <View className="bg-white p-4 rounded-lg w-80">
-            <Text></Text>
+        <View className="">
+          <FormFieldCustom
+            isRequired={true}
+            title={"Mô tả"}
+            value={operatingSlot.title}
+            placeholder={"Nhập mô tả khoảng hoạt động..."}
+            handleChangeText={(e) => {
+              setOperatingSlot({ ...operatingSlot, title: e });
+            }}
+            otherInputStyleClasses={`border-gray-300 h-12 mt-[-4px] pb-1 `}
+            otherTextInputStyleClasses="text-[14px]"
+            otherStyleClasses="mt-1"
+          />
+          <View className="mt-2">
+            <FormFieldCustom
+              isRequired={true}
+              labelOnly={true}
+              title={"Chọn khoảng thời gian"}
+              value={""}
+              placeholder={""}
+              handleChangeText={(e) => {}}
+              otherInputStyleClasses="border-gray-300 h-12 mt-[-4px] pb-1"
+              otherTextInputStyleClasses="text-[14px]"
+              otherStyleClasses="mt-1"
+            />
+            <AnyTimeRangeSelect
+              header={<Text></Text>}
+              startTime={operatingSlot.startTime}
+              endTime={operatingSlot.endTime}
+              setStartTime={(time) => {
+                setOperatingSlot({ ...operatingSlot, startTime: time });
+              }}
+              setEndTime={(time) => {
+                setOperatingSlot({ ...operatingSlot, endTime: time });
+              }}
+            />
           </View>
+          <CustomButton
+            title={operatingSlot.id == 0 ? "Thêm mới" : "Cập nhật"}
+            containerStyleClasses="mt-5 bg-secondary border-2 border-secondary-100  h-[40px]"
+            textStyleClasses="text-white text-sm "
+            // iconLeft={
+            //   <View className="mr-1">
+            //     <Ionicons name="add-circle-outline" size={16} color="#FF9001" />
+            //   </View>
+            // }
+            handlePress={() => {
+              onSubmit(operatingSlot);
+            }}
+          />
         </View>
       </CustomModal>
       <TouchableOpacity
@@ -141,7 +254,12 @@ const Setting = () => {
                   {slot.title} : {slot.timeSlot}
                 </Text>
                 <View className="mx-2 flex-row items-center">
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setOperatingSlot({ ...slot });
+                      setIsSlotModalOpening(true);
+                    }}
+                  >
                     <Ionicons name="create-outline" size={24} color="#227B94" />
                   </TouchableOpacity>
                   <TouchableOpacity className="ml-1">
@@ -168,6 +286,7 @@ const Setting = () => {
           </View>
         }
         handlePress={() => {
+          setOperatingSlot({ ...initOperatingSlot });
           setIsSlotModalOpening(true);
         }}
       />

@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React from "react";
+import React, { ReactNode } from "react";
 import Modal from "react-native-modal";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -7,7 +7,7 @@ interface Props {
   title: string;
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
-  body: ReactNode;
+  children: ReactNode;
   containerStyleClasses?: string;
   titleStyleClasses?: string;
 }
@@ -15,7 +15,7 @@ const CustomModal = ({
   title,
   isOpen,
   setIsOpen,
-  body,
+  children,
   containerStyleClasses = "",
   titleStyleClasses = "",
 }: Props) => {
@@ -38,7 +38,7 @@ const CustomModal = ({
               <Ionicons name="close-outline" size={24} color="gray" />
             </TouchableOpacity>
           </View>
-          {body}
+          {children}
         </View>
       </View>
     </Modal>

@@ -24,7 +24,6 @@ import { PaperProvider } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import TanStackProvider from "@/config/providers/TanStackProvider";
 import sessionService from "@/services/session-service";
-import { MagicModalPortal } from "react-native-magic-modal";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
