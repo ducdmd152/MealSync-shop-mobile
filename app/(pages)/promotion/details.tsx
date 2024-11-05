@@ -147,7 +147,7 @@ const PromotionDetails = () => {
             {/* </View> */}
 
             {/* <View className="flex-1 flex flex-col gap-4"> */}
-            <View className="flex mt-2">
+            <View className="flex flex-row mt-2">
               <View className="flex-1">
                 <Text className="font-bold">Thời gian bắt đầu *</Text>
                 <View className="flex-row px-1 relative mt-2 gap-x-2">
@@ -156,21 +156,22 @@ const PromotionDetails = () => {
                     className="flex-1 border-2 border-gray-300 p-1 rounded-md"
                   >
                     <View className="flex-row justify-between items-center">
-                      <Text className="text-black mx-2 text-[16px]">
+                      <Text className="text-black mx-2 text-[14px]">
+                        {dayjs(promotion.startDate).local().format("HH:mm")}{" "}
                         {dayjs(promotion.startDate)
                           .local()
                           .format("DD/MM/YYYY")}
                       </Text>
 
-                      <Ionicons
+                      {/* <Ionicons
                         name="create-outline"
                         size={21}
                         color="gray-600"
-                      />
+                      /> */}
                     </View>
                   </TouchableRipple>
 
-                  <TouchableRipple
+                  {/* <TouchableRipple
                     disabled
                     onPress={() => {}}
                     className="flex-1 border-2 border-gray-300 p-1 rounded-md"
@@ -188,11 +189,11 @@ const PromotionDetails = () => {
                         color="gray-600"
                       />
                     </View>
-                  </TouchableRipple>
+                  </TouchableRipple> */}
                 </View>
               </View>
 
-              <View className="flex-1 mt-2">
+              <View className="flex-1">
                 <Text className="font-bold">Thời gian kết thúc *</Text>
                 <View className="flex-row px-1 relative mt-2 gap-x-2">
                   <TouchableRipple
@@ -200,19 +201,20 @@ const PromotionDetails = () => {
                     className="flex-1 border-2 border-gray-300 p-1 rounded-md"
                   >
                     <View className="flex-row justify-between items-center">
-                      <Text className="text-black mx-2 text-[16px]">
+                      <Text className="text-black mx-2 text-[14px]">
+                        {dayjs(promotion.endDate).local().format("HH:mm")}{" "}
                         {dayjs(promotion.endDate).local().format("DD/MM/YYYY")}
                       </Text>
 
-                      <Ionicons
+                      {/* <Ionicons
                         name="create-outline"
                         size={21}
                         color="gray-600"
-                      />
+                      /> */}
                     </View>
                   </TouchableRipple>
 
-                  <TouchableRipple
+                  {/* <TouchableRipple
                     disabled
                     onPress={() => {}}
                     className="flex-1 border-2 border-gray-300 p-1 rounded-md"
@@ -228,9 +230,9 @@ const PromotionDetails = () => {
                         name="create-outline"
                         size={21}
                         color="gray-600"
-                      />
+                      /> 
                     </View>
-                  </TouchableRipple>
+                  </TouchableRipple> */}
                 </View>
               </View>
             </View>
