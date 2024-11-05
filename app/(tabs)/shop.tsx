@@ -34,7 +34,7 @@ const redirections = {
     {
       text: "Khuyến mãi",
       icon: <Ionicons size={19.5} name="pricetags-outline" />,
-      handlePress: () => router.push("/shop/promotion"),
+      handlePress: () => router.push("shop/promotion"),
       textStyleClasses: "text-gray-800",
     },
     {

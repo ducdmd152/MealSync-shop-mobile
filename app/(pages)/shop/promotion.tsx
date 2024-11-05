@@ -30,6 +30,7 @@ import PromotionModel, {
 } from "@/types/models/PromotionModel";
 import sessionService from "@/services/session-service";
 import { router, useFocusEffect } from "expo-router";
+import CONSTANTS from "@/constants/data";
 
 const STATUSES = [
   { label: "Tất cả", value: 0 },
@@ -50,7 +51,7 @@ const Promotion = () => {
     REACT_QUERY_CACHE_KEYS.PROMOTION_LIST.concat(["gpkg-create-page"]),
     async (): Promise<FetchResponse<PromotionModel>> =>
       apiClient
-        .get(endpoints.SHOP_PROFILE_FULL_INFO, {
+        .get(endpoints.PROMOTION_LIST, {
           headers: {
             Authorization: `Bearer ${await sessionService.getAuthToken()}`,
           },
@@ -72,6 +73,7 @@ const Promotion = () => {
   const toggleToDatePicker = () => {
     setToDatePickerVisibility(!isToDatePickerVisible);
   };
+  console.log(promotions.error, promotions.data?.value.items);
   useFocusEffect(
     React.useCallback(() => {
       promotions.refetch();
@@ -236,10 +238,12 @@ const Promotion = () => {
                       <View className="self-stretch">
                         <Image
                           source={{
-                            uri: promotion.bannerUrl,
+                            uri:
+                              promotion.bannerUrl ||
+                              CONSTANTS.url.noImageAvailable,
                           }}
                           resizeMode="cover"
-                          className="h-[52px] w-[62px] rounded-md opacity-85"
+                          className="h-[50px] w-[62px] rounded-md opacity-85"
                         />
                       </View>
                       <View className="flex-1">
@@ -248,21 +252,27 @@ const Promotion = () => {
                           numberOfLines={2}
                           ellipsizeMode="tail"
                         >
-                          {promotion.bannerUrl}
+                          {promotion.title}
                         </Text>
-                        <Text className="text-[12px] italic text-gray-500 mt-[-2px]">
+                        <Text className="text-[12px] italic text-gray-500 ">
                           {dayjs(promotion.startDate).format("DD/MM/YY")} -{" "}
                           {dayjs(promotion.endDate).format("DD/MM/YY")}
                         </Text>
                       </View>
                     </View>
-                    <Text className="bg-blue-100 text-blue-800 text-[12px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                    <Text
+                      className="bg-blue-100 text-gray-800 text-[12px] font-medium me-2 px-2.5 py-0.5 rounded"
+                      style={{
+                        backgroundColor:
+                          promotion.status == 1 ? "#86efac" : "#e5e5e5",
+                      }}
+                    >
                       {promotionStatuses.find(
                         (item) => item.key === promotion.status
                       )?.label || "------"}
                     </Text>
                   </View>
-                  <View className="flex-row justify-end gap-2 pt-4">
+                  <View className="flex-row justify-end gap-2 pt-2">
                     <TouchableOpacity
                       onPress={() => {}}
                       className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"

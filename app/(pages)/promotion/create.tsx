@@ -24,9 +24,6 @@ import timezone from "dayjs/plugin/timezone";
 // Initialize the timezone plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-// Set the default timezone to Vietnam (UTC+7)
-const vietnamTz = "Asia/Ho_Chi_Minh";
 const PromotionCreate = () => {
   const toast = useToast();
   const isAnyRequestSubmit = useRef(false);
