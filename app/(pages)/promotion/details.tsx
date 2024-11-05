@@ -37,9 +37,10 @@ const PromotionDetails = () => {
   const toast = useToast();
   const isAnyRequestSubmit = useRef(false);
   const globalPromotionState = usePromotionModelState();
-  const [promotion, setPromotion] = useState<PromotionModel>(
-    globalPromotionState.promotion
-  );
+  //   const [promotion, setPromotion] = useState<PromotionModel>(
+  //     globalPromotionState.promotion
+  //   );
+  const { promotion, setPromotion } = globalPromotionState;
   const [isFetching, setIsFetching] = useState(false);
   const getDetails = async (isRefetching = false) => {
     setIsFetching(true);
@@ -65,6 +66,50 @@ const PromotionDetails = () => {
     }
   };
 
+  const onDelete = () => {
+    Alert.alert(
+      "Xác nhận",
+      "Bạn chắc chắn muốn xóa chương trình khuyến mãi này",
+      [
+        {
+          text: "Đồng ý",
+          onPress: async () => {
+            apiClient
+              .put("shop-owner/promotion/status/update", {
+                id: promotion.id,
+                status: 3,
+              })
+              .then((res) => {
+                let result = res.data as ValueResponse<{
+                  messsage: string;
+                  promotionInfo: PromotionModel;
+                }>;
+                if (result.isSuccess) {
+                  toast.show(`Hoàn tất xóa chương trình ${promotion.title}.`, {
+                    type: "success",
+                    duration: 1500,
+                  });
+
+                  // set to init
+                  router.replace("/shop/promotion");
+                  isAnyRequestSubmit.current = false;
+                }
+              })
+              .catch((error: any) => {
+                Alert.alert(
+                  "Oops!",
+                  error?.response?.data?.error?.message ||
+                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                );
+              });
+          },
+        },
+        {
+          text: "Hủy",
+        },
+      ]
+    );
+  };
   useFocusEffect(
     React.useCallback(() => {
       getDetails();
@@ -313,11 +358,7 @@ const PromotionDetails = () => {
 
             <View className="flex flex-row items-center gap-y-2">
               <Text className="font-semibold mr-3">Trạng thái khả dụng</Text>
-              <Switch
-                color="#e95137"
-                value={promotion.status == 1}
-                onValueChange={(value) => {}}
-              />
+              <Switch color="#e95137" value={promotion.status == 1} />
             </View>
             <CustomButton
               title="Chỉnh sửa"
@@ -326,6 +367,14 @@ const PromotionDetails = () => {
               handlePress={() => {
                 getDetails();
                 router.replace("/promotion/update");
+              }}
+            />
+            <CustomButton
+              title="Xóa khuyến mãi này"
+              containerStyleClasses="mt-2 bg-white border-secondary border-[1px] h-11"
+              textStyleClasses="text-secondary text-[16px]"
+              handlePress={() => {
+                onDelete();
               }}
             />
           </View>

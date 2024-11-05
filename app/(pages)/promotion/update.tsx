@@ -59,6 +59,7 @@ const PromotionUpdate = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      setPromotion(globalPromotionState.promotion);
       getDetails();
     }, [])
   );
@@ -176,7 +177,6 @@ const PromotionUpdate = () => {
             });
             router.replace("/promotion/details");
             isAnyRequestSubmit.current = false;
-            setPromotion({ ...initPromotionSampleObject, bannerUrl: "" });
           }
         })
         .catch((error: any) => {
