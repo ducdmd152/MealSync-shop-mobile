@@ -235,7 +235,7 @@ const Promotion = () => {
             </Text>
           )}
           <ScrollView style={{ width: "100%", flexGrow: 1 }}>
-            <View className="gap-y-2 pb-[154px]">
+            <View className="gap-y-2 pb-[72px]">
               {(promotions.data?.value.items || []).map((promotion, index) => (
                 <TouchableOpacity
                   onPress={() => {
