@@ -13,6 +13,7 @@ const CONSTANTS = {
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTV5-FEuyxb-HMUB41PwAEX_yopAjz0KgMAbg&s",
     noImageAvailable:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/640px-Image_not_available.png",
+    pink: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTES5ovzC1lSsIL0v3CECqaABnI8jFZevh7Fw&s",
   },
 };
 
