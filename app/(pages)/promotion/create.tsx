@@ -123,11 +123,13 @@ const PromotionCreate = () => {
   const handleSubmit = () => {
     isAnyRequestSubmit.current = true;
     console.log("Promotion details:", promotion, validate(promotion), errors);
+    const submitPromotion =
+      promotion.applyType == PromotionApplyType.AmountApply
+        ? { ...promotion, amountRate: 0, maximumApplyValue: 0 }
+        : { ...promotion, amountValue: 0 };
     if (validate(promotion)) {
-      promotion.startDate = dayjs(promotion.startDate).toISOString();
-      promotion.endDate = dayjs(promotion.endDate).toISOString();
       apiClient
-        .post("shop-owner/promotion/create", promotion)
+        .post("shop-owner/promotion/create", submitPromotion)
         .then((res) => {
           let result = res.data as ValueResponse<PromotionModel>;
           if (result.isSuccess) {
@@ -149,8 +151,6 @@ const PromotionCreate = () => {
               "Yêu cầu bị từ chối, vui lòng thử lại sau!"
           );
         });
-      promotion.startDate = dayjs(promotion.startDate).format("YYYY-MM-DD");
-      promotion.endDate = dayjs(promotion.endDate).format("YYYY-MM-DD");
     } else {
       Alert.alert("Oops!", "Vui lòng hoàn thành thông tin một cách hợp lệ");
     }
@@ -622,10 +622,11 @@ const PromotionCreate = () => {
               />
             </View>
 
-            <View className="flex flex-row items-center gap-2">
-              <Text>Trạng thái khả dụng</Text>
+            <View className="flex flex-row items-center gap-y-2">
+              <Text className="font-semibold mr-3">Trạng thái khả dụng</Text>
               <Switch
-                value={(promotion.status || 0).toString() == "Active"}
+                color="#e95137"
+                value={promotion.status == 1}
                 onValueChange={(value) =>
                   setPromotion({
                     ...promotion,

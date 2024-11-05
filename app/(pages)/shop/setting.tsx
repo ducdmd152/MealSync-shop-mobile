@@ -317,7 +317,7 @@ const Setting = () => {
             )
           : await apiClient.put(
               `shop-owner/operating-slot/${request.operatingSlot.id}`,
-              request.operatingSlot
+              { ...request.operatingSlot, isConfirm: request.isConfirm }
             );
       const { value, isSuccess, isWarning, error } = response.data;
 

@@ -58,7 +58,7 @@ const Promotion = () => {
             status: status == 0 ? undefined : status,
             searchValue,
             startDate: fromDate.toISOString(),
-            endDate: toDate.toISOString(),
+            endDate: toDate.add(1, "day").toISOString(),
             pageIndex: 1,
             pageSize: 100_000_000,
           },
@@ -158,7 +158,7 @@ const Promotion = () => {
               >
                 <View className="flex-row justify-between items-center">
                   <Text className="text-black mx-2 text-lg">
-                    {toDate.format("DD/MM/YYYY")}
+                    {toDate.local().format("DD/MM/YYYY")}
                   </Text>
                   <Ionicons name="create-outline" size={21} color="gray-600" />
                 </View>
