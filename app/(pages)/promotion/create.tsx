@@ -33,8 +33,6 @@ const PromotionCreate = () => {
     ...initPromotionSampleObject,
     bannerUrl: "",
   });
-  const [fromDate, setFromDate] = useState(dayjs(dayjs("2024-01-01")));
-  const [toDate, setToDate] = useState(dayjs(Date.now()));
   const [isFromDatePickerVisible, setFromDatePickerVisibility] =
     useState(false);
   const [isFromTimePickerVisible, setFromTimePickerVisibility] =
@@ -50,7 +48,7 @@ const PromotionCreate = () => {
 
   const [errors, setErrors] = useState<any>({});
   const validate = (promotion: PromotionModel) => {
-    console.log("Validating promotion: ", promotion);
+    // console.log("Validating promotion: ", promotion);
     let tempErrors: any = {};
     if (promotion.title.length < 6)
       tempErrors.title = "Tiêu đề ít nhất 6 kí tự.";
@@ -595,9 +593,9 @@ const PromotionCreate = () => {
                 keyboardType="numeric"
                 placeholderTextColor="#888"
               />
-              {errors.minOrdervalue && (
+              {errors.usageLimit && (
                 <Text className="text-red-500 text-xs">
-                  {errors.minOrdervalue}
+                  {errors.usageLimit}
                 </Text>
               )}
             </View>

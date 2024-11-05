@@ -316,12 +316,7 @@ const PromotionDetails = () => {
               <Switch
                 color="#e95137"
                 value={promotion.status == 1}
-                onValueChange={(value) =>
-                  setPromotion({
-                    ...promotion,
-                    status: value ? 1 : 2,
-                  })
-                }
+                onValueChange={(value) => {}}
               />
             </View>
             <CustomButton
@@ -330,7 +325,7 @@ const PromotionDetails = () => {
               textStyleClasses="text-white"
               handlePress={() => {
                 getDetails();
-                router.push("/promotion/update");
+                router.replace("/promotion/update");
               }}
             />
           </View>

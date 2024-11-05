@@ -237,7 +237,11 @@ const Promotion = () => {
           <ScrollView style={{ width: "100%", flexGrow: 1 }}>
             <View className="gap-y-2 pb-[154px]">
               {(promotions.data?.value.items || []).map((promotion, index) => (
-                <View
+                <TouchableOpacity
+                  onPress={() => {
+                    globalPromotionState.setPromotion(promotion);
+                    router.push("/promotion/details");
+                  }}
                   key={promotion.id}
                   className="p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow"
                 >
@@ -282,7 +286,10 @@ const Promotion = () => {
                   </View>
                   <View className="flex-row justify-end gap-2 pt-2">
                     <TouchableOpacity
-                      onPress={() => {}}
+                      onPress={() => {
+                        globalPromotionState.setPromotion(promotion);
+                        router.push("/promotion/update");
+                      }}
                       className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                     >
                       <Text className="text-[13.5px] text-white">
@@ -299,7 +306,7 @@ const Promotion = () => {
                       <Text className="text-[13.5px]">Chi tiết</Text>
                     </TouchableOpacity>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           </ScrollView>
