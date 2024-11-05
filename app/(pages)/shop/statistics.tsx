@@ -6,15 +6,49 @@ import {
   Modal,
   StyleSheet,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { TouchableRipple } from "react-native-paper";
 import { BlurView } from "expo-blur";
 import dayjs from "dayjs";
 import DateTimePicker from "react-native-ui-datepicker";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import apiClient from "@/services/api-services/api-client";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
+import sessionService from "@/services/session-service";
+import utilService from "@/services/util-service";
+import CONSTANTS from "@/constants/data";
+interface FoodStatistics {
+  id: number;
+  name: string;
+  totalOrders: number;
+  imageUrl: string;
+  status: number;
+}
+
+interface ShopStatisticsModel {
+  startDate: string;
+  endDate: string;
+  totalOrderDone: number;
+  totalOrderInProcess: number;
+  successfulOrderPercentage: number;
+  revenue: number;
+  totalSuccess: number;
+  totalFailOrRefund: number;
+  totalCancelOrReject: number;
+  foods: FoodStatistics[];
+}
+const splitFoodName = (name: string, maxLengthOfLine: number) => {
+  const firstLine =
+    name.length > maxLengthOfLine ? name.slice(0, maxLengthOfLine) : name;
+  const secondLine =
+    name.length > maxLengthOfLine ? name.slice(maxLengthOfLine) : null;
+  return { firstLine, secondLine };
+};
 
 const Statistics = () => {
   const [fromDate, setFromDate] = useState(dayjs(dayjs("2024-01-01")));
@@ -29,11 +63,43 @@ const Statistics = () => {
   const toggleToDatePicker = () => {
     setToDatePickerVisibility(!isToDatePickerVisible);
   };
+
+  const statistics = useFetchWithRQWithFetchFunc(
+    [endpoints.SHOP_STATISTICS].concat(["statistics-page"]),
+    async (): Promise<FetchValueResponse<ShopStatisticsModel>> =>
+      apiClient
+        .get(endpoints.SHOP_STATISTICS, {
+          headers: {
+            Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+          },
+          params: {
+            startDate: fromDate.toISOString(),
+            endDate: toDate.add(1, "day").toISOString(),
+          },
+        })
+        .then((response) => response.data),
+    [fromDate, toDate]
+  );
+  // useEffect(() => {
+  //   console.log(
+  //     "fromDate: ",
+  //     fromDate,
+  //     " | toDate: ",
+  //     toDate.add(1, "day").toISOString()
+  //   );
+  // }, [fromDate, toDate]);
+  useFocusEffect(
+    React.useCallback(() => {
+      statistics.refetch();
+    }, [])
+  );
   return (
     <PageLayoutWrapper>
       <View className="w-full  bg-gray-000 flex-col rounded-xl items-center justify-center mb-3 border-green-100 border-2 py-8 gap-y-2">
         <View className="justify-center items-center flex-row">
-          <Text className="font-semibold text-[48px] text-green-500 ">80</Text>
+          <Text className="font-semibold text-[48px] text-green-500 ">
+            {statistics.data?.value.successfulOrderPercentage}
+          </Text>
           <Text className="text-[32px] text-green-500">%</Text>
         </View>
         <Text className="text-center text-lg font-bold text-green-400 ml-[-4px]">
@@ -135,23 +201,33 @@ const Statistics = () => {
         </View> */}
         <View className="w-full h-[80px] bg-gray-000 flex-col rounded-xl items-center justify-center mb-3 bg-yellow-100">
           <Text className="font-semibold">Doanh thu</Text>
-          <Text className="text-center text-lg font-bold">10.000.000 đ</Text>
+          <Text className="text-center text-lg font-bold">
+            {statistics.data?.value.revenue != undefined
+              ? utilService.formatPrice(statistics.data?.value.revenue) + " đ"
+              : "--------"}{" "}
+          </Text>
         </View>
         <View className="w-full flex-row gap-2 items-between">
           <View className="flex-1 h-[80px]  bg-yellow-100 flex-col rounded-xl items-center justify-center p-1">
-            <Text className="font-semibold text-green-500">10</Text>
+            <Text className="font-semibold text-green-500">
+              {statistics.data?.value.totalSuccess}
+            </Text>
             <Text className="text-center text-green-500">
               Đơn hàng {"\n"} thành công
             </Text>
           </View>
           <View className="flex-1 h-[80px]  bg-yellow-100  flex-col rounded-xl items-center justify-center p-1">
-            <Text className="font-semibold text-red-500">10</Text>
+            <Text className="font-semibold text-red-500">
+              {statistics.data?.value.totalFailOrRefund}
+            </Text>
             <Text className="text-center text-red-500">
               Đơn hàng thất bại/hoàn tiền
             </Text>
           </View>
           <View className="flex-1 h-[80px] bg-yellow-100 rounded-xl items-center justify-center p-1 ">
-            <Text className="font-semibold text-purple-500">10</Text>
+            <Text className="font-semibold text-purple-500">
+              {statistics.data?.value.totalCancelOrReject}
+            </Text>
             <Text className="text-center text-purple-500">
               Đơn hàng {"\n"}hủy/từ chối
             </Text>
@@ -161,23 +237,33 @@ const Statistics = () => {
       <View className="p-2 mt-2">
         <Text className="text-lg font-bold">Sản phẩm hàng đầu</Text>
         <View className="gap-y-2 pb-[154px] mt-2">
-          {Array.from({ length: 10 }, (_, i) => (
+          {!statistics.isFetching &&
+            statistics.data?.value.foods.length == 0 && (
+              <Text className="text-gray-600 text-center mt-[-12px]">
+                Cửa hàng chưa có bất kì sản phẩm nào
+              </Text>
+            )}
+          {statistics.data?.value.foods.map((food) => (
             <View
-              key={i}
-              className="p-3 bg-white border-2 border-gray-300 rounded-lg"
+              key={food.id}
+              className="p-3 px-1 bg-white border-2 border-gray-300 rounded-lg"
             >
-              <View className="flex-row items-start justify-between ">
-                <View className="flex-row justify-start items-center gap-2">
+              <View className="flex-row gap-x-2 items-start justify-between ">
+                <View className="flex-1 flex-row justify-start items-center gap-2">
                   <Image
                     source={{
-                      uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1200px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg",
+                      uri: CONSTANTS.url.pink,
                     }}
                     resizeMode="cover"
                     className="h-[32px] w-[40px] rounded-md opacity-85"
                   />
                   <View className="">
-                    <Text className="text-md font-psemibold mt-[-2px] ml-[4px]">
-                      Cơm tấm Sài Gòn
+                    <Text
+                      className="text-md w-[180px] font-semibold mt-[-2px] ml-[4px]"
+                      numberOfLines={2}
+                      ellipsizeMode="tail"
+                    >
+                      {food.name}
                     </Text>
                     {/* <Text className="text-md italic text-gray-500 mt-[-2px]">
                       120.000đ
@@ -185,9 +271,9 @@ const Statistics = () => {
                   </View>
                 </View>
 
-                <View className="flex-row gap-2 items-start">
+                <View className="flex-row gap-x-2 mr-1 items-start">
                   <Text className="bg-green-200 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded">
-                    10 lượt bán
+                    {food.totalOrders} lượt bán
                   </Text>
                 </View>
               </View>

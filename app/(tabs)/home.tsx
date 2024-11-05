@@ -205,7 +205,7 @@ export default function HomeScreen() {
           <View className="w-full h-[80px] bg-gray-000 flex-col rounded-xl items-center justify-center mb-3 bg-yellow-100">
             <Text className="font-semibold">Doanh thu tháng</Text>
             <Text className="text-center text-lg font-bold">
-              {statistics.data?.value.orderStatisticInMonth.revenue
+              {statistics.data?.value.orderStatisticInMonth.revenue != undefined
                 ? utilService.formatPrice(
                     statistics.data?.value.orderStatisticInMonth.revenue
                   ) + " đ"
@@ -215,8 +215,7 @@ export default function HomeScreen() {
           <View className="w-full flex-row gap-2 items-between">
             <TouchableOpacity className="flex-1  bg-yellow-100 flex-col rounded-xl items-center justify-center p-1 py-2">
               <Text className="font-semibold text-green-500">
-                {statistics.data?.value.orderStatisticInMonth.totalSuccess ||
-                  "--"}
+                {statistics.data?.value.orderStatisticInMonth.totalSuccess}
               </Text>
               <Text className="text-center text-green-500">
                 Đơn hàng {"\n"} thành công
