@@ -310,7 +310,7 @@ const Setting = () => {
     try {
       setIsSubmitting(true);
       const response =
-        operatingSlot.id == 0
+        request.operatingSlot.id == 0
           ? await apiClient.post(
               `shop-owner/operating-slot`,
               request.operatingSlot
@@ -324,6 +324,10 @@ const Setting = () => {
       if (isSuccess) {
         setIsSlotModalOpening(false);
         shopProfile.refetch();
+        console.log(
+          "shopProfile.data?.value.operatingSlots: ",
+          shopProfile.data?.value.operatingSlots
+        );
         onSuccess();
       } else if (isWarning) {
         if (request.isConfirm) return;
