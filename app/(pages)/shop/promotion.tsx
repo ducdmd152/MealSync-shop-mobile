@@ -56,7 +56,7 @@ const Promotion = () => {
   const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
 
   const promotions = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.PROMOTION_LIST.concat(["gpkg-create-page"]),
+    REACT_QUERY_CACHE_KEYS.PROMOTION_LIST.concat(["promotion-page"]),
     async (): Promise<FetchResponse<PromotionModel>> =>
       apiClient
         .get(endpoints.PROMOTION_LIST, {
@@ -81,7 +81,7 @@ const Promotion = () => {
   const toggleToDatePicker = () => {
     setToDatePickerVisibility(!isToDatePickerVisible);
   };
-  console.log(promotions.error, promotions.data?.value.items);
+  // console.log(promotions.error, promotions.data?.value.items);
   useFocusEffect(
     React.useCallback(() => {
       promotions.refetch();
