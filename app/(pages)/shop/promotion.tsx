@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
+  FlatList,
 } from "react-native";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import CustomButton from "@/components/custom/CustomButton";
@@ -54,11 +55,22 @@ const Promotion = () => {
   const [isFromDatePickerVisible, setFromDatePickerVisibility] =
     useState(false);
   const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [promotionsList, setPromotionsList] = useState<PromotionModel[]>([]);
+  const [pageIndex, setPageIndex] = useState(1);
 
   const promotions = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.PROMOTION_LIST.concat(["gpkg-create-page"]),
-    async (): Promise<FetchResponse<PromotionModel>> =>
-      apiClient
+    REACT_QUERY_CACHE_KEYS.PROMOTION_LIST.concat(["promotion-page"]),
+    async (): Promise<FetchResponse<PromotionModel>> => {
+      console.log("params: ", {
+        status: status == 0 ? undefined : status,
+        searchValue,
+        startDate: fromDate.toISOString(),
+        endDate: toDate.add(1, "day").toISOString(),
+        pageIndex: pageIndex,
+        pageSize: 5,
+      });
+      return apiClient
         .get(endpoints.PROMOTION_LIST, {
           headers: {
             Authorization: `Bearer ${await sessionService.getAuthToken()}`,
@@ -68,24 +80,37 @@ const Promotion = () => {
             searchValue,
             startDate: fromDate.toISOString(),
             endDate: toDate.add(1, "day").toISOString(),
-            pageIndex: 1,
-            pageSize: 100_000_000,
+            pageIndex: pageIndex,
+            pageSize: 5,
           },
         })
-        .then((response) => response.data),
-    [searchValue, status, fromDate, toDate]
+        .then((response) => response.data);
+    },
+    [pageIndex]
   );
+  useEffect(() => {
+    if (pageIndex == 1) setPromotionsList(promotions.data?.value.items || []);
+    else
+      setPromotionsList(
+        promotionsList.concat(promotions.data?.value.items || [])
+      );
+  }, [promotions.data?.value.items]);
+  console.log("pageIndex re-render: ", pageIndex);
+  useEffect(() => {
+    console.log("pageIndex change: ", pageIndex);
+  }, [pageIndex]);
   const toggleFromDatePicker = () => {
     setFromDatePickerVisibility(!isFromDatePickerVisible);
   };
   const toggleToDatePicker = () => {
     setToDatePickerVisibility(!isToDatePickerVisible);
   };
-  console.log(promotions.error, promotions.data?.value.items);
+  // console.log(promotions.data?.value.items);
   useFocusEffect(
     React.useCallback(() => {
+      setPageIndex(1);
       promotions.refetch();
-    }, [])
+    }, [searchValue, status, fromDate, toDate])
   );
   return (
     <PageLayoutWrapper isScroll={false}>
@@ -234,16 +259,19 @@ const Promotion = () => {
               Không tìm thấy khuyến mãi tương ứng
             </Text>
           )}
-          <ScrollView style={{ width: "100%", flexGrow: 1 }}>
-            <View className="gap-y-2 pb-[154px]">
-              {(promotions.data?.value.items || []).map((promotion, index) => (
+          {/* <ScrollView style={{ width: "100%", flexGrow: 1 }}> */}
+          <View className="flex-1 ">
+            <FlatList
+              style={{ flexGrow: 1 }}
+              data={promotionsList}
+              renderItem={({ item: promotion }: { item: PromotionModel }) => (
                 <TouchableOpacity
                   onPress={() => {
                     globalPromotionState.setPromotion(promotion);
                     router.push("/promotion/details");
                   }}
                   key={promotion.id}
-                  className="p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow"
+                  className="p-4 pt-3 mt-2 bg-white drop-shadow-md rounded-lg shadow"
                 >
                   <View className="flex-row items-start justify-between gap-2">
                     <View className="flex-row flex-1 justify-start items-start gap-x-2">
@@ -307,9 +335,29 @@ const Promotion = () => {
                     </TouchableOpacity>
                   </View>
                 </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
+              )}
+              keyExtractor={(item: PromotionModel) => item.id.toString()}
+              onEndReached={() => {
+                console.log(pageIndex, {
+                  ...promotions.data?.value,
+                  items: [],
+                });
+                if (promotions.isFetching) return;
+                if (promotions.data?.value.hasNext) {
+                  setPageIndex(pageIndex + 1);
+                }
+              }}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={() =>
+                promotions.isFetching ? (
+                  <ActivityIndicator size="large" color="#FCF450" />
+                ) : (
+                  <View className="h-154" />
+                )
+              }
+            />
+          </View>
+          {/* </ScrollView> */}
         </View>
       </View>
     </PageLayoutWrapper>
