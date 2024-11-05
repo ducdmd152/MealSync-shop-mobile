@@ -14,6 +14,8 @@ import { endpoints } from "@/services/api-services/api-service-instances";
 import React from "react";
 import CONSTANTS from "@/constants/data";
 import utilService from "@/services/util-service";
+import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
+import { filterStatuses } from "@/types/models/OrderFetchModel";
 interface HomeStatisticsModel {
   orderStatisticInToday: {
     date: string;
@@ -36,6 +38,7 @@ interface HomeStatisticsModel {
 }
 
 export default function HomeScreen() {
+  const globalOrderStatusesFilterState = useOrderStatusFilterState();
   const shopProfile = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO.concat(["home"]),
     async (): Promise<FetchValueResponse<ShopProfileGetModel>> =>
@@ -87,13 +90,29 @@ export default function HomeScreen() {
             </Link>
           </View>
           <View className="w-full flex-row gap-2 items-between">
-            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000  border-2 border-gray-200 rounded-xl items-center justify-center">
+            <TouchableOpacity
+              onPress={() => {
+                globalOrderStatusesFilterState.setStatuses(
+                  filterStatuses[1].statuses
+                );
+                router.push("/order");
+              }}
+              className="flex-1 h-[80px] bg-gray-000  border-2 border-gray-200 rounded-xl items-center justify-center"
+            >
               <Text className="font-semibold text-xl text-secondary-100">
                 {statistics.data?.value.orderStatisticInToday.totalOrderPending}
               </Text>
               <Text className="text-secondary-200">chờ xác nhận</Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000  border-2 border-gray-200 rounded-xl items-center justify-center">
+            <TouchableOpacity
+              onPress={() => {
+                globalOrderStatusesFilterState.setStatuses(
+                  filterStatuses[2].statuses
+                );
+                router.push("/order");
+              }}
+              className="flex-1 h-[80px] bg-gray-000  border-2 border-gray-200 rounded-xl items-center justify-center"
+            >
               <Text className="font-semibold text-xl">
                 {
                   statistics.data?.value.orderStatisticInToday
@@ -102,7 +121,15 @@ export default function HomeScreen() {
               </Text>
               <Text>đã xác nhận</Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000  border-2 border-gray-200 rounded-xl items-center justify-center">
+            <TouchableOpacity
+              onPress={() => {
+                globalOrderStatusesFilterState.setStatuses(
+                  filterStatuses[3].statuses
+                );
+                router.push("/order");
+              }}
+              className="flex-1 h-[80px] bg-gray-000  border-2 border-gray-200 rounded-xl items-center justify-center"
+            >
               <Text className="font-semibold text-xl">
                 {
                   statistics.data?.value.orderStatisticInToday
@@ -113,7 +140,15 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
           <View className="w-full flex-row gap-2 items-between mt-2">
-            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000 border-2 border-gray-200 rounded-xl items-center justify-center">
+            <TouchableOpacity
+              onPress={() => {
+                globalOrderStatusesFilterState.setStatuses(
+                  filterStatuses[4].statuses
+                );
+                router.push("/order");
+              }}
+              className="flex-1 h-[80px] bg-gray-000 border-2 border-gray-200 rounded-xl items-center justify-center"
+            >
               <Text className="font-semibold text-xl">
                 {
                   statistics.data?.value.orderStatisticInToday
@@ -122,7 +157,15 @@ export default function HomeScreen() {
               </Text>
               <Text>đang giao</Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000 border-2 border-gray-200 rounded-xl items-center justify-center">
+            <TouchableOpacity
+              onPress={() => {
+                globalOrderStatusesFilterState.setStatuses(
+                  filterStatuses[5].statuses
+                );
+                router.push("/order");
+              }}
+              className="flex-1 h-[80px] bg-gray-000 border-2 border-gray-200 rounded-xl items-center justify-center"
+            >
               <Text className="font-semibold text-xl">
                 {
                   statistics.data?.value.orderStatisticInToday
@@ -131,7 +174,15 @@ export default function HomeScreen() {
               </Text>
               <Text className="text-center">giao thành công</Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-1 h-[80px] bg-gray-000 border-2 border-gray-200 rounded-xl items-center justify-center">
+            <TouchableOpacity
+              onPress={() => {
+                globalOrderStatusesFilterState.setStatuses(
+                  filterStatuses[6].statuses
+                );
+                router.push("/order");
+              }}
+              className="flex-1 h-[80px] bg-gray-000 border-2 border-gray-200 rounded-xl items-center justify-center"
+            >
               <Text className="font-semibold text-xl text-red-500">
                 {
                   statistics.data?.value.orderStatisticInToday

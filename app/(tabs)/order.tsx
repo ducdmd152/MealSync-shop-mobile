@@ -27,6 +27,7 @@ import FetchResponse, {
   FetchOnlyListResponse,
 } from "@/types/responses/FetchResponse";
 import OrderFetchModel, {
+  filterStatuses,
   getOrderStatusDescription,
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
@@ -55,6 +56,7 @@ import {
   StaffInfoModel,
 } from "@/types/models/StaffInfoModel";
 import utilService from "@/services/util-service";
+import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -87,70 +89,10 @@ interface OrderFetchQuery extends PagingRequestQuery {
   intendedReceiveDate: string;
 }
 
-const filterStatuses = [
-  {
-    statuses: [
-      OrderStatus.Pending,
-      OrderStatus.Confirmed,
-      OrderStatus.Preparing,
-      OrderStatus.Delivering,
-      OrderStatus.Delivered,
-      OrderStatus.FailDelivery,
-      OrderStatus.IssueReported,
-      OrderStatus.UnderReview,
-      OrderStatus.Completed,
-      OrderStatus.Resolved,
-      OrderStatus.Rejected,
-      OrderStatus.Cancelled,
-    ],
-    label: "Tất cả",
-  },
-  {
-    statuses: [OrderStatus.Pending],
-    label: "Chờ xác nhận",
-  },
-  {
-    statuses: [OrderStatus.Confirmed],
-    label: "Đã xác nhận",
-  },
-  {
-    statuses: [OrderStatus.Preparing],
-    label: "Đang chuẩn bị",
-  },
-  {
-    statuses: [OrderStatus.Delivering],
-    label: "Đang giao",
-  },
-  {
-    statuses: [OrderStatus.Delivered],
-    label: "Giao thành công",
-  },
-  {
-    statuses: [OrderStatus.FailDelivery],
-    label: "Giao hàng thất bại",
-  },
-  {
-    statuses: [OrderStatus.IssueReported, OrderStatus.UnderReview],
-    label: "Đang báo cáo",
-  },
-  {
-    statuses: [OrderStatus.Completed, OrderStatus.Resolved],
-    label: "Hoàn tất",
-  },
-  {
-    statuses: [OrderStatus.Rejected],
-    label: "Đã từ chối",
-  },
-  {
-    statuses: [OrderStatus.Cancelled],
-    label: "Đơn hủy",
-  },
-];
-
 const Order = () => {
-  (async () => {
-    console.log(await sessionService.getAuthToken());
-  })();
+  // (async () => {
+  //   console.log(await sessionService.getAuthToken());
+  // })();
   const globalTimeRangeState = useTimeRangeState();
   const [order, setOrder] = useState<OrderFetchModel>({} as OrderFetchModel);
   const [cacheOrderList, setCacheOrderList] = useState<OrderFetchModel[]>([]);
@@ -164,9 +106,11 @@ const Order = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isRangePickerVisible, setRangePickerVisibility] = useState(false);
   const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
+  const [isFocusing, setIsFocusing] = React.useState(false);
 
   const [searchText, setSearchText] = useState("");
   const [isQueryChanging, setIsQueryChanging] = useState(true);
+  const globalOrderStatusesFilterState = useOrderStatusFilterState();
   const {
     data: operatingSlots,
     isLoading: isOperatingSlotsLoading,
@@ -182,7 +126,7 @@ const Order = () => {
     []
   );
   const [query, setQuery] = useState<OrderFetchQuery>({
-    status: filterStatuses[0].statuses,
+    status: globalOrderStatusesFilterState.statuses,
     id: "",
     phoneNumber: "",
     pageIndex: 1,
@@ -268,10 +212,26 @@ const Order = () => {
     // console.log("Query: ", query);
   }, [query]);
 
-  useFocusEffect(
-    React.useCallback(() => {
+  // useEffect(() => {
+  //   globalOrderStatusesFilterState.setStatuses([...query.status]);
+  //   console.log(query.status);
+  // }, [query.status]);
+  useEffect(() => {
+    if (isFocusing) {
+      setQuery({
+        ...query,
+        status: globalOrderStatusesFilterState.statuses,
+      });
       orderFetchRefetch();
       operatingSlotsRefetch();
+    } else globalOrderStatusesFilterState.setStatuses(query.status);
+  }, [isFocusing]);
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsFocusing(true);
+      return () => {
+        setIsFocusing(false);
+      };
     }, [])
   );
   const setCacheOrderInList = (order: OrderFetchModel) =>

@@ -185,3 +185,62 @@ export const getOrderStatusDescription = (
 //     ],
 //   },
 // ];
+export const filterStatuses = [
+  {
+    statuses: [
+      OrderStatus.Pending,
+      OrderStatus.Confirmed,
+      OrderStatus.Preparing,
+      OrderStatus.Delivering,
+      OrderStatus.Delivered,
+      OrderStatus.FailDelivery,
+      OrderStatus.IssueReported,
+      OrderStatus.UnderReview,
+      OrderStatus.Completed,
+      OrderStatus.Resolved,
+      OrderStatus.Rejected,
+      OrderStatus.Cancelled,
+    ],
+    label: "Tất cả",
+  },
+  {
+    statuses: [OrderStatus.Pending],
+    label: "Chờ xác nhận",
+  },
+  {
+    statuses: [OrderStatus.Confirmed],
+    label: "Đã xác nhận",
+  },
+  {
+    statuses: [OrderStatus.Preparing],
+    label: "Đang chuẩn bị",
+  },
+  {
+    statuses: [OrderStatus.Delivering],
+    label: "Đang giao",
+  },
+  {
+    statuses: [OrderStatus.Delivered],
+    label: "Giao thành công",
+  },
+  {
+    statuses: [OrderStatus.FailDelivery],
+    label: "Giao hàng thất bại",
+  },
+  {
+    statuses: [OrderStatus.IssueReported, OrderStatus.UnderReview],
+    label: "Đang báo cáo",
+  },
+  {
+    statuses: [OrderStatus.Completed, OrderStatus.Resolved],
+    label: "Hoàn tất",
+  },
+  {
+    statuses: [OrderStatus.Rejected],
+    label: "Đã từ chối",
+  },
+  {
+    statuses: [OrderStatus.Cancelled],
+    label: "Đơn hủy",
+  },
+];
