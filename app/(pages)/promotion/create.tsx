@@ -21,10 +21,12 @@ import { Ionicons } from "@expo/vector-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import usePromotionModelState from "@/hooks/states/usePromotionModelState";
 // Initialize the timezone plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
 const PromotionCreate = () => {
+  const globalPromotionState = usePromotionModelState();
   const toast = useToast();
   const isAnyRequestSubmit = useRef(false);
   const [promotion, setPromotion] = useState<PromotionModel>({
@@ -58,8 +60,8 @@ const PromotionCreate = () => {
     )
       tempErrors.amountRate =
         "Tỉ lệ giảm giá nằm trong khoảng từ 1 đến 100 (%).";
-    if (promotion.minimumOrderValue < 1000)
-      tempErrors.minimumOrderValue =
+    if (promotion.minOrdervalue < 1000)
+      tempErrors.minOrdervalue =
         "Giá trị đơn hàng tối thiểu lớn hơn hoặc bằng 1000 đồng.";
     if (promotion.maximumApplyValue < 0)
       tempErrors.maximumApplyValue =
@@ -87,7 +89,7 @@ const PromotionCreate = () => {
   const numericFields = [
     "id",
     "amountRate",
-    "minimumOrderValue",
+    "minOrdervalue",
     "maximumApplyValue",
     "amountValue",
     "applyType",
@@ -128,7 +130,10 @@ const PromotionCreate = () => {
       apiClient
         .post("shop-owner/promotion/create", submitPromotion)
         .then((res) => {
-          let result = res.data as ValueResponse<PromotionModel>;
+          let result = res.data as ValueResponse<{
+            messsage: string;
+            promotionInfo: PromotionModel;
+          }>;
           if (result.isSuccess) {
             toast.show(`Hoàn tất tạo mới khuyến mãi thành công.`, {
               type: "success",
@@ -136,7 +141,10 @@ const PromotionCreate = () => {
             });
 
             // set to init
-            router.push("shop/promotion");
+            globalPromotionState.setPromotion({
+              ...result.value.promotionInfo,
+            });
+            router.replace("/promotion/details");
             isAnyRequestSubmit.current = false;
             setPromotion({ ...initPromotionSampleObject, bannerUrl: "" });
           }
@@ -521,10 +529,8 @@ const PromotionCreate = () => {
                 <TextInput
                   className="border border-gray-300 mt-1 p-2 rounded"
                   placeholder="Nhập giá trị đơn hàng tối thiểu"
-                  value={utilService.formatPrice(promotion.minimumOrderValue)}
-                  onChangeText={(text) =>
-                    handleChange("minimumOrderValue", text)
-                  }
+                  value={utilService.formatPrice(promotion.minOrdervalue)}
+                  onChangeText={(text) => handleChange("minOrdervalue", text)}
                   keyboardType="numeric"
                   placeholderTextColor="#888"
                 />
@@ -533,9 +539,9 @@ const PromotionCreate = () => {
                 </Text>
               </View>
 
-              {errors.minimumOrderValue && (
+              {errors.minOrdervalue && (
                 <Text className="text-red-500 text-xs">
-                  {errors.minimumOrderValue}
+                  {errors.minOrdervalue}
                 </Text>
               )}
             </View>
@@ -571,9 +577,9 @@ const PromotionCreate = () => {
                     đồng
                   </Text>
                 </View>
-                {errors.minimumOrderValue && (
+                {errors.minOrdervalue && (
                   <Text className="text-red-500 text-xs">
-                    {errors.minimumOrderValue}
+                    {errors.minOrdervalue}
                   </Text>
                 )}
               </View>
@@ -589,9 +595,9 @@ const PromotionCreate = () => {
                 keyboardType="numeric"
                 placeholderTextColor="#888"
               />
-              {errors.minimumOrderValue && (
+              {errors.minOrdervalue && (
                 <Text className="text-red-500 text-xs">
-                  {errors.minimumOrderValue}
+                  {errors.minOrdervalue}
                 </Text>
               )}
             </View>

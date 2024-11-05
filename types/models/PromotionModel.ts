@@ -6,7 +6,7 @@ export default interface PromotionModel {
   description: string;
   bannerUrl: string;
   amountRate: number;
-  minimumOrderValue: number;
+  minOrdervalue: number;
   maximumApplyValue: number;
   amountValue: number;
   applyType: number;
@@ -47,7 +47,7 @@ export const initPromotionSampleObject = {
   bannerUrl:
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5UW3VOtxCrPlSPnHEWVi_OndZbv7IzamS6g&s",
   amountRate: 0,
-  minimumOrderValue: 1000,
+  minOrdervalue: 1000,
   maximumApplyValue: 40000,
   amountValue: 0,
   applyType: PromotionApplyType.RateApply,

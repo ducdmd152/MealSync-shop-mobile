@@ -31,6 +31,7 @@ import PromotionModel, {
 import sessionService from "@/services/session-service";
 import { router, useFocusEffect } from "expo-router";
 import CONSTANTS from "@/constants/data";
+import usePromotionModelState from "@/hooks/states/usePromotionModelState";
 
 const STATUSES = [
   { label: "Tất cả", value: 0 },
@@ -39,10 +40,17 @@ const STATUSES = [
 ];
 
 const Promotion = () => {
+  const globalPromotionState = usePromotionModelState();
+  const {
+    startDate: fromDate,
+    setStartDate: setFromDate,
+    endDate: toDate,
+    setEndDate: setToDate,
+  } = globalPromotionState;
   const [searchValue, setSearchValue] = useState("");
   const [status, setStatus] = useState(0);
-  const [fromDate, setFromDate] = useState(dayjs(dayjs("2024-01-01")));
-  const [toDate, setToDate] = useState(dayjs(Date.now()));
+  // const [fromDate, setFromDate] = useState(dayjs(dayjs("2024-01-01")));
+  // const [toDate, setToDate] = useState(dayjs(Date.now()));
   const [isFromDatePickerVisible, setFromDatePickerVisibility] =
     useState(false);
   const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
@@ -84,7 +92,7 @@ const Promotion = () => {
       <CustomButton
         title="Thêm mới"
         handlePress={() => {
-          router.push("promotion/create");
+          router.push("/promotion/create");
         }}
         containerStyleClasses="h-[48px] px-4 bg-transparent border-0 border-gray-200 absolute bottom-8 right-5 bg-primary font-psemibold z-10"
         iconLeft={
@@ -282,7 +290,10 @@ const Promotion = () => {
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      onPress={() => {}}
+                      onPress={() => {
+                        globalPromotionState.setPromotion(promotion);
+                        router.push("/promotion/details");
+                      }}
                       className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                     >
                       <Text className="text-[13.5px]">Chi tiết</Text>

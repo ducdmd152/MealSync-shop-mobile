@@ -81,6 +81,14 @@ const PageLayout = () => {
           name="promotion/create"
           options={{ headerTitle: "Tạo mới khuyến mãi" }}
         />
+        <Stack.Screen
+          name="promotion/details"
+          options={{ headerTitle: "Chi tiết khuyến mãi" }}
+        />
+        <Stack.Screen
+          name="promotion/update"
+          options={{ headerTitle: "Chỉnh sửa khuyến mãi" }}
+        />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
     </>
