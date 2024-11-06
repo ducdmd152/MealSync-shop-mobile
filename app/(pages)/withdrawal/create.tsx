@@ -65,10 +65,12 @@ const WithdrawalCreate = () => {
   const validate = (withdrawal: WithdrawalCreateModel) => {
     // console.log("Validating promotion: ", promotion);
     let tempErrors: any = {};
-    if (withdrawalCreateModel.bankCode.length == 0)
+    if (withdrawal.bankCode.length == 0)
       tempErrors.bankCode = "Vui lòng chọn ngân hàng";
-    if (withdrawalCreateModel.amount < 50000)
+    if (withdrawal.amount < 50000) {
+      // console.log(withdrawal.amount, withdrawal.amount < 50000);
       tempErrors.amount = "Vui lòng nhập số tiền từ 50.000đ";
+    }
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -79,6 +81,7 @@ const WithdrawalCreate = () => {
     const newValue = numericFields.includes(name)
       ? Number(utilService.parseFormattedNumber(value))
       : value;
+    // console.log(value, utilService.parseFormattedNumber(value), newValue);
 
     if (isAnyRequestSubmit.current) {
       validate({
@@ -87,10 +90,10 @@ const WithdrawalCreate = () => {
       });
     }
 
-    setWithdrawalCreateModel((prevPromotion) => ({
-      ...prevPromotion,
+    setWithdrawalCreateModel({
+      ...withdrawalCreateModel,
       [name]: newValue,
-    }));
+    });
     // console.log({
     //   ...promotion,
     //   [name]: newValue,
@@ -146,7 +149,10 @@ const WithdrawalCreate = () => {
                   className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[28px] pb-3"
                   placeholder="Nhập số tiền cần rút"
                   value={utilService.formatPrice(withdrawalCreateModel.amount)}
-                  onChangeText={(text) => handleChange("amount", text)}
+                  onChangeText={(text) => {
+                    console.log("text: " + text);
+                    handleChange("amount", text);
+                  }}
                   keyboardType="numeric"
                   placeholderTextColor="#888"
                 />
