@@ -34,6 +34,7 @@ import OrderDeliveryAssign from "./OrderDeliveryAssign";
 import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
 import { router } from "expo-router";
 import useGPKGState from "@/hooks/states/useGPKGState";
+import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 interface Props {
   query: FrameDateTime;
   onNotFound?: () => void;
@@ -58,6 +59,7 @@ const DeliveryFrameDetail = ({
   const [isLoading, setIsLoading] = useState(true);
   const [order, setOrder] = useState<OrderFetchModel>({} as OrderFetchModel);
   const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
+  const globalOrderDetailState = useGlobalOrderDetailState();
   const getGPKGDetails = async () => {
     setIsLoading(true);
     try {
@@ -203,9 +205,11 @@ const DeliveryFrameDetail = ({
                           <TouchableOpacity
                             key={order.id}
                             onPress={() => {
-                              // setOrderDetailId(order.id);
-                              // setOrder(order);
-                              // setIsDetailBottomSheetVisible(true);
+                              // globalOrderDetailState.setId(order.id);
+                              // globalOrderDetailState.setIsActionsShowing(true);
+                              // globalOrderDetailState.setIsDetailBottomSheetVisible(
+                              //   true
+                              // );
                             }}
                             className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
                           >

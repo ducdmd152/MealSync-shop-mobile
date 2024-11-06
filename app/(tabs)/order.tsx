@@ -57,6 +57,8 @@ import {
 } from "@/types/models/StaffInfoModel";
 import utilService from "@/services/util-service";
 import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
+import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
+import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -103,6 +105,7 @@ const Order = () => {
   const [detailBottomSheetDisplay, setDetailBottomSheetDisplay] =
     useState(true);
   const [orderDetailId, setOrderDetailId] = useState(0);
+  const globalOrderDetailState = useGlobalOrderDetailState();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isRangePickerVisible, setRangePickerVisibility] = useState(false);
   const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
@@ -361,7 +364,10 @@ const Order = () => {
               <TouchableOpacity
                 key={order.id}
                 onPress={() => {
-                  setOrderDetailId(order.id);
+                  // setOrderDetailId(order.id);
+                  globalOrderDetailState.setId(order.id);
+                  globalOrderDetailState.setIsActionsShowing(true);
+                  globalOrderDetailState.setIsDetailBottomSheetVisible(true);
                   setOrder(order);
                   setIsDetailBottomSheetVisible(true);
                 }}
@@ -758,6 +764,7 @@ const Order = () => {
                       <TouchableOpacity
                         onPress={() => {
                           setOrderDetailId(order.id);
+                          globalOrderDetailState.setId(order.id);
                           setOrder(order);
                           setIsOpenOrderAssign(true);
                         }}
@@ -905,7 +912,7 @@ const Order = () => {
           />
         </View>
       </BottomSheet>
-      <BottomSheet modalProps={{}} isVisible={isDetailBottomSheetVisible}>
+      {/* <BottomSheet modalProps={{}} isVisible={isDetailBottomSheetVisible}>
         {detailBottomSheetDisplay && (
           <View
             className={`p-4 bg-white rounded-t-lg min-h-[120px]`}
@@ -936,7 +943,8 @@ const Order = () => {
             </View>
           </View>
         )}
-      </BottomSheet>
+      </BottomSheet> */}
+      <OrderDetailBottomSheet />
     </View>
   );
 };
