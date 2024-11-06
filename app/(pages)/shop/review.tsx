@@ -17,6 +17,7 @@ import FetchResponse, {
 import apiClient from "@/services/api-services/api-client";
 import dayjs from "dayjs";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
+import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 const isOver24Hours = (createdDate: string) => {
   const now = dayjs();
   const reviewDate = dayjs(createdDate);
@@ -55,6 +56,7 @@ const Review = () => {
   //   console.log(await sessionService.getAuthToken());
   // })();
   const globalOrderDetailState = useGlobalOrderDetailState();
+  const globalImageViewState = useGlobalImageViewingState();
   const [query, setQuery] = useState<{
     rating: number;
     searchValue: string;
@@ -248,12 +250,19 @@ const Review = () => {
                 {review.reviews[0].imageUrls.length > 0 && (
                   <View className="flex-row gap-x-2 mt-1">
                     {review.reviews[0].imageUrls.map((imageUrl) => (
-                      <Image
+                      <TouchableOpacity
                         key={imageUrl}
-                        source={{ uri: imageUrl }}
-                        className="w-[90px] h-[90px]"
-                        resizeMode="cover"
-                      />
+                        onPress={() => {
+                          globalImageViewState.setUrl(imageUrl);
+                          globalImageViewState.setIsModalVisible(true);
+                        }}
+                      >
+                        <Image
+                          source={{ uri: imageUrl }}
+                          className="w-[90px] h-[90px]"
+                          resizeMode="cover"
+                        />
+                      </TouchableOpacity>
                     ))}
                   </View>
                 )}

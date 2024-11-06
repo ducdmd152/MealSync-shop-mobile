@@ -25,6 +25,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import TanStackProvider from "@/config/providers/TanStackProvider";
 import sessionService from "@/services/session-service";
 import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
+import ImageViewingModal from "@/components/target-modals/ImageViewingModal";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -105,6 +106,7 @@ export default function RootLayout() {
                 <Stack.Screen name="+not-found" />
               </Stack>
               <OrderDetailBottomSheet />
+              <ImageViewingModal />
               {/* <FlashMessage position="bottom" /> */}
               {/* </KeyboardAvoidingView> */}
             </PaperProvider>
