@@ -1,5 +1,13 @@
-import { View, Text, Alert, TextInput, TouchableOpacity } from "react-native";
-import React, { useRef, useState } from "react";
+import {
+  View,
+  Text,
+  Alert,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import PromotionModel, {
   initPromotionSampleObject,
   PromotionApplyType,
@@ -9,8 +17,8 @@ import dayjs from "dayjs";
 import apiClient from "@/services/api-services/api-client";
 import ValueResponse from "@/types/responses/ValueReponse";
 import { useToast } from "react-native-toast-notifications";
-import { router } from "expo-router";
-import { Switch, TouchableRipple } from "react-native-paper";
+import { router, useFocusEffect } from "expo-router";
+import { Searchbar, Switch, TouchableRipple } from "react-native-paper";
 import DateTimePicker from "react-native-ui-datepicker";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import ImageUpload from "@/components/common/ImageUpload";
@@ -23,6 +31,13 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import usePromotionModelState from "@/hooks/states/usePromotionModelState";
 import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import {
+  BankInfoModel,
+  BankListFetchResponse,
+} from "@/types/models/BankFetchResponse";
+import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
 // Initialize the timezone plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -35,7 +50,7 @@ interface WithdrawalCreateModel {
 }
 const initWithdrawSampleObject = {
   amount: 0,
-  bankCode: "",
+  bankCode: "ICB",
   bankShortName: "",
   bankAccountNumber: "",
   verifyCode: 0,
@@ -44,33 +59,62 @@ const WithdrawalCreate = () => {
   const globalWithdrawalState = useGlobalWithdrawalState();
   const toast = useToast();
   const isAnyRequestSubmit = useRef(false);
+  const [bankSearchText, setBankSearchText] = useState("");
+  const [bankSearchList, setBankSearchList] = useState<BankInfoModel[]>([]);
   const [withdrawalCreateModel, setWithdrawalCreateModel] =
     useState<WithdrawalCreateModel>({
       ...initWithdrawSampleObject,
     });
-  const [isFromDatePickerVisible, setFromDatePickerVisibility] =
-    useState(false);
-  const [isFromTimePickerVisible, setFromTimePickerVisibility] =
-    useState(false);
-  const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
-  const [isToTimePickerVisible, setToTimePickerVisibility] = useState(false);
-  const toggleFromDatePicker = () => {
-    setFromDatePickerVisibility(!isFromDatePickerVisible);
+  const bankListFetch = useFetchWithRQWithFetchFunc(
+    [endpoints.EXTERNAL_BANK_LIST].concat(["withdrawal-create-page"]),
+    async (): Promise<BankListFetchResponse> =>
+      apiClient
+        .get(endpoints.EXTERNAL_BANK_LIST)
+        .then((response) => response.data),
+    []
+  );
+  useEffect(() => {
+    const text = bankSearchText.trim().toLocaleLowerCase();
+    if (!bankListFetch.isFetching && bankListFetch.isSuccess)
+      setBankSearchList(
+        bankListFetch?.data?.data.filter(
+          (bank) =>
+            bank.name.toLocaleLowerCase().includes(text) ||
+            bank.shortName.toLocaleLowerCase().includes(text)
+        ) || []
+      );
+  }, [bankListFetch.isFetching, bankSearchText]);
+  // console.log(bankListFetch.data);
+  const getBankCode = (id: number) => {
+    return bankListFetch?.data?.data.find((item) => item.id === id)?.code || "";
   };
-  const toggleToDatePicker = () => {
-    setToDatePickerVisibility(!isToDatePickerVisible);
+  const getBankShortName = (id: number) => {
+    return (
+      bankListFetch?.data?.data.find((item) => item.id === id)?.shortName || ""
+    );
   };
-
+  const getBankName = (code: string) => {
+    return (
+      bankListFetch?.data?.data.find((item) => item.code === code)?.name || ""
+    );
+  };
+  useFocusEffect(
+    React.useCallback(() => {
+      bankListFetch.refetch();
+    }, [])
+  );
   const [errors, setErrors] = useState<any>({});
   const validate = (withdrawal: WithdrawalCreateModel) => {
     // console.log("Validating promotion: ", promotion);
     let tempErrors: any = {};
-    if (withdrawal.bankCode.length == 0)
-      tempErrors.bankCode = "Vui lòng chọn ngân hàng";
     if (withdrawal.amount < 50000) {
       // console.log(withdrawal.amount, withdrawal.amount < 50000);
       tempErrors.amount = "Vui lòng nhập số tiền từ 50.000đ";
     }
+    if (withdrawal.bankCode.length == 0)
+      tempErrors.bankCode = "Vui lòng chọn ngân hàng";
+    if (withdrawal.bankAccountNumber.length == 0)
+      tempErrors.bankAccountNumber = "Vui nhập số tài khoản";
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -137,6 +181,7 @@ const WithdrawalCreate = () => {
       Alert.alert("Oops!", "Vui lòng hoàn thành thông tin một cách hợp lệ");
     }
   };
+
   return (
     <PageLayoutWrapper>
       <View className="p-4 bg-gray">
@@ -150,7 +195,7 @@ const WithdrawalCreate = () => {
                   placeholder="Nhập số tiền cần rút"
                   value={utilService.formatPrice(withdrawalCreateModel.amount)}
                   onChangeText={(text) => {
-                    console.log("text: " + text);
+                    // console.log("text: " + text);
                     handleChange("amount", text);
                   }}
                   keyboardType="numeric"
@@ -174,6 +219,108 @@ const WithdrawalCreate = () => {
                         )
                       ) + " đồng"
                     : ""}
+                </Text>
+              )}
+            </View>
+            <View className="mb-2">
+              <Text className="font-bold">Ngân hàng và tài khoản của bạn</Text>
+              <View className="mt-2">
+                {/* <SelectList
+                  setSelected={(value: string | number) =>
+                    setWithdrawalCreateModel({
+                      ...withdrawalCreateModel,
+                      bankCode: getBankCode(Number(value)),
+                      bankShortName: getBankShortName(Number(value)),
+                    })
+                  }
+                  data={
+                    (bankListFetch?.data?.data || []).map((item) => ({
+                      key: item.id.toString(),
+                      value: item.shortName,
+                    })) || []
+                  }
+                  save="key"
+                  notFoundText="Không tìm thấy"
+                  placeholder="Chọn ngân hàng tài khoản của bạn"
+                  searchPlaceholder="Tìm kiếm..."
+                /> */}
+                <Searchbar
+                  style={{
+                    height: 40,
+                    backgroundColor: "white",
+                    borderColor: "lightgray",
+                    borderWidth: 1,
+                    // borderRadius: "12px",
+                  }}
+                  inputStyle={{ minHeight: 0, color: "#1f2937" }}
+                  placeholderTextColor="#9ca3af"
+                  placeholder="Nhập tên ngân hàng..."
+                  onChangeText={setBankSearchText}
+                  value={bankSearchText}
+                />
+                <ScrollView
+                  style={{ width: "100%", flexShrink: 0 }}
+                  horizontal={true}
+                >
+                  <View className="w-full flex-row gap-x-3 items-center justify-between pb-2 mt-3">
+                    {bankSearchList.map((bank, index) => (
+                      <TouchableOpacity
+                        key={bank.id}
+                        onPress={() => {
+                          setWithdrawalCreateModel({
+                            ...withdrawalCreateModel,
+                            bankCode: bank.code,
+                          });
+                        }}
+                      >
+                        <View
+                          className={`p-[1px] border-[1px] border-[#bbf7d0] rounded-full ${
+                            bank.code == withdrawalCreateModel.bankCode
+                              ? "border-[2px] border-[#06b6d4]"
+                              : ""
+                          }`}
+                        >
+                          <Image
+                            source={{ uri: bank.logo }}
+                            resizeMode="contain"
+                            className="h-[42px] w-[42px]  opacity-85"
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+            </View>
+            <View className="mb-2">
+              <Text className="font-bold">Ngân hàng *</Text>
+              <TextInput
+                className="border border-gray-300 mt-1 p-2 rounded text-[16px]"
+                placeholder="Vui lòng chọn ngân hàng"
+                value={getBankName(withdrawalCreateModel.bankCode)}
+                readOnly
+                placeholderTextColor="#888"
+              />
+              {errors.title && (
+                <Text className="text-red-500 text-xs">{errors.title}</Text>
+              )}
+            </View>
+            <View className="mb-2">
+              <Text className="font-bold">Số tài khoản *</Text>
+              <TextInput
+                className="border border-gray-300 mt-1 p-2 rounded text-[20px]"
+                placeholder="Nhập số tài khoản..."
+                value={withdrawalCreateModel.bankAccountNumber}
+                placeholderTextColor="#888"
+                // readOnly
+                onChangeText={(text) => {
+                  // console.log("text: " + text);
+                  handleChange("bankAccountNumber", text);
+                }}
+              />
+              {errors.bankAccountNumber && (
+                <Text className="text-red-500 text-xs">
+                  {errors.bankAccountNumber}
                 </Text>
               )}
             </View>
