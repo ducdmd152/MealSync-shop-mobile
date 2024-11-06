@@ -57,7 +57,7 @@ const Withdrawal = () => {
           },
         })
         .then((response) => response.data),
-    [fromDate, toDate]
+    [fromDate, toDate, globalWithdrawalState.statuses]
   );
   const toggleFromDatePicker = () => {
     setFromDatePickerVisibility(!isFromDatePickerVisible);
@@ -76,7 +76,7 @@ const Withdrawal = () => {
       <CustomButton
         title="Tạo yêu cầu"
         handlePress={() => {
-          router.push("/promotion/create");
+          router.push("/withdrawal/create");
         }}
         containerStyleClasses="h-[48px] px-4 bg-transparent border-0 border-gray-200 absolute bottom-8 right-5 bg-primary font-psemibold z-10"
         iconLeft={
