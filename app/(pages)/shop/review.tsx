@@ -293,7 +293,7 @@ const Review = () => {
                     Đã đặt: {review.description}
                   </Text>
                   <CustomButton
-                    title="Xem đơn"
+                    title={`Đơn MS-${review.orderId} >>`}
                     handlePress={() => {
                       globalOrderDetailState.setId(review.orderId);
                       globalOrderDetailState.setIsActionsShowing(true);
@@ -301,15 +301,15 @@ const Review = () => {
                         true
                       );
                     }}
-                    iconRight={
-                      <Ionicons
-                        name="arrow-forward-outline"
-                        size={15}
-                        color="#3b82f6"
-                      />
-                    }
+                    // iconRight={
+                    //   <Ionicons
+                    //     name="arrow-forward-outline"
+                    //     size={15}
+                    //     color="#3b82f6"
+                    //   />
+                    // }
                     containerStyleClasses="w-fit bg-white"
-                    textStyleClasses="ml-2 text-[#3b82f6] text-[12px]"
+                    textStyleClasses="ml-2 text-[#3b82f6] text-[11px]"
                   />
                 </View>
               </View>

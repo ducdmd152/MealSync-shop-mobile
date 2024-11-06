@@ -24,8 +24,8 @@ const ImageViewingModal = ({
       onBackdropPress={() => globalImageViewState.setIsModalVisible(false)}
     >
       <View style={{ zIndex: 100 }} className="justify-center items-center">
-        <View className={`bg-white p-4 rounded-lg ${containerStyleClasses}`}>
-          <View className="flex-row items-center justify-end">
+        <View className={`bg-white p-1 rounded-lg ${containerStyleClasses}`}>
+          {/* <View className="flex-row items-center justify-end">
             <TouchableOpacity
               onPress={() => {
                 globalImageViewState.setIsModalVisible(false);
@@ -33,12 +33,12 @@ const ImageViewingModal = ({
             >
               <Ionicons name="close-outline" size={24} color="gray" />
             </TouchableOpacity>
-          </View>
+          </View> */}
           <Image
             source={{
               uri: globalImageViewState.url || CONSTANTS.url.noImageAvailable,
             }}
-            className={`w-[${240}px] aspect-square ${imageStyleClasses}`}
+            className={`w-[${240}px] rounded-lg aspect-square ${imageStyleClasses}`}
             resizeMode="contain"
           />
         </View>
