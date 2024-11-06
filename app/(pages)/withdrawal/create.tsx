@@ -66,9 +66,9 @@ const WithdrawalCreate = () => {
     // console.log("Validating promotion: ", promotion);
     let tempErrors: any = {};
     if (withdrawalCreateModel.bankCode.length == 0)
-      tempErrors.title = "Vui lòng chọn ngân hàng";
+      tempErrors.bankCode = "Vui lòng chọn ngân hàng";
     if (withdrawalCreateModel.amount < 50000)
-      tempErrors.title = "Vui lòng nhập số tiền từ 50.000đ";
+      tempErrors.amount = "Vui lòng nhập số tiền từ 50.000đ";
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -98,12 +98,6 @@ const WithdrawalCreate = () => {
   };
   const handleSubmit = () => {
     isAnyRequestSubmit.current = true;
-    console.log(
-      "Promotion details:",
-      withdrawalCreateModel,
-      validate(withdrawalCreateModel),
-      errors
-    );
     if (validate(withdrawalCreateModel)) {
       // apiClient
       //   .post("shop-owner/promotion/create", submitPromotion)
@@ -149,26 +143,36 @@ const WithdrawalCreate = () => {
               <Text className="font-bold">Nhập số tiền *</Text>
               <View className="relative">
                 <TextInput
-                  className="border border-gray-300 mt-1 p-2 rounded"
+                  className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[28px] pb-3"
                   placeholder="Nhập số tiền cần rút"
                   value={utilService.formatPrice(withdrawalCreateModel.amount)}
                   onChangeText={(text) => handleChange("amount", text)}
                   keyboardType="numeric"
                   placeholderTextColor="#888"
                 />
-                <Text className="absolute right-2 top-4 text-[12px] italic">
-                  đồng
+                <Text className="absolute right-3 top-6 text-[12.8px] italic">
+                  VND
                 </Text>
               </View>
 
-              {errors.amountValue && (
-                <Text className="text-red-500 text-xs">
-                  {errors.amountValue}
+              {errors.amount ? (
+                <Text className="mt-1 text-red-500 text-xs">
+                  {errors.amount}
+                </Text>
+              ) : (
+                <Text className="mt-1 font-semibold text-gray-600 text-xs italic">
+                  {withdrawalCreateModel.amount > 1000
+                    ? utilService.capitalizeFirstChar(
+                        utilService.numberToVietnameseText(
+                          withdrawalCreateModel.amount
+                        )
+                      ) + " đồng"
+                    : ""}
                 </Text>
               )}
             </View>
             <CustomButton
-              title="Hoàn tất tạo mới"
+              title="Gửi yêu cầu"
               containerStyleClasses="mt-5 bg-secondary h-12"
               textStyleClasses="text-white"
               handlePress={() => {

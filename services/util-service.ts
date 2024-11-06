@@ -4,6 +4,32 @@ export type TimeRange = {
   startTime: number;
   endTime: number;
 };
+const units = [
+  "",
+  "một",
+  "hai",
+  "ba",
+  "bốn",
+  "năm",
+  "sáu",
+  "bảy",
+  "tám",
+  "chín",
+];
+const tens = [
+  "",
+  "mười",
+  "hai mươi",
+  "ba mươi",
+  "bốn mươi",
+  "năm mươi",
+  "sáu mươi",
+  "bảy mươi",
+  "tám mươi",
+  "chín mươi",
+];
+const scales = ["", "nghìn", "triệu", "tỷ"];
+
 const utilService = {
   formatTime: (time: number): string => {
     const hours = Math.floor(time / 100)
@@ -102,6 +128,82 @@ const utilService = {
   },
   parseFormattedNumber: (formattedValue: string) => {
     return Number(formattedValue.replace(/\./g, ""));
+  },
+
+  numberToVietnameseText: (number: number): string => {
+    if (number === 0) return "không";
+    if (number < 0) return `âm ${utilService.numberToVietnameseText(-number)}`;
+
+    let result = "";
+    let scaleIndex = 0;
+
+    while (number > 0) {
+      const threeDigits = number % 1000;
+      if (threeDigits !== 0) {
+        let prefix = utilService.convertThreeDigits(threeDigits);
+        if (scaleIndex > 0) {
+          prefix += ` ${scales[scaleIndex]}`;
+        }
+        result = prefix + " " + result;
+      }
+      number = Math.floor(number / 1000);
+      scaleIndex++;
+    }
+    return result.trim();
+  },
+
+  convertThreeDigits: (number: number): string => {
+    const units = [
+      "",
+      "một",
+      "hai",
+      "ba",
+      "bốn",
+      "năm",
+      "sáu",
+      "bảy",
+      "tám",
+      "chín",
+    ];
+    const tens = [
+      "",
+      "",
+      "hai mươi",
+      "ba mươi",
+      "bốn mươi",
+      "năm mươi",
+      "sáu mươi",
+      "bảy mươi",
+      "tám mươi",
+      "chín mươi",
+    ];
+
+    const hundred = Math.floor(number / 100);
+    const ten = Math.floor((number % 100) / 10);
+    const unit = number % 10;
+
+    let result = "";
+
+    if (hundred > 0) {
+      result += `${units[hundred]} trăm `;
+    }
+
+    if (ten > 1) {
+      result += `${tens[ten]} `;
+      if (unit > 0) result += `${units[unit]}`;
+    } else if (ten === 1) {
+      result += "mười ";
+      if (unit > 0) result += `${units[unit]}`;
+    } else if (unit > 0) {
+      if (hundred > 0) result += "lẻ ";
+      result += `${units[unit]}`;
+    }
+
+    return result.trim();
+  },
+  capitalizeFirstChar: (text: string): string => {
+    if (!text) return text;
+    return text.charAt(0).toUpperCase() + text.slice(1);
   },
 };
 
