@@ -205,11 +205,11 @@ const DeliveryFrameDetail = ({
                           <TouchableOpacity
                             key={order.id}
                             onPress={() => {
-                              globalOrderDetailState.setId(order.id);
-                              globalOrderDetailState.setIsActionsShowing(true);
-                              globalOrderDetailState.setIsDetailBottomSheetVisible(
-                                true
-                              );
+                              // globalOrderDetailState.setId(order.id);
+                              // globalOrderDetailState.setIsActionsShowing(true);
+                              // globalOrderDetailState.setIsDetailBottomSheetVisible(
+                              //   true
+                              // );
                             }}
                             className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
                           >

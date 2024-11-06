@@ -17,15 +17,21 @@ import FetchResponse, {
 import apiClient from "@/services/api-services/api-client";
 import dayjs from "dayjs";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
+const isOver24Hours = (createdDate: string) => {
+  const now = dayjs();
+  const reviewDate = dayjs(createdDate);
+  // console.log(now, createdDate, now.diff(reviewDate, "hour"));
+  return now.diff(reviewDate, "hour") >= 24;
+};
 const formatCreatedDate = (createdDate: string): string => {
   const date = dayjs(createdDate);
   const now = dayjs();
   const daysDiff = now.diff(date, "day");
 
   if (daysDiff < 1) {
-    return "hôm nay";
+    return date.local().format("HH:mm") + " hôm nay";
   } else if (daysDiff === 1) {
-    return "hôm qua";
+    return date.local().format("HH:mm") + " hôm qua";
   } else if (daysDiff <= 30) {
     return `${daysDiff} ngày trước`;
   } else {
@@ -213,29 +219,35 @@ const Review = () => {
                   </View>
                 </View>
 
-                <View className="flex-row justify-start items-center ml-[2px] mt-2 gap-x-2">
-                  <Rating
-                    showRating={false}
-                    readonly={true}
-                    startingValue={review.reviews[0].rating}
-                    imageSize={14}
-                  />
-                  <Text className="font-bold">&#183;</Text>
-                  <Text className="text-gray-600 text-[12px]">
-                    {formatCreatedDate(review.reviews[0].createdDate)}
-                  </Text>
+                <View className="flex-row justify-between items-center ml-[2px] mt-2">
+                  <View className="flex-row justify-start items-center gap-x-2">
+                    <Rating
+                      showRating={false}
+                      readonly={true}
+                      startingValue={review.reviews[0].rating}
+                      imageSize={14}
+                    />
+                    <Text className="font-bold">&#183;</Text>
+                    <Text className="text-gray-600 text-[12px]">
+                      {formatCreatedDate(review.reviews[0].createdDate)}
+                    </Text>
+                  </View>
+                  <View>
+                    {!isOver24Hours(review.reviews[0].createdDate) && (
+                      <TouchableOpacity>
+                        <Text className="ml-2 text-[#3b82f6] font-semibold text-[12px]">
+                          Trả lời
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
                 <Text className="mt-2 text-gray-800">
                   {review.reviews[0].comment}
                 </Text>
-                {review.reviews[0].imageUrls.length >= 0 && (
+                {review.reviews[0].imageUrls.length > 0 && (
                   <View className="flex-row gap-x-2 mt-1">
-                    {(
-                      review.reviews[0].imageUrls || [
-                        "https://mealsync.s3.ap-southeast-1.amazonaws.com/image/1729938216185-52b46e98-a7fb-48b6-91fa-b80378c7151d.jpg",
-                        "https://mealsync.s3.ap-southeast-1.amazonaws.com/image/1729938216839-2bcccc1c-4ec7-4ce7-8ce8-768cd203c7cc.jpg",
-                      ]
-                    ).map((imageUrl) => (
+                    {review.reviews[0].imageUrls.map((imageUrl) => (
                       <Image
                         key={imageUrl}
                         source={{ uri: imageUrl }}
