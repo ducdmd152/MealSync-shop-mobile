@@ -18,6 +18,7 @@ import apiClient from "@/services/api-services/api-client";
 import dayjs from "dayjs";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
+import { useFocusEffect } from "expo-router";
 const isOver24Hours = (createdDate: string) => {
   const now = dayjs();
   const reviewDate = dayjs(createdDate);
@@ -25,10 +26,11 @@ const isOver24Hours = (createdDate: string) => {
   return now.diff(reviewDate, "hour") >= 24;
 };
 const formatCreatedDate = (createdDate: string): string => {
-  const date = dayjs(createdDate);
+  const date = dayjs(createdDate).add(7, "hours");
   const now = dayjs();
   const daysDiff = now.diff(date, "day");
 
+  console.log("createdDate: ", createdDate, new Date(createdDate), date);
   if (daysDiff < 1) {
     return date.local().format("HH:mm") + " hôm nay";
   } else if (daysDiff === 1) {
@@ -79,7 +81,12 @@ const Review = () => {
         .then((response) => response.data),
     [query]
   );
-  // console.log("query: ", query, reviewFetch.data?.value.items);
+  useFocusEffect(
+    React.useCallback(() => {
+      reviewFetch.refetch();
+    }, [])
+  );
+  console.log(reviewFetch.data?.value.reviewOverview.totalReview);
   return (
     <PageLayoutWrapper>
       <View className="p-4">
