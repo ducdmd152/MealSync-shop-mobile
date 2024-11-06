@@ -59,6 +59,7 @@ const initWithdrawSampleObject = {
   verifyCode: 0,
 };
 const WithdrawalCreate = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const scrollViewRef = useRef<ScrollView | null>(null);
   const globalWithdrawalState = useGlobalWithdrawalState();
   const toast = useToast();
@@ -163,6 +164,7 @@ const WithdrawalCreate = () => {
     }
 
     if (!isVerified) {
+      setIsSubmitting(true);
       apiClient
         .post("shop-owner/withdrawal/send-verify-code", withdrawalCreateModel)
         .then((res) => {
@@ -176,12 +178,14 @@ const WithdrawalCreate = () => {
           }
         })
         .catch((error: any) => {
-          console.log("error 1: ", error?.response?.data);
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
               "Yêu cầu bị từ chối, vui lòng thử lại sau!"
           );
+        })
+        .finally(() => {
+          setIsSubmitting(false);
         });
     } else {
       apiClient
@@ -223,9 +227,9 @@ const WithdrawalCreate = () => {
   return (
     <SafeAreaView className="flex-1 bg-white relative">
       <ScrollView ref={scrollViewRef} contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="p-4 bg-gray">
+        <View className="flex-1 flex-grow p-4 bg-gray">
           <View
-            className={`flex flex-row gap-4 ${
+            className={`flex-1 flex-row gap-4 ${
               isUnderKeywodFocusing && "pb-[220px]"
             }`}
           >
@@ -390,16 +394,17 @@ const WithdrawalCreate = () => {
                   </Text>
                 )}
               </View>
-              <CustomButton
-                title="Gửi yêu cầu"
-                containerStyleClasses="mt-5 bg-secondary h-12"
-                textStyleClasses="text-white"
-                handlePress={() => {
-                  handleSubmit();
-                }}
-              />
             </View>
           </View>
+          <CustomButton
+            title="Gửi yêu cầu"
+            containerStyleClasses="mt-5 bg-secondary h-12"
+            textStyleClasses="text-white"
+            isLoading={isSubmitting}
+            handlePress={() => {
+              handleSubmit();
+            }}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
