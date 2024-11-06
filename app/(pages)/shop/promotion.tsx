@@ -185,15 +185,16 @@ const Promotion = () => {
                 <View style={styleTimePicker.modalContent}>
                   <DateTimePicker
                     minDate={dayjs("2024-01-01").toDate()}
-                    maxDate={toDate.toDate()}
+                    maxDate={new Date()}
                     mode="single"
-                    startDate={fromDate.toDate()}
-                    endDate={toDate.toDate()}
                     locale="vi-VN"
                     date={fromDate.toDate()}
                     onChange={(params) => {
                       setFromDate(dayjs(params.date));
                       setFromDatePickerVisibility(false);
+                      if (dayjs(params.date).toDate() > toDate.toDate()) {
+                        setToDate(dayjs(params.date));
+                      }
                     }}
                   />
                 </View>
@@ -210,16 +211,17 @@ const Promotion = () => {
               <BlurView intensity={50} style={styleTimePicker.modalBackground}>
                 <View style={styleTimePicker.modalContent}>
                   <DateTimePicker
-                    minDate={fromDate.toDate()}
-                    maxDate={dayjs("2030-01-01").toDate()}
+                    minDate={dayjs("2024-01-01").toDate()}
+                    maxDate={new Date()}
                     mode="single"
-                    startDate={fromDate.toDate()}
-                    endDate={toDate.toDate()}
                     locale="vi-VN"
                     date={toDate.toDate()}
                     onChange={(params) => {
                       setToDate(dayjs(params.date));
                       setToDatePickerVisibility(false);
+                      if (dayjs(params.date).toDate() < fromDate.toDate()) {
+                        setFromDate(dayjs(params.date));
+                      }
                     }}
                   />
                 </View>

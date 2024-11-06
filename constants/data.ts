@@ -1,3 +1,5 @@
+import Withdrawal from "@/app/(pages)/shop/withdrawal";
+
 const CONSTANTS = {
   USER_ROLE: {
     GUEST: 0 as const,
@@ -16,6 +18,8 @@ const CONSTANTS = {
     pink: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTES5ovzC1lSsIL0v3CECqaABnI8jFZevh7Fw&s",
     pickNewImage:
       "https://t4.ftcdn.net/jpg/04/81/13/43/360_F_481134373_0W4kg2yKeBRHNEklk4F9UXtGHdub3tYk.jpg",
+    withdrawalRequest:
+      "https://icons.veryicon.com/png/o/system/hywf-background-icon/withdraw-9.png",
   },
 };
 

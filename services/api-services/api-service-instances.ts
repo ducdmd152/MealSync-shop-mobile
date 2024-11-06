@@ -18,6 +18,7 @@ export const endpoints = {
   HOME_STATISTICS: "shop-owner/order/statistics/summary",
   SHOP_STATISTICS: "shop-owner/order/statistics",
   REVIEWS: "shop-onwer/review",
+  WITHDRAWAL_LIST: "shop-owner/withdrawal/history",
 };
 
 export const testApiService = createHttpService<TestModel>(

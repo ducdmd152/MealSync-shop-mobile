@@ -23,73 +23,80 @@ import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import { useToast } from "react-native-toast-notifications";
-const redirections = {
-  shop: [
-    {
-      text: "Hồ sơ cửa hàng",
-      icon: <Ionicons size={20} name="storefront-outline" />,
-      handlePress: () => router.push("/shop/profile"),
-      textStyleClasses: "text-gray-800",
-    },
-    {
-      text: "Khuyến mãi",
-      icon: <Ionicons size={19.5} name="pricetags-outline" />,
-      handlePress: () => router.push("/shop/promotion"),
-      textStyleClasses: "text-gray-800",
-    },
-    {
-      text: "Lượt đánh giá",
-      icon: <Ionicons size={20} name="star-outline" />,
-      handlePress: () => router.push("/shop/review"),
-      textStyleClasses: "text-gray-800",
-    },
+import { WITHDRAW_STATUSES_FILTER } from "@/types/models/WithdrawalModel";
+import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
 
-    {
-      text: "Hiệu suất bán hàng",
-      icon: <Ionicons size={20} name="stats-chart-outline" />,
-      handlePress: () => router.push("/shop/statistics"),
-      textStyleClasses: "text-gray-800",
-    },
-    {
-      text: "Cài đặt cửa hàng",
-      icon: <Ionicons size={20} name="settings-outline" />,
-      handlePress: () => router.push("/shop/setting"),
-      textStyleClasses: "text-gray-800",
-    },
-  ] as LinkItem[],
-  balance: [
-    {
-      text: "Quản lí số dư",
-      icon: <Ionicons size={20} name="wallet-outline" />,
-      handlePress: () => router.push("/shop/balance"),
-      textStyleClasses: "text-gray-800",
-    },
-    {
-      text: "Yêu cầu rút tiền",
-      icon: <Ionicons size={20} name="documents-outline" />,
-      handlePress: () => router.push("/shop/withdrawal"),
-      textStyleClasses: "text-gray-800",
-    },
-  ] as LinkItem[],
-  account: [
-    {
-      text: "Tài khoản của tôi",
-      icon: <Ionicons size={20} name="person-circle-outline" />,
-      handlePress: () => router.push("/shop/account"),
-      textStyleClasses: "text-gray-800",
-    },
-    {
-      text: "Đăng xuất",
-      icon: <Ionicons size={20} name="log-out-outline" />,
-      handlePress: () => {
-        sessionService.clear();
-        router.replace("/");
-      },
-      textStyleClasses: "text-gray-600",
-    },
-  ] as LinkItem[],
-};
 const Shop = () => {
+  const globalWithdrawalState = useGlobalWithdrawalState();
+  const redirections = {
+    shop: [
+      {
+        text: "Hồ sơ cửa hàng",
+        icon: <Ionicons size={20} name="storefront-outline" />,
+        handlePress: () => router.push("/shop/profile"),
+        textStyleClasses: "text-gray-800",
+      },
+      {
+        text: "Khuyến mãi",
+        icon: <Ionicons size={19.5} name="pricetags-outline" />,
+        handlePress: () => router.push("/shop/promotion"),
+        textStyleClasses: "text-gray-800",
+      },
+      {
+        text: "Lượt đánh giá",
+        icon: <Ionicons size={20} name="star-outline" />,
+        handlePress: () => router.push("/shop/review"),
+        textStyleClasses: "text-gray-800",
+      },
+
+      {
+        text: "Hiệu suất bán hàng",
+        icon: <Ionicons size={20} name="stats-chart-outline" />,
+        handlePress: () => router.push("/shop/statistics"),
+        textStyleClasses: "text-gray-800",
+      },
+      {
+        text: "Cài đặt cửa hàng",
+        icon: <Ionicons size={20} name="settings-outline" />,
+        handlePress: () => router.push("/shop/setting"),
+        textStyleClasses: "text-gray-800",
+      },
+    ] as LinkItem[],
+    balance: [
+      {
+        text: "Quản lí số dư",
+        icon: <Ionicons size={20} name="wallet-outline" />,
+        handlePress: () => router.push("/shop/balance"),
+        textStyleClasses: "text-gray-800",
+      },
+      {
+        text: "Yêu cầu rút tiền",
+        icon: <Ionicons size={20} name="documents-outline" />,
+        handlePress: () => {
+          globalWithdrawalState.setStatuses(WITHDRAW_STATUSES_FILTER[0].value);
+          router.push("/shop/withdrawal");
+        },
+        textStyleClasses: "text-gray-800",
+      },
+    ] as LinkItem[],
+    account: [
+      {
+        text: "Tài khoản của tôi",
+        icon: <Ionicons size={20} name="person-circle-outline" />,
+        handlePress: () => router.push("/shop/account"),
+        textStyleClasses: "text-gray-800",
+      },
+      {
+        text: "Đăng xuất",
+        icon: <Ionicons size={20} name="log-out-outline" />,
+        handlePress: () => {
+          sessionService.clear();
+          router.replace("/");
+        },
+        textStyleClasses: "text-gray-600",
+      },
+    ] as LinkItem[],
+  };
   const toast = useToast();
   const [isSwitchOn, setIsSwitchOn] = React.useState(true);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
