@@ -1,13 +1,62 @@
-import { View, Text, Touchable, TouchableOpacity } from "react-native";
-import React from "react";
+import { View, Text, Touchable, TouchableOpacity, Image } from "react-native";
+import React, { useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import { Ionicons } from "@expo/vector-icons";
 import { Avatar, ProgressBar } from "react-native-paper";
 import CONSTANTS from "@/constants/data";
 import { Rating } from "react-native-elements";
 import CustomButton from "@/components/custom/CustomButton";
+import sessionService from "@/services/session-service";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import FetchResponse, {
+  FetchOnlyListResponse,
+  FetchValueResponse,
+} from "@/types/responses/FetchResponse";
+import apiClient from "@/services/api-services/api-client";
+import dayjs from "dayjs";
+const formatCreatedDate = (createdDate: string): string => {
+  const date = dayjs(createdDate);
+  const now = dayjs();
+  const daysDiff = now.diff(date, "day");
 
+  if (daysDiff < 1) {
+    return "hôm nay";
+  } else if (daysDiff === 1) {
+    return "hôm qua";
+  } else if (daysDiff <= 30) {
+    return `${daysDiff} ngày trước`;
+  } else {
+    return date.local().format("YYYY-MM-DD HH:mm");
+  }
+};
 const Review = () => {
+  (async () => {
+    console.log(await sessionService.getAuthToken());
+  })();
+  const [query, setQuery] = useState<{
+    rating: 0;
+    searchValue: string;
+    pageIndex: number;
+    pageSize: number;
+  }>({ rating: 0, searchValue: "", pageIndex: 1, pageSize: 100_000_000 });
+  const reviewFetch = useFetchWithRQWithFetchFunc(
+    [endpoints.REVIEWS].concat(["reviews-page"]),
+    async (): Promise<FetchResponse<ReviewModel>> =>
+      apiClient
+        .get(endpoints.REVIEWS, {
+          headers: {
+            Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+          },
+          params: {
+            ...query,
+            rating: query.rating == 0 ? undefined : query.rating,
+          },
+        })
+        .then((response) => response.data),
+    [query]
+  );
+  // console.log("query: ", query, reviewFetch.data?.value.items);
   return (
     <PageLayoutWrapper>
       <View className="p-4">
@@ -72,55 +121,86 @@ const Review = () => {
           </View>
         </View>
         <View className="gap-y-[4px] mt-3">
-          {Array.from({ length: 5 }, (_, i) => (
-            <View className="p-4 py-1" key={i}>
-              <View className="mt-2 flex-row items-center justify-between">
-                <View className="flex-row gap-x-4 items-center">
-                  <View className="w-[36px] justify-center items-center border-[1px] border-green-200 rounded-full">
-                    <Avatar.Image
-                      size={36}
-                      source={{
-                        uri: CONSTANTS.url.userAvatarDefault,
-                      }}
-                    />
+          {reviewFetch.data?.value.items.map((review) => (
+            <View className="p-4 py-1" key={review.orderId}>
+              <View>
+                <View className="mt-2 flex-row items-center justify-between">
+                  <View className="flex-row gap-x-4 items-center">
+                    <View className="w-[36px] justify-center items-center border-[1px] border-green-200 rounded-full">
+                      <Avatar.Image
+                        size={34}
+                        source={{
+                          uri:
+                            review.reviews[0].avatar ||
+                            CONSTANTS.url.userAvatarDefault,
+                        }}
+                      />
+                    </View>
+                    <Text className="text-gray-800">
+                      {review.reviews[0].name}
+                    </Text>
                   </View>
-                  <Text className="text-gray-800">Duy Đức</Text>
+                </View>
+
+                <View className="flex-row justify-start items-center ml-[2px] mt-2 gap-x-2">
+                  <Rating
+                    showRating={false}
+                    readonly={true}
+                    startingValue={review.reviews[0].rating}
+                    imageSize={14}
+                  />
+                  <Text className="font-bold">&#183;</Text>
+                  <Text className="text-gray-600 text-[12px]">
+                    {formatCreatedDate(review.reviews[0].createdDate)}
+                  </Text>
+                </View>
+                <Text className="mt-2 text-gray-800">
+                  {review.reviews[0].comment}
+                </Text>
+                {review.reviews[0].imageUrls.length >= 0 && (
+                  <View className="flex-row gap-x-2">
+                    {(
+                      review.reviews[0].imageUrls || [
+                        "https://mealsync.s3.ap-southeast-1.amazonaws.com/image/1729938216185-52b46e98-a7fb-48b6-91fa-b80378c7151d.jpg",
+                        "https://mealsync.s3.ap-southeast-1.amazonaws.com/image/1729938216839-2bcccc1c-4ec7-4ce7-8ce8-768cd203c7cc.jpg",
+                      ]
+                    ).map((imageUrl) => (
+                      <Image
+                        source={{ uri: imageUrl }}
+                        className="w-[90px] h-[90px]"
+                        resizeMode="cover"
+                      />
+                    ))}
+                  </View>
+                )}
+                <View className="flex-row items-center justify-between">
+                  <Text
+                    className="w-[70%] text-gray-500 text-[12px]"
+                    ellipsizeMode="tail"
+                    numberOfLines={1}
+                  >
+                    Đã đặt: {review.description}
+                  </Text>
+                  <CustomButton
+                    title="Xem đơn"
+                    handlePress={() => {}}
+                    iconRight={
+                      <Ionicons
+                        name="arrow-forward-outline"
+                        size={15}
+                        color="#3b82f6"
+                      />
+                    }
+                    containerStyleClasses="w-fit bg-white"
+                    textStyleClasses="ml-2 text-[#3b82f6] text-[12px]"
+                  />
                 </View>
               </View>
-
-              <View className="flex-row justify-start items-center ml-[2px] mt-2 gap-x-2">
-                <Rating
-                  showRating={false}
-                  readonly={true}
-                  count={5}
-                  onFinishRating={5}
-                  startingValue={4.5}
-                  imageSize={14}
-                />
-                <Text className="font-bold">&#183;</Text>
-                <Text className="text-gray-600 text-[12px]">19 ngày trước</Text>
-              </View>
-              <Text className="mt-2 text-gray-800">
-                Trà sữa cũm ok, cũm ngon.
-              </Text>
-              <View className="flex-row items-center justify-between">
-                <Text className="text-gray-500 text-[12px]">
-                  Đã đặt: Trà Olong, Bánh cake,...
-                </Text>
-                <CustomButton
-                  title="Chi tiết"
-                  handlePress={() => {}}
-                  iconRight={
-                    <Ionicons
-                      name="arrow-forward-outline"
-                      size={16}
-                      color="#3b82f6"
-                    />
-                  }
-                  containerStyleClasses="w-fit bg-white"
-                  textStyleClasses="ml-2 text-[#3b82f6] text-[12px]"
-                />
-              </View>
+              {review.reviews.length > 1 && (
+                <View className="mt-2 ml-4">
+                  <Text>Reply</Text>
+                </View>
+              )}
             </View>
           ))}
         </View>
