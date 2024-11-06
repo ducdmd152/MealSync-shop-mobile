@@ -205,6 +205,19 @@ const utilService = {
     if (!text) return text;
     return text.charAt(0).toUpperCase() + text.slice(1);
   },
+  hideEmailMiddle: (email: string): string => {
+    const [username, domain] = email.split("@");
+    const visibleChars = Math.max(username.length - 6, 4);
+    const hiddenChars = username.length - visibleChars;
+
+    if (hiddenChars > 0) {
+      const hiddenPart = "*".repeat(hiddenChars);
+      const visibleUsername = username.slice(0, visibleChars);
+      return `${visibleUsername}${hiddenPart}@${domain}`;
+    }
+
+    return email; // Nếu không có đủ ký tự để ẩn, trả về email gốc
+  },
 };
 
 export default utilService;

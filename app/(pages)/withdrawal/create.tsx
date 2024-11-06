@@ -41,6 +41,9 @@ import {
 import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
 import { BalanceModel } from "@/types/models/BalanceModel";
 import { px } from "framer-motion";
+import CustomModal from "@/components/common/CustomModal";
+import OTPTextView from "react-native-otp-textinput";
+import sessionService from "@/services/session-service";
 // Initialize the timezone plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -50,6 +53,7 @@ interface WithdrawalCreateModel {
   bankShortName: string;
   bankAccountNumber: string;
   verifyCode: number;
+  email: string;
 }
 const initWithdrawSampleObject = {
   amount: 0,
@@ -57,6 +61,7 @@ const initWithdrawSampleObject = {
   bankShortName: "VietinBank",
   bankAccountNumber: "",
   verifyCode: 0,
+  email: "",
 };
 const WithdrawalCreate = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,12 +70,14 @@ const WithdrawalCreate = () => {
   const toast = useToast();
   const isAnyRequestSubmit = useRef(false);
   const [bankSearchText, setBankSearchText] = useState("");
+
   const [bankSearchList, setBankSearchList] = useState<BankInfoModel[]>([]);
   const [withdrawalCreateModel, setWithdrawalCreateModel] =
     useState<WithdrawalCreateModel>({
       ...initWithdrawSampleObject,
     });
   const [isUnderKeywodFocusing, setIsUnderKeywodFocusing] = useState(false);
+  const [isVerifing, setIsVerifing] = useState(false);
   const bankListFetch = useFetchWithRQWithFetchFunc(
     [endpoints.EXTERNAL_BANK_LIST].concat(["withdrawal-create-page"]),
     async (): Promise<BankListFetchResponse> =>
@@ -112,6 +119,8 @@ const WithdrawalCreate = () => {
   };
   useFocusEffect(
     React.useCallback(() => {
+      isAnyRequestSubmit.current = false;
+      setWithdrawalCreateModel({ ...initWithdrawSampleObject });
       balanceFetch.refetch();
       bankListFetch.refetch();
     }, [])
@@ -156,7 +165,10 @@ const WithdrawalCreate = () => {
     //   [name]: newValue,
     // });
   };
-  const handleSubmit = (isVerified: boolean = false) => {
+  const handleSubmit = (
+    withdrawal: WithdrawalCreateModel,
+    isVerified: boolean = false
+  ) => {
     isAnyRequestSubmit.current = true;
     if (!validate(withdrawalCreateModel)) {
       Alert.alert("Oops!", "Vui lòng hoàn thành thông tin hợp lệ");
@@ -166,7 +178,7 @@ const WithdrawalCreate = () => {
     if (!isVerified) {
       setIsSubmitting(true);
       apiClient
-        .post("shop-owner/withdrawal/send-verify-code", withdrawalCreateModel)
+        .post("shop-owner/withdrawal/send-verify-code", withdrawal)
         .then((res) => {
           let result = res.data as ValueResponse<{
             email: string;
@@ -174,7 +186,11 @@ const WithdrawalCreate = () => {
           }>;
 
           if (result.isSuccess) {
-            // open verify modal
+            setWithdrawalCreateModel({
+              ...withdrawal,
+              email: result.value.email,
+            });
+            setIsVerifing(true);
           }
         })
         .catch((error: any) => {
@@ -189,24 +205,21 @@ const WithdrawalCreate = () => {
         });
     } else {
       apiClient
-        .post("shop-owner/withdrawal", withdrawalCreateModel)
+        .post("shop-owner/withdrawal", {
+          ...withdrawal,
+          email: undefined,
+        })
         .then((res) => {
-          let result = res.data as ValueResponse<{
-            email: string;
-            messsage: string;
-          }>;
-          if (result.isSuccess) {
-            toast.show(`Yêu cầu đã được gửi thành công.`, {
-              type: "success",
-              duration: 1500,
-            });
-            // set to init
-            router.replace("/shop/withdrawal");
-            isAnyRequestSubmit.current = false;
-            setWithdrawalCreateModel({ ...initWithdrawSampleObject });
-          }
+          setIsVerifing(false);
+
+          router.back();
+          toast.show(`Yêu cầu đã được gửi thành công.`, {
+            type: "success",
+            duration: 1500,
+          });
         })
         .catch((error: any) => {
+          console.log("Verified Error: ", error?.response?.data);
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
@@ -230,7 +243,7 @@ const WithdrawalCreate = () => {
         <View className="flex-1 flex-grow p-4 bg-gray">
           <View
             className={`flex-1 flex-row gap-4 ${
-              isUnderKeywodFocusing && "pb-[220px]"
+              isUnderKeywodFocusing && "pb-[160px]"
             }`}
           >
             <View className="flex-1 flex flex-col">
@@ -402,13 +415,139 @@ const WithdrawalCreate = () => {
             textStyleClasses="text-white"
             isLoading={isSubmitting}
             handlePress={() => {
-              handleSubmit();
+              handleSubmit(withdrawalCreateModel);
             }}
           />
         </View>
+        <CustomModal
+          title="Xác thực yêu cầu rút tiền"
+          isOpen={isVerifing}
+          setIsOpen={setIsVerifing}
+        >
+          {/* <Text className="text-gray-800 text-center">
+            Vui lòng kiểm tra email (
+            <Text className="font-semibold">
+              {utilService.hideEmailMiddle(withdrawalCreateModel.email)})
+            </Text>{" "}
+            {"\n"} của bạn và hoàn thành mã xác thực
+          </Text> */}
+          <WithdrawalVerification
+            isSubmitting={isSubmitting}
+            email={withdrawalCreateModel.email}
+            limit={2 * 60}
+            onResendCode={() => {
+              handleSubmit(withdrawalCreateModel);
+            }}
+            handleSubmit={(code: number) => {
+              handleSubmit(
+                {
+                  ...withdrawalCreateModel,
+                  verifyCode: code,
+                },
+                true
+              );
+            }}
+          />
+        </CustomModal>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
 export default WithdrawalCreate;
+
+const WithdrawalVerification = ({
+  email,
+  limit,
+  handleSubmit,
+  onResendCode,
+  isSubmitting,
+}: {
+  email: string;
+  limit: number;
+  handleSubmit: (code: number) => void;
+  onResendCode: () => void;
+  isSubmitting: boolean;
+}) => {
+  const intervalIdRef = useRef<any>(null);
+  const [timeSecondsCounter, setTimeSecondsCounter] = useState(0);
+  const lengthOfCode = 4;
+  const [code, setCode] = useState("");
+  const otpInput = useRef<OTPTextView | null>(null);
+
+  const clearText = () => {
+    if (otpInput.current) {
+      otpInput.current.clear();
+    }
+  };
+  useEffect(() => {
+    if (code.length == lengthOfCode) handleSubmit(Number(code));
+  }, [code]);
+  const resetTimeCounter = () => {
+    setTimeSecondsCounter(limit);
+    const intervalId = setInterval(() => {
+      setTimeSecondsCounter((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(intervalId);
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1010);
+    intervalIdRef.current = intervalId;
+  };
+  useFocusEffect(
+    React.useCallback(() => {
+      resetTimeCounter();
+    }, [])
+  );
+
+  return (
+    <View className="mt-4">
+      <Text className="text-lg text-gray-500 text-center text-semibold mt-2 font-semibold">
+        Mã xác thực đã được gửi qua {utilService.hideEmailMiddle(email)}
+      </Text>
+      <Text className="text-lg text-gray-500 text-center text-semibold mt-2">
+        Thời gian còn lại{" "}
+        {Math.floor(timeSecondsCounter / 60)
+          .toString()
+          .padStart(2, "0") +
+          " : " +
+          (timeSecondsCounter % 60).toString().padStart(2, "0")}
+      </Text>
+      <OTPTextView
+        inputCount={lengthOfCode}
+        ref={otpInput}
+        handleTextChange={(text) => {
+          setCode(text);
+        }}
+      />
+      {/* <CustomButton
+        title="Xác thực"
+        handlePress={() => onVerify()}
+        containerStyleClasses="min-h-[52px] mt-6 bg-primary"
+        textStyleClasses="text-[16px] text-white"
+      /> */}
+      {/* <CustomButton
+        title="Nhập lại"
+        handlePress={clearText}
+        containerStyleClasses="min-h-[52px] mt-4 border-[1px] border-gray-600 bg-white"
+        textStyleClasses="text-[16px] text-gray-600"
+      /> */}
+      <CustomButton
+        isLoading={isSubmitting}
+        title="Nhận mã mới"
+        handlePress={() => {
+          if (intervalIdRef.current) {
+            clearInterval(intervalIdRef.current);
+            intervalIdRef.current = null;
+          }
+          resetTimeCounter();
+          onResendCode();
+        }}
+        containerStyleClasses="min-h-[52px] mt-4 border-[0px] border-gray-600 bg-white bg-[#fcd34d]"
+        textStyleClasses="text-[16px] text-gray-600"
+      />
+    </View>
+  );
+};
