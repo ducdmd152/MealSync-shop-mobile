@@ -20,6 +20,7 @@ import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState"
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import { useFocusEffect } from "expo-router";
 import useGlobalReviewReplyState from "@/hooks/states/useGlobalReviewReplyState";
+import { RefreshControl } from "react-native-gesture-handler";
 const isOver24Hours = (createdDate: string) => {
   const now = dayjs();
   const reviewDate = dayjs(createdDate);
@@ -90,7 +91,17 @@ const Review = () => {
   );
   // console.log(reviewFetch.data?.value.reviewOverview.totalReview);
   return (
-    <PageLayoutWrapper>
+    <PageLayoutWrapper
+      refreshControl={
+        <RefreshControl
+          tintColor={"#FCF450"}
+          onRefresh={() => {
+            reviewFetch.refetch();
+          }}
+          refreshing={reviewFetch.isFetching}
+        />
+      }
+    >
       <View className="p-4">
         <View className="py-2 bg-[#ecfdf5] grow-0 rounded-[12px]">
           <TouchableOpacity
@@ -314,8 +325,49 @@ const Review = () => {
                 </View>
               </View>
               {review.reviews.length > 1 && (
-                <View className="mt-2 ml-4">
-                  <Text>Reply</Text>
+                <View className="py-2 pl-4 mr-[-14px] bg-[#fefce8] rounded-md">
+                  <View className="flex-row gap-x-4 items-center">
+                    <View className="w-[36px] justify-center items-center border-[1px] border-green-200 rounded-full">
+                      <Avatar.Image
+                        size={34}
+                        source={{
+                          uri:
+                            review.reviews[1].avatar ||
+                            CONSTANTS.url.userAvatarDefault,
+                        }}
+                      />
+                    </View>
+                    <View>
+                      <Text className="text-gray-800">
+                        {review.reviews[1].name}
+                      </Text>
+                      <Text className="text-gray-600 mt-1 text-[12px]">
+                        {formatCreatedDate(review.reviews[1].createdDate)}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text className="mt-2 italic text-gray-800">
+                    {review.reviews[1].comment}
+                  </Text>
+                  {review.reviews[1].imageUrls.length > 0 && (
+                    <View className="flex-row gap-x-2 mt-1">
+                      {review.reviews[0].imageUrls.map((imageUrl) => (
+                        <TouchableOpacity
+                          key={imageUrl}
+                          onPress={() => {
+                            globalImageViewState.setUrl(imageUrl);
+                            globalImageViewState.setIsModalVisible(true);
+                          }}
+                        >
+                          <Image
+                            source={{ uri: imageUrl }}
+                            className="w-[90px] h-[90px]"
+                            resizeMode="cover"
+                          />
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
                 </View>
               )}
             </View>

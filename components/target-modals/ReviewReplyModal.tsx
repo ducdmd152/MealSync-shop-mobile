@@ -51,14 +51,13 @@ const ReviewReplyModal = ({
         comment: "",
         imageUrls: [],
       });
-    }, [])
+    }, [globalReviewReplyState])
   );
   const onSubmit = async () => {
     try {
       setIsSubmitting(true);
       const response = await apiClient.post(`shop-onwer/review`, {
         ...request,
-        imageUrl: "",
       });
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -71,7 +70,7 @@ const ReviewReplyModal = ({
         globalReviewReplyState.onAfterCompleted();
       }
     } catch (error: any) {
-      console.log("error: ", error);
+      console.log("error: ", error?.response?.data?.error);
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
