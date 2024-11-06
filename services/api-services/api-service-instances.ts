@@ -20,6 +20,7 @@ export const endpoints = {
   REVIEWS: "shop-onwer/review",
   WITHDRAWAL_LIST: "shop-owner/withdrawal/history",
   EXTERNAL_BANK_LIST: "https://api.vietqr.io/v2/banks",
+  BALANCE: "shop-owner/wallet/summary",
 };
 
 export const testApiService = createHttpService<TestModel>(

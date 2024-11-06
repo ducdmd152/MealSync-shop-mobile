@@ -38,6 +38,7 @@ import {
   BankListFetchResponse,
 } from "@/types/models/BankFetchResponse";
 import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
+import { BalanceModel } from "@/types/models/BalanceModel";
 // Initialize the timezone plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -51,7 +52,7 @@ interface WithdrawalCreateModel {
 const initWithdrawSampleObject = {
   amount: 0,
   bankCode: "ICB",
-  bankShortName: "",
+  bankShortName: "VietinBank",
   bankAccountNumber: "",
   verifyCode: 0,
 };
@@ -71,6 +72,12 @@ const WithdrawalCreate = () => {
       apiClient
         .get(endpoints.EXTERNAL_BANK_LIST)
         .then((response) => response.data),
+    []
+  );
+  const balanceFetch = useFetchWithRQWithFetchFunc(
+    [endpoints.BALANCE].concat(["withdrawal-create-page"]),
+    async (): Promise<ValueResponse<BalanceModel>> =>
+      apiClient.get(endpoints.BALANCE).then((response) => response.data),
     []
   );
   useEffect(() => {
@@ -100,6 +107,7 @@ const WithdrawalCreate = () => {
   };
   useFocusEffect(
     React.useCallback(() => {
+      balanceFetch.refetch();
       bankListFetch.refetch();
     }, [])
   );
@@ -143,42 +151,60 @@ const WithdrawalCreate = () => {
     //   [name]: newValue,
     // });
   };
-  const handleSubmit = () => {
+  const handleSubmit = (isVerified: boolean = false) => {
     isAnyRequestSubmit.current = true;
-    if (validate(withdrawalCreateModel)) {
-      // apiClient
-      //   .post("shop-owner/promotion/create", submitPromotion)
-      //   .then((res) => {
-      //     let result = res.data as ValueResponse<{
-      //       messsage: string;
-      //       promotionInfo: PromotionModel;
-      //     }>;
-      //     if (result.isSuccess) {
-      //       toast.show(`Hoàn tất tạo mới khuyến mãi thành công.`, {
-      //         type: "success",
-      //         duration: 1500,
-      //       });
-      //       // set to init
-      //       globalPromotionState.setPromotion({
-      //         ...result.value.promotionInfo,
-      //       });
-      //       router.replace("/promotion/details");
-      //       isAnyRequestSubmit.current = false;
-      //       setWithdrawalCreateModel({
-      //         ...initPromotionSampleObject,
-      //         bannerUrl: "",
-      //       });
-      //     }
-      //   })
-      //   .catch((error: any) => {
-      //     Alert.alert(
-      //       "Oops!",
-      //       error?.response?.data?.error?.message ||
-      //         "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-      //     );
-      //   });
+    if (!validate(withdrawalCreateModel)) {
+      Alert.alert("Oops!", "Vui lòng hoàn thành thông tin hợp lệ");
+      return;
+    }
+
+    if (!isVerified) {
+      apiClient
+        .post("shop-owner/withdrawal/send-verify-code", withdrawalCreateModel)
+        .then((res) => {
+          let result = res.data as ValueResponse<{
+            email: string;
+            messsage: string;
+          }>;
+
+          if (result.isSuccess) {
+            // open verify modal
+          }
+        })
+        .catch((error: any) => {
+          console.log("error 1: ", error?.response?.data);
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        });
     } else {
-      Alert.alert("Oops!", "Vui lòng hoàn thành thông tin một cách hợp lệ");
+      apiClient
+        .post("shop-owner/withdrawal", withdrawalCreateModel)
+        .then((res) => {
+          let result = res.data as ValueResponse<{
+            email: string;
+            messsage: string;
+          }>;
+          if (result.isSuccess) {
+            toast.show(`Yêu cầu đã được gửi thành công.`, {
+              type: "success",
+              duration: 1500,
+            });
+            // set to init
+            router.replace("/shop/withdrawal");
+            isAnyRequestSubmit.current = false;
+            setWithdrawalCreateModel({ ...initWithdrawSampleObject });
+          }
+        })
+        .catch((error: any) => {
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        });
     }
   };
 
@@ -188,7 +214,22 @@ const WithdrawalCreate = () => {
         <View className="flex flex-row gap-4">
           <View className="flex-1 flex flex-col">
             <View className="mb-2">
-              <Text className="font-bold">Nhập số tiền *</Text>
+              <Text className="font-bold">Số dư có sẵn</Text>
+              <TextInput
+                className="border-0 border-gray-300 py-2 rounded text-[20px]"
+                value={`${
+                  balanceFetch.data?.value.availableAmount
+                    ? utilService.formatPrice(
+                        balanceFetch.data?.value.availableAmount
+                      )
+                    : "----------"
+                }₫`}
+                readOnly
+                placeholderTextColor="#888"
+              />
+            </View>
+            <View className="mb-2">
+              <Text className="font-bold">Nhập số tiền cần rút *</Text>
               <View className="relative">
                 <TextInput
                   className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[28px] pb-3"
@@ -270,6 +311,7 @@ const WithdrawalCreate = () => {
                           setWithdrawalCreateModel({
                             ...withdrawalCreateModel,
                             bankCode: bank.code,
+                            bankShortName: bank.shortName,
                           });
                         }}
                       >
@@ -308,7 +350,7 @@ const WithdrawalCreate = () => {
             <View className="mb-2">
               <Text className="font-bold">Số tài khoản *</Text>
               <TextInput
-                className="border border-gray-300 mt-1 p-2 rounded text-[24px]"
+                className="border border-gray-300 mt-1 p-2 px-3 rounded text-[20px]"
                 placeholder="Nhập số tài khoản..."
                 value={withdrawalCreateModel.bankAccountNumber}
                 placeholderTextColor="#888"
@@ -319,7 +361,7 @@ const WithdrawalCreate = () => {
                 }}
               />
               {errors.bankAccountNumber && (
-                <Text className="text-red-500 text-xs">
+                <Text className="text-red-500 text-xs mt-1">
                   {errors.bankAccountNumber}
                 </Text>
               )}
