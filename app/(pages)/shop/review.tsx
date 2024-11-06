@@ -11,10 +11,12 @@ import { endpoints } from "@/services/api-services/api-service-instances";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import FetchResponse, {
   FetchOnlyListResponse,
+  FetchResponseValue,
   FetchValueResponse,
 } from "@/types/responses/FetchResponse";
 import apiClient from "@/services/api-services/api-client";
 import dayjs from "dayjs";
+import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 const formatCreatedDate = (createdDate: string): string => {
   const date = dayjs(createdDate);
   const now = dayjs();
@@ -30,19 +32,32 @@ const formatCreatedDate = (createdDate: string): string => {
     return date.local().format("YYYY-MM-DD HH:mm");
   }
 };
+interface FetchReviewModel {
+  reviewOverview: {
+    totalReview: number;
+    ratingAverage: number;
+    totalOneStar: number;
+    totalTwoStar: number;
+    totalThreeStar: number;
+    totalFourStar: number;
+    totalFiveStar: number;
+  };
+  reviews: FetchResponseValue<ReviewModel>;
+}
 const Review = () => {
-  (async () => {
-    console.log(await sessionService.getAuthToken());
-  })();
+  // (async () => {
+  //   console.log(await sessionService.getAuthToken());
+  // })();
+  const globalOrderDetailState = useGlobalOrderDetailState();
   const [query, setQuery] = useState<{
-    rating: 0;
+    rating: number;
     searchValue: string;
     pageIndex: number;
     pageSize: number;
   }>({ rating: 0, searchValue: "", pageIndex: 1, pageSize: 100_000_000 });
   const reviewFetch = useFetchWithRQWithFetchFunc(
     [endpoints.REVIEWS].concat(["reviews-page"]),
-    async (): Promise<FetchResponse<ReviewModel>> =>
+    async (): Promise<FetchValueResponse<FetchReviewModel>> =>
       apiClient
         .get(endpoints.REVIEWS, {
           headers: {
@@ -61,67 +76,123 @@ const Review = () => {
     <PageLayoutWrapper>
       <View className="p-4">
         <View className="py-2 bg-[#ecfdf5] grow-0 rounded-[12px]">
-          <View className="flex-row p-2 items-center gap-x-2 px-4">
-            <Text className="text-lg font-bold">4.1</Text>
+          <TouchableOpacity
+            onPress={() => setQuery({ ...query, rating: 0 })}
+            className="flex-row p-2 items-center gap-x-2 px-4"
+          >
+            <Text className="text-lg font-bold">
+              {reviewFetch.data?.value.reviewOverview.ratingAverage.toFixed(1)}
+            </Text>
             <Ionicons name="star" size={21} color="#fde047" />
-            <Text className="text-sm text-gray-700 ml-[8px]">150 đánh giá</Text>
-          </View>
+            <Text className="text-sm text-gray-700 ml-[8px]">
+              {reviewFetch.data?.value.reviewOverview.totalReview} đánh giá
+            </Text>
+          </TouchableOpacity>
           <View className="h-[2px] bg-white"></View>
           <View className="p-3 px-4">
-            <View className="flex-row gap-2 items-center">
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, rating: 5 })}
+              className="flex-row gap-2 items-center"
+            >
               <Text className="text-gray-600">5</Text>
               <View className="flex-1">
                 <ProgressBar
-                  progress={0.6}
+                  progress={
+                    reviewFetch.data?.value.reviewOverview.totalReview
+                      ? reviewFetch.data?.value.reviewOverview.totalFiveStar /
+                        reviewFetch.data?.value.reviewOverview.totalReview
+                      : 0
+                  }
                   color={"#fde047"}
                   style={{ backgroundColor: "#e5e5e5" }}
                 />
               </View>
-            </View>
-            <View className="flex-row gap-2 items-center">
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, rating: 4 })}
+              className="flex-row gap-2 items-center"
+            >
               <Text className="text-gray-600">4</Text>
               <View className="flex-1">
                 <ProgressBar
-                  progress={0.2}
+                  progress={
+                    reviewFetch.data?.value.reviewOverview.totalReview
+                      ? reviewFetch.data?.value.reviewOverview.totalFourStar /
+                        reviewFetch.data?.value.reviewOverview.totalReview
+                      : 0
+                  }
                   color={"#fde047"}
                   style={{ backgroundColor: "#e5e5e5" }}
                 />
               </View>
-            </View>
-            <View className="flex-row gap-2 items-center">
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, rating: 3 })}
+              className="flex-row gap-2 items-center"
+            >
               <Text className="text-gray-600">3</Text>
               <View className="flex-1">
                 <ProgressBar
-                  progress={0.08}
+                  progress={
+                    reviewFetch.data?.value.reviewOverview.totalReview
+                      ? reviewFetch.data?.value.reviewOverview.totalThreeStar /
+                        reviewFetch.data?.value.reviewOverview.totalReview
+                      : 0
+                  }
                   color={"#fde047"}
                   style={{ backgroundColor: "#e5e5e5" }}
                 />
               </View>
-            </View>
-            <View className="flex-row gap-2 items-center">
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, rating: 2 })}
+              className="flex-row gap-2 items-center"
+            >
               <Text className="text-gray-600">2</Text>
               <View className="flex-1">
                 <ProgressBar
-                  progress={0.07}
+                  progress={
+                    reviewFetch.data?.value.reviewOverview.totalReview
+                      ? reviewFetch.data?.value.reviewOverview.totalTwoStar /
+                        reviewFetch.data?.value.reviewOverview.totalReview
+                      : 0
+                  }
                   color={"#fde047"}
                   style={{ backgroundColor: "#e5e5e5" }}
                 />
               </View>
-            </View>
-            <View className="flex-row gap-2 items-center">
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, rating: 1 })}
+              className="flex-row gap-2 items-center"
+            >
               <Text className="text-gray-600">1</Text>
               <View className="flex-1">
                 <ProgressBar
-                  progress={0.05}
+                  progress={
+                    reviewFetch.data?.value.reviewOverview.totalReview
+                      ? reviewFetch.data?.value.reviewOverview.totalOneStar /
+                        reviewFetch.data?.value.reviewOverview.totalReview
+                      : 0
+                  }
                   color={"#fde047"}
                   style={{ backgroundColor: "#e5e5e5" }}
                 />
               </View>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
-        <View className="gap-y-[4px] mt-3">
-          {reviewFetch.data?.value.items.map((review) => (
+        {query.rating != 0 && (
+          <View className="flex-row items-center mt-4 justify-end">
+            <Text className="text-gray-600 text-center italic ">
+              {reviewFetch.data?.value.reviews.totalCount} lượt đánh giá{" "}
+              {query.rating}{" "}
+            </Text>
+            <Ionicons name="star" size={12} color="#fde047" />
+          </View>
+        )}
+        <View className="gap-y-[4px] mt-1">
+          {reviewFetch.data?.value.reviews.items.map((review) => (
             <View className="p-4 py-1" key={review.orderId}>
               <View>
                 <View className="mt-2 flex-row items-center justify-between">
@@ -158,7 +229,7 @@ const Review = () => {
                   {review.reviews[0].comment}
                 </Text>
                 {review.reviews[0].imageUrls.length >= 0 && (
-                  <View className="flex-row gap-x-2">
+                  <View className="flex-row gap-x-2 mt-1">
                     {(
                       review.reviews[0].imageUrls || [
                         "https://mealsync.s3.ap-southeast-1.amazonaws.com/image/1729938216185-52b46e98-a7fb-48b6-91fa-b80378c7151d.jpg",
@@ -166,6 +237,7 @@ const Review = () => {
                       ]
                     ).map((imageUrl) => (
                       <Image
+                        key={imageUrl}
                         source={{ uri: imageUrl }}
                         className="w-[90px] h-[90px]"
                         resizeMode="cover"
@@ -183,7 +255,13 @@ const Review = () => {
                   </Text>
                   <CustomButton
                     title="Xem đơn"
-                    handlePress={() => {}}
+                    handlePress={() => {
+                      globalOrderDetailState.setId(review.orderId);
+                      globalOrderDetailState.setIsActionsShowing(true);
+                      globalOrderDetailState.setIsDetailBottomSheetVisible(
+                        true
+                      );
+                    }}
                     iconRight={
                       <Ionicons
                         name="arrow-forward-outline"
