@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import PromotionModel, {
@@ -39,6 +40,7 @@ import {
 } from "@/types/models/BankFetchResponse";
 import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
 import { BalanceModel } from "@/types/models/BalanceModel";
+import { px } from "framer-motion";
 // Initialize the timezone plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -57,6 +59,7 @@ const initWithdrawSampleObject = {
   verifyCode: 0,
 };
 const WithdrawalCreate = () => {
+  const scrollViewRef = useRef<ScrollView | null>(null);
   const globalWithdrawalState = useGlobalWithdrawalState();
   const toast = useToast();
   const isAnyRequestSubmit = useRef(false);
@@ -66,6 +69,7 @@ const WithdrawalCreate = () => {
     useState<WithdrawalCreateModel>({
       ...initWithdrawSampleObject,
     });
+  const [isUnderKeywodFocusing, setIsUnderKeywodFocusing] = useState(false);
   const bankListFetch = useFetchWithRQWithFetchFunc(
     [endpoints.EXTERNAL_BANK_LIST].concat(["withdrawal-create-page"]),
     async (): Promise<BankListFetchResponse> =>
@@ -208,65 +212,82 @@ const WithdrawalCreate = () => {
     }
   };
 
+  useEffect(() => {
+    // console.log(isUnderKeywodFocusing);
+    if (isUnderKeywodFocusing && scrollViewRef.current) {
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [isUnderKeywodFocusing, scrollViewRef]);
   return (
-    <PageLayoutWrapper>
-      <View className="p-4 bg-gray">
-        <View className="flex flex-row gap-4">
-          <View className="flex-1 flex flex-col">
-            <View className="mb-2">
-              <Text className="font-bold">Số dư có sẵn</Text>
-              <TextInput
-                className="border-0 border-gray-300 py-2 rounded text-[20px]"
-                value={`${
-                  balanceFetch.data?.value.availableAmount
-                    ? utilService.formatPrice(
-                        balanceFetch.data?.value.availableAmount
-                      )
-                    : "----------"
-                }₫`}
-                readOnly
-                placeholderTextColor="#888"
-              />
-            </View>
-            <View className="mb-2">
-              <Text className="font-bold">Nhập số tiền cần rút *</Text>
-              <View className="relative">
+    <SafeAreaView className="flex-1 bg-white relative">
+      <ScrollView ref={scrollViewRef} contentContainerStyle={{ flexGrow: 1 }}>
+        <View className="p-4 bg-gray">
+          <View
+            className={`flex flex-row gap-4 ${
+              isUnderKeywodFocusing && "pb-[220px]"
+            }`}
+          >
+            <View className="flex-1 flex flex-col">
+              <View className="mb-2">
+                <Text className="font-bold">Số dư có sẵn</Text>
                 <TextInput
-                  className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[28px] pb-3"
-                  placeholder="Nhập số tiền cần rút"
-                  value={utilService.formatPrice(withdrawalCreateModel.amount)}
-                  onChangeText={(text) => {
-                    // console.log("text: " + text);
-                    handleChange("amount", text);
-                  }}
-                  keyboardType="numeric"
+                  className="border-0 border-gray-300 py-2 rounded text-[20px]"
+                  value={`${
+                    balanceFetch.data?.value.availableAmount
+                      ? utilService.formatPrice(
+                          balanceFetch.data?.value.availableAmount
+                        )
+                      : "----------"
+                  }₫`}
+                  readOnly
                   placeholderTextColor="#888"
                 />
-                <Text className="absolute right-3 top-6 text-[12.8px] italic">
-                  VND
-                </Text>
               </View>
+              <View className="mb-2">
+                <Text className="font-bold">Nhập số tiền cần rút *</Text>
+                <View className="relative">
+                  <TextInput
+                    className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[28px] pb-3"
+                    placeholder="Nhập số tiền cần rút"
+                    value={utilService.formatPrice(
+                      withdrawalCreateModel.amount
+                    )}
+                    onChangeText={(text) => {
+                      // console.log("text: " + text);
+                      handleChange("amount", text);
+                    }}
+                    keyboardType="numeric"
+                    placeholderTextColor="#888"
+                  />
+                  <Text className="absolute right-3 top-6 text-[12.8px] italic">
+                    VND
+                  </Text>
+                </View>
 
-              {errors.amount ? (
-                <Text className="mt-1 text-red-500 text-xs">
-                  {errors.amount}
+                {errors.amount ? (
+                  <Text className="mt-1 text-red-500 text-xs">
+                    {errors.amount}
+                  </Text>
+                ) : (
+                  <Text className="mt-1 font-semibold text-gray-600 text-xs italic">
+                    {withdrawalCreateModel.amount > 1000
+                      ? utilService.capitalizeFirstChar(
+                          utilService.numberToVietnameseText(
+                            withdrawalCreateModel.amount
+                          )
+                        ) + " đồng"
+                      : ""}
+                  </Text>
+                )}
+              </View>
+              <View className="mb-2">
+                <Text className="font-bold">
+                  Ngân hàng và tài khoản của bạn
                 </Text>
-              ) : (
-                <Text className="mt-1 font-semibold text-gray-600 text-xs italic">
-                  {withdrawalCreateModel.amount > 1000
-                    ? utilService.capitalizeFirstChar(
-                        utilService.numberToVietnameseText(
-                          withdrawalCreateModel.amount
-                        )
-                      ) + " đồng"
-                    : ""}
-                </Text>
-              )}
-            </View>
-            <View className="mb-2">
-              <Text className="font-bold">Ngân hàng và tài khoản của bạn</Text>
-              <View className="mt-2">
-                {/* <SelectList
+                <View className="mt-2">
+                  {/* <SelectList
                   setSelected={(value: string | number) =>
                     setWithdrawalCreateModel({
                       ...withdrawalCreateModel,
@@ -285,100 +306,103 @@ const WithdrawalCreate = () => {
                   placeholder="Chọn ngân hàng tài khoản của bạn"
                   searchPlaceholder="Tìm kiếm..."
                 /> */}
-                <Searchbar
-                  style={{
-                    height: 40,
-                    backgroundColor: "white",
-                    borderColor: "lightgray",
-                    borderWidth: 1,
-                    // borderRadius: "12px",
-                  }}
-                  inputStyle={{ minHeight: 0, color: "#1f2937" }}
-                  placeholderTextColor="#9ca3af"
-                  placeholder="Nhập tên ngân hàng..."
-                  onChangeText={setBankSearchText}
-                  value={bankSearchText}
-                />
-                <ScrollView
-                  style={{ width: "100%", flexShrink: 0 }}
-                  horizontal={true}
-                >
-                  <View className="w-full flex-row gap-x-3 items-center justify-between pb-2 mt-3">
-                    {bankSearchList.map((bank, index) => (
-                      <TouchableOpacity
-                        key={bank.id}
-                        onPress={() => {
-                          setWithdrawalCreateModel({
-                            ...withdrawalCreateModel,
-                            bankCode: bank.code,
-                            bankShortName: bank.shortName,
-                          });
-                        }}
-                      >
-                        <View
-                          className={`p-[1px] border-[1px] border-[#bbf7d0] rounded-full ${
-                            bank.code == withdrawalCreateModel.bankCode
-                              ? "border-[2px] border-[#06b6d4]"
-                              : ""
-                          }`}
+                  <Searchbar
+                    style={{
+                      height: 40,
+                      backgroundColor: "white",
+                      borderColor: "lightgray",
+                      borderWidth: 1,
+                      // borderRadius: "12px",
+                    }}
+                    inputStyle={{ minHeight: 0, color: "#1f2937" }}
+                    placeholderTextColor="#9ca3af"
+                    placeholder="Nhập tên ngân hàng..."
+                    onChangeText={setBankSearchText}
+                    value={bankSearchText}
+                  />
+                  <ScrollView
+                    style={{ width: "100%", flexShrink: 0 }}
+                    horizontal={true}
+                  >
+                    <View className="w-full flex-row gap-x-3 items-center justify-between pb-2 mt-3">
+                      {bankSearchList.map((bank, index) => (
+                        <TouchableOpacity
+                          key={bank.id}
+                          onPress={() => {
+                            setWithdrawalCreateModel({
+                              ...withdrawalCreateModel,
+                              bankCode: bank.code,
+                              bankShortName: bank.shortName,
+                            });
+                          }}
                         >
-                          <Image
-                            source={{ uri: bank.logo }}
-                            resizeMode="contain"
-                            className="h-[42px] w-[42px]  opacity-85"
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </ScrollView>
+                          <View
+                            className={`p-[1px] border-[1px] border-[#bbf7d0] rounded-full ${
+                              bank.code == withdrawalCreateModel.bankCode
+                                ? "border-[2px] border-[#06b6d4]"
+                                : ""
+                            }`}
+                          >
+                            <Image
+                              source={{ uri: bank.logo }}
+                              resizeMode="contain"
+                              className="h-[42px] w-[42px]  opacity-85"
+                            />
+                          </View>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </ScrollView>
+                </View>
               </View>
-            </View>
-            <View className="mb-2">
-              <Text className="font-bold">Ngân hàng *</Text>
-              <TextInput
-                className="border border-gray-300 mt-1 p-2 rounded text-[16px]"
-                placeholder="Vui lòng chọn ngân hàng"
-                value={getBankName(withdrawalCreateModel.bankCode)}
-                readOnly
-                placeholderTextColor="#888"
-              />
-              {errors.title && (
-                <Text className="text-red-500 text-xs">{errors.title}</Text>
-              )}
-            </View>
-            <View className="mb-2">
-              <Text className="font-bold">Số tài khoản *</Text>
-              <TextInput
-                className="border border-gray-300 mt-1 p-2 px-3 rounded text-[20px]"
-                placeholder="Nhập số tài khoản..."
-                keyboardType="numeric"
-                value={withdrawalCreateModel.bankAccountNumber}
-                placeholderTextColor="#888"
-                // readOnly
-                onChangeText={(text) => {
-                  // console.log("text: " + text);
-                  handleChange("bankAccountNumber", text);
+              <View className="mb-2">
+                <Text className="font-bold">Ngân hàng *</Text>
+                <TextInput
+                  className="border border-gray-300 mt-1 p-2 rounded text-[16px]"
+                  placeholder="Vui lòng chọn ngân hàng"
+                  value={getBankName(withdrawalCreateModel.bankCode)}
+                  readOnly
+                  placeholderTextColor="#888"
+                />
+                {errors.title && (
+                  <Text className="text-red-500 text-xs">{errors.title}</Text>
+                )}
+              </View>
+              <View className="mb-2">
+                <Text className="font-bold">Số tài khoản *</Text>
+                <TextInput
+                  className="border border-gray-300 mt-1 p-2 px-3 rounded text-[20px]"
+                  placeholder="Nhập số tài khoản..."
+                  keyboardType="numeric"
+                  onFocus={() => setIsUnderKeywodFocusing(true)}
+                  onBlur={() => setIsUnderKeywodFocusing(false)}
+                  value={withdrawalCreateModel.bankAccountNumber}
+                  placeholderTextColor="#888"
+                  // readOnly
+                  onChangeText={(text) => {
+                    // console.log("text: " + text);
+                    handleChange("bankAccountNumber", text);
+                  }}
+                />
+                {errors.bankAccountNumber && (
+                  <Text className="text-red-500 text-xs mt-1">
+                    {errors.bankAccountNumber}
+                  </Text>
+                )}
+              </View>
+              <CustomButton
+                title="Gửi yêu cầu"
+                containerStyleClasses="mt-5 bg-secondary h-12"
+                textStyleClasses="text-white"
+                handlePress={() => {
+                  handleSubmit();
                 }}
               />
-              {errors.bankAccountNumber && (
-                <Text className="text-red-500 text-xs mt-1">
-                  {errors.bankAccountNumber}
-                </Text>
-              )}
             </View>
-            <CustomButton
-              title="Gửi yêu cầu"
-              containerStyleClasses="mt-5 bg-secondary h-12"
-              textStyleClasses="text-white"
-              handlePress={() => {
-                handleSubmit();
-              }}
-            />
           </View>
         </View>
-      </View>
-    </PageLayoutWrapper>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
