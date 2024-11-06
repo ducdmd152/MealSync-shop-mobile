@@ -89,6 +89,10 @@ const PageLayout = () => {
           name="promotion/update"
           options={{ headerTitle: "Chỉnh sửa khuyến mãi" }}
         />
+        <Stack.Screen
+          name="withdrawal/create"
+          options={{ headerTitle: "Tạo yêu cầu rút tiền" }}
+        />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
     </>

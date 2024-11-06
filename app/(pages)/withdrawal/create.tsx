@@ -308,7 +308,7 @@ const WithdrawalCreate = () => {
             <View className="mb-2">
               <Text className="font-bold">Số tài khoản *</Text>
               <TextInput
-                className="border border-gray-300 mt-1 p-2 rounded text-[20px]"
+                className="border border-gray-300 mt-1 p-2 rounded text-[24px]"
                 placeholder="Nhập số tài khoản..."
                 value={withdrawalCreateModel.bankAccountNumber}
                 placeholderTextColor="#888"
