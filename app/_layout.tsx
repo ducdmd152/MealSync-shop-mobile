@@ -26,6 +26,7 @@ import TanStackProvider from "@/config/providers/TanStackProvider";
 import sessionService from "@/services/session-service";
 import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
 import ImageViewingModal from "@/components/target-modals/ImageViewingModal";
+import ReviewReplyModal from "@/components/target-modals/ReviewReplyModal";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -107,6 +108,7 @@ export default function RootLayout() {
               </Stack>
               <OrderDetailBottomSheet />
               <ImageViewingModal />
+              <ReviewReplyModal />
               {/* <FlashMessage position="bottom" /> */}
               {/* </KeyboardAvoidingView> */}
             </PaperProvider>

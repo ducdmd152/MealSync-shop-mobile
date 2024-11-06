@@ -19,6 +19,7 @@ import dayjs from "dayjs";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import { useFocusEffect } from "expo-router";
+import useGlobalReviewReplyState from "@/hooks/states/useGlobalReviewReplyState";
 const isOver24Hours = (createdDate: string) => {
   const now = dayjs();
   const reviewDate = dayjs(createdDate);
@@ -30,7 +31,7 @@ const formatCreatedDate = (createdDate: string): string => {
   const now = dayjs();
   const daysDiff = now.diff(date, "day");
 
-  console.log("createdDate: ", createdDate, new Date(createdDate), date);
+  // console.log("createdDate: ", createdDate, new Date(createdDate), date);
   if (daysDiff < 1) {
     return date.local().format("HH:mm") + " hôm nay";
   } else if (daysDiff === 1) {
@@ -59,6 +60,7 @@ const Review = () => {
   // })();
   const globalOrderDetailState = useGlobalOrderDetailState();
   const globalImageViewState = useGlobalImageViewingState();
+  const globalReviewReplyState = useGlobalReviewReplyState();
   const [query, setQuery] = useState<{
     rating: number;
     searchValue: string;
@@ -86,7 +88,7 @@ const Review = () => {
       reviewFetch.refetch();
     }, [])
   );
-  console.log(reviewFetch.data?.value.reviewOverview.totalReview);
+  // console.log(reviewFetch.data?.value.reviewOverview.totalReview);
   return (
     <PageLayoutWrapper>
       <View className="p-4">
@@ -242,13 +244,22 @@ const Review = () => {
                     </Text>
                   </View>
                   <View>
-                    {!isOver24Hours(review.reviews[0].createdDate) && (
-                      <TouchableOpacity>
-                        <Text className="ml-2 text-[#3b82f6] font-semibold text-[12px]">
-                          Trả lời
-                        </Text>
-                      </TouchableOpacity>
-                    )}
+                    {review.isAllowShopReply &&
+                      !isOver24Hours(review.reviews[0].createdDate) && (
+                        <TouchableOpacity
+                          onPress={() => {
+                            globalReviewReplyState.setId(review.orderId);
+                            globalReviewReplyState.setIsModalVisible(true);
+                            globalReviewReplyState.setOnAfterCompleted(() => {
+                              reviewFetch.refetch();
+                            });
+                          }}
+                        >
+                          <Text className="ml-2 text-[#3b82f6] font-semibold text-[12px]">
+                            Trả lời
+                          </Text>
+                        </TouchableOpacity>
+                      )}
                   </View>
                 </View>
                 <Text className="mt-2 text-gray-800">

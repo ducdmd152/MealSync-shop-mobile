@@ -14,6 +14,8 @@ const CONSTANTS = {
     noImageAvailable:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/640px-Image_not_available.png",
     pink: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTES5ovzC1lSsIL0v3CECqaABnI8jFZevh7Fw&s",
+    pickNewImage:
+      "https://t4.ftcdn.net/jpg/04/81/13/43/360_F_481134373_0W4kg2yKeBRHNEklk4F9UXtGHdub3tYk.jpg",
   },
 };
 

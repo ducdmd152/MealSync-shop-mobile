@@ -12,5 +12,6 @@ interface ReviewItemModel {
 interface ReviewModel {
   orderId: number;
   description: string;
+  isAllowShopReply: boolean;
   reviews: ReviewItemModel[];
 }
