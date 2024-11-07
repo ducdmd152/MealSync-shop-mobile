@@ -269,8 +269,8 @@ const Promotion = () => {
                           {promotion.title}
                         </Text>
                         <Text className="text-[12px] italic text-gray-500 ">
-                          {dayjs(promotion.startDate).format("DD/MM/YY")} -{" "}
-                          {dayjs(promotion.endDate).format("DD/MM/YY")}
+                          {dayjs(promotion.startDate).format("DD/MM/YYYY")} -{" "}
+                          {dayjs(promotion.endDate).format("DD/MM/YYYY")}
                         </Text>
                       </View>
                     </View>
