@@ -22,6 +22,7 @@ import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import sessionService from "@/services/session-service";
 import utilService from "@/services/util-service";
 import CONSTANTS from "@/constants/data";
+import { FoodStatus } from "@/types/models/FoodModel";
 interface FoodStatistics {
   id: number;
   name: string;
@@ -235,18 +236,20 @@ const Statistics = () => {
         </View>
       </View>
       <View className="p-2 mt-2">
-        <Text className="text-lg font-bold">Sản phẩm hàng đầu</Text>
+        <Text className="text-lg font-bold">Sản phẩm bán chạy</Text>
         <View className="gap-y-2 pb-[154px] mt-2">
           {!statistics.isFetching &&
             statistics.data?.value.foods.length == 0 && (
               <Text className="text-gray-600 text-center mt-[-12px]">
-                Cửa hàng chưa có bất kì sản phẩm nào
+                Không có lượt bán nào trong khoảng này
               </Text>
             )}
           {statistics.data?.value.foods.map((food) => (
             <View
               key={food.id}
-              className="p-3 px-1 bg-white border-2 border-gray-300 rounded-lg"
+              className={`p-3 px-1 bg-white border-2 border-gray-300 rounded-lg ${
+                food.status == FoodStatus.Deleted && "opacity-50"
+              }`}
             >
               <View className="flex-row gap-x-2 items-start justify-between ">
                 <View className="flex-1 flex-row justify-start items-center gap-2">

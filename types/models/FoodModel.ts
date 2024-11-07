@@ -6,3 +6,8 @@ export default interface FoodModel {
   isSoldOut: boolean;
   status: number;
 }
+export enum FoodStatus {
+  Active = 1,
+  UnActive = 2,
+  Deleted = 3,
+}
