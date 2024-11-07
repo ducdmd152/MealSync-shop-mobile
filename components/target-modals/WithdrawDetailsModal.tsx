@@ -8,7 +8,7 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import Modal from "react-native-modal";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -71,11 +71,10 @@ const WithdrawDetailsModal = ({
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      getDetails();
-    }, [])
-  );
+  useEffect(() => {
+    if (globalWithdrawalState.isDetailsModalVisible) getDetails();
+  }, [globalWithdrawalState.isDetailsModalVisible]);
+  useFocusEffect(React.useCallback(() => {}, []));
   const onCancel = async (isConfirm: boolean = false) => {
     try {
       setIsLoading(true);
