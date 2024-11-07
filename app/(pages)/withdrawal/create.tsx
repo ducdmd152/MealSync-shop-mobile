@@ -285,7 +285,7 @@ const WithdrawalCreate = () => {
                 />
               </View>
               <View className="mb-2">
-                <Text className="font-bold">Nhập số tiền cần rút *</Text>
+                <Text className="font-bold">Số tiền cần rút *</Text>
                 <View className="relative">
                   <TextInput
                     className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[28px] pb-3"

@@ -19,10 +19,15 @@ import ImageUpload from "../common/ImageUpload";
 import CustomButton from "../custom/CustomButton";
 import apiClient from "@/services/api-services/api-client";
 import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
-import { WithdrawalModel } from "@/types/models/WithdrawalModel";
+import {
+  WithdrawalModel,
+  WithdrawalStatus,
+  withdrawalStatuses,
+} from "@/types/models/WithdrawalModel";
 import ValueResponse from "@/types/responses/ValueReponse";
 import { useToast } from "react-native-toast-notifications";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import utilService from "@/services/util-service";
 interface Props {
   containerStyleClasses?: string;
 
@@ -82,8 +87,12 @@ const WithdrawDetailsModal = ({
           type: "success",
           duration: 1500,
         });
-
-        globalWithdrawalState.setIsDetailsModalVisible(false);
+        globalWithdrawalState.setWithdrawal({
+          ...globalWithdrawalState.withdrawal,
+          status: WithdrawalStatus.Cancelled,
+        });
+        // globalWithdrawalState.setIsDetailsModalVisible(false);
+        globalWithdrawalState.onAfterCancelCompleted();
       } else if (isWarning) {
         if (isConfirm) return;
         const warningInfo = value as WarningMessageValue;
@@ -100,6 +109,7 @@ const WithdrawDetailsModal = ({
         ]);
       }
     } catch (error: any) {
+      getDetails();
       console.log("error: ", error?.response?.data?.error);
       Alert.alert(
         "Oops!",
@@ -117,10 +127,7 @@ const WithdrawDetailsModal = ({
         globalWithdrawalState.setIsDetailsModalVisible(false)
       }
     >
-      <View
-        style={{ flex: 1, zIndex: 100 }}
-        className="justify-center items-center"
-      >
+      <View style={{ zIndex: 100 }} className="justify-center items-center">
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View
             className={`bg-white w-80 p-4 rounded-lg  ${containerStyleClasses}`}
@@ -129,80 +136,101 @@ const WithdrawDetailsModal = ({
               <Text className={`${titleStyleClasses}`}>
                 Yêu cầu rút tiền | RQ-{globalWithdrawalState.withdrawal.id}
               </Text>
-              <TouchableOpacity
+              <Text
+                className="bg-blue-100 text-gray-800 text-[12px] font-medium me-2 px-2.5 py-0.5 rounded"
+                style={{
+                  backgroundColor:
+                    withdrawalStatuses.find(
+                      (item) =>
+                        item.key === globalWithdrawalState.withdrawal.status
+                    )?.bgColor || "#e5e5e5",
+                }}
+              >
+                {withdrawalStatuses.find(
+                  (item) => item.key === globalWithdrawalState.withdrawal.status
+                )?.label || "------"}
+              </Text>
+              {/* <TouchableOpacity
                 onPress={() => {
                   globalWithdrawalState.setIsDetailsModalVisible(false);
                 }}
               >
                 <Ionicons name="close-outline" size={24} color="gray" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
             <View className="gap-y-2 mt-1">
-              {/* <View>
-                <Text className="font-bold">Trả lời</Text>
+              <View className="mb-2">
+                <Text className="font-bold text-[12.8px]">
+                  Số tiền cần rút *
+                </Text>
+                <View className="relative">
+                  <TextInput
+                    className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
+                    placeholder="Số tiền cần rút"
+                    value={utilService.formatPrice(
+                      globalWithdrawalState.withdrawal.amount
+                    )}
+                    onChangeText={(text) => {}}
+                    keyboardType="numeric"
+                    readOnly
+                    placeholderTextColor="#888"
+                  />
+                  <Text className="absolute right-3 top-4 text-[12.8px] italic">
+                    đồng
+                  </Text>
+                </View>
+              </View>
+              <View className="mb-2">
+                <Text className="font-bold text-[12.8px]">Ngân hàng *</Text>
                 <TextInput
-                  className="border border-gray-300 mt-1 rounded p-2 h-16 bg-white"
-                  placeholder="Nhập câu trả lời..."
-                  value={request.comment}
-                  onChangeText={(text) =>
-                    setRequest({ ...request, comment: text })
-                  }
-                  multiline
+                  className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
+                  placeholder="Vui lòng chọn ngân hàng"
+                  value={globalWithdrawalState.withdrawal.bankShortName}
+                  readOnly
                   placeholderTextColor="#888"
                 />
               </View>
-              <View className="flex-row gap-x-2 mt-1">
-                <ImageUpload
-                  containerStyleClasses="mt-2 w-full bg-red"
-                  uri={
-                    request.imageUrls.length == 0
-                      ? CONSTANTS.url.pickNewImage
-                      : request.imageUrls[0]
-                  }
-                  setUri={(uri: string) => {
-                    setRequest({
-                      ...request,
-                      imageUrls: [uri],
-                    });
-                  }}
-                  imageStyleObject={{ aspect: 1, width: 70, height: 70 }}
-                  updateButton={
-                    <CustomButton
-                      title="Lưu"
-                      containerStyleClasses="bg-white  bg-[#227B94] h-8"
-                      textStyleClasses="text-sm text-white"
-                      handlePress={() => {}}
-                    />
-                  }
+              <View className="mb-2">
+                <Text className="font-bold text-[12.8px]">Số tài khoản *</Text>
+                <TextInput
+                  className="border border-gray-300 mt-1 p-2 px-3 rounded text-[15px]"
+                  placeholder="Nhập số tài khoản..."
+                  keyboardType="numeric"
+                  value={globalWithdrawalState.withdrawal.bankAccountNumber}
+                  placeholderTextColor="#888"
+                  readOnly
                 />
-              </View> */}
-              <CustomButton
-                title="Hủy"
-                isLoading={isLoading}
-                handlePress={() =>
-                  Alert.alert(
-                    "Xác nhận",
-                    `Bạn chắc chắn hủy yêu cầu RQ-${globalWithdrawalState.withdrawal.id} không?`,
-                    [
-                      {
-                        text: "Không",
-                        // style: "cancel",
-                      },
-                      {
-                        text: "Xác nhận hủy",
-                        onPress: async () => {
-                          onCancel();
+              </View>
+              {globalWithdrawalState.withdrawal.status ==
+                WithdrawalStatus.Pending && (
+                <CustomButton
+                  title="Hủy yêu cầu"
+                  isLoading={isLoading}
+                  handlePress={() =>
+                    Alert.alert(
+                      "Xác nhận",
+                      `Bạn chắc chắn hủy yêu cầu RQ-${globalWithdrawalState.withdrawal.id} không?`,
+                      [
+                        {
+                          text: "Xác nhận hủy",
+                          onPress: async () => {
+                            onCancel(true);
+                          },
                         },
-                      },
-                    ]
-                  )
-                }
-                containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-psemibold z-10"
-                // iconLeft={
-                //   <Ionicons name="add-circle-outline" size={21} color="white" />
-                // }
-                textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
-              />
+                        {
+                          text: "Không",
+                          // style: "cancel",
+                        },
+                      ]
+                    )
+                  }
+                  containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-psemibold z-10"
+                  // iconLeft={
+                  //   <Ionicons name="add-circle-outline" size={21} color="white" />
+                  // }
+                  textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
+                />
+              )}
             </View>
           </View>
         </TouchableWithoutFeedback>

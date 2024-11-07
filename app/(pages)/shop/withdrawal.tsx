@@ -78,6 +78,7 @@ const Withdrawal = () => {
   useFocusEffect(
     React.useCallback(() => {
       fetch.refetch();
+      globalWithdrawalState.setOnAfterCancelCompleted(() => fetch.refetch());
     }, [])
   );
   return (

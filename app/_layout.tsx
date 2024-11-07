@@ -27,6 +27,7 @@ import sessionService from "@/services/session-service";
 import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
 import ImageViewingModal from "@/components/target-modals/ImageViewingModal";
 import ReviewReplyModal from "@/components/target-modals/ReviewReplyModal";
+import WithdrawDetailsModal from "@/components/target-modals/WithdrawDetailsModal";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -109,6 +110,7 @@ export default function RootLayout() {
               <OrderDetailBottomSheet />
               <ImageViewingModal />
               <ReviewReplyModal />
+              <WithdrawDetailsModal titleStyleClasses="font-semibold" />
               {/* <FlashMessage position="bottom" /> */}
               {/* </KeyboardAvoidingView> */}
             </PaperProvider>
