@@ -5,8 +5,9 @@ import {
   Modal,
   Image,
   StyleSheet,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -86,7 +87,33 @@ const Withdrawal = () => {
       <CustomButton
         title="Tạo yêu cầu"
         handlePress={() => {
-          router.push("/withdrawal/create");
+          fetch
+            .refetch()
+            .then(() => {
+              const request = (fetch.data?.value.items || []).find(
+                (item) =>
+                  item.status === WithdrawalStatus.Pending ||
+                  item.status === WithdrawalStatus.UnderReview
+              );
+
+              if (request) {
+                Alert.alert(
+                  "Oops!",
+                  request.status === WithdrawalStatus.Pending
+                    ? "Bạn đang có 1 yêu cầu đang chờ, vui lòng hủy yêu cầu hoặc chờ đợi đến khi yêu cầu hoàn tất xử lí"
+                    : "Bạn đang có 1 yêu cầu đang xem xét, bạn có thể tạo mới yêu cầu khi yêu cầu hiện tại hoàn tất xử lí"
+                );
+              } else {
+                router.push("/withdrawal/create");
+              }
+            })
+            .catch((error: any) => {
+              Alert.alert(
+                "Oops!",
+                error?.response?.data?.error?.message ||
+                  "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              );
+            });
         }}
         containerStyleClasses="h-[48px] px-4 bg-transparent border-0 border-gray-200 absolute bottom-8 right-5 bg-primary font-psemibold z-10"
         iconLeft={
