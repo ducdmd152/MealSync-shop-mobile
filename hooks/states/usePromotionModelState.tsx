@@ -19,7 +19,7 @@ const usePromotionModelState = create<PromotionModelState>((set) => ({
   promotion: {} as PromotionModel,
   setPromotion: (item: PromotionModel) => set({ promotion: item }),
   startDate: dayjs(dayjs("2024-01-01")),
-  endDate: dayjs(Date.now()),
+  endDate: dayjs(dayjs("2024-12-31")),
   setStartDate: (date: Dayjs) => set({ startDate: date }),
   setEndDate: (date: Dayjs) => set({ endDate: date }),
 }));
