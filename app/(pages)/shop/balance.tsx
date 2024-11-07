@@ -233,46 +233,49 @@ const Balance = () => {
                 index % 2 == 1 && "bg-[#fffbeb]"
               }`}
             >
-              <View className="flex-row items-start justify-between gap-2">
-                <View className="flex-row flex-1 justify-start items-start gap-x-2">
-                  <View className="self-center">
-                    <Image
-                      source={{
-                        uri: CONSTANTS.url.withdrawalRequest,
-                      }}
-                      resizeMode="contain"
-                      className="h-[32px] w-[40px] opacity-85"
-                    />
-                  </View>
-                  <View className="flex-1">
-                    <Text
-                      className="text-[12.5px] font-psemibold mt-[-2px]"
-                      numberOfLines={2}
-                      ellipsizeMode="tail"
-                    >
-                      {transaction.description}
-                    </Text>
-                    <View className="flex-row justify-between">
-                      <View>
-                        <Text className="text-[11px] italic text-gray-500 ">
-                          {dayjs(transaction.createdDate)
-                            .local()
-                            .format("HH:mm - DD/MM/YYYY")}{" "}
-                        </Text>
-                        <Text className="text-[11px] italic text-gray-500 ">
-                          Số dư sau giao dịch:{" "}
-                          {utilService.formatPrice(transaction.amount)}
-                          {"₫"}
-                        </Text>
-                      </View>
-                      <Text
-                        className={`text-[11px] italic text-gray-500 text-green-600 font-semibold`}
-                      >
-                        {"+"}
-                        {utilService.formatPrice(transaction.amount)}
+              <View className="flex-row flex-1 justify-start items-start">
+                <View className="self-center border-[1px] border-gray-200 mr-2 ml-[-2px] rounded-full p-[1px] overflow-hidden mb-1">
+                  <Image
+                    source={{
+                      uri: CONSTANTS.url.transaction_circle,
+                    }}
+                    resizeMode="cover"
+                    className="h-[40px] w-[40px] opacity-85"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Text
+                    className="text-[12.5px] font-psemibold mt-[-2px]"
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
+                  >
+                    {transaction.description}
+                  </Text>
+                  <View className="flex-row justify-between">
+                    <View>
+                      <Text className="text-[11px] italic text-gray-500 ">
+                        {dayjs(transaction.createdDate)
+                          .local()
+                          .format("HH:mm - DD/MM/YYYY")}{" "}
+                      </Text>
+                      <Text className="text-[11px] italic text-gray-500 ">
+                        Số dư sau giao dịch:{" "}
+                        {utilService.formatPrice(
+                          transaction.avaiableAmountBefore +
+                            transaction.incomingAmountBefore +
+                            transaction.reportingAmountBefore +
+                            transaction.amount
+                        )}
                         {"₫"}
                       </Text>
                     </View>
+                    <Text
+                      className={`text-[11px] italic text-gray-500 text-green-600 font-semibold`}
+                    >
+                      {"+"}
+                      {utilService.formatPrice(transaction.amount)}
+                      {"₫"}
+                    </Text>
                   </View>
                 </View>
               </View>

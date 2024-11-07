@@ -24,6 +24,8 @@ const CONSTANTS = {
       "https://img.freepik.com/free-vector/gradient-blur-pink-blue-abstract-background_53876-117324.jpg",
     balanceDetailBackgroundImage:
       "https://www.shutterstock.com/image-vector/pink-blue-gradient-background-abstract-260nw-2204016497.jpg",
+    transaction_circle:
+      "https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Money-transaction-icon-Graphics-10421047-1-1-580x386.jpg",
   },
 };
 
