@@ -20,6 +20,10 @@ const CONSTANTS = {
       "https://t4.ftcdn.net/jpg/04/81/13/43/360_F_481134373_0W4kg2yKeBRHNEklk4F9UXtGHdub3tYk.jpg",
     withdrawalRequest:
       "https://icons.veryicon.com/png/o/system/hywf-background-icon/withdraw-9.png",
+    balanceBackgroundImage:
+      "https://img.freepik.com/free-vector/gradient-blur-pink-blue-abstract-background_53876-117324.jpg",
+    balanceDetailBackgroundImage:
+      "https://www.shutterstock.com/image-vector/pink-blue-gradient-background-abstract-260nw-2204016497.jpg",
   },
 };
 
