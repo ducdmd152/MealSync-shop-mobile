@@ -185,7 +185,7 @@ const Promotion = () => {
                 <View style={styleTimePicker.modalContent}>
                   <DateTimePicker
                     minDate={dayjs("2024-01-01").toDate()}
-                    maxDate={new Date()}
+                    maxDate={dayjs("2026-01-01").toDate()}
                     mode="single"
                     locale="vi-VN"
                     date={fromDate.toDate()}
@@ -212,7 +212,7 @@ const Promotion = () => {
                 <View style={styleTimePicker.modalContent}>
                   <DateTimePicker
                     minDate={dayjs("2024-01-01").toDate()}
-                    maxDate={new Date()}
+                    maxDate={dayjs("2026-01-01").toDate()}
                     mode="single"
                     locale="vi-VN"
                     date={toDate.toDate()}
