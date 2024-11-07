@@ -19,6 +19,8 @@ interface GlobalWithdrawalState {
   endDate: Dayjs;
   setStartDate: (date: Dayjs) => void;
   setEndDate: (date: Dayjs) => void;
+  isDetailsModalVisible: boolean;
+  setIsDetailsModalVisible: (param: boolean) => void;
 }
 
 const useGlobalWithdrawalState = create<GlobalWithdrawalState>((set) => ({
@@ -30,6 +32,9 @@ const useGlobalWithdrawalState = create<GlobalWithdrawalState>((set) => ({
   endDate: dayjs(Date.now()),
   setStartDate: (date: Dayjs) => set({ startDate: date }),
   setEndDate: (date: Dayjs) => set({ endDate: date }),
+  isDetailsModalVisible: false,
+  setIsDetailsModalVisible: (param: boolean) =>
+    set({ isDetailsModalVisible: param }),
 }));
 
 export default useGlobalWithdrawalState;

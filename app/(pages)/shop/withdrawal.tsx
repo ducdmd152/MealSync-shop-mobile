@@ -41,6 +41,7 @@ const Withdrawal = () => {
   } = globalWithdrawalState;
   const [isFromDatePickerVisible, setFromDatePickerVisibility] =
     useState(false);
+
   const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
   const fetch = useFetchWithRQWithFetchFunc(
     [endpoints.WITHDRAWAL_LIST].concat(["withdrawal-page"]),
@@ -189,7 +190,7 @@ const Withdrawal = () => {
             {WITHDRAW_STATUSES_FILTER.map((sts) => (
               <TouchableOpacity
                 key={sts.label}
-                className={`flex-1 mx-[2px] bg-gray-100 rounded-lg py-2   ${
+                className={`flex-1 mx-[3px] bg-gray-100 rounded-lg py-2   ${
                   sts.value == globalWithdrawalState.statuses
                     ? "bg-secondary"
                     : "bg-gray-100"
@@ -224,7 +225,7 @@ const Withdrawal = () => {
                 <TouchableOpacity
                   onPress={() => {
                     globalWithdrawalState.setWithdrawal(draw);
-                    // router.push("/promotion/details");
+                    globalWithdrawalState.setIsDetailsModalVisible(true);
                   }}
                   key={draw.id}
                   className="p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow"
