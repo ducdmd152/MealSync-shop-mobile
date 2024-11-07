@@ -28,6 +28,9 @@ import ValueResponse from "@/types/responses/ValueReponse";
 import { useToast } from "react-native-toast-notifications";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import utilService from "@/services/util-service";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import { BalanceModel } from "@/types/models/BalanceModel";
 interface Props {
   containerStyleClasses?: string;
 
@@ -120,6 +123,18 @@ const WithdrawDetailsModal = ({
       setIsLoading(false);
     }
   };
+
+  const balanceFetch = useFetchWithRQWithFetchFunc(
+    [endpoints.BALANCE].concat(["withdrawal-page"]),
+    async (): Promise<ValueResponse<BalanceModel>> =>
+      apiClient.get(endpoints.BALANCE).then((response) => response.data),
+    []
+  );
+  useFocusEffect(
+    React.useCallback(() => {
+      balanceFetch.refetch();
+    }, [])
+  );
   return (
     <Modal
       isVisible={globalWithdrawalState.isDetailsModalVisible}
@@ -181,7 +196,7 @@ const WithdrawDetailsModal = ({
                 </View>
               </View>
               <View className="mb-2">
-                <Text className="font-bold text-[12.8px]">Ngân hàng *</Text>
+                <Text className="font-bold text-[12.8px]">Ngân hàng</Text>
                 <TextInput
                   className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
                   placeholder="Vui lòng chọn ngân hàng"
@@ -191,7 +206,7 @@ const WithdrawDetailsModal = ({
                 />
               </View>
               <View className="mb-2">
-                <Text className="font-bold text-[12.8px]">Số tài khoản *</Text>
+                <Text className="font-bold text-[12.8px]">Số tài khoản</Text>
                 <TextInput
                   className="border border-gray-300 mt-1 p-2 px-3 rounded text-[15px]"
                   placeholder="Nhập số tài khoản..."
@@ -201,6 +216,54 @@ const WithdrawDetailsModal = ({
                   readOnly
                 />
               </View>
+
+              {globalWithdrawalState.withdrawal.status ==
+                WithdrawalStatus.Pending && (
+                <View>
+                  <Text className="font-bold text-[12.8px]">Số dư có sẵn</Text>
+                  <View className="flex-row gap-x-2 items-center mt-2">
+                    <View className="flex-1 mb-2 relative">
+                      <Text className="absolute text-[12.8px]  top-[-4px] left-3 bg-white z-10 italic">
+                        Trước xử lí
+                      </Text>
+                      <TextInput
+                        className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
+                        placeholder="Số tiền cần rút"
+                        value={utilService.formatPrice(
+                          globalWithdrawalState.withdrawal.walletHistory
+                            .avaiableAmountBefore
+                        )}
+                        onChangeText={(text) => {}}
+                        keyboardType="numeric"
+                        readOnly
+                        placeholderTextColor="#888"
+                      />
+                      <Text className="absolute right-3 top-4 text-[12.8px] italic">
+                        đ
+                      </Text>
+                    </View>
+                    <View className="flex-1 mb-2 relative">
+                      <Text className="absolute text-[12.8px]  top-[-4px] left-3 bg-white z-10 italic">
+                        Hiện tại
+                      </Text>
+                      <TextInput
+                        className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
+                        value={utilService.formatPrice(
+                          balanceFetch.data?.value.availableAmount || 0
+                        )}
+                        onChangeText={(text) => {}}
+                        keyboardType="numeric"
+                        readOnly
+                        placeholderTextColor="#888"
+                      />
+                      <Text className="absolute right-3 top-4 text-[12.8px] italic">
+                        đ
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              )}
+
               {globalWithdrawalState.withdrawal.status ==
                 WithdrawalStatus.Pending && (
                 <CustomButton
