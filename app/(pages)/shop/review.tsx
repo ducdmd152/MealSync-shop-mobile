@@ -28,11 +28,12 @@ const isOver24Hours = (createdDate: string) => {
   return now.diff(reviewDate, "hour") >= 24;
 };
 const formatCreatedDate = (createdDate: string): string => {
-  const date = dayjs(createdDate).add(7, "hours");
+  const date = dayjs(createdDate);
   const now = dayjs();
-  const daysDiff = now.diff(date, "day");
-
-  // console.log("createdDate: ", createdDate, new Date(createdDate), date);
+  const daysDiff = dayjs(now.local().format("YYYY-MM-DD")).diff(
+    dayjs(date.local().format("YYYY-MM-DD")).local(),
+    "day"
+  );
   if (daysDiff < 1) {
     return date.local().format("HH:mm") + " hôm nay";
   } else if (daysDiff === 1) {
