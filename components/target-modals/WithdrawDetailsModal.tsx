@@ -218,7 +218,7 @@ const WithdrawDetailsModal = ({
               </View>
 
               {globalWithdrawalState.withdrawal.status ==
-                WithdrawalStatus.Pending &&
+                WithdrawalStatus.Approved &&
                 globalWithdrawalState.withdrawal && (
                   <View>
                     <Text className="font-bold text-[12.8px]">
@@ -267,6 +267,20 @@ const WithdrawDetailsModal = ({
                     </View>
                   </View>
                 )}
+              {globalWithdrawalState.withdrawal.status ==
+                WithdrawalStatus.Rejected && (
+                <View className="mb-2">
+                  <Text className="font-bold">Lí do từ chối</Text>
+                  <TextInput
+                    className="border border-gray-300 mt-1 p-2 rounded h-16"
+                    placeholder="Không có bất kì phản hồi nào..."
+                    value={globalWithdrawalState.withdrawal.reason || ""}
+                    multiline
+                    readOnly
+                    placeholderTextColor="#888"
+                  />
+                </View>
+              )}
 
               {globalWithdrawalState.withdrawal.status ==
                 WithdrawalStatus.Pending && (
