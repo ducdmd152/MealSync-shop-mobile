@@ -238,7 +238,7 @@ const Withdrawal = () => {
                           numberOfLines={2}
                           ellipsizeMode="tail"
                         >
-                          WRQ-{draw.id}
+                          RQ-{draw.id}
                         </Text>
                         <Text className="text-[12px] italic text-gray-500 ">
                           {dayjs(draw.createdDate)

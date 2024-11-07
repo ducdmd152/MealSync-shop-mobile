@@ -44,6 +44,7 @@ import { px } from "framer-motion";
 import CustomModal from "@/components/common/CustomModal";
 import OTPTextView from "react-native-otp-textinput";
 import sessionService from "@/services/session-service";
+import { RefreshControl } from "react-native-gesture-handler";
 // Initialize the timezone plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -194,6 +195,7 @@ const WithdrawalCreate = () => {
           }
         })
         .catch((error: any) => {
+          balanceFetch.refetch();
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
@@ -230,6 +232,12 @@ const WithdrawalCreate = () => {
   };
 
   useEffect(() => {
+    if (!balanceFetch.isFetching && isAnyRequestSubmit.current) {
+      validate(withdrawalCreateModel);
+    }
+  }, [balanceFetch.isFetching]);
+
+  useEffect(() => {
     // console.log(isUnderKeywodFocusing);
     if (isUnderKeywodFocusing && scrollViewRef.current) {
       setTimeout(() => {
@@ -239,7 +247,20 @@ const WithdrawalCreate = () => {
   }, [isUnderKeywodFocusing, scrollViewRef]);
   return (
     <SafeAreaView className="flex-1 bg-white relative">
-      <ScrollView ref={scrollViewRef} contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView
+        ref={scrollViewRef}
+        refreshControl={
+          <RefreshControl
+            tintColor={"#FCF450"}
+            onRefresh={() => {
+              balanceFetch.refetch();
+              bankListFetch.refetch();
+            }}
+            refreshing={balanceFetch.isFetching || bankListFetch.isFetching}
+          />
+        }
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         <View className="flex-1 flex-grow p-4 bg-gray">
           <View
             className={`flex-1 flex-row gap-4 ${
@@ -535,9 +556,10 @@ const WithdrawalVerification = ({
         textStyleClasses="text-[16px] text-gray-600"
       /> */}
       <CustomButton
-        isLoading={isSubmitting}
+        // isLoading={isSubmitting}
         title="Nhận mã mới"
         handlePress={() => {
+          clearText();
           if (intervalIdRef.current) {
             clearInterval(intervalIdRef.current);
             intervalIdRef.current = null;
@@ -545,8 +567,8 @@ const WithdrawalVerification = ({
           resetTimeCounter();
           onResendCode();
         }}
-        containerStyleClasses="min-h-[52px] mt-4 border-[0px] border-gray-600 bg-white bg-[#fcd34d]"
-        textStyleClasses="text-[16px] text-gray-600"
+        containerStyleClasses="h-[40px] mt-4 border-[1px] border-gray-300 bg-white"
+        textStyleClasses="text-[16px] text-gray-600 font-medium"
       />
     </View>
   );

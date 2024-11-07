@@ -102,7 +102,9 @@ export default function HomeScreen() {
               <Text className="font-semibold text-xl text-secondary-100">
                 {statistics.data?.value.orderStatisticInToday.totalOrderPending}
               </Text>
-              <Text className="text-secondary-200">chờ xác nhận</Text>
+              <Text className="text-center text-secondary text-[12px]">
+                chờ xác nhận
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -119,7 +121,7 @@ export default function HomeScreen() {
                     .totalOrderConfirmed
                 }
               </Text>
-              <Text>đã xác nhận</Text>
+              <Text className="text-center text-[12px]">đã xác nhận</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -136,7 +138,7 @@ export default function HomeScreen() {
                     .totalOrderPreparing
                 }
               </Text>
-              <Text className="text-center">đang chuẩn bị</Text>
+              <Text className="text-center text-[12px]">đang chuẩn bị</Text>
             </TouchableOpacity>
           </View>
           <View className="w-full flex-row gap-2 items-between mt-2">
@@ -155,7 +157,7 @@ export default function HomeScreen() {
                     .totalOrderDelivering
                 }
               </Text>
-              <Text>đang giao</Text>
+              <Text className="text-center text-[12px]">đang giao</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -172,7 +174,7 @@ export default function HomeScreen() {
                     .totalOrderCompleted
                 }
               </Text>
-              <Text className="text-center">giao thành công</Text>
+              <Text className="text-center text-[12px]">giao thành công</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -189,7 +191,9 @@ export default function HomeScreen() {
                     .totalOrderFailDelivery
                 }
               </Text>
-              <Text className="text-center text-red-500">giao thất bại</Text>
+              <Text className="text-center text-red-500 text-[12px]">
+                giao thất bại
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

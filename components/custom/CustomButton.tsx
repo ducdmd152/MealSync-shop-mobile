@@ -20,6 +20,7 @@ interface CustomButtonProps {
   isLoading?: boolean;
   isDisabled?: boolean;
   flexibleComponent?: ReactNode;
+  iconLoadingColor?: string;
 }
 
 const CustomButton = ({
@@ -34,6 +35,7 @@ const CustomButton = ({
   isLoading,
   isDisabled,
   flexibleComponent,
+  iconLoadingColor,
 }: CustomButtonProps) => {
   return (
     <TouchableOpacity
@@ -47,7 +49,7 @@ const CustomButton = ({
     >
       {iconLeft ? iconLeft : ""}
       <Text
-        className={`text-primary text-lg font-psemibold ${
+        className={`text-primary text-lg font-semibold ${
           textStyleClasses || ""
         }`}
         style={textStyleObject}
@@ -58,7 +60,7 @@ const CustomButton = ({
       {isLoading && (
         <ActivityIndicator
           animating={isLoading}
-          color="#fff"
+          color={iconLoadingColor || "#fff"}
           size="small"
           className="ml-2"
         />
