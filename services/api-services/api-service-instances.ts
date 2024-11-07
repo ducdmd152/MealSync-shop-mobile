@@ -21,6 +21,7 @@ export const endpoints = {
   WITHDRAWAL_LIST: "shop-owner/withdrawal/history",
   EXTERNAL_BANK_LIST: "https://api.vietqr.io/v2/banks",
   BALANCE: "shop-owner/wallet/summary",
+  WALLET_TRANSACTIONS: "shop-owner/walet-transaction",
 };
 
 export const testApiService = createHttpService<TestModel>(
