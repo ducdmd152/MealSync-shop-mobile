@@ -29,6 +29,7 @@ import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import sessionService from "@/services/session-service";
 import CONSTANTS from "@/constants/data";
+import utilService from "@/services/util-service";
 
 const Withdrawal = () => {
   const globalWithdrawalState = useGlobalWithdrawalState();
@@ -45,17 +46,24 @@ const Withdrawal = () => {
     [endpoints.WITHDRAWAL_LIST].concat(["withdrawal-page"]),
     async (): Promise<FetchResponse<WithdrawalModel>> =>
       apiClient
-        .get(endpoints.WITHDRAWAL_LIST, {
-          headers: {
-            Authorization: `Bearer ${await sessionService.getAuthToken()}`,
-          },
-          params: {
-            startDate: fromDate.toISOString(),
-            endDate: toDate.add(1, "day").toISOString(),
-            pageIndex: 1,
-            pageSize: 100_000_000,
-          },
-        })
+        .get(
+          endpoints.WITHDRAWAL_LIST +
+            "?" +
+            globalWithdrawalState.statuses
+              .map((item) => "status=" + item)
+              .join("&"),
+          {
+            headers: {
+              Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+            },
+            params: {
+              startDate: fromDate.toISOString(),
+              endDate: toDate.add(1, "day").toISOString(),
+              pageIndex: 1,
+              pageSize: 100_000_000,
+            },
+          }
+        )
         .then((response) => response.data),
     [fromDate, toDate, globalWithdrawalState.statuses]
   );
@@ -216,20 +224,20 @@ const Withdrawal = () => {
                 <TouchableOpacity
                   onPress={() => {
                     globalWithdrawalState.setWithdrawal(draw);
-                    router.push("/promotion/details");
+                    // router.push("/promotion/details");
                   }}
                   key={draw.id}
                   className="p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow"
                 >
                   <View className="flex-row items-start justify-between gap-2">
                     <View className="flex-row flex-1 justify-start items-start gap-x-2">
-                      <View className="self-stretch">
+                      <View className="self-center">
                         <Image
                           source={{
                             uri: CONSTANTS.url.withdrawalRequest,
                           }}
-                          resizeMode="cover"
-                          className="h-[50px] w-[62px] rounded-md opacity-85"
+                          resizeMode="contain"
+                          className="h-[32px] w-[40px] opacity-85"
                         />
                       </View>
                       <View className="flex-1">
@@ -240,11 +248,16 @@ const Withdrawal = () => {
                         >
                           RQ-{draw.id}
                         </Text>
-                        <Text className="text-[12px] italic text-gray-500 ">
+                        <Text className="text-[11px] italic text-gray-500 ">
+                          Đã tạo vào{" "}
                           {dayjs(draw.createdDate)
                             .local()
-                            .format("DD/MM/YYYY HH:mm")}{" "}
-                          -{" "}
+                            .format("HH:mm DD/MM/YYYY")}{" "}
+                        </Text>
+                        <Text className="text-[11px] italic text-gray-500 ">
+                          Số tiền yêu cầu:{" "}
+                          {utilService.formatPrice(draw.amount)}
+                          {"₫"}
                         </Text>
                       </View>
                     </View>
@@ -262,11 +275,11 @@ const Withdrawal = () => {
                       )?.label || "------"}
                     </Text>
                   </View>
-                  <View className="flex-row justify-end gap-2 pt-2">
+                  {/* <View className="flex-row justify-end gap-2 pt-2">
                     <TouchableOpacity
                       onPress={() => {
                         globalWithdrawalState.setWithdrawal(draw);
-                        router.push("/promotion/update");
+                        // router.push("/promotion/update");
                       }}
                       className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                     >
@@ -283,7 +296,7 @@ const Withdrawal = () => {
                     >
                       <Text className="text-[13.5px]">Chi tiết</Text>
                     </TouchableOpacity>
-                  </View>
+                  </View> */}
                 </TouchableOpacity>
               ))}
             </View>

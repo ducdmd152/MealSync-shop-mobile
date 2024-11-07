@@ -45,6 +45,7 @@ import CustomModal from "@/components/common/CustomModal";
 import OTPTextView from "react-native-otp-textinput";
 import sessionService from "@/services/session-service";
 import { RefreshControl } from "react-native-gesture-handler";
+import { WITHDRAW_STATUSES_FILTER } from "@/types/models/WithdrawalModel";
 // Initialize the timezone plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -213,7 +214,7 @@ const WithdrawalCreate = () => {
         })
         .then((res) => {
           setIsVerifing(false);
-
+          globalWithdrawalState.setStatuses(WITHDRAW_STATUSES_FILTER[0].value);
           router.back();
           toast.show(`Yêu cầu đã được gửi thành công.`, {
             type: "success",
