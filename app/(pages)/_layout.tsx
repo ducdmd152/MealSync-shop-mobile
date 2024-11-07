@@ -24,6 +24,10 @@ const PageLayout = () => {
           options={{ headerTitle: "Hiệu suất bán hàng" }}
         />
         <Stack.Screen
+          name="shop/staff"
+          options={{ headerTitle: "Nhân viên giao hàng" }}
+        />
+        <Stack.Screen
           name="shop/setting"
           options={{ headerTitle: "Cài đặt cửa hàng" }}
         />

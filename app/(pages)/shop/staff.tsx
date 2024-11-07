@@ -26,7 +26,7 @@ import FetchResponse from "@/types/responses/FetchResponse";
 import sessionService from "@/services/session-service";
 import dayjs from "dayjs";
 
-const Balance = () => {
+const StaffManagement = () => {
   const balanceFetch = useFetchWithRQWithFetchFunc(
     [endpoints.BALANCE].concat(["withdrawal-create-page"]),
     async (): Promise<ValueResponse<BalanceModel>> =>
@@ -209,7 +209,7 @@ const Balance = () => {
           />
         }
       >
-        {/* {!transactionsFetch.isFetching &&
+        {!transactionsFetch.isFetching &&
         !transactionsFetch.data?.value.items?.length ? (
           <Text className="text-gray-600 text-center mt-6">
             {transactionsFetch.data?.value.items?.length == 0
@@ -220,7 +220,7 @@ const Balance = () => {
           <Text className="text-gray-600 text-center mt-3">
             Lịch sử giao dịch
           </Text>
-        )} */}
+        )}
         <View className=" p-2 mt-2 pb-[72px]">
           {(transactionsFetch.data?.value.items.length
             ? transactionsFetch.data?.value.items
@@ -280,27 +280,27 @@ const Balance = () => {
                 </View>
               </View>
               {/* <View className="flex-row justify-end gap-2 pt-2">
-                    <TouchableOpacity
-                      onPress={() => {
-                        globalWithdrawalState.setWithdrawal(draw);
-                        // router.push("/promotion/update");
-                      }}
-                      className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                    >
-                      <Text className="text-[13.2px] text-white">
-                        Chỉnh sửa
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        globalWithdrawalState.setWithdrawal(draw);
-                        router.push("/promotion/details");
-                      }}
-                      className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                    >
-                      <Text className="text-[13.2px]">Chi tiết</Text>
-                    </TouchableOpacity>
-                  </View> */}
+                      <TouchableOpacity
+                        onPress={() => {
+                          globalWithdrawalState.setWithdrawal(draw);
+                          // router.push("/promotion/update");
+                        }}
+                        className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      >
+                        <Text className="text-[13.2px] text-white">
+                          Chỉnh sửa
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          globalWithdrawalState.setWithdrawal(draw);
+                          router.push("/promotion/details");
+                        }}
+                        className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      >
+                        <Text className="text-[13.2px]">Chi tiết</Text>
+                      </TouchableOpacity>
+                    </View> */}
             </TouchableOpacity>
           ))}
         </View>
@@ -309,7 +309,7 @@ const Balance = () => {
   );
 };
 
-export default Balance;
+export default StaffManagement;
 
 const styles = StyleSheet.create({
   backgroundImage: {

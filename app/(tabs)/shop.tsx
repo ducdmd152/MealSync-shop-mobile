@@ -56,6 +56,12 @@ const Shop = () => {
         textStyleClasses: "text-gray-800",
       },
       {
+        text: "Nhân viên giao hàng",
+        icon: <Ionicons size={20} name="people-outline" />,
+        handlePress: () => router.push("/shop/staff"),
+        textStyleClasses: "text-gray-800",
+      },
+      {
         text: "Cài đặt cửa hàng",
         icon: <Ionicons size={20} name="settings-outline" />,
         handlePress: () => router.push("/shop/setting"),
@@ -86,6 +92,7 @@ const Shop = () => {
         handlePress: () => router.push("/shop/account"),
         textStyleClasses: "text-gray-800",
       },
+
       {
         text: "Đăng xuất",
         icon: <Ionicons size={20} name="log-out-outline" />,
@@ -313,21 +320,21 @@ const Shop = () => {
       </TouchableOpacity>
       <View className="border-b-2 border-gray-300"></View>
 
-      <View className="gap-y-[24px] mt-2 pb-[120px] px-1">
+      <View className="gap-y-[24px] mt-1 pb-[120px] px-1">
         <LinkGroup
           title="CỬA HÀNG"
           data={redirections.shop}
-          containerStyleClasses="mt-4"
+          containerStyleClasses="mt-3"
         />
         <LinkGroup
           title="TÀI CHÍNH"
           data={redirections.balance}
-          containerStyleClasses="mt-4"
+          containerStyleClasses="mt-3"
         />
         <LinkGroup
           title="TÀI KHOẢN"
           data={redirections.account}
-          containerStyleClasses="mt-4"
+          containerStyleClasses="mt-3"
         />
       </View>
     </View>
