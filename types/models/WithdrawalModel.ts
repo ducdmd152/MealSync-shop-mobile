@@ -1,6 +1,7 @@
 export interface WalletHistoryModel {
   walletId: number;
   avaiableAmountBefore: number;
+  avaiableAmountAfter: number;
   incomingAmountBefore: number;
   reportingAmountBefore: number;
 }

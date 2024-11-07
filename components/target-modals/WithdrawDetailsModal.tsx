@@ -218,51 +218,55 @@ const WithdrawDetailsModal = ({
               </View>
 
               {globalWithdrawalState.withdrawal.status ==
-                WithdrawalStatus.Pending && (
-                <View>
-                  <Text className="font-bold text-[12.8px]">Số dư có sẵn</Text>
-                  <View className="flex-row gap-x-2 items-center mt-2">
-                    <View className="flex-1 mb-2 relative">
-                      <Text className="absolute text-[12.8px]  top-[-4px] left-3 bg-white z-10 italic">
-                        Trước xử lí
-                      </Text>
-                      <TextInput
-                        className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
-                        placeholder="Số tiền cần rút"
-                        value={utilService.formatPrice(
-                          globalWithdrawalState.withdrawal.walletHistory
-                            .avaiableAmountBefore
-                        )}
-                        onChangeText={(text) => {}}
-                        keyboardType="numeric"
-                        readOnly
-                        placeholderTextColor="#888"
-                      />
-                      <Text className="absolute right-3 top-4 text-[12.8px] italic">
-                        đ
-                      </Text>
-                    </View>
-                    <View className="flex-1 mb-2 relative">
-                      <Text className="absolute text-[12.8px]  top-[-4px] left-3 bg-white z-10 italic">
-                        Hiện tại
-                      </Text>
-                      <TextInput
-                        className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
-                        value={utilService.formatPrice(
-                          balanceFetch.data?.value.availableAmount || 0
-                        )}
-                        onChangeText={(text) => {}}
-                        keyboardType="numeric"
-                        readOnly
-                        placeholderTextColor="#888"
-                      />
-                      <Text className="absolute right-3 top-4 text-[12.8px] italic">
-                        đ
-                      </Text>
+                WithdrawalStatus.Pending &&
+                globalWithdrawalState.withdrawal && (
+                  <View>
+                    <Text className="font-bold text-[12.8px]">
+                      Số dư có sẵn
+                    </Text>
+                    <View className="flex-row gap-x-2 items-center mt-2">
+                      <View className="flex-1 mb-2 relative">
+                        <Text className="absolute text-[12.8px]  top-[-4px] left-3 bg-white z-10 italic">
+                          Trước xử lí
+                        </Text>
+                        <TextInput
+                          className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
+                          placeholder="Số tiền cần rút"
+                          value={utilService.formatPrice(
+                            globalWithdrawalState.withdrawal.walletHistory
+                              .avaiableAmountBefore
+                          )}
+                          onChangeText={(text) => {}}
+                          keyboardType="numeric"
+                          readOnly
+                          placeholderTextColor="#888"
+                        />
+                        <Text className="absolute right-3 top-4 text-[12.8px] italic">
+                          đ
+                        </Text>
+                      </View>
+                      <View className="flex-1 mb-2 relative">
+                        <Text className="absolute text-[12.8px]  top-[-4px] left-3 bg-white z-10 italic">
+                          Sau xử lí
+                        </Text>
+                        <TextInput
+                          className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
+                          value={utilService.formatPrice(
+                            globalWithdrawalState.withdrawal.walletHistory
+                              .avaiableAmountAfter
+                          )}
+                          onChangeText={(text) => {}}
+                          keyboardType="numeric"
+                          readOnly
+                          placeholderTextColor="#888"
+                        />
+                        <Text className="absolute right-3 top-4 text-[12.8px] italic">
+                          đ
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                </View>
-              )}
+                )}
 
               {globalWithdrawalState.withdrawal.status ==
                 WithdrawalStatus.Pending && (
