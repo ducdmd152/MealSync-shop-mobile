@@ -8,8 +8,8 @@ interface Query {
 interface GlobalStaffState {
   id: number;
   setId: (param: number) => void;
-  isDetaiModalVisible: boolean;
-  setIsDetailModalVisible: (param: boolean) => void;
+  isDetailsModalVisible: boolean;
+  setIsDetailsModalVisible: (param: boolean) => void;
   query: Query;
   setQuery: (param: Query) => void;
   model: ShopDeliveryStaffModel;
@@ -19,9 +19,9 @@ interface GlobalStaffState {
 const useGlobalStaffState = create<GlobalStaffState>((set) => ({
   id: 0,
   setId: (param: number) => set({ id: param }),
-  isDetaiModalVisible: false,
-  setIsDetailModalVisible: (param: boolean) =>
-    set({ isDetaiModalVisible: param }),
+  isDetailsModalVisible: false,
+  setIsDetailsModalVisible: (param: boolean) =>
+    set({ isDetailsModalVisible: param }),
   query: { searchText: "", status: 0 },
   setQuery: (param: Query) => set({ query: param }),
   model: {} as ShopDeliveryStaffModel,

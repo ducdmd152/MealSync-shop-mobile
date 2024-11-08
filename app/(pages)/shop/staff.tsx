@@ -181,7 +181,7 @@ const StaffManagement = () => {
                     toast.show(
                       `Đã chuyển trạng thái của ${staff.fullName} sang trạng thái hoạt động`,
                       {
-                        type: "info",
+                        type: "success",
                         duration: 2000,
                       }
                     );
@@ -288,7 +288,10 @@ const StaffManagement = () => {
         <View className="flex-1 p-2 mt-2 pb-[72px] ">
           {staffsFetch.data?.value.items.map((staff, index) => (
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={() => {
+                globalStaffState.setModel(staff);
+                globalStaffState.setIsDetailsModalVisible(true);
+              }}
               key={staff.id}
               className={`p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow mb-3 h-200`}
             >

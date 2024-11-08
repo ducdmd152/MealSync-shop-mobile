@@ -28,6 +28,7 @@ import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetai
 import ImageViewingModal from "@/components/target-modals/ImageViewingModal";
 import ReviewReplyModal from "@/components/target-modals/ReviewReplyModal";
 import WithdrawDetailsModal from "@/components/target-modals/WithdrawDetailsModal";
+import StaffDetailsModal from "@/components/target-modals/StaffDetailsModal";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -110,6 +111,7 @@ export default function RootLayout() {
               <OrderDetailBottomSheet />
               <ImageViewingModal />
               <ReviewReplyModal />
+              <StaffDetailsModal />
               <WithdrawDetailsModal titleStyleClasses="font-semibold" />
               {/* <FlashMessage position="bottom" /> */}
               {/* </KeyboardAvoidingView> */}
