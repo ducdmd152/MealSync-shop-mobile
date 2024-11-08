@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Alert,
 } from "react-native";
 import React from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
@@ -25,19 +26,20 @@ import { useFocusEffect } from "expo-router";
 import FetchResponse from "@/types/responses/FetchResponse";
 import sessionService from "@/services/session-service";
 import dayjs from "dayjs";
+import {
+  ShopDeliveryStaffModel,
+  ShopDeliveryStaffStatus,
+} from "@/types/models/StaffInfoModel";
+import { Switch } from "react-native-paper";
+import { useToast } from "react-native-toast-notifications";
 
 const StaffManagement = () => {
-  const balanceFetch = useFetchWithRQWithFetchFunc(
-    [endpoints.BALANCE].concat(["withdrawal-create-page"]),
-    async (): Promise<ValueResponse<BalanceModel>> =>
-      apiClient.get(endpoints.BALANCE).then((response) => response.data),
-    []
-  );
-  const transactionsFetch = useFetchWithRQWithFetchFunc(
-    [endpoints.WITHDRAWAL_LIST].concat(["balance-page"]),
-    async (): Promise<FetchResponse<WalletTransaction>> =>
+  const toast = useToast();
+  const staffsFetch = useFetchWithRQWithFetchFunc(
+    [endpoints.STAFF_LIST].concat(["shop-staff-page"]),
+    async (): Promise<FetchResponse<ShopDeliveryStaffModel>> =>
       apiClient
-        .get(endpoints.WALLET_TRANSACTIONS, {
+        .get(endpoints.STAFF_LIST, {
           headers: {
             Authorization: `Bearer ${await sessionService.getAuthToken()}`,
           },
@@ -51,261 +53,226 @@ const StaffManagement = () => {
         .then((response) => response.data),
     []
   );
+  //   console.log(staffsFetch.data?.value.items);
   useFocusEffect(
     React.useCallback(() => {
-      balanceFetch.refetch();
-      transactionsFetch.refetch();
+      staffsFetch.refetch();
     }, [])
   );
-  return (
-    <PageLayoutWrapper isScroll={false}>
-      <View className="p-2 w-full">
-        <ImageBackground
-          source={{ uri: CONSTANTS.url.balanceBackgroundImage }}
-          style={{ ...styles.backgroundImage }}
-          resizeMode="cover"
-        >
-          <View className="w-full bg-gray-000 flex-col items-center justify-center p-4 py-10 pb-5 backdrop-blur-lg bg-white/3 rounded-lg">
-            <View>
-              <Text className="text-center mb-1 text-gray-500">Tổng số dư</Text>
-              <View className="justify-center items-end gap-x-2 flex-row flex-col items-center ">
-                <Text
-                  className="font-semibold text-[42px] text-[#fcd34d]"
-                  style={{
-                    // color: "white",
-                    fontSize: 32,
-                    fontWeight: "bold",
-                    textShadowColor: "gray",
-                    textShadowOffset: { width: -0.6, height: 0.2 },
-                    textShadowRadius: 1,
-                  }}
-                >
-                  {balanceFetch.data?.value
-                    ? utilService.formatPrice(
-                        balanceFetch.data.value.availableAmount +
-                          balanceFetch.data.value.incomingAmount +
-                          balanceFetch.data.value.reportingAmount
-                      )
-                    : "---------"}
-                </Text>
-                <Text
-                  className="text-[15px] text-[#fcd34d] mb-3 font-semibold"
-                  style={{
-                    fontWeight: "bold",
-                    textShadowColor: "gray",
-                    textShadowOffset: { width: -0.1, height: 0.1 },
-                    textShadowRadius: 0.2,
-                  }}
-                >
-                  VND
-                </Text>
-              </View>
-            </View>
-          </View>
-        </ImageBackground>
-        <View className="bg-opacity-10 mt-2 rounded-lg overflow-hidden">
-          <ImageBackground
-            source={{ uri: CONSTANTS.url.balanceDetailBackgroundImage }}
-            style={{ ...styles.backgroundImage, alignItems: "flex-start" }}
-            resizeMode="cover"
-          >
-            <View className="w-full py-4 mt-2 backdrop-blur-xl  ">
-              <View className="mb-2 relative">
-                <Text className="absolute text-[12.8px]  top-[-4px] left-2 px-1 bg-white/3 z-10 italic backdrop-blur-md text-gray-500 text-[13.2px] text-gray-500 text-[13.2px]">
-                  Có sẵn
-                </Text>
-                <TextInput
-                  className="border-0 border-gray-200 mt-1 px-3 pt-3 text-[#fbbf24] text-[18px] "
-                  style={{
-                    textShadowColor: "gray",
-                    textShadowOffset: { width: -0.1, height: 0.1 },
-                    textShadowRadius: 0.4,
-                  }}
-                  value={
-                    balanceFetch.data?.value
-                      ? utilService.formatPrice(
-                          balanceFetch.data.value.availableAmount
-                        ) + "₫"
-                      : "---------"
+
+  const onChangeStaffStatusSubmit = (
+    staff: ShopDeliveryStaffModel,
+    onSuccess: () => void
+  ) => {};
+  const getStaffStatusComponent = (staff: ShopDeliveryStaffModel) => {
+    let label = "";
+    let bgColor = "";
+    let isSwitchOn = true;
+    let onSwitchTouch = () => {};
+    switch (staff.shopDeliveryStaffStatus) {
+      case ShopDeliveryStaffStatus.On:
+        label = "Hoạt động";
+        bgColor = "#7dd3fc";
+        isSwitchOn = true;
+        break;
+      case ShopDeliveryStaffStatus.Off:
+        label = "Nghỉ phép";
+        bgColor = "#fde047";
+        isSwitchOn = false;
+
+        break;
+      case ShopDeliveryStaffStatus.Inactive:
+        label = "Đã khóa";
+        bgColor = "#cbd5e1";
+        isSwitchOn = false;
+        break;
+    }
+    if (staff.shopDeliveryStaffStatus == 1) {
+      onSwitchTouch = () => {
+        Alert.alert(
+          `Xác nhận`,
+          `Bạn muốn chuyển trạng thái của ${staff.fullName} sang nghỉ phép hay khóa tài khoản?`,
+          [
+            {
+              text: "Chuyển sang nghỉ phép",
+              onPress: async () => {
+                onChangeStaffStatusSubmit(
+                  { ...staff, shopDeliveryStaffStatus: 2 },
+                  () => {
+                    staffsFetch.refetch();
+                    toast.show(
+                      `Đã chuyển ${staff.fullName} sang trạng thái nghỉ phép`,
+                      {
+                        type: "success",
+                        duration: 2000,
+                      }
+                    );
                   }
-                  onChangeText={(text) => {}}
-                  keyboardType="numeric"
-                  readOnly
-                  placeholderTextColor="#888"
-                />
-                <Text className="absolute right-3 top-5 text-[12.8px] italic"></Text>
-              </View>
-              <View className="w-full flex-row gap-x-[2px] items-center flex-wrap">
-                <View className="flex-1 min-w-[30%] mb-2 relative">
-                  <Text className="absolute text-[12.8px]  top-[-4px] left-2 px-1 bg-white/2 z-10 italic backdrop-blur-md text-gray-500 text-[13.2px] text-gray-500 text-[13.2px]">
-                    Đang chờ về
-                  </Text>
-                  <TextInput
-                    className="border-0 border-gray-200 mt-1 px-3 pt-3 pt-3 text-[#fbbf24] text-[18px] "
-                    style={{
-                      textShadowColor: "gray",
-                      textShadowOffset: { width: -0.1, height: 0.1 },
-                      textShadowRadius: 0.4,
-                    }}
-                    value={
-                      balanceFetch.data?.value
-                        ? utilService.formatPrice(
-                            balanceFetch.data.value.incomingAmount
-                          ) + "₫"
-                        : "---------"
-                    }
-                    onChangeText={(text) => {}}
-                    keyboardType="numeric"
-                    readOnly
-                    placeholderTextColor="#888"
-                  />
-                  <Text className="absolute right-3 top-4 text-[12.8px] italic">
-                    {/* đ */}
-                  </Text>
-                </View>
-                <View className="flex-1 min-w-[30%] mb-2 relative \">
-                  <Text className="absolute text-[12.8px]  top-[-4px] left-2 px-1 bg-white/2 z-10 italic backdrop-blur-md text-gray-500 text-[13.2px] text-gray-500 text-[13.2px] rounded-md">
-                    Báo cáo
-                  </Text>
-                  <TextInput
-                    className="border-0 border-gray-200 mt-1 px-3 pt-3 pt-3 text-[#fbbf24] text-[18px] "
-                    style={{
-                      textShadowColor: "gray",
-                      textShadowOffset: { width: -0.1, height: 0.1 },
-                      textShadowRadius: 0.4,
-                    }}
-                    value={
-                      balanceFetch.data?.value
-                        ? utilService.formatPrice(
-                            balanceFetch.data.value.reportingAmount
-                            // || 10000000
-                          ) + "₫"
-                        : "---------"
-                    }
-                    onChangeText={(text) => {}}
-                    keyboardType="numeric"
-                    readOnly
-                    placeholderTextColor="#888"
-                  />
-                  <Text className="absolute right-3 top-4 text-[12.8px] italic">
-                    {/* đ */}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </ImageBackground>
+                );
+              },
+            },
+            {
+              text: "Khóa tài khoản",
+              onPress: async () => {
+                onChangeStaffStatusSubmit(
+                  { ...staff, shopDeliveryStaffStatus: 3 },
+                  () => {
+                    staffsFetch.refetch();
+                    toast.show(
+                      `Đã chuyển khóa tài khoản của ${staff.fullName} `,
+                      {
+                        type: "info",
+                        duration: 2000,
+                      }
+                    );
+                  }
+                );
+              },
+            },
+            {
+              text: "Hủy",
+            },
+          ]
+        );
+      };
+    } else {
+      onSwitchTouch = () => {
+        Alert.alert(
+          `Xác nhận`,
+          staff.shopDeliveryStaffStatus == 2
+            ? `Chuyển trạng thái của ${staff.fullName} sang trạng thái hoạt động?`
+            : `Xác nhận mở khóa tài khoản ${staff.fullName}?`,
+          [
+            {
+              text: "Xác nhận",
+              onPress: async () => {
+                onChangeStaffStatusSubmit(
+                  { ...staff, shopDeliveryStaffStatus: 1 },
+                  () => {
+                    staffsFetch.refetch();
+                    toast.show(`Xác nhận`, {
+                      type: "info",
+                      duration: 2000,
+                    });
+                  }
+                );
+              },
+            },
+            {
+              text: "Hủy",
+            },
+          ]
+        );
+      };
+    }
+    return (
+      <View
+        className="flex-row items-center rounded-lg "
+        style={{ backgroundColor: "#fefce8" }}
+      >
+        <View className="scale-50 h-6 items-center justify-center ml-[-4px]">
+          <Switch
+            color="#22c55e"
+            value={staff.shopDeliveryStaffStatus == 1}
+            onValueChange={(value) => {
+              onSwitchTouch();
+            }}
+          />
         </View>
+        <Text className="text-[11px] italic text-gray-500 mr-2 ml-[-4px]">
+          {label}
+        </Text>
       </View>
+    );
+  };
+  return (
+    <View className="p-4 h-full px-2 w-full bg-white">
       <ScrollView
         style={{ width: "100%", flexGrow: 1 }}
         refreshControl={
           <RefreshControl
             tintColor={"#FCF450"}
             onRefresh={() => {
-              balanceFetch.refetch();
-              transactionsFetch.refetch();
+              staffsFetch.refetch();
             }}
-            refreshing={balanceFetch.isFetching || transactionsFetch.isFetching}
+            refreshing={staffsFetch.isFetching}
           />
         }
       >
-        {!transactionsFetch.isFetching &&
-        !transactionsFetch.data?.value.items?.length ? (
+        {!staffsFetch.isFetching && !staffsFetch.data?.value.items?.length && (
           <Text className="text-gray-600 text-center mt-6">
-            {transactionsFetch.data?.value.items?.length == 0
-              ? "Chưa có bất kì giao dịch nào"
+            {staffsFetch.data?.value.items?.length == 0
+              ? "Không có nhân viên nào"
               : "Mất kết nối, vui lòng thử lại"}
           </Text>
-        ) : (
-          <Text className="text-gray-600 text-center mt-3">
-            Lịch sử giao dịch
+        )}
+
+        {(staffsFetch.data?.value.items?.length || 0) > 0 && (
+          <Text className="text-gray-600 text-center mt-6">
+            {staffsFetch.data?.value.items?.length} nhân viên trong cửa hàng
           </Text>
         )}
-        <View className=" p-2 mt-2 pb-[72px]">
-          {(transactionsFetch.data?.value.items.length
-            ? transactionsFetch.data?.value.items
-            : sampleWalletTransactionList
-          ).map((transaction, index) => (
+        <View className="flex-1 p-2 mt-2 pb-[72px]">
+          {staffsFetch.data?.value.items.map((staff, index) => (
             <TouchableOpacity
               onPress={() => {}}
-              key={transaction.description + (Math.random() % 100_000_000)}
-              className={`p-4 pt-3 bg-white ${
-                index % 2 == 1 && "bg-[#fffbeb]"
-              }`}
+              key={staff.id}
+              className={`p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow mb-3`}
             >
-              <View className="flex-row flex-1 justify-start items-start">
-                <View className="self-center border-[1px] border-gray-200 mr-2 ml-[-2px] rounded-full p-[1px] overflow-hidden mb-1">
+              <View className="flex-row flex-1 items-start ">
+                <View className="border-[1px] border-gray-200 mr-2 ml-[-2px] rounded-full p-[1px] overflow-hidden mb-1">
                   <Image
                     source={{
-                      uri: CONSTANTS.url.transaction_circle,
+                      uri: staff.avatarUrl,
                     }}
                     resizeMode="cover"
                     className="h-[40px] w-[40px] opacity-85"
                   />
                 </View>
-                <View className="flex-1">
-                  <Text
-                    className="text-[12.5px] font-psemibold mt-[-2px]"
-                    numberOfLines={2}
-                    ellipsizeMode="tail"
-                  >
-                    {transaction.description}
-                  </Text>
-                  <View className="flex-row justify-between">
-                    <View>
-                      <Text className="text-[11px] italic text-gray-500 ">
-                        {dayjs(transaction.createdDate)
-                          .local()
-                          .format("HH:mm - DD/MM/YYYY")}{" "}
-                      </Text>
-                      <Text className="text-[11px] italic text-gray-500 ">
-                        Số dư sau giao dịch:{" "}
-                        {utilService.formatPrice(
-                          transaction.avaiableAmountBefore +
-                            transaction.incomingAmountBefore +
-                            transaction.reportingAmountBefore +
-                            transaction.amount
-                        )}
-                        {"₫"}
-                      </Text>
-                    </View>
-                    <Text
-                      className={`text-[11px] italic text-gray-500 text-green-600 font-semibold`}
-                    >
-                      {"+"}
-                      {utilService.formatPrice(transaction.amount)}
-                      {"₫"}
+
+                <View>
+                  <View className="flex-row w-full justify-between items-center">
+                    <Text className="text-[12.5px] font-psemibold">
+                      {staff.fullName}
                     </Text>
+                    <View className="mr-10">
+                      {getStaffStatusComponent(staff)}
+                    </View>
                   </View>
+
+                  <Text className="text-[11px] italic text-gray-500 mt-[4px]">
+                    Đã thêm vào{" "}
+                    {dayjs(staff.createdDate)
+                      .local()
+                      .format("HH:mm DD/MM/YYYY")}{" "}
+                  </Text>
                 </View>
               </View>
               {/* <View className="flex-row justify-end gap-2 pt-2">
-                      <TouchableOpacity
-                        onPress={() => {
-                          globalWithdrawalState.setWithdrawal(draw);
-                          // router.push("/promotion/update");
-                        }}
-                        className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                      >
-                        <Text className="text-[13.2px] text-white">
-                          Chỉnh sửa
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => {
-                          globalWithdrawalState.setWithdrawal(draw);
-                          router.push("/promotion/details");
-                        }}
-                        className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                      >
-                        <Text className="text-[13.2px]">Chi tiết</Text>
-                      </TouchableOpacity>
-                    </View> */}
+                <TouchableOpacity
+                  onPress={() => {
+                    //   globalWithdrawalState.setWithdrawal(draw);
+                    // router.push("/promotion/update");
+                  }}
+                  className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                >
+                  <Text className="text-[13.2px] text-white">Chỉnh sửa</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    //   globalWithdrawalState.setWithdrawal(draw);
+                    //   router.push("/promotion/details");
+                  }}
+                  className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                >
+                  <Text className="text-[13.2px]">Chi tiết</Text>
+                </TouchableOpacity>
+              </View> */}
             </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
-    </PageLayoutWrapper>
+    </View>
   );
 };
 

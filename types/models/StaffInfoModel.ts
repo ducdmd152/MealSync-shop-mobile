@@ -23,3 +23,22 @@ export interface FrameStaffInfoModel {
   failed: number;
   staffInfor: StaffInfoModel;
 }
+
+export interface ShopDeliveryStaffModel {
+  id: number;
+  phoneNumber: string;
+  email: string;
+  avatarUrl: string;
+  fullName: string;
+  genders: number;
+  accountStatus: number;
+  shopDeliveryStaffStatus: number;
+  createdDate: string;
+  updatedDate: string;
+}
+
+export enum ShopDeliveryStaffStatus {
+  On = 1,
+  Off = 2,
+  Inactive = 3,
+}
