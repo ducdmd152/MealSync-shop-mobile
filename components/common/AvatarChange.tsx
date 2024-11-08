@@ -49,6 +49,9 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
       setAvatar(user.avatarUrl);
     }
   }, [user]);
+  useEffect(() => {
+    setAvatar(shopProfile.data?.value.logoUrl || CONSTANTS.url.avatar);
+  }, [shopProfile.data?.value]);
 
   const pickImage = async () => {
     if (Platform.OS !== "web") {

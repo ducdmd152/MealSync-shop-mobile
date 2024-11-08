@@ -55,10 +55,11 @@ const ForgetPassword = () => {
     setIsSubmitting(true);
     apiClient
       .post("auth/verify-code", {
+        isVerify: isVerifying,
         email: data.email,
         code: code,
         verifyType: 3,
-        password: data.password || "Aa11111!",
+        password: isVerifying ? undefined : data.password,
       })
       .then(() => {
         if (isVerifying) {
@@ -72,19 +73,13 @@ const ForgetPassword = () => {
           Toast.show({
             type: "success",
             text1: "Hoàn tất",
-            text2: `Cập nhật mật khẩu thành công, đăng nhập với mật khẩu mới!.`,
+            text2: `Cập nhật mật khẩu thành công.\nĐăng nhập với mật khẩu mới!.`,
           });
         }
       })
       .catch((error) => {
         if (error.response && error.response.status === 404) {
           Alert.alert("Oops!", "Không tìm thấy tài khoản với email tương ứng");
-          router.replace("/sign-in");
-        } else if (
-          error.response &&
-          error?.response?.data?.error?.code == "E-Account-InvalidVerifyCode"
-        ) {
-          Alert.alert("Oops!", "Đã quá hạn để thao tác, vui lòng thử lại!");
           router.replace("/sign-in");
         } else {
           Alert.alert(
@@ -156,6 +151,7 @@ const ForgetPassword = () => {
         handleChangeText={(e) => setData({ ...data, password: e })}
         isPassword={true}
         otherStyleClasses="mt-3"
+        className="mb-1"
       />
       <FormFieldCustom
         title={"Xác nhận mật khẩu *"}
@@ -164,6 +160,7 @@ const ForgetPassword = () => {
         handleChangeText={(e) => setData({ ...data, confirmPassword: e })}
         isPassword={true}
         otherStyleClasses="mt-3"
+        className="mb-1"
       />
       <CustomButton
         title="Cập nhật"

@@ -76,7 +76,7 @@ const Balance = () => {
                     fontSize: 32,
                     fontWeight: "bold",
                     textShadowColor: "gray",
-                    textShadowOffset: { width: -0.6, height: 0.2 },
+                    textShadowOffset: { width: -1, height: 0.2 },
                     textShadowRadius: 1,
                   }}
                 >
@@ -209,7 +209,7 @@ const Balance = () => {
           />
         }
       >
-        {/* {!transactionsFetch.isFetching &&
+        {!transactionsFetch.isFetching &&
         !transactionsFetch.data?.value.items?.length ? (
           <Text className="text-gray-600 text-center mt-6">
             {transactionsFetch.data?.value.items?.length == 0
@@ -220,7 +220,7 @@ const Balance = () => {
           <Text className="text-gray-600 text-center mt-3">
             Lịch sử giao dịch
           </Text>
-        )} */}
+        )}
         <View className=" p-2 mt-2 pb-[72px]">
           {(transactionsFetch.data?.value.items.length
             ? transactionsFetch.data?.value.items
@@ -270,10 +270,14 @@ const Balance = () => {
                       </Text>
                     </View>
                     <Text
-                      className={`text-[11px] italic text-gray-500 text-green-600 font-semibold`}
+                      className={`text-[11px] italic text-gray-500 ${
+                        transaction.amount > 0
+                          ? "text-green-600"
+                          : "text-red-700"
+                      } font-semibold`}
                     >
-                      {"+"}
-                      {utilService.formatPrice(transaction.amount)}
+                      {transaction.amount > 0 ? "+" : "-"}
+                      {utilService.formatPrice(Math.abs(transaction.amount))}
                       {"₫"}
                     </Text>
                   </View>
