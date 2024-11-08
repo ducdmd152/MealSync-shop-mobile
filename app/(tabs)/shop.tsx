@@ -216,7 +216,10 @@ const Shop = () => {
   };
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
-      <TouchableOpacity className="flex-row justify-between items-center gap-x-2 pb-4">
+      <TouchableOpacity
+        // onPress={() => router.push("/shop/profile")}
+        className="flex-row justify-between items-center gap-x-2 pb-4"
+      >
         <View className="flex-row justify-start items-center gap-x-2">
           {cache.bannerUrl ? (
             <Avatar.Image
