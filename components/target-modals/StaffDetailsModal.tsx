@@ -129,6 +129,7 @@ const StaffDetailsModal = ({
         const { value, isSuccess, isWarning, error } = response.data;
         if (isSuccess) {
           onSuccess();
+          globalStaffState.onAfterCompleted();
         }
       })
       .catch((error: any) => {
@@ -194,13 +195,19 @@ const StaffDetailsModal = ({
                       ...staff,
                       shopDeliveryStaffStatus: ShopDeliveryStaffStatus.Off,
                     });
-                    toast.show(
-                      `Đã chuyển ${staff.fullName} sang trạng thái nghỉ phép`,
-                      {
-                        type: "success",
-                        duration: 2000,
-                      }
-                    );
+                    Toast.show({
+                      type: "success",
+                      text1: "Hoàn tất",
+                      text2: `Đã chuyển ${staff.fullName} sang trạng thái nghỉ phép.`,
+                      // time: 15000
+                    });
+                    // toast.show(
+                    //   `Đã chuyển ${staff.fullName} sang trạng thái nghỉ phép`,
+                    //   {
+                    //     type: "success",
+                    //     duration: 2000,
+                    //   }
+                    // );
                   }
                 );
               },
@@ -225,10 +232,16 @@ const StaffDetailsModal = ({
                       ...staff,
                       shopDeliveryStaffStatus: ShopDeliveryStaffStatus.Inactive,
                     });
-                    toast.show(`Đã khóa tài khoản ${staff.fullName} `, {
-                      type: "info",
-                      duration: 2000,
+                    Toast.show({
+                      type: "success",
+                      text1: "Hoàn tất",
+                      text2: `Đã khóa tài khoản ${staff.fullName} `,
+                      // time: 15000
                     });
+                    // toast.show(`Đã khóa tài khoản ${staff.fullName} `, {
+                    //   type: "info",
+                    //   duration: 2000,
+                    // });
                   }
                 );
               },
@@ -267,13 +280,19 @@ const StaffDetailsModal = ({
                       ...staff,
                       shopDeliveryStaffStatus: 1,
                     });
-                    toast.show(
-                      `Đã chuyển trạng thái của ${staff.fullName} sang trạng thái hoạt động`,
-                      {
-                        type: "success",
-                        duration: 2000,
-                      }
-                    );
+                    Toast.show({
+                      type: "success",
+                      text1: "Hoàn tất",
+                      text2: `Đã chuyển trạng thái của ${staff.fullName} sang trạng thái hoạt động.`,
+                      // time: 15000
+                    });
+                    // toast.show(
+                    //   `Đã chuyển trạng thái của ${staff.fullName} sang trạng thái hoạt động`,
+                    //   {
+                    //     type: "success",
+                    //     duration: 2000,
+                    //   }
+                    // );
                   }
                 );
               },
@@ -458,6 +477,7 @@ const StaffDetailsModal = ({
               text2: `Thêm nhân viên ${model.fullName} thành công.`,
               // time: 15000
             });
+            globalStaffState.onAfterCompleted();
             // toast.show(`Cập nhật thông tin thành công`, {
             //   type: "success",
             //   duration: 1500,
@@ -499,6 +519,7 @@ const StaffDetailsModal = ({
               text2: "Cập nhật thông tin nhân viên thành công",
               // time: 15000
             });
+            globalStaffState.onAfterCompleted();
             // toast.show(`Cập nhật thông tin thành công`, {
             //   type: "success",
             //   duration: 1500,

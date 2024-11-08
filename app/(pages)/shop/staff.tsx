@@ -66,6 +66,7 @@ const StaffManagement = () => {
   useFocusEffect(
     React.useCallback(() => {
       staffsFetch.refetch();
+      globalStaffState.setOnAfterCompleted(() => staffsFetch.refetch());
     }, [])
   );
 

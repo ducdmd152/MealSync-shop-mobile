@@ -21,6 +21,9 @@ interface GlobalStaffState {
   setModel: (param: ShopDeliveryStaffModel) => void;
   isDetailsOrUpdateOrCreateMode: number;
   setIsDetailsOrUpdateOrCreateMode: (param: number) => void;
+
+  onAfterCompleted: () => void;
+  setOnAfterCompleted: (func: () => void) => void;
 }
 
 const useGlobalStaffState = create<GlobalStaffState>((set) => ({
@@ -36,6 +39,9 @@ const useGlobalStaffState = create<GlobalStaffState>((set) => ({
   isDetailsOrUpdateOrCreateMode: StaffModalAction.Details,
   setIsDetailsOrUpdateOrCreateMode: (param: number) =>
     set({ isDetailsOrUpdateOrCreateMode: param }),
+
+  onAfterCompleted: () => {},
+  setOnAfterCompleted: (func: () => void) => set({ onAfterCompleted: func }),
 }));
 
 export default useGlobalStaffState;
