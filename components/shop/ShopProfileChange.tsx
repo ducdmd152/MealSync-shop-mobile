@@ -94,6 +94,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
     } as ShopProfileUpdateModel;
   };
   useEffect(() => {
+    shopProfile.refetch();
     setModel(getModelFromFetch());
     isAnyRequestSubmit.current = false;
   }, [isEditMode]);
@@ -111,7 +112,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
     let tempErrors: any = {};
     if (profile.shopName.length < 6)
       tempErrors.shopName = "Tên cửa hàng dài ít nhất 6 kí tự.";
-    if (CONSTANTS.REGEX.phone.test(profile.phoneNumber))
+    if (!CONSTANTS.REGEX.phone.test(profile.phoneNumber))
       tempErrors.phoneNumber = "Số điện thoại không hợp lệ.";
     if (profile.shopOwnerName.length < 6)
       tempErrors.shopOwnerName = "Tên chủ cửa hàng dài ít nhất 4 kí tự.";
@@ -224,7 +225,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       <FormFieldCustom
         title={"Địa chỉ cửa hàng"}
         value={model.location.address || ""}
-        readOnly={!isEditMode}
+        readOnly={true}
         placeholder={"Chọn địa chỉ cửa hàng..."}
         handleChangeText={(text) => {
           setModel({
