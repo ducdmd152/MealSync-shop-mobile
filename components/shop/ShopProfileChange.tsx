@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import FormFieldCustom from "../custom/FormFieldCustom";
 import CustomCheckbox from "../custom/CustomCheckbox";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,6 +19,7 @@ import { useFocusEffect } from "expo-router";
 import { useToast } from "react-native-toast-notifications";
 import { TextInput } from "react-native-gesture-handler";
 import SampleCustomCheckbox from "../custom/SampleCustomCheckbox";
+import CONSTANTS from "@/constants/data";
 interface ShopProfileUpdateModel {
   shopName: string;
   shopOwnerName: string;
@@ -65,7 +66,9 @@ const ShopProfileChange = () => {
     emptyShopProfileUpdate
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isAnyRequestSubmit = useRef(false);
   const [isEditMode, setIsEditMode] = useState(false);
+
   const getModelFromFetch = () => {
     return {
       shopName: shopProfile.data?.value.name || "",
@@ -83,6 +86,7 @@ const ShopProfileChange = () => {
   };
   useEffect(() => {
     setModel(getModelFromFetch());
+    isAnyRequestSubmit.current = false;
   }, [isEditMode]);
   useEffect(() => {
     if (!shopProfile.isFetching) setModel(getModelFromFetch());
@@ -92,6 +96,35 @@ const ShopProfileChange = () => {
       shopProfile.refetch();
     }, [])
   );
+
+  const [errors, setErrors] = useState<any>({});
+  const validate = (profile: ShopProfileUpdateModel) => {
+    let tempErrors: any = {};
+    if (profile.shopName.length < 6)
+      tempErrors.shopName = "Tên cửa hàng dài ít nhất 6 kí tự.";
+    if (CONSTANTS.REGEX.phone.test(profile.phoneNumber))
+      tempErrors.phoneNumber = "Số điện thoại không hợp lệ.";
+    if (profile.shopOwnerName.length < 6)
+      tempErrors.shopOwnerName = "Tên chủ cửa hàng dài ít nhất 4 kí tự.";
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+  const onFieldChange = (change: ShopProfileUpdateModel) => {
+    if (isAnyRequestSubmit.current) {
+      validate(change);
+    }
+  };
+  const handleUpdate = () => {
+    isAnyRequestSubmit.current = true;
+    if (!validate(model)) {
+      Alert.alert("Vui lòng hoàn thành thông tin hợp lệ");
+      return;
+    }
+    if (model.dormitoryIds.length == 0) {
+      Alert.alert("Vui lòng chọn ít nhất một khu bán hàng");
+      return;
+    }
+  };
   return (
     <View className="w-full px-4 py-2 ">
       {!isEditMode && (
@@ -121,11 +154,16 @@ const ShopProfileChange = () => {
         placeholder={"Nhập tên cửa hàng..."}
         handleChangeText={(text) => {
           setModel({ ...model, shopName: text });
+          onFieldChange({ ...model, shopName: text });
         }}
         keyboardType="default"
         otherStyleClasses="mt-3"
-        otherInputStyleClasses="h-12 border-gray-100"
+        otherInputStyleClasses="h-12 border-gray-100 "
+        className="mb-1"
       />
+      {errors.shopName && (
+        <Text className="text-red-500 text-xs mt-1">{errors.shopName}</Text>
+      )}
       <View className="mb-2">
         <FormFieldCustom
           title={"Mô tả cửa hàng"}
@@ -163,6 +201,7 @@ const ShopProfileChange = () => {
         }}
         otherStyleClasses="mt-3"
         otherInputStyleClasses="h-12 border-gray-100"
+        className="mb-1"
         iconRight={
           <TouchableOpacity className="h-[32px] w-[32px] bg-primary rounded-md justify-center items-center relative">
             <Ionicons name="location-outline" size={28} color="white" />
@@ -224,33 +263,44 @@ const ShopProfileChange = () => {
         placeholder={"Nhập số điện thoại..."}
         handleChangeText={(text) => {
           setModel({ ...model, phoneNumber: text });
+          onFieldChange({ ...model, phoneNumber: text });
         }}
         keyboardType="email-address"
         otherStyleClasses="mt-3"
         otherInputStyleClasses="h-12 border-gray-100"
         readOnly={!isEditMode}
+        className="mb-1"
       />
+      {errors.phoneNumber && (
+        <Text className="text-red-500 text-xs mt-1">{errors.phoneNumber}</Text>
+      )}
 
       <FormFieldCustom
-        title={"Chủ cửa hàng"}
+        title={"Chủ cửa hàng (bạn)"}
         value={model.shopOwnerName}
         placeholder={"Nhập tên chủ cửa hàng..."}
         handleChangeText={(text) => {
           setModel({ ...model, shopOwnerName: text });
+          onFieldChange({ ...model, shopOwnerName: text });
         }}
         keyboardType="default"
         otherStyleClasses="mt-2"
         otherInputStyleClasses="h-12 border-gray-100"
         readOnly={!isEditMode}
+        className="mb-1"
       />
-
+      {errors.shopOwnerName && (
+        <Text className="text-red-500 text-xs mt-1">
+          {errors.shopOwnerName}
+        </Text>
+      )}
       {isEditMode && (
         <CustomButton
           title="Cập nhật"
           containerStyleClasses="mt-5 bg-secondary h-12"
           textStyleClasses="text-white"
           handlePress={() => {
-            setIsEditMode(false);
+            handleUpdate();
           }}
         />
       )}
