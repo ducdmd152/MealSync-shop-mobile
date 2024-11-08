@@ -118,7 +118,9 @@ const ShopProfileChange = () => {
         value={model.shopName}
         readOnly={!isEditMode}
         placeholder={"Nhập tên cửa hàng..."}
-        handleChangeText={(text) => {}}
+        handleChangeText={(text) => {
+          setModel({ ...model, shopName: text });
+        }}
         keyboardType="default"
         otherStyleClasses="mt-3"
         otherInputStyleClasses="h-12 border-gray-100"
@@ -139,7 +141,9 @@ const ShopProfileChange = () => {
           className="border border-gray-300 mt-1 p-2 rounded h-16 rounded-2xl border-2 border-gray-300 p-3"
           placeholder="Nhập mô tả..."
           value={model.description}
-          onChangeText={(text) => {}}
+          onChangeText={(text) => {
+            setModel({ ...model, description: text });
+          }}
           multiline
           placeholderTextColor="#888"
         />
@@ -150,7 +154,12 @@ const ShopProfileChange = () => {
         value={model.location.address || ""}
         readOnly={!isEditMode}
         placeholder={"Chọn địa chỉ cửa hàng..."}
-        handleChangeText={(text) => {}}
+        handleChangeText={(text) => {
+          setModel({
+            ...model,
+            location: { ...model.location, address: text },
+          });
+        }}
         otherStyleClasses="mt-3"
         otherInputStyleClasses="h-12 border-gray-100"
         iconRight={
@@ -165,16 +174,24 @@ const ShopProfileChange = () => {
         </Text>
         <View className="flex-row gap-x-8 ml-[2px]">
           <CustomCheckbox
-            isChecked={model.dormitoryIds.includes(1)}
+            isChecked={model.dormitoryIds.includes(Dormitories.A)}
             handlePress={() => {
-              Dormitories.A;
+              setModel({
+                ...model,
+                dormitoryIds: [...model.dormitoryIds, Dormitories.A],
+              });
             }}
             label={<Text className="text-[16px]">Khu A</Text>}
             containerStyleClasses={"w-[100px]"}
           />
           <CustomCheckbox
             isChecked={model.dormitoryIds.includes(Dormitories.B)}
-            handlePress={() => {}}
+            handlePress={() => {
+              setModel({
+                ...model,
+                dormitoryIds: [...model.dormitoryIds, Dormitories.B],
+              });
+            }}
             label={<Text className="text-[16px]">Khu B</Text>}
             containerStyleClasses={"w-[100px]"}
           />
@@ -185,7 +202,9 @@ const ShopProfileChange = () => {
         title={"Số điện thoại"}
         value={model.phoneNumber}
         placeholder={"Nhập số điện thoại..."}
-        handleChangeText={(e) => {}}
+        handleChangeText={(text) => {
+          setModel({ ...model, phoneNumber: text });
+        }}
         keyboardType="email-address"
         otherStyleClasses="mt-3"
         otherInputStyleClasses="h-12 border-gray-100"
@@ -196,7 +215,9 @@ const ShopProfileChange = () => {
         title={"Chủ cửa hàng"}
         value={model.shopOwnerName}
         placeholder={"Nhập tên chủ cửa hàng..."}
-        handleChangeText={(e) => {}}
+        handleChangeText={(text) => {
+          setModel({ ...model, shopOwnerName: text });
+        }}
         keyboardType="default"
         otherStyleClasses="mt-2"
         otherInputStyleClasses="h-12 border-gray-100"
