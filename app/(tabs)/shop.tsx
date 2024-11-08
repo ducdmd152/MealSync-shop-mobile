@@ -120,7 +120,7 @@ const Shop = () => {
 
   const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
   const shopProfile = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO.concat(["gpkg-create-page"]),
+    REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO,
     async (): Promise<FetchValueResponse<ShopProfileGetModel>> =>
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
