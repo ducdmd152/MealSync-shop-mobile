@@ -561,10 +561,120 @@ const StaffDetailsModal = ({
           // }
           textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
         />
+        <CustomButton
+          title="Hủy"
+          isLoading={isSubmitting}
+          handlePress={() => {
+            globalStaffState.setIsDetailsOrUpdateOrCreateMode(
+              StaffModalAction.Details
+            );
+          }}
+          containerStyleClasses="mt-2 w-full h-[36px] px-4 bg-transparent border-[1px] border-gray-400 font-psemibold z-10"
+          // iconLeft={
+          //   <Ionicons name="add-circle-outline" size={21} color="white" />
+          // }
+          textStyleClasses="text-[14px] text-gray-900 ml-1 text-white text-gray-500"
+        />
       </View>
     </View>
   );
+  const creation = (
+    <View>
+      <View className="flex-row items-start justify-between">
+        <View>
+          <Text className={`${titleStyleClasses}`}>Tạo mới nhân viên</Text>
+          <Text className="text-[9.5px] italic text-gray-500 mt-[4px]">
+            Cập nhật gần nhất{" "}
+            {dayjs(globalStaffState.model.createdDate)
+              .local()
+              .format("HH:mm DD/MM/YYYY")}{" "}
+          </Text>
+        </View>
 
+        {getStaffStatusComponent(globalStaffState.model)}
+      </View>
+      <View className="gap-y-2 mt-1">
+        <View className="mb-2">
+          <Text className="font-bold text-[12.8px]">Tên nhân viên</Text>
+          <View className="relative">
+            <TextInput
+              className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
+              value={model.fullName}
+              onChangeText={(text) => {
+                handleChange("fullName", text);
+              }}
+              placeholder="Nhập tên nhân viên"
+              placeholderTextColor="#888"
+              readOnly={
+                globalStaffState.isDetailsOrUpdateOrCreateMode ==
+                StaffModalAction.Details
+              }
+            />
+            {errors.fullName && (
+              <Text className="text-red-500 text-xs mt-1">
+                {errors.fullName}
+              </Text>
+            )}
+          </View>
+        </View>
+        <View className="mb-2">
+          <Text className="font-bold text-[12.8px]">Email</Text>
+          <TextInput
+            className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
+            value={model.email}
+            onChangeText={(text) => {
+              handleChange("email", text);
+            }}
+            keyboardType="email-address"
+            placeholder="Nhập email nhân viên"
+            placeholderTextColor="#888"
+            readOnly={
+              globalStaffState.isDetailsOrUpdateOrCreateMode ==
+              StaffModalAction.Details
+            }
+          />
+          {errors.email && (
+            <Text className="text-red-500 text-xs mt-1">{errors.email}</Text>
+          )}
+        </View>
+        <View className="mb-2">
+          <Text className="font-bold text-[12.8px]">Số điện thoại</Text>
+          <TextInput
+            className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
+            value={model.phoneNumber}
+            onChangeText={(text) => {
+              handleChange("phone", text);
+            }}
+            keyboardType="numeric"
+            placeholder="Nhập số điện thoại"
+            placeholderTextColor="#888"
+            readOnly={
+              globalStaffState.isDetailsOrUpdateOrCreateMode ==
+              StaffModalAction.Details
+            }
+          />
+          {errors.phoneNumber && (
+            <Text className="text-red-500 text-xs mt-1">
+              {errors.phoneNumber}
+            </Text>
+          )}
+        </View>
+
+        <CustomButton
+          title="Cập nhật thông tin"
+          isLoading={isSubmitting}
+          handlePress={() => {
+            handleSubmit(model);
+          }}
+          containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-psemibold z-10"
+          // iconLeft={
+          //   <Ionicons name="add-circle-outline" size={21} color="white" />
+          // }
+          textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
+        />
+      </View>
+    </View>
+  );
   return (
     <Modal
       isVisible={globalStaffState.isDetailsModalVisible}
@@ -577,7 +687,9 @@ const StaffDetailsModal = ({
           >
             {globalStaffState.isDetailsOrUpdateOrCreateMode == 1
               ? details
-              : editation}
+              : globalStaffState.isDetailsOrUpdateOrCreateMode == 2
+              ? editation
+              : creation}
           </View>
         </TouchableWithoutFeedback>
       </View>

@@ -292,7 +292,7 @@ const StaffManagement = () => {
             <TouchableOpacity
               onPress={() => {
                 globalStaffState.setIsDetailsOrUpdateOrCreateMode(
-                  StaffModalAction.Create
+                  StaffModalAction.Details
                 );
                 globalStaffState.setModel(staff);
                 globalStaffState.setIsDetailsModalVisible(true);
