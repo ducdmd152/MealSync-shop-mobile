@@ -46,6 +46,7 @@ const ForgetPassword = () => {
   const enterEmail = (
     <View className="w-full p-4 pb-16">
       <FormFieldCustom
+        className="text-center mb-1"
         title={"Nhập email đã đăng ký"}
         value={data.email}
         placeholder={"Nhập email của bạn..."}
@@ -55,6 +56,8 @@ const ForgetPassword = () => {
         keyboardType="email-address"
         titleStyleClasses="text-center w-full mb-2"
         otherStyleClasses="mt-7"
+        otherInputStyleClasses="text-center"
+        otherTextInputStyleClasses="text-center"
       />
       <CustomButton
         title="Tiếp tục"
@@ -116,6 +119,7 @@ const ForgetPassword = () => {
       />
     </View>
   );
+
   const componentOfSteps: ReactNode[] = [enterEmail, verifyCode];
   return (
     <PageLayoutWrapper>
