@@ -20,6 +20,7 @@ import { useToast } from "react-native-toast-notifications";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import SampleCustomCheckbox from "../custom/SampleCustomCheckbox";
 import CONSTANTS from "@/constants/data";
+import Toast from "react-native-toast-message";
 interface ShopProfileUpdateModel {
   shopName: string;
   shopOwnerName: string;
@@ -132,6 +133,28 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       Alert.alert("Vui lòng chọn ít nhất một khu bán hàng");
       return;
     }
+    setIsSubmitting(true);
+    apiClient
+      .put("shop-owner/profile", model)
+      .then(() => {
+        setIsEditMode(false);
+        Toast.show({
+          type: "success",
+          text1: "Hoàn tất",
+          text2: `Cập nhật hồ sơ thành công!.`,
+        });
+      })
+      .catch((error) => {
+        console.log(error?.response?.data);
+        Alert.alert(
+          "Oops!",
+          error?.response?.data?.error?.message ||
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+        );
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
   return (
     <View
