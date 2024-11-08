@@ -25,9 +25,11 @@ import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import { useToast } from "react-native-toast-notifications";
 import { WITHDRAW_STATUSES_FILTER } from "@/types/models/WithdrawalModel";
 import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
+import useGlobalStaffState from "@/hooks/states/useGlobalStaffState";
 
 const Shop = () => {
   const globalWithdrawalState = useGlobalWithdrawalState();
+  const globalStaffState = useGlobalStaffState();
   const redirections = {
     shop: [
       {
@@ -58,7 +60,10 @@ const Shop = () => {
       {
         text: "Nhân viên giao hàng",
         icon: <Ionicons size={20} name="people-outline" />,
-        handlePress: () => router.push("/shop/staff"),
+        handlePress: () => {
+          globalStaffState.setQuery({ searchText: "", status: 0 });
+          router.push("/shop/staff");
+        },
         textStyleClasses: "text-gray-800",
       },
       {

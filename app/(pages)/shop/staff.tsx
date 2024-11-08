@@ -34,10 +34,12 @@ import { Searchbar, Switch } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
+import useGlobalStaffState from "@/hooks/states/useGlobalStaffState";
 
 const StaffManagement = () => {
+  const globalStaffState = useGlobalStaffState();
   const toast = useToast();
-  const [query, setQuery] = useState({ searchText: "", status: 0 });
+  const { query, setQuery } = globalStaffState;
   const staffsFetch = useFetchWithRQWithFetchFunc(
     [endpoints.STAFF_LIST].concat(["shop-staff-page"]),
     async (): Promise<FetchResponse<ShopDeliveryStaffModel>> =>
