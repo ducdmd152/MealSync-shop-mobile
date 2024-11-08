@@ -8,7 +8,7 @@ import {
   Image,
   Alert,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import utilService from "@/services/util-service";
 import { RefreshControl, TextInput } from "react-native-gesture-handler";
@@ -30,11 +30,12 @@ import {
   ShopDeliveryStaffModel,
   ShopDeliveryStaffStatus,
 } from "@/types/models/StaffInfoModel";
-import { Switch } from "react-native-paper";
+import { Searchbar, Switch } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
 
 const StaffManagement = () => {
   const toast = useToast();
+  const [query, setQuery] = useState({ searchText: "", status: 0 });
   const staffsFetch = useFetchWithRQWithFetchFunc(
     [endpoints.STAFF_LIST].concat(["shop-staff-page"]),
     async (): Promise<FetchResponse<ShopDeliveryStaffModel>> =>
@@ -44,15 +45,16 @@ const StaffManagement = () => {
             Authorization: `Bearer ${await sessionService.getAuthToken()}`,
           },
           params: {
-            // startDate: fromDate.toISOString(),
-            // endDate: toDate.add(1, "day").toISOString(),
+            searchValue: query.searchText,
+            status: query.status == 0 ? undefined : query.status,
             pageIndex: 1,
             pageSize: 100_000_000,
           },
         })
         .then((response) => response.data),
-    []
+    [query]
   );
+  query;
   //   console.log(staffsFetch.data?.value.items);
   useFocusEffect(
     React.useCallback(() => {
@@ -187,6 +189,17 @@ const StaffManagement = () => {
   };
   return (
     <View className="p-4 h-full px-2 w-full bg-white">
+      <View className="w-full">
+        <Searchbar
+          style={{
+            height: 50,
+          }}
+          inputStyle={{ minHeight: 0 }}
+          placeholder="Nhập tiêu đề khuyến mãi..."
+          onChangeText={(text) => setQuery({ ...query, searchText: text })}
+          value={query.searchText}
+        />
+      </View>
       <ScrollView
         style={{ width: "100%", flexGrow: 1 }}
         refreshControl={
@@ -212,14 +225,14 @@ const StaffManagement = () => {
             {staffsFetch.data?.value.items?.length} nhân viên trong cửa hàng
           </Text>
         )}
-        <View className="flex-1 p-2 mt-2 pb-[72px]">
+        <View className="flex-1 p-2 mt-2 pb-[72px] ">
           {staffsFetch.data?.value.items.map((staff, index) => (
             <TouchableOpacity
               onPress={() => {}}
               key={staff.id}
-              className={`p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow mb-3`}
+              className={`p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow mb-3 h-200`}
             >
-              <View className="flex-row flex-1 items-start ">
+              <View className="flex-row items-start ">
                 <View className="border-[1px] border-gray-200 mr-2 ml-[-2px] rounded-full p-[1px] overflow-hidden mb-1">
                   <Image
                     source={{
@@ -248,26 +261,6 @@ const StaffManagement = () => {
                   </Text>
                 </View>
               </View>
-              {/* <View className="flex-row justify-end gap-2 pt-2">
-                <TouchableOpacity
-                  onPress={() => {
-                    //   globalWithdrawalState.setWithdrawal(draw);
-                    // router.push("/promotion/update");
-                  }}
-                  className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                >
-                  <Text className="text-[13.2px] text-white">Chỉnh sửa</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    //   globalWithdrawalState.setWithdrawal(draw);
-                    //   router.push("/promotion/details");
-                  }}
-                  className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                >
-                  <Text className="text-[13.2px]">Chi tiết</Text>
-                </TouchableOpacity>
-              </View> */}
             </TouchableOpacity>
           ))}
         </View>
