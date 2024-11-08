@@ -10,7 +10,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import AvatarImage from "react-native-paper/lib/typescript/components/Avatar/AvatarImage";
 import { ActivityIndicator, Avatar, Switch } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, router, useFocusEffect } from "expo-router";
+import { Link, router, useFocusEffect, useNavigation } from "expo-router";
 import sessionService from "@/services/session-service";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
@@ -26,8 +26,10 @@ import { useToast } from "react-native-toast-notifications";
 import { WITHDRAW_STATUSES_FILTER } from "@/types/models/WithdrawalModel";
 import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
 import useGlobalStaffState from "@/hooks/states/useGlobalStaffState";
+import { CommonActions } from "@react-navigation/native";
 
 const Shop = () => {
+  const navigation = useNavigation();
   const globalWithdrawalState = useGlobalWithdrawalState();
   const globalStaffState = useGlobalStaffState();
   const redirections = {
@@ -103,7 +105,10 @@ const Shop = () => {
         icon: <Ionicons size={20} name="log-out-outline" />,
         handlePress: () => {
           sessionService.clear();
-          router.replace("/");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "index" }],
+          });
         },
         textStyleClasses: "text-gray-600",
       },
