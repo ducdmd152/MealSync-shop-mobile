@@ -38,6 +38,7 @@ import {
 import { Switch } from "react-native-paper";
 import useGlobalStaffState from "@/hooks/states/useGlobalStaffState";
 import dayjs from "dayjs";
+import Toast from "react-native-toast-message";
 interface Props {
   containerStyleClasses?: string;
 
@@ -387,10 +388,16 @@ const StaffDetailsModal = ({
             ...result.value,
           });
           globalStaffState.setIsDetailsMode(true);
-          toast.show(`Cập nhật thông tin thành công`, {
+          Toast.show({
             type: "success",
-            duration: 1500,
+            text1: "Hoàn tất",
+            text2: "Cập nhật thông tin nhân viên thành công",
+            // time: 15000
           });
+          // toast.show(`Cập nhật thông tin thành công`, {
+          //   type: "success",
+          //   duration: 1500,
+          // });
         }
       })
       .catch((error: any) => {
@@ -512,6 +519,7 @@ const StaffDetailsModal = ({
           </View>
         </TouchableWithoutFeedback>
       </View>
+      <Toast position="top" />
     </Modal>
   );
 };
