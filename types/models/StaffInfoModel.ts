@@ -42,3 +42,16 @@ export enum ShopDeliveryStaffStatus {
   Off = 2,
   Inactive = 3,
 }
+
+export const emptyShopDeliveryStaff: ShopDeliveryStaffModel = {
+  id: 0,
+  phoneNumber: "",
+  email: "",
+  avatarUrl: "",
+  fullName: "",
+  genders: 0,
+  accountStatus: 0,
+  shopDeliveryStaffStatus: 1,
+  createdDate: "",
+  updatedDate: "",
+};

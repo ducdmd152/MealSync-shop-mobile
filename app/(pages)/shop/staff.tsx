@@ -222,7 +222,12 @@ const StaffManagement = () => {
     <View className="w-full h-full bg-white text-black p-4 relative">
       <CustomButton
         title="Thêm mới"
-        handlePress={() => {}}
+        handlePress={() => {
+          globalStaffState.setIsDetailsOrUpdateOrCreateMode(
+            StaffModalAction.Create
+          );
+          globalStaffState.setIsDetailsModalVisible(true);
+        }}
         containerStyleClasses="h-[48px] px-4 bg-transparent border-0 border-gray-200 absolute bottom-8 right-5 bg-primary font-psemibold z-10"
         iconLeft={
           <Ionicons name="add-circle-outline" size={21} color="white" />

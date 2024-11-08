@@ -32,6 +32,7 @@ import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetc
 import { endpoints } from "@/services/api-services/api-service-instances";
 import { BalanceModel } from "@/types/models/BalanceModel";
 import {
+  emptyShopDeliveryStaff,
   ShopDeliveryStaffModel,
   ShopDeliveryStaffStatus,
 } from "@/types/models/StaffInfoModel";
@@ -87,11 +88,27 @@ const StaffDetailsModal = ({
   };
 
   useEffect(() => {
-    if (globalStaffState.isDetailsModalVisible) getDetails();
+    if (
+      globalStaffState.isDetailsModalVisible &&
+      globalStaffState.isDetailsOrUpdateOrCreateMode != StaffModalAction.Create
+    )
+      getDetails();
     if (
       globalStaffState.isDetailsOrUpdateOrCreateMode != StaffModalAction.Details
     )
       isAnyRequestSubmit.current = false;
+    if (
+      globalStaffState.isDetailsOrUpdateOrCreateMode == StaffModalAction.Create
+    ) {
+      setModel({
+        ...emptyShopDeliveryStaff,
+        phoneNumber: "",
+        email: "",
+        password: "123456",
+        fullName: "",
+        shopDeliveryStaffStatus: 1,
+      } as ShopDeliveryStaffModel);
+    }
   }, [
     globalStaffState.isDetailsModalVisible,
     globalStaffState.isDetailsOrUpdateOrCreateMode,
@@ -125,7 +142,10 @@ const StaffDetailsModal = ({
         setIsSubmitting(false);
       });
   };
-  const getStaffStatusComponent = (staff: ShopDeliveryStaffModel) => {
+  const getStaffStatusComponent = (
+    staff: ShopDeliveryStaffModel,
+    isCreatedMode: boolean = false
+  ) => {
     let label = "";
     let bgColor = "";
     let isSwitchOn = true;
@@ -157,12 +177,22 @@ const StaffDetailsModal = ({
             {
               text: "Chuyển sang nghỉ phép",
               onPress: async () => {
+                if (isCreatedMode) {
+                  setModel({
+                    ...staff,
+                    shopDeliveryStaffStatus: ShopDeliveryStaffStatus.Off,
+                  });
+                  return;
+                }
                 onChangeStaffStatusSubmit(
-                  { ...staff, shopDeliveryStaffStatus: 2 },
+                  {
+                    ...staff,
+                    shopDeliveryStaffStatus: ShopDeliveryStaffStatus.Off,
+                  },
                   () => {
                     globalStaffState.setModel({
                       ...staff,
-                      shopDeliveryStaffStatus: 2,
+                      shopDeliveryStaffStatus: ShopDeliveryStaffStatus.Off,
                     });
                     toast.show(
                       `Đã chuyển ${staff.fullName} sang trạng thái nghỉ phép`,
@@ -178,12 +208,22 @@ const StaffDetailsModal = ({
             {
               text: "Khóa tài khoản",
               onPress: async () => {
+                if (isCreatedMode) {
+                  setModel({
+                    ...staff,
+                    shopDeliveryStaffStatus: ShopDeliveryStaffStatus.Inactive,
+                  });
+                  return;
+                }
                 onChangeStaffStatusSubmit(
-                  { ...staff, shopDeliveryStaffStatus: 3 },
+                  {
+                    ...staff,
+                    shopDeliveryStaffStatus: ShopDeliveryStaffStatus.Inactive,
+                  },
                   () => {
                     globalStaffState.setModel({
                       ...staff,
-                      shopDeliveryStaffStatus: 3,
+                      shopDeliveryStaffStatus: ShopDeliveryStaffStatus.Inactive,
                     });
                     toast.show(`Đã khóa tài khoản ${staff.fullName} `, {
                       type: "info",
@@ -210,8 +250,18 @@ const StaffDetailsModal = ({
             {
               text: `Xác nhận`,
               onPress: async () => {
+                if (isCreatedMode) {
+                  setModel({
+                    ...staff,
+                    shopDeliveryStaffStatus: ShopDeliveryStaffStatus.On,
+                  });
+                  return;
+                }
                 onChangeStaffStatusSubmit(
-                  { ...staff, shopDeliveryStaffStatus: 1 },
+                  {
+                    ...staff,
+                    shopDeliveryStaffStatus: ShopDeliveryStaffStatus.On,
+                  },
                   () => {
                     globalStaffState.setModel({
                       ...staff,
@@ -388,7 +438,7 @@ const StaffDetailsModal = ({
       apiClient
         .post("shop-owner/delivery-staff/create", {
           ...model,
-          gender: model.genders,
+          shopDeliveryStaffStatus: model.shopDeliveryStaffStatus,
           password: "123456",
         })
         .then((res) => {
@@ -532,7 +582,7 @@ const StaffDetailsModal = ({
             className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
             value={model.phoneNumber}
             onChangeText={(text) => {
-              handleChange("phone", text);
+              handleChange("phoneNumber", text);
             }}
             keyboardType="numeric"
             placeholder="Nhập số điện thoại"
@@ -591,7 +641,7 @@ const StaffDetailsModal = ({
           </Text>
         </View>
 
-        {getStaffStatusComponent(globalStaffState.model)}
+        {getStaffStatusComponent(model, true)}
       </View>
       <View className="gap-y-2 mt-1">
         <View className="mb-2">
@@ -643,7 +693,7 @@ const StaffDetailsModal = ({
             className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
             value={model.phoneNumber}
             onChangeText={(text) => {
-              handleChange("phone", text);
+              handleChange("phoneNumber", text);
             }}
             keyboardType="numeric"
             placeholder="Nhập số điện thoại"
