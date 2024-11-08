@@ -32,6 +32,8 @@ import {
 } from "@/types/models/StaffInfoModel";
 import { Searchbar, Switch } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
+import CustomButton from "@/components/custom/CustomButton";
+import { Ionicons } from "@expo/vector-icons";
 
 const StaffManagement = () => {
   const toast = useToast();
@@ -188,17 +190,46 @@ const StaffManagement = () => {
     );
   };
   return (
-    <View className="p-4 h-full px-2 w-full bg-white">
+    <View className="w-full h-full bg-white text-black p-4 relative">
+      <CustomButton
+        title="Thêm mới"
+        handlePress={() => {}}
+        containerStyleClasses="h-[48px] px-4 bg-transparent border-0 border-gray-200 absolute bottom-8 right-5 bg-primary font-psemibold z-10"
+        iconLeft={
+          <Ionicons name="add-circle-outline" size={21} color="white" />
+        }
+        textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+      />
       <View className="w-full">
         <Searchbar
           style={{
             height: 50,
           }}
           inputStyle={{ minHeight: 0 }}
-          placeholder="Nhập tiêu đề khuyến mãi..."
+          placeholder="Nhập tên nhân viên..."
           onChangeText={(text) => setQuery({ ...query, searchText: text })}
           value={query.searchText}
         />
+      </View>
+      <View className="w-full flex-row items-center justify-between pb-2 pr-2 mt-4">
+        {[
+          { value: 0, label: "Tất cả" },
+          { value: ShopDeliveryStaffStatus.On, label: "Hoạt động" },
+          { value: ShopDeliveryStaffStatus.Off, label: "Nghỉ phép" },
+          { value: ShopDeliveryStaffStatus.Inactive, label: "Đã khóa" },
+        ].map((sts) => (
+          <TouchableOpacity
+            key={sts.label}
+            className={`flex-1 mx-[3px] bg-gray-100 rounded-lg py-2   ${
+              sts.value == query.status ? "bg-secondary" : "bg-gray-100"
+            }`}
+            onPress={() => {
+              setQuery({ ...query, status: sts.value });
+            }}
+          >
+            <Text className="text-center text-[12px]">{sts.label}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
       <ScrollView
         style={{ width: "100%", flexGrow: 1 }}
@@ -221,8 +252,10 @@ const StaffManagement = () => {
         )}
 
         {(staffsFetch.data?.value.items?.length || 0) > 0 && (
-          <Text className="text-gray-600 text-center mt-6">
-            {staffsFetch.data?.value.items?.length} nhân viên trong cửa hàng
+          <Text className="text-gray-600 text-center mt-3 ">
+            {staffsFetch.data?.value.items?.length} nhân viên{" "}
+            {(query.searchText.length || query.status != 0) && "tương ứng "}
+            trong cửa hàng
           </Text>
         )}
         <View className="flex-1 p-2 mt-2 pb-[72px] ">
