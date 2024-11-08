@@ -886,7 +886,7 @@ const Setting = () => {
         </View>
 
         <View className="">
-          <Text className="font-psemibold text-gray-600">
+          <Text className="font-semibold text-gray-600">
             THỜI GIAN HOẠT ĐỘNG
           </Text>
           <View className="text-gray-700">
@@ -903,7 +903,7 @@ const Setting = () => {
                   <ActivityIndicator animating={true} color="#FCF450" />
                 )} */}
 
-                <Text className={`font-psemibold text-md text-gray-600`}>
+                <Text className={`font-semibold text-md text-gray-600`}>
                   {formatTimeRanges(
                     (cache.operatingSlots || []).map((slot) => slot.timeSlot)
                   )}
@@ -915,7 +915,7 @@ const Setting = () => {
         </View>
 
         <View className="">
-          <Text className="font-psemibold text-gray-600">ĐẶT HÀNG QUA ĐÊM</Text>
+          <Text className="font-semibold text-gray-600">ĐẶT HÀNG QUA ĐÊM</Text>
           <View className="text-gray-700">
             <TouchableOpacity
               onPress={() => {}}
@@ -1055,7 +1055,7 @@ const Setting = () => {
               />
             </View>
           </CustomModal>
-          <Text className="font-psemibold text-gray-600">
+          <Text className="font-semibold text-gray-600">
             TỰ ĐỘNG XÁC NHẬN ĐƠN HÀNG
           </Text>
           <View className="text-gray-700">

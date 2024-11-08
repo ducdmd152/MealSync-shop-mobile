@@ -304,7 +304,7 @@ const WithdrawDetailsModal = ({
                       ]
                     )
                   }
-                  containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-psemibold z-10"
+                  containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-semibold z-10"
                   // iconLeft={
                   //   <Ionicons name="add-circle-outline" size={21} color="white" />
                   // }

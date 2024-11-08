@@ -81,7 +81,7 @@ const SignIn = () => {
             resizeMode="contain"
             className="h-[80px]"
           />
-          <Text className="text-2xl text-gray text-semibold mt-10 font-psemibold">
+          <Text className="text-2xl text-gray text-semibold mt-10 font-semibold">
             Đăng nhập
           </Text>
 
@@ -148,12 +148,23 @@ const SignIn = () => {
             isLoading={isSubmitting}
           />
 
+          <View className="w-full justify-center items-center mt-4">
+            <Text className="text-lg text-black font-regular text-right pr-2">
+              <Link
+                href="/forget-password"
+                className="text-white text-primary text-[14px]"
+              >
+                Bạn quên mật khẩu?
+              </Link>
+            </Text>
+          </View>
+
           <View className="justify-center items-center pt-2 gap-2 mt-2">
             <Text className="text-lg text-black font-regular text-center">
               Bạn chưa có tài khoản?{" "}
               <Link
                 href="/sign-up"
-                className="text-white text-primary font-psemibold"
+                className="text-white text-primary font-semibold"
               >
                 Đăng ký
               </Link>

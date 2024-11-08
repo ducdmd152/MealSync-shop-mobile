@@ -633,7 +633,7 @@ const OptionGroupUpdate: React.FC = () => {
               },
             ]);
           }}
-          containerStyleClasses={`mt-2 w-full h-[48px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10 border-secondary bg-white relative `}
+          containerStyleClasses={`mt-2 w-full h-[48px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-semibold z-10 border-secondary bg-white relative `}
           textStyleClasses={`text-[16px] text-gray-900 ml-1 text-secondary`}
         />
       </View>

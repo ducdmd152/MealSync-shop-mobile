@@ -385,7 +385,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     />
                     <View className="flex-1">
                       <Text
-                        className="text-md font-psemibold mt-[-2px] text-gray-600"
+                        className="text-md font-semibold mt-[-2px] text-gray-600"
                         numberOfLines={2}
                         ellipsizeMode="tail"
                       >
@@ -485,7 +485,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
           handlePress={() => {
             setIsBottomSheetVisible(true);
           }}
-          containerStyleClasses="w-[98%] h-[50px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
+          containerStyleClasses="w-[98%] h-[50px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-semibold z-10"
           // iconLeft={
           //   <Ionicons name="add-circle-outline" size={21} color="white" />
           // }

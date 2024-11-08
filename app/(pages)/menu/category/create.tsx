@@ -63,7 +63,7 @@ const CategoryPage = () => {
           <CustomButton
             title={"Thêm danh mục"}
             handlePress={handleAddCategory}
-            containerStyleClasses="w-full h-[52px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
+            containerStyleClasses="w-full h-[52px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-semibold z-10"
             textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
             isLoading={isSubmitting}
           />

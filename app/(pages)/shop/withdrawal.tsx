@@ -115,7 +115,7 @@ const Withdrawal = () => {
               );
             });
         }}
-        containerStyleClasses="h-[48px] px-4 bg-transparent border-0 border-gray-200 absolute bottom-8 right-5 bg-primary font-psemibold z-10"
+        containerStyleClasses="h-[48px] px-4 bg-transparent border-0 border-gray-200 absolute bottom-8 right-5 bg-primary font-semibold z-10"
         iconLeft={
           <Ionicons name="add-circle-outline" size={21} color="white" />
         }
@@ -271,7 +271,7 @@ const Withdrawal = () => {
                       </View>
                       <View className="flex-1">
                         <Text
-                          className="text-[12.5px] font-psemibold mt-[-2px]"
+                          className="text-[12.5px] font-semibold mt-[-2px]"
                           numberOfLines={2}
                           ellipsizeMode="tail"
                         >

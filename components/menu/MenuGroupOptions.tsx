@@ -180,7 +180,7 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
             beforeGo();
             router.push("/menu/option-group/create");
           }}
-          containerStyleClasses="w-[98%] h-[50px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
+          containerStyleClasses="w-[98%] h-[50px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-semibold z-10"
           // iconLeft={
           //   <Ionicons name="add-circle-outline" size={21} color="white" />
           // }
@@ -243,7 +243,7 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                       </View> */}
                         <View className="flex-1">
                           <Text
-                            className="text-[14px] font-psemibold mt-[-2px]"
+                            className="text-[14px] font-semibold mt-[-2px]"
                             numberOfLines={2}
                             ellipsizeMode="tail"
                           >

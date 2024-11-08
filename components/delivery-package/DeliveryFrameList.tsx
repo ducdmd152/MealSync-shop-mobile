@@ -76,7 +76,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
             beforeGo();
             router.push("/delivery-package-group/create");
           }}
-          containerStyleClasses="mb-1 mr-2 h-[36px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
+          containerStyleClasses="mb-1 mr-2 h-[36px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-semibold z-10"
           iconLeft={
             <Ionicons name="add-circle-outline" size={21} color="white" />
           }
@@ -145,7 +145,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
               >
                 <View className="flex-row items-center justify-between gap-2">
                   <View className="flex-row">
-                    <Text className="font-psemibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
+                    <Text className="font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
                       {utilService.formatTime(gPKG.startTime) +
                         " - " +
                         utilService.formatTime(gPKG.endTime)}
@@ -155,7 +155,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                     </Text>
                   </View>
                   <View className="flex-row items-center">
-                    {/* <Text className="text-[12px] font-psemibold bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
+                    {/* <Text className="text-[12px] font-semibold bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
                       GPKG-{123 + index}
                     </Text> */}
                   </View>

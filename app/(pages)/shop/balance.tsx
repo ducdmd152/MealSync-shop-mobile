@@ -245,7 +245,7 @@ const Balance = () => {
                 </View>
                 <View className="flex-1">
                   <Text
-                    className="text-[12.5px] font-psemibold mt-[-2px]"
+                    className="text-[12.5px] font-semibold mt-[-2px]"
                     numberOfLines={2}
                     ellipsizeMode="tail"
                   >

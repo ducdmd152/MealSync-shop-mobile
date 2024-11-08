@@ -229,7 +229,7 @@ const SignUp = () => {
         handleChangeText={(e) => setForm({ ...form, address: e })}
         otherStyleClasses="mt-3"
       />
-      <Text className="text-base text-gray-500 font-pmedium mt-3">
+      <Text className="text-base text-gray-500 font-medium mt-3">
         Khu bán hàng
       </Text>
       <View className="flex-row items-center mt-1">
@@ -298,7 +298,7 @@ const SignUp = () => {
           resizeMode="contain"
           className="h-[60px]"
         />
-        <Text className="text-2xl text-gray text-semibold mt-2 font-psemibold">
+        <Text className="text-2xl text-gray text-semibold mt-2 font-semibold">
           Đăng ký
         </Text>
         {step != 2 && (
@@ -321,7 +321,7 @@ const SignUp = () => {
               Bạn đã có tài khoản?{" "}
               <Link
                 href="/sign-in"
-                className="text-white text-primary font-psemibold"
+                className="text-white text-primary font-semibold"
               >
                 Đăng nhập
               </Link>

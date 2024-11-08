@@ -159,7 +159,7 @@ const CategoryUpdate = () => {
                       />
                       <View className="flex-1">
                         <Text
-                          className="text-md font-psemibold mt-[-2px] text-gray-600"
+                          className="text-md font-semibold mt-[-2px] text-gray-600"
                           numberOfLines={2}
                           ellipsizeMode="tail"
                         >
@@ -263,7 +263,7 @@ const CategoryUpdate = () => {
             title="Hoàn tất chỉnh sửa"
             isLoading={isSubmitting}
             handlePress={() => handleUpdateCategory()}
-            containerStyleClasses="w-full h-[52px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10"
+            containerStyleClasses="w-full h-[52px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-semibold z-10"
             // iconLeft={
             //   <Ionicons name="add-circle-outline" size={21} color="white" />
             // }
@@ -275,7 +275,7 @@ const CategoryUpdate = () => {
             isDisabled={
               shopCategoryModel.foods && shopCategoryModel.foods?.length > 0
             }
-            containerStyleClasses={`mt-2 w-full h-[48px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-psemibold z-10 border-secondary bg-white relative ${
+            containerStyleClasses={`mt-2 w-full h-[48px] px-4 bg-transparent border-2 border-gray-200 bg-primary-100 font-semibold z-10 border-secondary bg-white relative ${
               shopCategoryModel.foods?.length && "border-gray-400"
             }`}
             // iconLeft={

@@ -229,7 +229,7 @@ const StaffManagement = () => {
           );
           globalStaffState.setIsDetailsModalVisible(true);
         }}
-        containerStyleClasses="h-[48px] px-4 bg-transparent border-0 border-gray-200 absolute bottom-8 right-5 bg-primary font-psemibold z-10"
+        containerStyleClasses="h-[48px] px-4 bg-transparent border-0 border-gray-200 absolute bottom-8 right-5 bg-primary font-semibold z-10"
         iconLeft={
           <Ionicons name="add-circle-outline" size={21} color="white" />
         }
@@ -319,7 +319,7 @@ const StaffManagement = () => {
 
                 <View>
                   <View className="flex-row w-full justify-between items-center">
-                    <Text className="text-[12.5px] font-psemibold">
+                    <Text className="text-[12.5px] font-semibold">
                       {staff.fullName}
                     </Text>
                     <View className="mr-10">

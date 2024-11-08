@@ -134,7 +134,7 @@ const DeliveryPackage = () => {
         handlePress={() => {
           setIsFilterBottomSheetVisible(true);
         }}
-        containerStyleClasses="h-[32px] px-3 bg-transparent border-2 border-gray-200 absolute bottom-4 right-4 bg-secondary-100 font-psemibold z-10"
+        containerStyleClasses="h-[32px] px-3 bg-transparent border-2 border-gray-200 absolute bottom-4 right-4 bg-secondary-100 font-semibold z-10"
         iconLeft={<Ionicons name="filter-outline" size={21} color="white" />}
         textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
       />
@@ -238,7 +238,7 @@ const DeliveryPackage = () => {
                         setRangePickerVisibility(false);
                         globalTimeRangeState.setIsEditing(false);
                       }}
-                      containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+                      containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold z-10"
                       textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
                     />
                   </View>
@@ -251,7 +251,7 @@ const DeliveryPackage = () => {
             handlePress={() => {
               setIsFilterBottomSheetVisible(false);
             }}
-            containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-primary font-psemibold z-10"
+            containerStyleClasses="mt-5 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-primary font-semibold z-10"
             // iconLeft={
             //   <Ionicons name="filter-outline" size={21} color="white" />
             // }

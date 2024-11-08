@@ -268,12 +268,12 @@ const DeliveryPackageGroupCreate = () => {
             >
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
-                  <Text className="text-[10px] font-psemibold bg-gray-100 text-gray-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
+                  <Text className="text-[10px] font-semibold bg-gray-100 text-gray-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
                     MS-{order.id}
                   </Text>
                 </View>
                 <View className="flex-row gap-x-1 items-center">
-                  <Text className="ml-2  font-psemibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
+                  <Text className="ml-2  font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
                     {order.dormitoryId == 1 ? "Đến KTX khu A" : "Đến KTX khu B"}
                   </Text>
                   <TouchableOpacity
@@ -353,12 +353,12 @@ const DeliveryPackageGroupCreate = () => {
             >
               <View className="flex-row items-center justify-between gap-2">
                 <View className="flex-row items-center">
-                  <Text className="text-[10px] font-psemibold bg-gray-100 text-gray-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
+                  <Text className="text-[10px] font-semibold bg-gray-100 text-gray-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
                     MS-{order.id}
                   </Text>
                 </View>
                 <View className="flex-row gap-x-1 items-center">
-                  <Text className="ml-2  font-psemibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
+                  <Text className="ml-2  font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
                     {order.dormitoryId == 1 ? "Đến KTX khu A" : "Đến KTX khu B"}
                   </Text>
                   <TouchableOpacity
@@ -445,7 +445,7 @@ const DeliveryPackageGroupCreate = () => {
             handlePress={() => {
               onSubmit();
             }}
-            containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+            containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold z-10"
             textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
           />
         </View>

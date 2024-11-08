@@ -268,7 +268,7 @@ const OrderDeliveryAssign = ({
           onAssign();
         }}
         isLoading={isSubmitting}
-        containerStyleClasses="mt-5 h-[36px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+        containerStyleClasses="mt-5 h-[36px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold z-10"
         textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
       />
     </View>

@@ -43,7 +43,7 @@ const ShopProfileChange = () => {
         }
       />
       <View className={`gap-y-0 mt-3`}>
-        <Text className="text-base text-gray-500 font-pmedium">
+        <Text className="text-base text-gray-500 font-medium">
           Khu vực bán hàng
         </Text>
         <View className="flex-row gap-x-8 ml-[2px]">

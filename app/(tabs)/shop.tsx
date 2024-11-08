@@ -367,7 +367,7 @@ const LinkGroup: React.FC<LinkGroupProps> = ({
 }) => {
   return (
     <View className={containerStyleClasses}>
-      <Text className="font-psemibold text-gray-600">{title}</Text>
+      <Text className="font-semibold text-gray-600">{title}</Text>
       <View className="text-gray-700">
         {data.map((item, index) => (
           <TouchableOpacity
@@ -378,7 +378,7 @@ const LinkGroup: React.FC<LinkGroupProps> = ({
             <View className="flex-row gap-x-2">
               {item.icon}
               <Text
-                className={`font-psemibold text-md text-gray-700 ${item.textStyleClasses}`}
+                className={`font-semibold text-md text-gray-700 ${item.textStyleClasses}`}
               >
                 {item.text}
               </Text>

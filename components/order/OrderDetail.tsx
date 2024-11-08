@@ -89,7 +89,7 @@ const OrderDetail = ({
                 Đơn hàng MS-{order.id}
               </Text>
               <View className="flex-row gap-x-1 items-center">
-                <Text className="ml-2  font-psemibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
+                <Text className="ml-2  font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
                   {formatTime(order.startTime) +
                     " - " +
                     formatTime(order.endTime)}
@@ -286,7 +286,7 @@ const OrderDetail = ({
                         ]
                       );
                     }}
-                    containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#7dd3fc] font-psemibold z-10"
+                    containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#7dd3fc] font-semibold z-10"
                     // iconLeft={
                     //   <Ionicons name="filter-outline" size={21} color="white" />
                     // }
@@ -332,7 +332,7 @@ const OrderDetail = ({
                         ]
                       );
                     }}
-                    containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#fda4af] font-psemibold z-10 ml-1 "
+                    containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#fda4af] font-semibold z-10 ml-1 "
                     // iconLeft={
                     //   <Ionicons name="filter-outline" size={21} color="white" />
                     // }
@@ -420,7 +420,7 @@ const OrderDetail = ({
                         ]
                       );
                     }}
-                    containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#7dd3fc] font-psemibold z-10"
+                    containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#7dd3fc] font-semibold z-10"
                     textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-800"
                   />
                   <CustomButton
@@ -506,7 +506,7 @@ const OrderDetail = ({
                         ]
                       );
                     }}
-                    containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#d6d3d1] font-psemibold z-10 ml-1"
+                    containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-[#d6d3d1] font-semibold z-10 ml-1"
                     textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-700"
                   />
                 </View>
@@ -516,7 +516,7 @@ const OrderDetail = ({
                   <CustomButton
                     title="Chọn nhân viên giao"
                     handlePress={() => {}}
-                    containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold z-10"
+                    containerStyleClasses="flex-1 h-[48px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold z-10"
                     textStyleClasses="text-[16px] text-gray-900 ml-1 text-white text-gray-800"
                   />
                 </View>
@@ -526,7 +526,7 @@ const OrderDetail = ({
                   <CustomButton
                     title="Giao thành công"
                     handlePress={() => {}}
-                    containerStyleClasses="flex-1 h-[44px] px-4 bg-transparent border-0 border-gray-200 bg-[#4ade80] font-psemibold z-10"
+                    containerStyleClasses="flex-1 h-[44px] px-4 bg-transparent border-0 border-gray-200 bg-[#4ade80] font-semibold z-10"
                     // iconLeft={
                     //   <Ionicons name="filter-outline" size={21} color="white" />
                     // }
@@ -535,7 +535,7 @@ const OrderDetail = ({
                   <CustomButton
                     title="Không thành công"
                     handlePress={() => {}}
-                    containerStyleClasses="flex-1 h-[44px] px-4 bg-transparent border-0 border-gray-200 bg-[#fda4af] font-psemibold z-10 ml-1 "
+                    containerStyleClasses="flex-1 h-[44px] px-4 bg-transparent border-0 border-gray-200 bg-[#fda4af] font-semibold z-10 ml-1 "
                     textStyleClasses="text-[13.5px] text-gray-900 ml-1 text-white text-gray-700"
                   />
                 </View>

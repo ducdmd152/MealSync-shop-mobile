@@ -66,7 +66,7 @@ export default function HomeScreen() {
       <View className="w-full h-[86px] flex-row items-center justify-between p-2 gap-x-2">
         <View className="flex-1 items-start">
           <Text className="text-lg text-gray-600">Cửa hàng</Text>
-          <Text className="flex-1 text-[24px] text-gray text-primary font-pmedium">
+          <Text className="flex-1 text-[24px] text-gray text-primary font-medium">
             {shopProfile.data?.value.name || "------------------------"}
           </Text>
         </View>

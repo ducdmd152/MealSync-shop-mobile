@@ -111,7 +111,7 @@ const DeliveryFrameDetail = ({
           Khung giao hàng:
         </Text>
         <View className="flex-row">
-          <Text className="font-psemibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
+          <Text className="font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
             {utilService.formatTime(query.startTime) +
               " - " +
               utilService.formatTime(query.endTime)}
@@ -444,7 +444,7 @@ const DeliveryFrameDetail = ({
             globalGPKGState.setQuery({ ...query });
             router.push("/delivery-package-group/update");
           }}
-          containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-psemibold"
+          containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold"
           textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
         />
       )}

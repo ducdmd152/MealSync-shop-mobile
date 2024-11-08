@@ -41,7 +41,7 @@ const SignUpVerification = () => {
 
   return (
     <View className="mt-4">
-      <Text className="text-lg text-gray-500 text-center text-semibold mt-2 font-psemibold">
+      <Text className="text-lg text-gray-500 text-center text-semibold mt-2 font-semibold">
         Mã xác thực đã được gửi qua {email}
       </Text>
       <OTPTextView
