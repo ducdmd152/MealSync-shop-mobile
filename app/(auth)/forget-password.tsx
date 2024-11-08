@@ -80,6 +80,12 @@ const ForgetPassword = () => {
         if (error.response && error.response.status === 404) {
           Alert.alert("Oops!", "Không tìm thấy tài khoản với email tương ứng");
           router.replace("/sign-in");
+        } else if (
+          error.response &&
+          error?.response?.data?.error?.code == "E-Account-InvalidVerifyCode"
+        ) {
+          Alert.alert("Oops!", "Đã quá hạn để thao tác, vui lòng thử lại!");
+          router.replace("/sign-in");
         } else {
           Alert.alert(
             "Oops!",
@@ -144,7 +150,7 @@ const ForgetPassword = () => {
   const passwordUpdate = (
     <View className="w-full p-4 pb-16">
       <FormFieldCustom
-        title={"Mật khẩu"}
+        title={"Mật khẩu mới *"}
         value={data.password}
         placeholder={"Nhập mật khẩu mới..."}
         handleChangeText={(e) => setData({ ...data, password: e })}
@@ -152,7 +158,7 @@ const ForgetPassword = () => {
         otherStyleClasses="mt-3"
       />
       <FormFieldCustom
-        title={"Xác nhận mật khẩu"}
+        title={"Xác nhận mật khẩu *"}
         value={data.confirmPassword}
         placeholder={"Xác nhận mật khẩu..."}
         handleChangeText={(e) => setData({ ...data, confirmPassword: e })}
