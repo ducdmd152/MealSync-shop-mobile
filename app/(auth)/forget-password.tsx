@@ -8,15 +8,20 @@ import CONSTANTS from "@/constants/data";
 import apiClient from "@/services/api-services/api-client";
 import { Link, router, useFocusEffect } from "expo-router";
 import OTPTextView from "react-native-otp-textinput";
+import { useToast } from "react-native-toast-notifications";
+import Toast from "react-native-toast-message";
 
 const ForgetPassword = () => {
+  const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1); // 1. Enter email 2. Verify code 3. Enter password
   const [data, setData] = useState({
     email: "",
     password: "",
     confirmPassword: "",
+    code: 0,
   });
+
   const requestSendCode = () => {
     setIsSubmitting(true);
     apiClient
@@ -31,6 +36,50 @@ const ForgetPassword = () => {
       .catch((error) => {
         if (error.response && error.response.status === 400) {
           Alert.alert("Oops!", "Không tìm thấy tài khoản với email tương ứng");
+        } else {
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
+  const requestUpdatePassword = (
+    code: number = data.code,
+    isVerifying: boolean = false
+  ) => {
+    setIsSubmitting(true);
+    apiClient
+      .post("auth/verify-code", {
+        email: data.email,
+        code: code,
+        verifyType: 3,
+        password: data.password || "Aa11111!",
+      })
+      .then(() => {
+        if (isVerifying) {
+          setStep(3);
+          toast.show(`Xác thực email hợp lệ.`, {
+            type: "success",
+            duration: 1500,
+          });
+        } else {
+          router.replace("/sign-in");
+          Toast.show({
+            type: "success",
+            text1: "Hoàn tất",
+            text2: `Cập nhật mật khẩu thành công, đăng nhập với mật khẩu mới!.`,
+          });
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 404) {
+          Alert.alert("Oops!", "Không tìm thấy tài khoản với email tương ứng");
+          router.replace("/sign-in");
         } else {
           Alert.alert(
             "Oops!",
@@ -79,35 +128,8 @@ const ForgetPassword = () => {
     <View className="w-full p-4 pb-16">
       <ForgetPasswordVerification
         handleSubmit={(code: number) => {
-          setIsSubmitting(true);
-          apiClient
-            .post("auth/verify-code", {
-              email: data.email,
-              code: code,
-              verifyType: 3,
-              password: "Aa11111!",
-            })
-            .then(() => {
-              setStep(3);
-            })
-            .catch((error) => {
-              if (error.response && error.response.status === 404) {
-                Alert.alert(
-                  "Oops!",
-                  "Không tìm thấy tài khoản với email tương ứng"
-                );
-                router.replace("/sign-in");
-              } else {
-                Alert.alert(
-                  "Oops!",
-                  error?.response?.data?.error?.message ||
-                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                );
-              }
-            })
-            .finally(() => {
-              setIsSubmitting(false);
-            });
+          setData({ ...data, code: code });
+          requestUpdatePassword(code, true);
         }}
         isSubmitting={isSubmitting}
         onResendCode={() => {
@@ -119,8 +141,45 @@ const ForgetPassword = () => {
       />
     </View>
   );
-
-  const componentOfSteps: ReactNode[] = [enterEmail, verifyCode];
+  const passwordUpdate = (
+    <View className="w-full p-4 pb-16">
+      <FormFieldCustom
+        title={"Mật khẩu"}
+        value={data.password}
+        placeholder={"Nhập mật khẩu mới..."}
+        handleChangeText={(e) => setData({ ...data, password: e })}
+        isPassword={true}
+        otherStyleClasses="mt-3"
+      />
+      <FormFieldCustom
+        title={"Xác nhận mật khẩu"}
+        value={data.confirmPassword}
+        placeholder={"Xác nhận mật khẩu..."}
+        handleChangeText={(e) => setData({ ...data, confirmPassword: e })}
+        isPassword={true}
+        otherStyleClasses="mt-3"
+      />
+      <CustomButton
+        title="Cập nhật"
+        handlePress={() => {
+          if (data.password != data.confirmPassword) {
+            Alert.alert("Mật khẩu không trùng khớp, vui lòng kiểm tra lại!");
+            return;
+          }
+          requestUpdatePassword();
+        }}
+        isDisabled={!CONSTANTS.REGEX.email.test(data.email.trim())}
+        containerStyleClasses="bg-primary w-full mt-7"
+        textStyleClasses="text-white"
+        isLoading={isSubmitting}
+      />
+    </View>
+  );
+  const componentOfSteps: ReactNode[] = [
+    enterEmail,
+    verifyCode,
+    passwordUpdate,
+  ];
   return (
     <PageLayoutWrapper>
       <View className="w-full h-full justify-center items-center p-4 ">
