@@ -38,6 +38,7 @@ import useGlobalStaffState from "@/hooks/states/useGlobalStaffState";
 
 const StaffManagement = () => {
   const globalStaffState = useGlobalStaffState();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const toast = useToast();
   const { query, setQuery } = globalStaffState;
   const staffsFetch = useFetchWithRQWithFetchFunc(
@@ -66,10 +67,34 @@ const StaffManagement = () => {
     }, [])
   );
 
-  const onChangeStaffStatusSubmit = (
+  const onChangeStaffStatusSubmit = async (
     staff: ShopDeliveryStaffModel,
     onSuccess: () => void
-  ) => {};
+  ) => {
+    setIsSubmitting(true);
+    await apiClient
+      .put(`shop-owner/delivery-staff/status`, {
+        id: staff.id,
+        isConfirm: true,
+        status: staff.shopDeliveryStaffStatus,
+      })
+      .then((response) => {
+        const { value, isSuccess, isWarning, error } = response.data;
+        if (isSuccess) {
+          onSuccess();
+        }
+      })
+      .catch((error: any) => {
+        Alert.alert(
+          "Oops!",
+          error?.response?.data?.error?.message ||
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+        );
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
   const getStaffStatusComponent = (staff: ShopDeliveryStaffModel) => {
     let label = "";
     let bgColor = "";
@@ -124,13 +149,10 @@ const StaffManagement = () => {
                   { ...staff, shopDeliveryStaffStatus: 3 },
                   () => {
                     staffsFetch.refetch();
-                    toast.show(
-                      `Đã chuyển khóa tài khoản của ${staff.fullName} `,
-                      {
-                        type: "info",
-                        duration: 2000,
-                      }
-                    );
+                    toast.show(`Đã khóa tài khoản ${staff.fullName} `, {
+                      type: "info",
+                      duration: 2000,
+                    });
                   }
                 );
               },
@@ -150,16 +172,19 @@ const StaffManagement = () => {
             : `Xác nhận mở khóa tài khoản ${staff.fullName}?`,
           [
             {
-              text: "Xác nhận",
+              text: `Xác nhận`,
               onPress: async () => {
                 onChangeStaffStatusSubmit(
                   { ...staff, shopDeliveryStaffStatus: 1 },
                   () => {
                     staffsFetch.refetch();
-                    toast.show(`Xác nhận`, {
-                      type: "info",
-                      duration: 2000,
-                    });
+                    toast.show(
+                      `Đã chuyển trạng thái của ${staff.fullName} sang trạng thái hoạt động`,
+                      {
+                        type: "info",
+                        duration: 2000,
+                      }
+                    );
                   }
                 );
               },
@@ -173,7 +198,7 @@ const StaffManagement = () => {
     }
     return (
       <View
-        className="flex-row items-center rounded-lg "
+        className="flex-row items-center rounded-lg w-28"
         style={{ backgroundColor: "#fefce8" }}
       >
         <View className="scale-50 h-6 items-center justify-center ml-[-4px]">
