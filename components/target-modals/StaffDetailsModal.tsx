@@ -143,6 +143,34 @@ const StaffDetailsModal = ({
         setIsSubmitting(false);
       });
   };
+  const onDelete = async (
+    staff: ShopDeliveryStaffModel,
+    onSuccess: () => void
+  ) => {
+    setIsSubmitting(true);
+    await apiClient
+      .put(`shop-owner/delivery-staff/delete`, {
+        id: staff.id,
+        isConfirm: true,
+      })
+      .then((response) => {
+        const { value, isSuccess, isWarning, error } = response.data;
+        if (isSuccess) {
+          onSuccess();
+          globalStaffState.onAfterCompleted();
+        }
+      })
+      .catch((error: any) => {
+        Alert.alert(
+          "Oops!",
+          error?.response?.data?.error?.message ||
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+        );
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
   const getStaffStatusComponent = (
     staff: ShopDeliveryStaffModel,
     isCreatedMode: boolean = false
@@ -391,6 +419,36 @@ const StaffDetailsModal = ({
           // }
           textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
         />
+        <CustomButton
+          title="Xóa nhân viên này"
+          isLoading={isSubmitting}
+          handlePress={() => {
+            Alert.alert(`Xác nhận`, `Bạn chắc chắn muốn xóa nhân viên này`, [
+              {
+                text: `Xác nhận`,
+                onPress: async () => {
+                  onDelete(globalStaffState.model, () => {
+                    globalStaffState.onAfterCompleted();
+                    globalStaffState.setIsDetailsModalVisible(false);
+                    Toast.show({
+                      type: "success",
+                      text1: "Hoàn tất",
+                      text2: `Đã xóa tài khoản ${globalStaffState.model.fullName}.`,
+                    });
+                  });
+                },
+              },
+              {
+                text: "Hủy",
+              },
+            ]);
+          }}
+          containerStyleClasses="mt-2 w-full h-[36px] px-4 bg-transparent border-[1px] border-gray-400 font-psemibold z-10"
+          // iconLeft={
+          //   <Ionicons name="add-circle-outline" size={21} color="white" />
+          // }
+          textStyleClasses="text-[14px] text-gray-900 ml-1 text-white text-gray-500"
+        />
       </View>
     </View>
   );
@@ -558,7 +616,7 @@ const StaffDetailsModal = ({
           <Text className="font-bold text-[12.8px]">Tên nhân viên</Text>
           <View className="relative">
             <TextInput
-              className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
+              className="border border-gray-300 mt-1 px-3 p-2 rounded text-[15px]"
               value={model.fullName}
               onChangeText={(text) => {
                 handleChange("fullName", text);
@@ -654,12 +712,6 @@ const StaffDetailsModal = ({
       <View className="flex-row items-start justify-between">
         <View>
           <Text className={`${titleStyleClasses}`}>Tạo mới nhân viên</Text>
-          <Text className="text-[9.5px] italic text-gray-500 mt-[4px]">
-            Cập nhật gần nhất{" "}
-            {dayjs(globalStaffState.model.createdDate)
-              .local()
-              .format("HH:mm DD/MM/YYYY")}{" "}
-          </Text>
         </View>
 
         {getStaffStatusComponent(model, true)}
