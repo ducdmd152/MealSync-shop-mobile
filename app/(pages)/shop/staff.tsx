@@ -289,6 +289,7 @@ const StaffManagement = () => {
           {staffsFetch.data?.value.items.map((staff, index) => (
             <TouchableOpacity
               onPress={() => {
+                globalStaffState.setIsDetailsMode(true);
                 globalStaffState.setModel(staff);
                 globalStaffState.setIsDetailsModalVisible(true);
               }}

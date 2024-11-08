@@ -54,6 +54,9 @@ const StaffDetailsModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const globalStaffState = useGlobalStaffState();
+  const [editModel, setEditModel] = useState<ShopDeliveryStaffModel>(
+    {} as ShopDeliveryStaffModel
+  );
 
   const getDetails = async () => {
     setIsLoading(true);
@@ -80,7 +83,7 @@ const StaffDetailsModal = ({
 
   useEffect(() => {
     if (globalStaffState.isDetailsModalVisible) getDetails();
-  }, [globalStaffState.isDetailsModalVisible]);
+  }, [globalStaffState.isDetailsModalVisible, globalStaffState.isDetailsMode]);
   useFocusEffect(React.useCallback(() => {}, []));
   const onChangeStaffStatusSubmit = async (
     staff: ShopDeliveryStaffModel,
@@ -240,6 +243,141 @@ const StaffDetailsModal = ({
       </View>
     );
   };
+  const details = (
+    <View>
+      <View className="flex-row items-center justify-between">
+        <View>
+          <Text className={`${titleStyleClasses}`}>Thông tin nhân viên</Text>
+          <Text className="text-[11px] italic text-gray-500 mt-[4px]">
+            Đã thêm vào{" "}
+            {dayjs(globalStaffState.model.createdDate)
+              .local()
+              .format("HH:mm DD/MM/YYYY")}{" "}
+          </Text>
+        </View>
+
+        {getStaffStatusComponent(globalStaffState.model)}
+      </View>
+      <View className="gap-y-2 mt-1">
+        <View className="mb-2">
+          <Text className="font-bold text-[12.8px]">Tên nhân viên</Text>
+          <View className="relative">
+            <TextInput
+              className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
+              value={globalStaffState.model.fullName}
+              onChangeText={(text) => {}}
+              keyboardType="numeric"
+              readOnly
+              placeholderTextColor="#888"
+            />
+            {/* <Text className="absolute right-3 top-4 text-[12.8px] italic">
+        đồng
+      </Text> */}
+          </View>
+        </View>
+        <View className="mb-2">
+          <Text className="font-bold text-[12.8px]">Email</Text>
+          <TextInput
+            className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
+            value={globalStaffState.model.email}
+            readOnly
+            placeholderTextColor="#888"
+          />
+        </View>
+        <View className="mb-2">
+          <Text className="font-bold text-[12.8px]">Số điện thoại</Text>
+          <TextInput
+            className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
+            value={globalStaffState.model.phoneNumber}
+            readOnly
+            placeholderTextColor="#888"
+            placeholder="Chưa có thông tin"
+          />
+        </View>
+
+        <CustomButton
+          title="Chỉnh sửa thông tin"
+          handlePress={() => {
+            globalStaffState.setIsDetailsMode(false);
+            setEditModel(globalStaffState.model);
+          }}
+          containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-psemibold z-10"
+          // iconLeft={
+          //   <Ionicons name="add-circle-outline" size={21} color="white" />
+          // }
+          textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
+        />
+      </View>
+    </View>
+  );
+  const editation = (
+    <View>
+      <View className="flex-row items-center justify-between">
+        <View>
+          <Text className={`${titleStyleClasses}`}>Cập nhật thông tin</Text>
+        </View>
+
+        {getStaffStatusComponent(globalStaffState.model)}
+      </View>
+      <View className="gap-y-2 mt-1">
+        <View className="mb-2">
+          <Text className="font-bold text-[12.8px]">Tên nhân viên</Text>
+          <View className="relative">
+            <TextInput
+              className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
+              value={editModel.fullName}
+              onChangeText={(text) => {
+                setEditModel({ ...editModel, fullName: text });
+              }}
+              placeholder="Nhập tên nhân viên"
+              placeholderTextColor="#888"
+            />
+            {/* <Text className="absolute right-3 top-4 text-[12.8px] italic">
+        đồng
+      </Text> */}
+          </View>
+        </View>
+        <View className="mb-2">
+          <Text className="font-bold text-[12.8px]">Email</Text>
+          <TextInput
+            className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
+            value={editModel.email}
+            onChangeText={(text) => {
+              setEditModel({ ...editModel, email: text });
+            }}
+            keyboardType="email-address"
+            placeholder="Nhập email nhân viên"
+            placeholderTextColor="#888"
+          />
+        </View>
+        <View className="mb-2">
+          <Text className="font-bold text-[12.8px]">Số điện thoại</Text>
+          <TextInput
+            className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
+            value={editModel.phoneNumber}
+            onChangeText={(text) => {
+              setEditModel({ ...editModel, phoneNumber: text });
+            }}
+            placeholder="Nhập số điện thoại"
+            placeholderTextColor="#888"
+          />
+        </View>
+
+        <CustomButton
+          title="Cập nhật thông tin"
+          isLoading={isSubmitting}
+          handlePress={() => {
+            globalStaffState.setIsDetailsMode(true);
+          }}
+          containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-psemibold z-10"
+          // iconLeft={
+          //   <Ionicons name="add-circle-outline" size={21} color="white" />
+          // }
+          textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
+        />
+      </View>
+    </View>
+  );
   return (
     <Modal
       isVisible={globalStaffState.isDetailsModalVisible}
@@ -250,69 +388,7 @@ const StaffDetailsModal = ({
           <View
             className={`bg-white w-80 p-4 rounded-lg  ${containerStyleClasses}`}
           >
-            <View className="flex-row items-center justify-between">
-              <View>
-                <Text className={`${titleStyleClasses}`}>
-                  Thông tin nhân viên
-                </Text>
-                <Text className="text-[11px] italic text-gray-500 mt-[4px]">
-                  Đã thêm vào{" "}
-                  {dayjs(globalStaffState.model.createdDate)
-                    .local()
-                    .format("HH:mm DD/MM/YYYY")}{" "}
-                </Text>
-              </View>
-
-              {getStaffStatusComponent(globalStaffState.model)}
-            </View>
-            <View className="gap-y-2 mt-1">
-              <View className="mb-2">
-                <Text className="font-bold text-[12.8px]">Tên nhân viên</Text>
-                <View className="relative">
-                  <TextInput
-                    className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
-                    value={globalStaffState.model.fullName}
-                    onChangeText={(text) => {}}
-                    keyboardType="numeric"
-                    readOnly
-                    placeholderTextColor="#888"
-                  />
-                  {/* <Text className="absolute right-3 top-4 text-[12.8px] italic">
-                    đồng
-                  </Text> */}
-                </View>
-              </View>
-              <View className="mb-2">
-                <Text className="font-bold text-[12.8px]">Email</Text>
-                <TextInput
-                  className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
-                  value={globalStaffState.model.email}
-                  readOnly
-                  placeholderTextColor="#888"
-                />
-              </View>
-              <View className="mb-2">
-                <Text className="font-bold text-[12.8px]">Số điện thoại</Text>
-                <TextInput
-                  className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
-                  value={globalStaffState.model.phoneNumber}
-                  readOnly
-                  placeholderTextColor="#888"
-                  placeholder="Chưa có thông tin"
-                />
-              </View>
-
-              <CustomButton
-                title="Chỉnh sửa thông tin"
-                isLoading={isLoading}
-                handlePress={() => {}}
-                containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-psemibold z-10"
-                // iconLeft={
-                //   <Ionicons name="add-circle-outline" size={21} color="white" />
-                // }
-                textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
-              />
-            </View>
+            {globalStaffState.isDetailsMode ? details : editation}
           </View>
         </TouchableWithoutFeedback>
       </View>

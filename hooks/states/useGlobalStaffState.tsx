@@ -14,6 +14,8 @@ interface GlobalStaffState {
   setQuery: (param: Query) => void;
   model: ShopDeliveryStaffModel;
   setModel: (param: ShopDeliveryStaffModel) => void;
+  isDetailsMode: boolean;
+  setIsDetailsMode: (param: boolean) => void;
 }
 
 const useGlobalStaffState = create<GlobalStaffState>((set) => ({
@@ -26,6 +28,8 @@ const useGlobalStaffState = create<GlobalStaffState>((set) => ({
   setQuery: (param: Query) => set({ query: param }),
   model: {} as ShopDeliveryStaffModel,
   setModel: (param: ShopDeliveryStaffModel) => set({ model: param }),
+  isDetailsMode: true,
+  setIsDetailsMode: (param: boolean) => set({ isDetailsMode: param }),
 }));
 
 export default useGlobalStaffState;
