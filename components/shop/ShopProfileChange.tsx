@@ -17,7 +17,7 @@ import { Banner, Button } from "react-native-paper";
 import { unSelectLocation } from "@/hooks/states/useMapLocationState";
 import { useFocusEffect } from "expo-router";
 import { useToast } from "react-native-toast-notifications";
-import { TextInput } from "react-native-gesture-handler";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
 import SampleCustomCheckbox from "../custom/SampleCustomCheckbox";
 import CONSTANTS from "@/constants/data";
 interface ShopProfileUpdateModel {
@@ -52,7 +52,7 @@ const emptyShopProfileUpdate: ShopProfileUpdateModel = {
   },
 };
 
-const ShopProfileChange = () => {
+const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
   const toast = useToast();
   const shopProfile = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO,
@@ -68,7 +68,15 @@ const ShopProfileChange = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isAnyRequestSubmit = useRef(false);
   const [isEditMode, setIsEditMode] = useState(false);
-
+  const [isUnderKeywodFocusing, setIsUnderKeywodFocusing] = useState(false);
+  useEffect(() => {
+    // console.log(isUnderKeywodFocusing);
+    if (isUnderKeywodFocusing && scrollViewRef?.current) {
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [isUnderKeywodFocusing, scrollViewRef]);
   const getModelFromFetch = () => {
     return {
       shopName: shopProfile.data?.value.name || "",
@@ -126,7 +134,9 @@ const ShopProfileChange = () => {
     }
   };
   return (
-    <View className="w-full px-4 py-2 ">
+    <View
+      className={`w-full px-4 py-2 ${isUnderKeywodFocusing && "pb-[160px]"}`}
+    >
       {!isEditMode && (
         <TouchableOpacity
           className="mt-[-20px] "
@@ -288,6 +298,8 @@ const ShopProfileChange = () => {
         otherInputStyleClasses="h-12 border-gray-100"
         readOnly={!isEditMode}
         className="mb-1"
+        onFocus={() => setIsUnderKeywodFocusing(true)}
+        onBlur={() => setIsUnderKeywodFocusing(false)}
       />
       {errors.shopOwnerName && (
         <Text className="text-red-500 text-xs mt-1">

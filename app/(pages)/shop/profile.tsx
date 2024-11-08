@@ -1,15 +1,18 @@
 import { View, Text, SafeAreaView, ScrollView } from "react-native";
-import React from "react";
+import React, { useRef, useState } from "react";
 import AvatarChange from "@/components/common/AvatarChange";
 import ShopProfileChange from "@/components/shop/ShopProfileChange";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 
 const Profile = () => {
+  const scrollViewRef = useRef<ScrollView | null>(null);
   return (
-    <PageLayoutWrapper>
-      <AvatarChange />
-      <ShopProfileChange />
-    </PageLayoutWrapper>
+    <SafeAreaView className="flex-1 bg-white relative">
+      <ScrollView ref={scrollViewRef}>
+        <AvatarChange />
+        <ShopProfileChange scrollViewRef={scrollViewRef} />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
