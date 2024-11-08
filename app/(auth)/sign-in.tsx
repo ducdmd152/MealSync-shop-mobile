@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import CustomButton from "@/components/custom/CustomButton";
 import FormFieldCustom from "@/components/custom/FormFieldCustom";
 import { images } from "@/constants";
-import { Link, router, useNavigation } from "expo-router";
+import { Link, router, useFocusEffect, useNavigation } from "expo-router";
 import React, { useState } from "react";
 import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 import apiClient from "@/services/api-services/api-client";
@@ -71,6 +71,12 @@ const SignIn = () => {
       }
     },
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      formik.resetForm();
+    }, [])
+  );
 
   return (
     <SafeAreaView className="h-full">
