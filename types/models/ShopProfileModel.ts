@@ -10,6 +10,10 @@ export interface ShopDormitoryModel {
   name: string;
 }
 
+export enum Dormitories {
+  A = 1,
+  B = 2,
+}
 export interface OperatingSlotModel {
   id: number;
   title: string;
@@ -23,6 +27,7 @@ export interface OperatingSlotModel {
 export interface ShopProfileGetModel {
   id: number;
   name: string;
+  description: string;
   shopOwnerName: string;
   logoUrl: string;
   bannerUrl: string;

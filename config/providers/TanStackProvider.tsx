@@ -9,8 +9,8 @@ const TanStackProvider = ({ children }: { children: React.ReactNode }) => {
         defaultOptions: {
           queries: {
             retry: 2, // 2 more times from the first request fail
-            gcTime: 5 * 60 * 1_000, // time remain before a inactive query that be removed from caching
-            staleTime: 2 * 60 * 1_000, // how long the data is considered fresh
+            gcTime: 10 * 60 * 1_000, // time remain before a inactive query that be removed from caching
+            staleTime: 5 * 60 * 1_000, // how long the data is considered fresh
             refetchOnWindowFocus: false,
             refetchOnReconnect: false,
             refetchOnMount: false,

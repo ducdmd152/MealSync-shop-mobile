@@ -1,5 +1,11 @@
 import { Colors } from "@/constants/Colors";
 import CONSTANTS from "@/constants/data";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import { ShopProfileGetModel } from "@/types/models/ShopProfileModel";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
@@ -23,9 +29,17 @@ const styles = StyleSheet.create({
 interface AvatarChangeProps {}
 
 const AvatarChange: React.FC<AvatarChangeProps> = () => {
+  const shopProfile = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO,
+    async (): Promise<FetchValueResponse<ShopProfileGetModel>> =>
+      apiClient
+        .get(endpoints.SHOP_PROFILE_FULL_INFO)
+        .then((response) => response.data),
+    []
+  );
   const [user, setUser] = useState({
     avatarUrl: CONSTANTS.url.shopAvatarSample,
-    fullname: "Tiệm ăn tháng năm",
+    fullname: shopProfile.data?.value.name || "--------------",
   });
   const [isChangeMode, setIsChangeMode] = useState(false);
   const [avatar, setAvatar] = useState(CONSTANTS.url.avatar);
