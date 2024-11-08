@@ -6,7 +6,7 @@ import { images } from "@/constants";
 import CustomButton from "@/components/custom/CustomButton";
 import CONSTANTS from "@/constants/data";
 import apiClient from "@/services/api-services/api-client";
-import { router, useFocusEffect } from "expo-router";
+import { Link, router, useFocusEffect } from "expo-router";
 import OTPTextView from "react-native-otp-textinput";
 
 const ForgetPassword = () => {
@@ -17,6 +17,32 @@ const ForgetPassword = () => {
     password: "",
     confirmPassword: "",
   });
+  const requestSendCode = () => {
+    setIsSubmitting(true);
+    apiClient
+      .post("auth/send-code", {
+        email: data.email.trim(),
+        verifyType: 3,
+      })
+      .then(() => {
+        setData({ ...data, email: data.email.toLowerCase() });
+        setStep(2);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 400) {
+          Alert.alert("Oops!", "Không tìm thấy tài khoản với email tương ứng");
+        } else {
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
   const enterEmail = (
     <View className="w-full p-4 pb-16">
       <FormFieldCustom
@@ -37,33 +63,7 @@ const ForgetPassword = () => {
             Alert.alert("Vui lòng nhập email hợp lệ!");
             return;
           }
-          setIsSubmitting(true);
-          apiClient
-            .post("auth/send-code", {
-              email: data.email.trim(),
-              verifyType: 3,
-            })
-            .then(() => {
-              setData({ ...data, email: data.email.toLowerCase() });
-              setStep(2);
-            })
-            .catch((error) => {
-              if (error.response && error.response.status === 400) {
-                Alert.alert(
-                  "Oops!",
-                  "Không tìm thấy tài khoản với email tương ứng"
-                );
-              } else {
-                Alert.alert(
-                  "Oops!",
-                  error?.response?.data?.error?.message ||
-                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                );
-              }
-            })
-            .finally(() => {
-              setIsSubmitting(false);
-            });
+          requestSendCode();
         }}
         isDisabled={!CONSTANTS.REGEX.email.test(data.email.trim())}
         containerStyleClasses="bg-primary w-full mt-7"
@@ -108,34 +108,8 @@ const ForgetPassword = () => {
         }}
         isSubmitting={isSubmitting}
         onResendCode={() => {
-          setIsSubmitting(true);
-          apiClient
-            .post("auth/send-code", {
-              email: data.email.trim(),
-              verify: 3,
-            })
-            .then(() => {
-              setData({ ...data, email: data.email.toLowerCase() });
-              setStep(2);
-            })
-            .catch((error) => {
-              if (error.response && error.response.status === 400) {
-                Alert.alert(
-                  "Oops!",
-                  "Không tìm thấy tài khoản với email tương ứng"
-                );
-                router.replace("/sign-in");
-              } else {
-                Alert.alert(
-                  "Oops!",
-                  error?.response?.data?.error?.message ||
-                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                );
-              }
-            })
-            .finally(() => {
-              setIsSubmitting(false);
-            });
+          console.log("Email submit: ", data.email.trim());
+          requestSendCode();
         }}
         limit={2 * 60}
         email={data.email}
@@ -156,6 +130,16 @@ const ForgetPassword = () => {
         </Text>
         <View className="w-full justify-center items-center shink-0">
           {componentOfSteps[step - 1]}
+        </View>
+        <View className="justify-center items-center pt-2 gap-2 mt-2">
+          <Text className="text-lg text-black font-regular text-center">
+            <Link
+              href="/sign-in"
+              className="text-white text-primary font-semibold"
+            >
+              Quay về đăng nhập
+            </Link>
+          </Text>
         </View>
       </View>
     </PageLayoutWrapper>
