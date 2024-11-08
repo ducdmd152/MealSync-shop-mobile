@@ -380,22 +380,22 @@ const StaffDetailsModal = ({
     let tempErrors: any = {};
     if (model.fullName.length < 4) {
       // console.log(withdrawal.amount, withdrawal.amount < 50000);
-      tempErrors.amount = "Vui lòng nhập tên từ 4 kí tự trở lên.";
+      tempErrors.fullName = "Vui lòng nhập tên từ 4 kí tự trở lên.";
     }
     if (model.fullName.length == 0) {
-      tempErrors.amount = "Vui lòng nhập tên nhân viên.";
+      tempErrors.fullName = "Vui lòng nhập tên nhân viên.";
     }
     if (!CONSTANTS.REGEX.email.test(model.email)) {
-      tempErrors.amount = "Vui lòng email hợp lệ.";
+      tempErrors.email = "Vui lòng email hợp lệ.";
     }
     if (model.email.length == 0) {
-      tempErrors.amount = "Vui lòng email nhân viên.";
+      tempErrors.email = "Vui lòng email nhân viên.";
     }
     if (!CONSTANTS.REGEX.phone.test(model.phoneNumber)) {
-      tempErrors.amount = "Vui lòng nhập số điện thoại hợp lệ.";
+      tempErrors.phoneNumber = "Vui lòng nhập số điện thoại hợp lệ.";
     }
     if (model.phoneNumber.length == 0) {
-      tempErrors.amount = "Vui lòng nhập số điện thoại nhân viên.";
+      tempErrors.phoneNumber = "Vui lòng nhập số điện thoại nhân viên.";
     }
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -711,7 +711,7 @@ const StaffDetailsModal = ({
         </View>
 
         <CustomButton
-          title="Cập nhật thông tin"
+          title="Thêm mới"
           isLoading={isSubmitting}
           handlePress={() => {
             handleSubmit(model);
