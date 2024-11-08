@@ -31,6 +31,7 @@ const ForgetPassword = () => {
         otherStyleClasses="mt-7"
       />
       <CustomButton
+        title="Tiếp tục"
         handlePress={() => {
           if (!CONSTANTS.REGEX.email.test(data.email.trim())) {
             Alert.alert("Vui lòng nhập email hợp lệ!");
