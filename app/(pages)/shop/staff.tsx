@@ -34,7 +34,9 @@ import { Searchbar, Switch } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
 import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
-import useGlobalStaffState from "@/hooks/states/useGlobalStaffState";
+import useGlobalStaffState, {
+  StaffModalAction,
+} from "@/hooks/states/useGlobalStaffState";
 
 const StaffManagement = () => {
   const globalStaffState = useGlobalStaffState();
@@ -289,7 +291,9 @@ const StaffManagement = () => {
           {staffsFetch.data?.value.items.map((staff, index) => (
             <TouchableOpacity
               onPress={() => {
-                globalStaffState.setIsDetailsMode(true);
+                globalStaffState.setIsDetailsOrUpdateOrCreateMode(
+                  StaffModalAction.Create
+                );
                 globalStaffState.setModel(staff);
                 globalStaffState.setIsDetailsModalVisible(true);
               }}

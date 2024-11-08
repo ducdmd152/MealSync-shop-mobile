@@ -5,6 +5,11 @@ interface Query {
   searchText: string;
   status: number;
 }
+export enum StaffModalAction {
+  Details = 1,
+  Update = 2,
+  Create = 3,
+}
 interface GlobalStaffState {
   id: number;
   setId: (param: number) => void;
@@ -14,8 +19,8 @@ interface GlobalStaffState {
   setQuery: (param: Query) => void;
   model: ShopDeliveryStaffModel;
   setModel: (param: ShopDeliveryStaffModel) => void;
-  isDetailsMode: boolean;
-  setIsDetailsMode: (param: boolean) => void;
+  isDetailsOrUpdateOrCreateMode: number;
+  setIsDetailsOrUpdateOrCreateMode: (param: number) => void;
 }
 
 const useGlobalStaffState = create<GlobalStaffState>((set) => ({
@@ -28,8 +33,9 @@ const useGlobalStaffState = create<GlobalStaffState>((set) => ({
   setQuery: (param: Query) => set({ query: param }),
   model: {} as ShopDeliveryStaffModel,
   setModel: (param: ShopDeliveryStaffModel) => set({ model: param }),
-  isDetailsMode: true,
-  setIsDetailsMode: (param: boolean) => set({ isDetailsMode: param }),
+  isDetailsOrUpdateOrCreateMode: StaffModalAction.Details,
+  setIsDetailsOrUpdateOrCreateMode: (param: number) =>
+    set({ isDetailsOrUpdateOrCreateMode: param }),
 }));
 
 export default useGlobalStaffState;

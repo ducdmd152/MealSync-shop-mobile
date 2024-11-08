@@ -36,7 +36,9 @@ import {
   ShopDeliveryStaffStatus,
 } from "@/types/models/StaffInfoModel";
 import { Switch } from "react-native-paper";
-import useGlobalStaffState from "@/hooks/states/useGlobalStaffState";
+import useGlobalStaffState, {
+  StaffModalAction,
+} from "@/hooks/states/useGlobalStaffState";
 import dayjs from "dayjs";
 import Toast from "react-native-toast-message";
 interface Props {
@@ -57,7 +59,7 @@ const StaffDetailsModal = ({
   const isAnyRequestSubmit = useRef(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const globalStaffState = useGlobalStaffState();
-  const [editModel, setEditModel] = useState<ShopDeliveryStaffModel>(
+  const [model, setModel] = useState<ShopDeliveryStaffModel>(
     {} as ShopDeliveryStaffModel
   );
 
@@ -86,9 +88,14 @@ const StaffDetailsModal = ({
 
   useEffect(() => {
     if (globalStaffState.isDetailsModalVisible) getDetails();
-    if (globalStaffState.isDetailsMode == false)
+    if (
+      globalStaffState.isDetailsOrUpdateOrCreateMode != StaffModalAction.Details
+    )
       isAnyRequestSubmit.current = false;
-  }, [globalStaffState.isDetailsModalVisible, globalStaffState.isDetailsMode]);
+  }, [
+    globalStaffState.isDetailsModalVisible,
+    globalStaffState.isDetailsOrUpdateOrCreateMode,
+  ]);
   useFocusEffect(React.useCallback(() => {}, []));
   const onChangeStaffStatusSubmit = async (
     staff: ShopDeliveryStaffModel,
@@ -304,8 +311,10 @@ const StaffDetailsModal = ({
         <CustomButton
           title="Chỉnh sửa thông tin"
           handlePress={() => {
-            globalStaffState.setIsDetailsMode(false);
-            setEditModel(globalStaffState.model);
+            globalStaffState.setIsDetailsOrUpdateOrCreateMode(
+              StaffModalAction.Update
+            );
+            setModel(globalStaffState.model);
           }}
           containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-psemibold z-10"
           // iconLeft={
@@ -350,13 +359,13 @@ const StaffDetailsModal = ({
 
     if (isAnyRequestSubmit.current) {
       validate({
-        ...editModel,
+        ...model,
         [name]: newValue,
       });
     }
 
-    setEditModel({
-      ...editModel,
+    setModel({
+      ...model,
       [name]: newValue,
     });
     // console.log({
@@ -364,57 +373,99 @@ const StaffDetailsModal = ({
     //   [name]: newValue,
     // });
   };
-  const handleSubmit = (editModel: ShopDeliveryStaffModel) => {
+  const handleSubmit = (model: ShopDeliveryStaffModel) => {
     isAnyRequestSubmit.current = true;
-    if (!validate(editModel)) {
+    if (!validate(model)) {
       console.log(errors);
       Alert.alert("Oops!", "Vui lòng hoàn thành thông tin hợp lệ");
       return;
     }
 
     setIsSubmitting(true);
-    apiClient
-      .put("shop-owner/delivery-staff/info", {
-        ...editModel,
-        gender: editModel.genders,
-        status: editModel.shopDeliveryStaffStatus,
-      })
-      .then((res) => {
-        let result = res.data as ValueResponse<ShopDeliveryStaffModel>;
+    if (
+      globalStaffState.isDetailsOrUpdateOrCreateMode == StaffModalAction.Create
+    )
+      apiClient
+        .post("shop-owner/delivery-staff/create", {
+          ...model,
+          gender: model.genders,
+          password: "123456",
+        })
+        .then((res) => {
+          let result = res.data as ValueResponse<ShopDeliveryStaffModel>;
 
-        if (result.isSuccess) {
-          globalStaffState.setModel({
-            ...editModel,
-            ...result.value,
-          });
-          globalStaffState.setIsDetailsMode(true);
-          Toast.show({
-            type: "success",
-            text1: "Hoàn tất",
-            text2: "Cập nhật thông tin nhân viên thành công",
-            // time: 15000
-          });
-          // toast.show(`Cập nhật thông tin thành công`, {
-          //   type: "success",
-          //   duration: 1500,
-          // });
-        }
-      })
-      .catch((error: any) => {
-        console.log(
-          "error?.response?.data: ",
-          editModel,
-          error?.response?.data
-        );
-        Alert.alert(
-          "Oops!",
-          error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-        );
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+          if (result.isSuccess) {
+            globalStaffState.setModel({
+              ...model,
+              ...result.value,
+            });
+            globalStaffState.setIsDetailsOrUpdateOrCreateMode(
+              StaffModalAction.Details
+            );
+            Toast.show({
+              type: "success",
+              text1: "Hoàn tất",
+              text2: `Thêm nhân viên ${model.fullName} thành công.`,
+              // time: 15000
+            });
+            // toast.show(`Cập nhật thông tin thành công`, {
+            //   type: "success",
+            //   duration: 1500,
+            // });
+          }
+        })
+        .catch((error: any) => {
+          console.log("error?.response?.data: ", model, error?.response?.data);
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        })
+        .finally(() => {
+          setIsSubmitting(false);
+        });
+    else
+      apiClient
+        .put("shop-owner/delivery-staff/info", {
+          ...model,
+          gender: model.genders,
+          status: model.shopDeliveryStaffStatus,
+        })
+        .then((res) => {
+          let result = res.data as ValueResponse<ShopDeliveryStaffModel>;
+
+          if (result.isSuccess) {
+            globalStaffState.setModel({
+              ...model,
+              ...result.value,
+            });
+            globalStaffState.setIsDetailsOrUpdateOrCreateMode(
+              StaffModalAction.Details
+            );
+            Toast.show({
+              type: "success",
+              text1: "Hoàn tất",
+              text2: "Cập nhật thông tin nhân viên thành công",
+              // time: 15000
+            });
+            // toast.show(`Cập nhật thông tin thành công`, {
+            //   type: "success",
+            //   duration: 1500,
+            // });
+          }
+        })
+        .catch((error: any) => {
+          console.log("error?.response?.data: ", model, error?.response?.data);
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        })
+        .finally(() => {
+          setIsSubmitting(false);
+        });
   };
   const editation = (
     <View>
@@ -437,13 +488,16 @@ const StaffDetailsModal = ({
           <View className="relative">
             <TextInput
               className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
-              value={editModel.fullName}
+              value={model.fullName}
               onChangeText={(text) => {
                 handleChange("fullName", text);
               }}
               placeholder="Nhập tên nhân viên"
               placeholderTextColor="#888"
-              readOnly={globalStaffState.isDetailsMode}
+              readOnly={
+                globalStaffState.isDetailsOrUpdateOrCreateMode ==
+                StaffModalAction.Details
+              }
             />
             {errors.fullName && (
               <Text className="text-red-500 text-xs mt-1">
@@ -456,14 +510,17 @@ const StaffDetailsModal = ({
           <Text className="font-bold text-[12.8px]">Email</Text>
           <TextInput
             className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
-            value={editModel.email}
+            value={model.email}
             onChangeText={(text) => {
               handleChange("email", text);
             }}
             keyboardType="email-address"
             placeholder="Nhập email nhân viên"
             placeholderTextColor="#888"
-            readOnly={globalStaffState.isDetailsMode}
+            readOnly={
+              globalStaffState.isDetailsOrUpdateOrCreateMode ==
+              StaffModalAction.Details
+            }
           />
           {errors.email && (
             <Text className="text-red-500 text-xs mt-1">{errors.email}</Text>
@@ -473,14 +530,17 @@ const StaffDetailsModal = ({
           <Text className="font-bold text-[12.8px]">Số điện thoại</Text>
           <TextInput
             className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
-            value={editModel.phoneNumber}
+            value={model.phoneNumber}
             onChangeText={(text) => {
               handleChange("phone", text);
             }}
             keyboardType="numeric"
             placeholder="Nhập số điện thoại"
             placeholderTextColor="#888"
-            readOnly={globalStaffState.isDetailsMode}
+            readOnly={
+              globalStaffState.isDetailsOrUpdateOrCreateMode ==
+              StaffModalAction.Details
+            }
           />
           {errors.phoneNumber && (
             <Text className="text-red-500 text-xs mt-1">
@@ -493,7 +553,7 @@ const StaffDetailsModal = ({
           title="Cập nhật thông tin"
           isLoading={isSubmitting}
           handlePress={() => {
-            handleSubmit(editModel);
+            handleSubmit(model);
           }}
           containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-psemibold z-10"
           // iconLeft={
@@ -515,7 +575,9 @@ const StaffDetailsModal = ({
           <View
             className={`bg-white w-80 p-4 rounded-lg  ${containerStyleClasses}`}
           >
-            {globalStaffState.isDetailsMode ? details : editation}
+            {globalStaffState.isDetailsOrUpdateOrCreateMode == 1
+              ? details
+              : editation}
           </View>
         </TouchableWithoutFeedback>
       </View>
