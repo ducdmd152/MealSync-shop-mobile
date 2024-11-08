@@ -18,6 +18,7 @@ import { unSelectLocation } from "@/hooks/states/useMapLocationState";
 import { useFocusEffect } from "expo-router";
 import { useToast } from "react-native-toast-notifications";
 import { TextInput } from "react-native-gesture-handler";
+import SampleCustomCheckbox from "../custom/SampleCustomCheckbox";
 interface ShopProfileUpdateModel {
   shopName: string;
   shopOwnerName: string;
@@ -172,28 +173,47 @@ const ShopProfileChange = () => {
         <Text className="text-base text-gray-500 font-medium">
           Khu vực bán hàng
         </Text>
+
         <View className="flex-row gap-x-8 ml-[2px]">
-          <CustomCheckbox
-            isChecked={model.dormitoryIds.includes(Dormitories.A)}
-            handlePress={() => {
-              setModel({
-                ...model,
-                dormitoryIds: [...model.dormitoryIds, Dormitories.A],
-              });
+          <SampleCustomCheckbox
+            readOnly={!isEditMode}
+            checked={model.dormitoryIds.includes(Dormitories.A)}
+            onToggle={() => {
+              if (!model.dormitoryIds.includes(Dormitories.A))
+                setModel({
+                  ...model,
+                  dormitoryIds: model.dormitoryIds.concat([Dormitories.A]),
+                });
+              else
+                setModel({
+                  ...model,
+                  dormitoryIds: model.dormitoryIds.filter(
+                    (item) => item != Dormitories.A
+                  ),
+                });
             }}
             label={<Text className="text-[16px]">Khu A</Text>}
             containerStyleClasses={"w-[100px]"}
           />
-          <CustomCheckbox
-            isChecked={model.dormitoryIds.includes(Dormitories.B)}
-            handlePress={() => {
-              setModel({
-                ...model,
-                dormitoryIds: [...model.dormitoryIds, Dormitories.B],
-              });
+          <SampleCustomCheckbox
+            checked={model.dormitoryIds.includes(Dormitories.B)}
+            onToggle={() => {
+              if (!model.dormitoryIds.includes(Dormitories.B))
+                setModel({
+                  ...model,
+                  dormitoryIds: model.dormitoryIds.concat([Dormitories.B]),
+                });
+              else
+                setModel({
+                  ...model,
+                  dormitoryIds: model.dormitoryIds.filter(
+                    (item) => item != Dormitories.B
+                  ),
+                });
             }}
             label={<Text className="text-[16px]">Khu B</Text>}
             containerStyleClasses={"w-[100px]"}
+            readOnly={!isEditMode}
           />
         </View>
       </View>
