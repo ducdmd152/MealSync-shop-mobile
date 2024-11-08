@@ -6,6 +6,12 @@ const CONSTANTS = {
     SHOP_OWNER: 1 as const,
     SHOP_DELIVERY_STAFF: 2 as const,
   },
+  REGEX: {
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    phone: /^[0-9]{10}$/,
+    password:
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+  },
   url: {
     avatar:
       "https://png.pngtree.com/element_our/20200610/ourmid/pngtree-character-default-avatar-image_2237203.jpg",

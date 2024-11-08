@@ -8,7 +8,7 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import Modal from "react-native-modal";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -52,6 +52,8 @@ const StaffDetailsModal = ({
 }: Props) => {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<any>({});
+  const isAnyRequestSubmit = useRef(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const globalStaffState = useGlobalStaffState();
   const [editModel, setEditModel] = useState<ShopDeliveryStaffModel>(
@@ -83,6 +85,8 @@ const StaffDetailsModal = ({
 
   useEffect(() => {
     if (globalStaffState.isDetailsModalVisible) getDetails();
+    if (globalStaffState.isDetailsMode == false)
+      isAnyRequestSubmit.current = false;
   }, [globalStaffState.isDetailsModalVisible, globalStaffState.isDetailsMode]);
   useFocusEffect(React.useCallback(() => {}, []));
   const onChangeStaffStatusSubmit = async (
@@ -243,9 +247,10 @@ const StaffDetailsModal = ({
       </View>
     );
   };
+
   const details = (
     <View>
-      <View className="flex-row items-center justify-between">
+      <View className="flex-row items-start justify-between">
         <View>
           <Text className={`${titleStyleClasses}`}>Thông tin nhân viên</Text>
           <Text className="text-[11px] italic text-gray-500 mt-[4px]">
@@ -310,11 +315,111 @@ const StaffDetailsModal = ({
       </View>
     </View>
   );
+
+  const validate = (model: ShopDeliveryStaffModel) => {
+    let tempErrors: any = {};
+    if (model.fullName.length < 4) {
+      // console.log(withdrawal.amount, withdrawal.amount < 50000);
+      tempErrors.amount = "Vui lòng nhập tên từ 4 kí tự trở lên.";
+    }
+    if (model.fullName.length == 0) {
+      tempErrors.amount = "Vui lòng nhập tên nhân viên.";
+    }
+    if (!CONSTANTS.REGEX.email.test(model.email)) {
+      tempErrors.amount = "Vui lòng email hợp lệ.";
+    }
+    if (model.email.length == 0) {
+      tempErrors.amount = "Vui lòng email nhân viên.";
+    }
+    if (!CONSTANTS.REGEX.phone.test(model.phoneNumber)) {
+      tempErrors.amount = "Vui lòng nhập số điện thoại hợp lệ.";
+    }
+    if (model.phoneNumber.length == 0) {
+      tempErrors.amount = "Vui lòng nhập số điện thoại nhân viên.";
+    }
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+  const numericFields: string[] = [];
+  const handleChange = (name: string, value: string) => {
+    const newValue = numericFields.includes(name)
+      ? Number(utilService.parseFormattedNumber(value))
+      : value;
+    // console.log(value, utilService.parseFormattedNumber(value), newValue);
+
+    if (isAnyRequestSubmit.current) {
+      validate({
+        ...editModel,
+        [name]: newValue,
+      });
+    }
+
+    setEditModel({
+      ...editModel,
+      [name]: newValue,
+    });
+    // console.log({
+    //   ...promotion,
+    //   [name]: newValue,
+    // });
+  };
+  const handleSubmit = (editModel: ShopDeliveryStaffModel) => {
+    isAnyRequestSubmit.current = true;
+    if (!validate(editModel)) {
+      console.log(errors);
+      Alert.alert("Oops!", "Vui lòng hoàn thành thông tin hợp lệ");
+      return;
+    }
+
+    setIsSubmitting(true);
+    apiClient
+      .put("shop-owner/delivery-staff/info", {
+        ...editModel,
+        gender: editModel.genders,
+        status: editModel.shopDeliveryStaffStatus,
+      })
+      .then((res) => {
+        let result = res.data as ValueResponse<ShopDeliveryStaffModel>;
+
+        if (result.isSuccess) {
+          globalStaffState.setModel({
+            ...editModel,
+            ...result.value,
+          });
+          globalStaffState.setIsDetailsMode(true);
+          toast.show(`Cập nhật thông tin thành công`, {
+            type: "success",
+            duration: 1500,
+          });
+        }
+      })
+      .catch((error: any) => {
+        console.log(
+          "error?.response?.data: ",
+          editModel,
+          error?.response?.data
+        );
+        Alert.alert(
+          "Oops!",
+          error?.response?.data?.error?.message ||
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+        );
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
   const editation = (
     <View>
-      <View className="flex-row items-center justify-between">
+      <View className="flex-row items-start justify-between">
         <View>
           <Text className={`${titleStyleClasses}`}>Cập nhật thông tin</Text>
+          <Text className="text-[9.5px] italic text-gray-500 mt-[4px]">
+            Cập nhật gần nhất{" "}
+            {dayjs(globalStaffState.model.createdDate)
+              .local()
+              .format("HH:mm DD/MM/YYYY")}{" "}
+          </Text>
         </View>
 
         {getStaffStatusComponent(globalStaffState.model)}
@@ -327,14 +432,17 @@ const StaffDetailsModal = ({
               className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
               value={editModel.fullName}
               onChangeText={(text) => {
-                setEditModel({ ...editModel, fullName: text });
+                handleChange("fullName", text);
               }}
               placeholder="Nhập tên nhân viên"
               placeholderTextColor="#888"
+              readOnly={globalStaffState.isDetailsMode}
             />
-            {/* <Text className="absolute right-3 top-4 text-[12.8px] italic">
-        đồng
-      </Text> */}
+            {errors.fullName && (
+              <Text className="text-red-500 text-xs mt-1">
+                {errors.fullName}
+              </Text>
+            )}
           </View>
         </View>
         <View className="mb-2">
@@ -343,12 +451,16 @@ const StaffDetailsModal = ({
             className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
             value={editModel.email}
             onChangeText={(text) => {
-              setEditModel({ ...editModel, email: text });
+              handleChange("email", text);
             }}
             keyboardType="email-address"
             placeholder="Nhập email nhân viên"
             placeholderTextColor="#888"
+            readOnly={globalStaffState.isDetailsMode}
           />
+          {errors.email && (
+            <Text className="text-red-500 text-xs mt-1">{errors.email}</Text>
+          )}
         </View>
         <View className="mb-2">
           <Text className="font-bold text-[12.8px]">Số điện thoại</Text>
@@ -356,18 +468,25 @@ const StaffDetailsModal = ({
             className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
             value={editModel.phoneNumber}
             onChangeText={(text) => {
-              setEditModel({ ...editModel, phoneNumber: text });
+              handleChange("phone", text);
             }}
+            keyboardType="numeric"
             placeholder="Nhập số điện thoại"
             placeholderTextColor="#888"
+            readOnly={globalStaffState.isDetailsMode}
           />
+          {errors.phoneNumber && (
+            <Text className="text-red-500 text-xs mt-1">
+              {errors.phoneNumber}
+            </Text>
+          )}
         </View>
 
         <CustomButton
           title="Cập nhật thông tin"
           isLoading={isSubmitting}
           handlePress={() => {
-            globalStaffState.setIsDetailsMode(true);
+            handleSubmit(editModel);
           }}
           containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-psemibold z-10"
           // iconLeft={
@@ -378,6 +497,7 @@ const StaffDetailsModal = ({
       </View>
     </View>
   );
+
   return (
     <Modal
       isVisible={globalStaffState.isDetailsModalVisible}
