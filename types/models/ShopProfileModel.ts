@@ -31,6 +31,8 @@ export interface ShopProfileGetModel {
   shopOwnerName: string;
   logoUrl: string;
   bannerUrl: string;
+  email: string;
+
   phoneNumber: string;
   status: number;
   isAcceptingOrderNextDay: boolean;

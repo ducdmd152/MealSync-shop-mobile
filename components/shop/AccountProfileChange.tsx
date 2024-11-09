@@ -27,11 +27,8 @@ const ShopProfileChange = () => {
   const [email, setEmail] = useState("--------------");
   useFocusEffect(
     React.useCallback(() => {
-      sessionService.getAuthToken().then((value) => {
-        if (value && utilService.getEmailFromToken(value) != null)
-          setEmail(utilService.getEmailFromToken(value) || "");
-      });
-    }, [])
+      setEmail(shopProfile.data?.value.email || "");
+    }, [shopProfile.data?.value])
   );
   return (
     <View className="w-full px-4 py-2 ">
