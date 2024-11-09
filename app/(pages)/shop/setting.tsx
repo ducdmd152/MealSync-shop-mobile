@@ -580,7 +580,7 @@ const Setting = () => {
                     ? "Đang hoạt động"
                     : !slot.isActive
                     ? "Đã tắt hoạt động"
-                    : "Tạm ngưng nhận hàng hôm nay"}
+                    : "Tạm ngưng nhận đơn hôm nay"}
                 </Text>
                 <View className="scale-50 h-5 items-center justify-center">
                   <Switch
@@ -829,7 +829,7 @@ const Setting = () => {
                   } else {
                     Alert.alert(
                       `Xác nhận`,
-                      `Bạn muốn tạm ngưng nhận đơn hay tạm dừng hoạt động của cửa hàng?`,
+                      `Bạn muốn tạm ngưng nhận đơn hôm nay hay tạm dừng hoạt động của cửa hàng?`,
                       [
                         {
                           text: "Tạm ngưng nhận đơn",
@@ -837,7 +837,7 @@ const Setting = () => {
                             onChangeShopStatusSubmit(2, true, () => {
                               shopProfile.refetch();
                               toast.show(
-                                `Cửa hàng của bạn đã tạm ngưng nhận đơn`,
+                                `Cửa hàng của bạn đã tạm ngưng nhận đơn hôm nay.`,
                                 {
                                   type: "info",
                                   duration: 2000,
