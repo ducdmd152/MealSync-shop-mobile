@@ -4,11 +4,12 @@ import AvatarChange from "@/components/common/AvatarChange";
 import ShopProfileChange from "@/components/shop/ShopProfileChange";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import AccountProfileChange from "@/components/shop/AccountProfileChange";
+import AccountAvatarChange from "@/components/common/AccountAvatarChange";
 
 const Account = () => {
   return (
     <PageLayoutWrapper>
-      <AvatarChange />
+      <AccountAvatarChange />
       <AccountProfileChange />
     </PageLayoutWrapper>
   );

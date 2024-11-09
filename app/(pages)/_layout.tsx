@@ -97,6 +97,14 @@ const PageLayout = () => {
           name="withdrawal/create"
           options={{ headerTitle: "Tạo yêu cầu rút tiền" }}
         />
+        <Stack.Screen
+          name="account/email-update"
+          options={{ headerTitle: "Cập nhật địa chỉ email" }}
+        />
+        <Stack.Screen
+          name="account/password-update"
+          options={{ headerTitle: "Thay đổi mật khẩu" }}
+        />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
     </>

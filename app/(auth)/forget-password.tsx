@@ -151,7 +151,7 @@ const ForgetPassword = () => {
         handleChangeText={(e) => setData({ ...data, password: e })}
         isPassword={true}
         otherStyleClasses="mt-3"
-        className="mb-1"
+        // className="mb-1"
       />
       <FormFieldCustom
         title={"Xác nhận mật khẩu *"}
@@ -160,7 +160,7 @@ const ForgetPassword = () => {
         handleChangeText={(e) => setData({ ...data, confirmPassword: e })}
         isPassword={true}
         otherStyleClasses="mt-3"
-        className="mb-1"
+        // className="mb-1"
       />
       <CustomButton
         title="Cập nhật"

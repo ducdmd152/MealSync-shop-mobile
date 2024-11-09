@@ -193,7 +193,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
         keyboardType="default"
         otherStyleClasses="mt-3"
         otherInputStyleClasses="h-12 border-gray-100 "
-        className="mb-1"
+        // className="mb-1"
       />
       {errors.shopName && (
         <Text className="text-red-500 text-xs mt-1">{errors.shopName}</Text>
@@ -235,7 +235,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
         }}
         otherStyleClasses="mt-3"
         otherInputStyleClasses="h-12 border-gray-100"
-        className="mb-1"
+        // className="mb-1"
         iconRight={
           <TouchableOpacity className="h-[32px] w-[32px] bg-primary rounded-md justify-center items-center relative">
             <Ionicons name="location-outline" size={28} color="white" />
@@ -303,7 +303,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
         otherStyleClasses="mt-3"
         otherInputStyleClasses="h-12 border-gray-100"
         readOnly={!isEditMode}
-        className="mb-1"
+        // className="mb-1"
       />
       {errors.phoneNumber && (
         <Text className="text-red-500 text-xs mt-1">{errors.phoneNumber}</Text>
@@ -321,7 +321,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
         otherStyleClasses="mt-2"
         otherInputStyleClasses="h-12 border-gray-100"
         readOnly={!isEditMode}
-        className="mb-1"
+        // className="mb-1"
         onFocus={() => setIsUnderKeywodFocusing(true)}
         onBlur={() => setIsUnderKeywodFocusing(false)}
       />
