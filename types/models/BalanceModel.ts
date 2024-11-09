@@ -14,6 +14,7 @@ export interface WalletTransaction {
   avaiableAmountBefore: number;
   incomingAmountBefore: number;
   reportingAmountBefore: number;
+  totalAmountAfter: number;
   amount: number;
   type: number;
   description: string;
@@ -31,6 +32,7 @@ export const sampleWalletTransactionList: WalletTransaction[] = [
     avaiableAmountBefore: 254100,
     incomingAmountBefore: 0,
     reportingAmountBefore: 0,
+    totalAmountAfter: 2450000,
     amount: 86336,
     type: 2,
     description: "Tiền từ ví tổng hệ thống chuyển về ví của bạn 86336 VNĐ",
@@ -46,6 +48,7 @@ export const sampleWalletTransactionList: WalletTransaction[] = [
     avaiableAmountBefore: 518016,
     incomingAmountBefore: 0,
     reportingAmountBefore: 0,
+    totalAmountAfter: 2450000,
     amount: 86336,
     type: 1,
     description: "Rút tiền từ ví tổng hệ thống $86336 VNĐ về ví shop id $2",
@@ -61,6 +64,7 @@ export const sampleWalletTransactionList: WalletTransaction[] = [
     avaiableAmountBefore: 254100,
     incomingAmountBefore: 0,
     reportingAmountBefore: 0,
+    totalAmountAfter: 2450000,
     amount: 86336,
     type: 2,
     description: "Tiền từ ví tổng hệ thống chuyển về ví của bạn 86336 VNĐ",
@@ -76,6 +80,7 @@ export const sampleWalletTransactionList: WalletTransaction[] = [
     avaiableAmountBefore: 518016,
     incomingAmountBefore: 0,
     reportingAmountBefore: 0,
+    totalAmountAfter: 2450000,
     amount: 86336,
     type: 1,
     description: "Rút tiền từ ví tổng hệ thống $86336 VNĐ về ví shop id $2",
@@ -91,6 +96,7 @@ export const sampleWalletTransactionList: WalletTransaction[] = [
     avaiableAmountBefore: 254100,
     incomingAmountBefore: 0,
     reportingAmountBefore: 0,
+    totalAmountAfter: 2450000,
     amount: 86336,
     type: 2,
     description: "Tiền từ ví tổng hệ thống chuyển về ví của bạn 86336 VNĐ",
@@ -106,6 +112,7 @@ export const sampleWalletTransactionList: WalletTransaction[] = [
     avaiableAmountBefore: 518016,
     incomingAmountBefore: 0,
     reportingAmountBefore: 0,
+    totalAmountAfter: 2450000,
     amount: 86336,
     type: 1,
     description: "Rút tiền từ ví tổng hệ thống $86336 VNĐ về ví shop id $2",
@@ -121,6 +128,7 @@ export const sampleWalletTransactionList: WalletTransaction[] = [
     avaiableAmountBefore: 254100,
     incomingAmountBefore: 0,
     reportingAmountBefore: 0,
+    totalAmountAfter: 2450000,
     amount: 86336,
     type: 2,
     description: "Tiền từ ví tổng hệ thống chuyển về ví của bạn 86336 VNĐ",
@@ -136,6 +144,7 @@ export const sampleWalletTransactionList: WalletTransaction[] = [
     avaiableAmountBefore: 518016,
     incomingAmountBefore: 0,
     reportingAmountBefore: 0,
+    totalAmountAfter: 2450000,
     amount: 86336,
     type: 1,
     description: "Rút tiền từ ví tổng hệ thống $86336 VNĐ về ví shop id $2",

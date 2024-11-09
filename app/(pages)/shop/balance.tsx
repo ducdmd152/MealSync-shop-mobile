@@ -260,12 +260,7 @@ const Balance = () => {
                       </Text>
                       <Text className="text-[11px] italic text-gray-500 ">
                         Số dư sau giao dịch:{" "}
-                        {utilService.formatPrice(
-                          transaction.avaiableAmountBefore +
-                            transaction.incomingAmountBefore +
-                            transaction.reportingAmountBefore +
-                            transaction.amount
-                        )}
+                        {utilService.formatPrice(transaction.totalAmountAfter)}
                         {"₫"}
                       </Text>
                     </View>
