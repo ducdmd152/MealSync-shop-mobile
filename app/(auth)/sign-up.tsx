@@ -76,8 +76,8 @@ const SignUp = () => {
       return;
     }
 
-    if (form.shopName.length < 6) {
-      Alert.alert("Thông báo", "Tên cửa hàng phải có ít nhất 6 ký tự.");
+    if (form.shopName.length < 8) {
+      Alert.alert("Thông báo", "Tên cửa hàng phải có ít nhất 8 ký tự.");
       return;
     }
 
