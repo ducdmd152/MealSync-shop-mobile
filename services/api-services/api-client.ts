@@ -10,6 +10,7 @@ apiClient.interceptors.request.use(
     // console.log("Request Config:", config);
     if (!config.headers.Authorization) {
       const token = await sessionService.getAuthToken();
+      // console.log("Token:", token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

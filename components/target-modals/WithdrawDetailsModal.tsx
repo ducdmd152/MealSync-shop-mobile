@@ -52,7 +52,7 @@ const WithdrawDetailsModal = ({
     setIsLoading(true);
     try {
       const response = await apiClient.get<ValueResponse<WithdrawalModel>>(
-        `shop-owner/withdrawal//${globalWithdrawalState.withdrawal.id}`
+        `shop-owner/withdrawal/${globalWithdrawalState.withdrawal.id}`
       );
       globalWithdrawalState.setWithdrawal({ ...response.data.value });
     } catch (error: any) {
