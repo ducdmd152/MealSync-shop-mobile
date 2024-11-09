@@ -111,18 +111,36 @@ const EmailUpdate = () => {
     setIsSubmitting(true);
     apiClient
       .put("shop-owner/email/update", {
-        newEmail: data.newEmail,
+        newEmail: data.newEmail.trim().toLowerCase(),
         codeVerifyOldEmail: data.currentEmailCode,
         CodeVerifyNewEmail: data.newEmailCode,
       })
-      .then(() => {
-        // router.back();
-        setStep(1);
+      .then(async (response) => {
+        const data = response.data as {
+          value: {
+            tokenAndInfor: {
+              tokenResponse: {
+                accessToken: string;
+                refreshToken: string;
+              };
+            };
+          };
+        };
+        await sessionService.setAuthToken(
+          data.value.tokenAndInfor.tokenResponse.accessToken
+        );
+        console.log(
+          "accessToken :",
+          data.value.tokenAndInfor.tokenResponse.accessToken
+        );
+        router.back();
+
         Toast.show({
           type: "success",
           text1: "Hoàn tất",
           text2: `Cập nhật email thành công..`,
         });
+        setStep(1);
       })
       .catch((error) => {
         Alert.alert(

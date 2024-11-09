@@ -182,14 +182,14 @@ const PasswordUpdate = () => {
               />
             </View>
           </View>
-          <View className="justify-center items-center pt-2 gap-2 mt-2">
+          {/* <View className="justify-center items-center">
             <Text
               onPress={() => router.back()}
               className="text-lg text-black font-regular text-center text-white text-primary font-semibo"
             >
               Quay về tài khoản
             </Text>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
     </SafeAreaView>
