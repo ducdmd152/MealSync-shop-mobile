@@ -255,7 +255,7 @@ const Statistics = () => {
                 <View className="flex-1 flex-row justify-start items-center gap-2">
                   <Image
                     source={{
-                      uri: CONSTANTS.url.pink,
+                      uri: food.imageUrl || CONSTANTS.url.pink,
                     }}
                     resizeMode="cover"
                     className="h-[32px] w-[40px] rounded-md opacity-85"
