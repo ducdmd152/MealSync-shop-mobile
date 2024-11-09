@@ -49,7 +49,7 @@ const WithdrawDetailsModal = ({
   const globalWithdrawalState = useGlobalWithdrawalState();
 
   const getDetails = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const response = await apiClient.get<ValueResponse<WithdrawalModel>>(
         `shop-owner/withdrawal/${globalWithdrawalState.withdrawal.id}`
@@ -67,7 +67,7 @@ const WithdrawDetailsModal = ({
         );
       }
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
