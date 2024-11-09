@@ -221,25 +221,19 @@ const Shop = () => {
         className="flex-row justify-between items-center gap-x-2 pb-4"
       >
         <View className="flex-row justify-start items-center gap-x-2">
-          {cache.bannerUrl ? (
+          <View className="border-[1px] rounded-full border-[#fff1f2]">
             <Avatar.Image
               size={48}
               source={{
-                uri: cache.bannerUrl,
+                uri: cache.logoUrl || "string",
               }}
             />
-          ) : (
-            <ActivityIndicator animating={true} color="#FCF450" />
-          )}
+          </View>
 
           <View className="gap-y-0">
-            {cache.name ? (
-              <Text className="text-lg italic text-gray text-primary font-medium mb-[-4px]">
-                {cache.name}
-              </Text>
-            ) : (
-              <ActivityIndicator animating={true} color="#FCF450" />
-            )}
+            <Text className="text-lg italic text-gray text-primary font-medium mb-[-4px]">
+              {cache.name || "----------------"}
+            </Text>
 
             <Text className="text-[11px] italic text-gray text-primary font-medium ">
               {getShopStatusDescription(
@@ -379,7 +373,7 @@ const LinkGroup: React.FC<LinkGroupProps> = ({
       <View className="text-gray-700">
         {data.map((item, index) => (
           <TouchableOpacity
-            key={index}
+            key={item.text}
             onPress={() => item.handlePress()}
             className="flex-row p-1 justify-between items-center mt-1"
           >

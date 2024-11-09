@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, Image } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import FormFieldCustom from "../custom/FormFieldCustom";
 import CustomCheckbox from "../custom/CustomCheckbox";
@@ -330,6 +330,17 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
           {errors.shopOwnerName}
         </Text>
       )}
+      <View className={` mt-3`}>
+        <Text className="text-base text-gray-500 font-medium">Banner</Text>
+
+        <View className="flex-row overflow-hidden ml-[2px] border-2 rounded-lg border-gray-300 mt-1">
+          <Image
+            source={{ uri: model.bannerUrl || "string" }}
+            resizeMode="cover"
+            className="h-40 w-full justify-center items-center"
+          />
+        </View>
+      </View>
       {isEditMode && (
         <CustomButton
           title="Cập nhật"

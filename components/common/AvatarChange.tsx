@@ -173,7 +173,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
         <Avatar.Image size={140} source={{ uri: avatar }} />
         <IconButton
           icon="camera"
-          iconColor={Colors.primaryBackgroundColor}
+          iconColor={"#a78bfa"}
           size={24}
           style={{ position: "absolute", right: -10, bottom: -10 }}
           onPress={pickImage}
