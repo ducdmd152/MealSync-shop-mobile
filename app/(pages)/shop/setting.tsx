@@ -761,27 +761,21 @@ const Setting = () => {
     <PageLayoutWrapper>
       <View className="p-4 gap-y-8">
         <View className="">
-          <TouchableOpacity className="flex-row justify-between items-center gap-x-2 pb-4">
-            <View className="flex-row justify-start items-center gap-x-2">
-              {cache.bannerUrl ? (
+          <TouchableOpacity className="flex-row justify-between items-center gap-x-2 pb-4 px-1">
+            <View className="flex-row justify-start items-center">
+              <View className="border-[1px] rounded-full border-[#fff1f2] mr-2">
                 <Avatar.Image
                   size={48}
                   source={{
-                    uri: cache.bannerUrl,
+                    uri: cache.logoUrl || "string",
                   }}
                 />
-              ) : (
-                <ActivityIndicator animating={true} color="#FCF450" />
-              )}
+              </View>
 
               <View className="gap-y-0">
-                {cache.name ? (
-                  <Text className="text-lg italic text-gray text-primary font-medium mb-[-4px]">
-                    {cache.name}
-                  </Text>
-                ) : (
-                  <ActivityIndicator animating={true} color="#FCF450" />
-                )}
+                <Text className="text-lg italic text-gray text-primary font-medium mb-[-4px]">
+                  {cache.name}
+                </Text>
 
                 <Text className="text-[11px] italic text-gray text-primary font-medium ">
                   {getShopStatusDescription(
