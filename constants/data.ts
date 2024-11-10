@@ -20,6 +20,8 @@ const CONSTANTS = {
     avatar:
       "https://png.pngtree.com/element_our/20200610/ourmid/pngtree-character-default-avatar-image_2237203.jpg",
     shopLogoDefault: "https://cdn-icons-png.flaticon.com/512/3419/3419665.png",
+    addNewImage:
+      "https://www.shutterstock.com/image-vector/add-photo-icon-vector-illustration-600nw-1871525389.jpg",
     userAvatarDefault:
       "https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg",
     shopAvatarSample:
