@@ -1,5 +1,5 @@
 import Withdrawal from "@/app/(pages)/shop/withdrawal";
-
+const MAX_FILE_SIZE_MB = 5;
 const CONSTANTS = {
   USER_ROLE: {
     GUEST: 0 as const,
@@ -11,6 +11,10 @@ const CONSTANTS = {
     phone: /^(0|\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-4|6-9])[0-9]{6,9}$/,
     password:
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+  },
+  FILE_CONSTRAINTS: {
+    MAX_FILE_SIZE_MB,
+    MAX_FILE_SIZE_BYTE: MAX_FILE_SIZE_MB * 1024 * 1024,
   },
   url: {
     avatar:

@@ -21,6 +21,7 @@ import { ScrollView, TextInput } from "react-native-gesture-handler";
 import SampleCustomCheckbox from "../custom/SampleCustomCheckbox";
 import CONSTANTS from "@/constants/data";
 import Toast from "react-native-toast-message";
+import PreviewImageUpload from "../images/PreviewImageUpload";
 interface ShopProfileUpdateModel {
   shopName: string;
   shopOwnerName: string;
@@ -332,14 +333,25 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       )}
       <View className={` mt-3`}>
         <Text className="text-base text-gray-500 font-medium">Banner</Text>
-
-        <View className="flex-row overflow-hidden ml-[2px] border-2 rounded-lg border-gray-300 mt-1">
-          <Image
-            source={{ uri: model.bannerUrl || "string" }}
-            resizeMode="cover"
-            className="h-40 w-full justify-center items-center"
+        {isEditMode ? (
+          <PreviewImageUpload
+            className="flex-row w-full justify-center items-center overflow-hidden ml-[2px] border-2 rounded-lg border-gray-300 mt-1"
+            aspect={[1, 1 / (16 / 9)]}
+            uri={model.bannerUrl || "string"}
+            setUri={(uri: string) => {
+              setModel({ ...model, bannerUrl: uri });
+              // console.log("uri: ", uri);
+            }}
           />
-        </View>
+        ) : (
+          <View className="flex-row overflow-hidden ml-[2px] border-2 rounded-lg border-gray-300 mt-1">
+            <Image
+              source={{ uri: model.bannerUrl || "string" }}
+              resizeMode="cover"
+              className="h-40 w-full justify-center items-center"
+            />
+          </View>
+        )}
       </View>
       {isEditMode && (
         <CustomButton
