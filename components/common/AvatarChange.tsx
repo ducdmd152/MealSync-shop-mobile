@@ -127,9 +127,11 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
       // console.log("blob.size: ", blob.size);
 
       // Check if file size is within limit (5 MB in bytes)
-      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-      if (blob.size > MAX_FILE_SIZE) {
-        Alert.alert("Oops", "Ảnh vượt quá dung lượng cho phép 5 MB.");
+      if (blob.size > CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_BYTE) {
+        Alert.alert(
+          "Oops",
+          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`
+        );
         return;
       }
       setAvatar(imageURI);

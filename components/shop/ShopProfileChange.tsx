@@ -22,6 +22,7 @@ import SampleCustomCheckbox from "../custom/SampleCustomCheckbox";
 import CONSTANTS from "@/constants/data";
 import Toast from "react-native-toast-message";
 import PreviewImageUpload from "../images/PreviewImageUpload";
+import imageService from "@/services/image-service";
 interface ShopProfileUpdateModel {
   shopName: string;
   shopOwnerName: string;
@@ -125,7 +126,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       validate(change);
     }
   };
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     isAnyRequestSubmit.current = true;
     if (!validate(model)) {
       Alert.alert("Vui lòng hoàn thành thông tin hợp lệ");
@@ -136,27 +137,33 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       return;
     }
     setIsSubmitting(true);
-    apiClient
-      .put("shop-owner/profile", model)
-      .then(() => {
-        setIsEditMode(false);
-        Toast.show({
-          type: "success",
-          text1: "Hoàn tất",
-          text2: `Cập nhật hồ sơ thành công!.`,
+    try {
+      apiClient
+        .put("shop-owner/profile", {
+          ...model,
+          bannerUrl:
+            shopProfile.data?.value.bannerUrl == model.bannerUrl
+              ? model.bannerUrl
+              : await imageService.uploadPreviewImage(model.bannerUrl),
+        })
+        .then(() => {
+          setIsEditMode(false);
+          Toast.show({
+            type: "success",
+            text1: "Hoàn tất",
+            text2: `Cập nhật hồ sơ thành công!.`,
+          });
         });
-      })
-      .catch((error) => {
-        console.log(error?.response?.data);
-        Alert.alert(
-          "Oops!",
-          error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-        );
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+    } catch (error: any) {
+      console.log(error?.response?.data);
+      Alert.alert(
+        "Oops!",
+        error?.response?.data?.error?.message ||
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <View
@@ -356,6 +363,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       {isEditMode && (
         <CustomButton
           title="Cập nhật"
+          isLoading={isSubmitting}
           containerStyleClasses="mt-5 bg-secondary h-12"
           textStyleClasses="text-white"
           handlePress={() => {
