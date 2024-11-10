@@ -73,7 +73,12 @@ export const deleteImageOnServer = async (url: string) => {
     return false;
   }
 };
-
+const isLocalImage = (uri: string) => {
+  return (
+    uri.toLocaleLowerCase().startsWith("file://") ||
+    uri.toLocaleLowerCase().startsWith("content://")
+  );
+};
 const imageService = {
   getExtensionFromMimeType,
   uploadPreviewImage,

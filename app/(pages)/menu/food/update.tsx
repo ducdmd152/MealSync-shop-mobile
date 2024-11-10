@@ -32,6 +32,8 @@ import { useFormik } from "formik";
 import useModelState from "@/hooks/states/useModelState";
 import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
 import PreviewImageUpload from "@/components/images/PreviewImageUpload";
+import imageService from "@/services/image-service";
+import CONSTANTS from "@/constants/data";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -69,6 +71,7 @@ const FoodUpdate = () => {
   const [name, setName] = useState(foodDetailModel.name);
   const [description, setDescription] = useState(foodDetailModel.description);
   const [price, setPrice] = useState(foodDetailModel.price);
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const [selectedShopCategory, setSelectedShopCategory] = useState(
     foodDetailModel.shopCategoryId
   );
@@ -235,12 +238,20 @@ const FoodUpdate = () => {
     onSubmit: async (values) => {
       let toReturn = false;
       const submit = async () => {
+        setIsSubmiting(true);
         try {
+          let imageUrl = "";
+          if (imageURI != foodDetailModel.imageUrl)
+            imageUrl =
+              (await imageService.uploadPreviewImage(imageURI)) ||
+              CONSTANTS.url.noImageAvailable;
+          else imageUrl = foodDetailModel.imageUrl;
+          setImageURI(imageUrl);
           // Construct the data object to send to the API
           const foodData = {
             ...foodDetailModel,
             ...values,
-            imgUrl: imageURI,
+            imgUrl: imageUrl,
             status: status,
             isSoldOut: isSoldOut,
             price: Number(values.price),
@@ -267,6 +278,8 @@ const FoodUpdate = () => {
             "Xảy ra lỗi khi tạo món",
             error?.response?.data?.error?.message || "Vui lòng thử lại!"
           );
+        } finally {
+          setIsSubmiting(false);
         }
       };
       if (selectedOperatingSlots.length === 0 && status == 1) {
@@ -623,6 +636,7 @@ const FoodUpdate = () => {
         </View>
         <CustomButton
           title="Hoàn tất"
+          isLoading={isSubmiting}
           containerStyleClasses="mt-5 bg-primary"
           textStyleClasses="text-white"
           handlePress={formik.handleSubmit}
