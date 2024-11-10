@@ -201,7 +201,7 @@ const FoodCreate = () => {
 
           // Handle successful response
           Alert.alert("Hoàn tất", "Món ăn đã được tạo thành công");
-          router.push("/menu");
+          router.back();
         } catch (error: any) {
           Alert.alert(
             "Xảy ra lỗi khi tạo món",

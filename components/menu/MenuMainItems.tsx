@@ -33,6 +33,7 @@ import ValueResponse from "@/types/responses/ValueReponse";
 import FoodDetailModel from "@/types/models/FoodDetailModel";
 import useModelState from "@/hooks/states/useModelState";
 import usePathState from "@/hooks/states/usePathState";
+import utilService from "@/services/util-service";
 
 const initialCategories = [
   { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
@@ -426,10 +427,19 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                 <View className="flex-row justify-between items-center gap-2 pt-2">
                   <View>
                     <Text className="text-gray-500 italic text-[12px] text-secondary-200">
-                      100 đơn cần xử lí trong 2h tới
+                      {food.totalOrderInNextTwoHours} đơn cần xử lí trong 2h tới
                     </Text>
                     <Text className="mt-1 text-gray-500 italic text-[7px] text-secondary-200 text-gray-500">
-                      Mở bán: 10:00 - 14:00 | 16:00 - 20:00
+                      {food.operatingSlots.length == 0
+                        ? "Chưa mở bán khung giờ nào"
+                        : `Mở bán: ${food.operatingSlots
+                            .map(
+                              (item) =>
+                                `${utilService.formatTime(
+                                  item.startTime
+                                )} - ${utilService.formatTime(item.endTime)}`
+                            )
+                            .join(" | ")}`}
                     </Text>
                   </View>
 

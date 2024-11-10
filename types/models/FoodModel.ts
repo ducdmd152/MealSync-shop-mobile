@@ -1,3 +1,5 @@
+import { OperatingSlotModel } from "./OperatingSlotModel";
+
 export default interface FoodModel {
   id: number;
   name: string;
@@ -5,6 +7,8 @@ export default interface FoodModel {
   imageUrl: string;
   isSoldOut: boolean;
   status: number;
+  totalOrderInNextTwoHours: number;
+  operatingSlots: OperatingSlotModel[];
 }
 export enum FoodStatus {
   Active = 1,
