@@ -18,6 +18,7 @@ import CustomModal from "../common/CustomModal";
 import { useState } from "react";
 import CONSTANTS from "@/constants/data";
 import * as ImagePicker from "expo-image-picker";
+import { styled } from "nativewind";
 export interface PreviewImageUploadProps extends ViewProps {
   uri: string;
   setUri: (uri: string) => void;
@@ -26,9 +27,24 @@ export interface PreviewImageUploadProps extends ViewProps {
   imageWrapperStyleClasses?: string;
   imageStyle?: ImageStyle;
   imageStyleClasses?: string;
-  isViewOnly?: boolean;
+  isAutoShadow?: boolean;
   afterPickImage?: (uri: string) => void;
+  pickIconColor?: string;
 }
+const imageShadowStyle = StyleSheet.create({
+  shadow: {
+    shadowOffset: { width: 5, height: 8 },
+    shadowColor: Colors.shadow[400],
+    shadowOpacity: 0.4,
+    elevation: 20,
+  },
+  shadowSelected: {
+    shadowOffset: { width: 8, height: 8 },
+    shadowColor: Colors.shadow.DEFAULT,
+    shadowOpacity: 0.6,
+    elevation: 20,
+  },
+});
 const PreviewImageUpload = ({
   uri,
   setUri,
@@ -38,6 +54,8 @@ const PreviewImageUpload = ({
   imageStyle = {},
   imageStyleClasses = "",
   afterPickImage = (uri: string) => {},
+  isAutoShadow = false,
+  pickIconColor = "#a78bfa",
   ...props
 }: PreviewImageUploadProps) => {
   const [isSelectPicking, setIsSelectPicking] = useState(false);
@@ -102,6 +120,7 @@ const PreviewImageUpload = ({
         className={`w-full ${imageWrapperStyleClasses}`}
         style={{
           backgroundColor: "white",
+          ...(isAutoShadow ? imageShadowStyle.shadow : {}),
           ...imageWrapperStyle,
         }}
         onLayout={(event) => {
@@ -121,7 +140,7 @@ const PreviewImageUpload = ({
         />
         <IconButton
           icon="camera"
-          iconColor={"#a78bfa"}
+          iconColor={pickIconColor}
           size={24}
           style={{ position: "absolute", right: -10, bottom: -10 }}
           onPress={() => setIsSelectPicking(true)}

@@ -31,6 +31,7 @@ import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import { useFormik } from "formik";
 import useModelState from "@/hooks/states/useModelState";
 import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
+import PreviewImageUpload from "@/components/images/PreviewImageUpload";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -304,7 +305,19 @@ const FoodUpdate = () => {
       <View className="p-4 bg-white">
         <View className="items-start">
           <Text className="text-lg font-semibold">Ảnh mô tả</Text>
-          <ImageUpload
+          <PreviewImageUpload
+            isAutoShadow={true}
+            imageWrapperStyle={{
+              width: 90,
+            }}
+            aspect={[1, 1]}
+            uri={imageURI}
+            setUri={(uri: string) => {
+              setImageURI(uri);
+              // console.log("uri: ", uri);
+            }}
+          />
+          {/* <ImageUpload
             containerStyleClasses="mt-2"
             uri={imageURI}
             setUri={(uri: string) => {
@@ -319,9 +332,9 @@ const FoodUpdate = () => {
                 handlePress={() => {}}
               />
             }
-          />
-          <Text className="italic text-gray-700 mt-2">
-            Tối đa 5MB, nhận diện tệp .PNG, .JPG
+          /> */}
+          <Text className="italic text-gray-700 mt-2 text-[12.8px]">
+            Tối đa 5MB, nhận diện tệp .PNG, .JPG, .HEIC
           </Text>
         </View>
         <View className="border-b-2 border-gray-200 my-2" />
