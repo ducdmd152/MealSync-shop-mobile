@@ -68,14 +68,17 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
       const { status: libraryStatus } =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (libraryStatus !== "granted") {
-        alert("Oops, ứng dụng cần truy cập thư viện để hoàn tất tác vụ!");
+        Alert.alert(
+          "Oops",
+          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!"
+        );
         return;
       }
 
       const { status: cameraStatus } =
         await ImagePicker.requestCameraPermissionsAsync();
       if (cameraStatus !== "granted") {
-        alert("Oops, ứng dụng cần truy cập camera để hoàn tất tác vụ!");
+        Alert.alert("Oops", "Ứng dụng cần truy cập camera để hoàn tất tác vụ!");
         return;
       }
     }
