@@ -1,8 +1,9 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import sessionService from "../session-service";
+export const BASE_URL = "https://api.mealsync.org/api/v1/";
 const apiClient = axios.create({
-  baseURL: "https://api.mealsync.org/api/v1/",
+  baseURL: BASE_URL,
 });
 
 apiClient.interceptors.request.use(
@@ -10,7 +11,7 @@ apiClient.interceptors.request.use(
     // console.log("Request Config:", config);
     if (!config.headers.Authorization) {
       const token = await sessionService.getAuthToken();
-      // console.log("Token:", token);
+      console.log("Token:", token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

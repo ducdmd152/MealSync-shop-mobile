@@ -2,7 +2,7 @@ import { Colors } from "@/constants/Colors";
 import CONSTANTS from "@/constants/data";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import apiClient from "@/services/api-services/api-client";
+import apiClient, { BASE_URL } from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import { ShopProfileGetModel } from "@/types/models/ShopProfileModel";
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
@@ -13,7 +13,9 @@ import { Avatar, Button, IconButton } from "react-native-paper";
 import CustomButton from "../custom/CustomButton";
 import { unSelectLocation } from "@/hooks/states/useMapLocationState";
 import Toast from "react-native-toast-message";
-
+import * as FileSystem from "expo-file-system";
+import { getExtensionFromMimeType } from "@/services/image-service";
+import sessionService from "@/services/session-service";
 const styles = StyleSheet.create({
   shadow: {
     shadowOffset: { width: 5, height: 8 },
@@ -114,23 +116,23 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
         return;
       }
 
-      const extension = blob.type === "image/png" ? "png" : "jpg";
-      const fileName = `avatar.${extension}`;
-
-      const file = new File([blob], fileName, { type: blob.type });
+      const fileName = `shop-avatar.${getExtensionFromMimeType(blob.type)}`;
       const formData = new FormData();
-      // formData.append("file", file);
-      formData.append("file", blob, fileName);
+      formData.append("file", {
+        uri: imageURI,
+        name: fileName,
+        type: blob.type,
+      } as any);
 
       // Upload the image
       const res = await apiClient.put("storage/file/upload", formData, {
         headers: {
+          Authorization: `Bearer ${await sessionService.getAuthToken()}`,
           "Content-Type": "multipart/form-data",
         },
       });
 
       const data = res.data as { value: { url: string } };
-      console.log("res.data: ", res.data);
       await apiClient
         .put("shop-owner/logo/update", {
           logoUrl: data.value.url,
@@ -142,7 +144,6 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
             res.data?.value?.logoUrl
           );
         });
-
       await shopProfile.refetch();
       Toast.show({
         type: "success",
