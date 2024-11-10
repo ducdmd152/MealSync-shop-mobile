@@ -2,7 +2,7 @@ import { Colors } from "@/constants/Colors";
 import CONSTANTS from "@/constants/data";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import apiClient from "@/services/api-services/api-client";
+import apiClient, { BASE_URL } from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import { ShopProfileGetModel } from "@/types/models/ShopProfileModel";
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
@@ -13,7 +13,12 @@ import { Avatar, Button, IconButton } from "react-native-paper";
 import CustomButton from "../custom/CustomButton";
 import { unSelectLocation } from "@/hooks/states/useMapLocationState";
 import Toast from "react-native-toast-message";
-
+import * as FileSystem from "expo-file-system";
+import { getExtensionFromMimeType } from "@/services/image-service";
+import sessionService from "@/services/session-service";
+import CustomModal from "./CustomModal";
+import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
 const styles = StyleSheet.create({
   shadow: {
     shadowOffset: { width: 5, height: 8 },
@@ -41,12 +46,14 @@ const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
     []
   );
   const [user, setUser] = useState({
-    avatarUrl: shopProfile.data?.value.logoUrl || CONSTANTS.url.avatar,
-    fullname: shopProfile.data?.value.name || "--------------",
+    avatarUrl:
+      shopProfile.data?.value.shopOwnerAvatar || CONSTANTS.url.shopLogoDefault,
+    fullname: shopProfile.data?.value.shopOwnerName || "--------------",
   });
   const [isChangeMode, setIsChangeMode] = useState(true);
   const [avatar, setAvatar] = useState(CONSTANTS.url.avatar);
-
+  const [isTakeFromCamera, setIsTakeFromCamera] = useState(true);
+  const [isPicking, setIsPicking] = useState(false);
   useEffect(() => {
     if (user?.avatarUrl) {
       setAvatar(user.avatarUrl);
@@ -63,98 +70,113 @@ const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
     shopProfile.refetch();
   }, [isChangeMode]);
 
-  const pickImage = async () => {
+  const pickImage = async (isPickByCam: boolean = false) => {
     if (Platform.OS !== "web") {
       const { status: libraryStatus } =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (libraryStatus !== "granted") {
-        alert("Oops, ứng dụng cần truy cập thư viện để hoàn tất tác vụ!");
+        Alert.alert(
+          "Oops",
+          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!"
+        );
         return;
       }
 
       const { status: cameraStatus } =
         await ImagePicker.requestCameraPermissionsAsync();
       if (cameraStatus !== "granted") {
-        alert("Oops, ứng dụng cần truy cập camera để hoàn tất tác vụ!");
+        Alert.alert("Oops", "Ứng dụng cần truy cập camera để hoàn tất tác vụ!");
         return;
       }
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-    });
+    if (isPickByCam) {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5,
+      });
 
-    if (!result.canceled && result.assets) {
-      setAvatar(result.assets[0].uri);
-      handleSaveAvatar(result.assets[0].uri);
+      if (!result.canceled && result.assets) {
+        handleSaveAvatar(result.assets[0].uri);
+      }
+    } else {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets) {
+        handleSaveAvatar(result.assets[0].uri);
+      }
     }
   };
 
   const handleSaveAvatar = async (imageURI: string) => {
     try {
+      setIsPicking(false);
       if (!imageURI) {
-        Alert.alert("Lỗi", "Không có ảnh nào được chọn.");
+        Alert.alert("Oops", "Không có ảnh nào được chọn.");
         return;
       }
 
       const response = await fetch(imageURI);
       const blob = await response.blob();
-      console.log("blob.size: ", blob.size);
+      // console.log("blob.size: ", blob.size);
 
       // Check if file size is within limit (5 MB in bytes)
       const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
       if (blob.size > MAX_FILE_SIZE) {
-        Alert.alert("Lỗi", "Ảnh vượt quá dung lượng cho phép 5 MB.");
+        Alert.alert("Oops", "Ảnh vượt quá dung lượng cho phép 5 MB.");
         return;
       }
-
-      const extension = blob.type === "image/png" ? "png" : "jpg";
-      const fileName = `avatar.${extension}`;
-
-      const file = new File([blob], fileName, { type: blob.type });
+      setAvatar(imageURI);
+      const fileName = `shop-avatar.${getExtensionFromMimeType(blob.type)}`;
       const formData = new FormData();
-      // formData.append("file", file);
-      formData.append("file", blob, fileName);
-
+      formData.append("file", {
+        uri: imageURI,
+        name: fileName,
+        type: blob.type,
+      } as any);
       // Upload the image
       const res = await apiClient.put("storage/file/upload", formData, {
         headers: {
+          Authorization: `Bearer ${await sessionService.getAuthToken()}`,
           "Content-Type": "multipart/form-data",
         },
       });
 
       const data = res.data as { value: { url: string } };
-      console.log("res.data: ", res.data);
       await apiClient
-        .put("shop-owner/logo/update", {
+        .put(endpoints.ACCOUNT_AVATAR_UPDATE, {
           logoUrl: data.value.url,
         })
         .then((res) => {
-          console.log(
-            "data.value.url: ",
-            data.value.url,
-            res.data?.value?.logoUrl
-          );
+          // console.log(
+          //   "data.value.url: ",
+          //   data.value.url,
+          //   res.data?.value?.logoUrl
+          // );
         });
-
-      await shopProfile.refetch();
       Toast.show({
         type: "success",
         text1: "Hoàn tất",
-        text2: "Cập nhật ảnh đại diện cửa hàng thành công!",
+        text2: "Cập nhật ảnh đại diện thành công!",
       });
     } catch (error: any) {
       setAvatar(user.avatarUrl);
-      console.log(error, error?.response?.data);
+      // console.log(error, error?.response?.data);
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
           error?.response?.data?.value?.File[0] ||
           "Yêu cầu bị từ chối, vui lòng thử lại sau!"
       );
+    } finally {
+      shopProfile.refetch();
     }
   };
 
@@ -170,13 +192,45 @@ const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
           borderRadius: 100,
         }}
       >
+        <CustomModal
+          title="     Chọn hình ảnh"
+          hasHeader={false}
+          isOpen={isPicking}
+          setIsOpen={(value) => setIsPicking(value)}
+          titleStyleClasses="text-center flex-1"
+          containerStyleClasses="w-72"
+          onBackdropPress={() => {
+            console.log("-------");
+            setIsPicking(false);
+          }}
+        >
+          <Text className="text-center text-[12px] font-semibold">
+            Chọn hình ảnh
+          </Text>
+          <View className="flex-row items-center justify-center gap-x-8 mt-4 p-2">
+            <TouchableOpacity
+              onPress={() => pickImage(true)}
+              className="justify-center items-center bg-[#fefce8] p-2 w-[100px] rounded-lg"
+            >
+              <Ionicons name="camera-outline" size={40} color="#fb923c" />
+              <Text className="mt-1">Chụp hình</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => pickImage(false)}
+              className="justify-center items-center bg-[#fefce8] p-2 w-[100px] rounded-lg"
+            >
+              <Ionicons name="images-outline" size={40} color="#fb923c" />
+              <Text className="mt-1">Thư viện</Text>
+            </TouchableOpacity>
+          </View>
+        </CustomModal>
         <Avatar.Image size={140} source={{ uri: avatar }} />
         <IconButton
           icon="camera"
           iconColor={"#a78bfa"}
           size={24}
           style={{ position: "absolute", right: -10, bottom: -10 }}
-          onPress={pickImage}
+          onPress={() => setIsPicking(true)}
           disabled={!isChangeMode}
         />
       </View>

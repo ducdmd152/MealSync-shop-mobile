@@ -29,6 +29,7 @@ export interface ShopProfileGetModel {
   name: string;
   description: string;
   shopOwnerName: string;
+  shopOwnerAvatar: string;
   logoUrl: string;
   bannerUrl: string;
   email: string;

@@ -150,7 +150,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
 
       const data = res.data as { value: { url: string } };
       await apiClient
-        .put("shop-owner/logo/update", {
+        .put(endpoints.SHOP_LOGO_UPDATE, {
           logoUrl: data.value.url,
         })
         .then((res) => {
