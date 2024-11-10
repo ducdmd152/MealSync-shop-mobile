@@ -24,6 +24,8 @@ export const endpoints = {
   WALLET_TRANSACTIONS: "shop-owner/walet-transaction",
   STAFF_LIST: "shop-owner/delivery-staff",
   STORAGE_UPLOAD: "storage/file/upload",
+  SHOP_LOGO_UPDATE: "shop-owner/logo/update",
+  ACCOUNT_AVATAR_UPDATE: "shop-owner/logo/update",
 };
 
 export const testApiService = createHttpService<TestModel>(
