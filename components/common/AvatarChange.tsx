@@ -16,6 +16,9 @@ import Toast from "react-native-toast-message";
 import * as FileSystem from "expo-file-system";
 import { getExtensionFromMimeType } from "@/services/image-service";
 import sessionService from "@/services/session-service";
+import CustomModal from "./CustomModal";
+import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
 const styles = StyleSheet.create({
   shadow: {
     shadowOffset: { width: 5, height: 8 },
@@ -48,7 +51,8 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
   });
   const [isChangeMode, setIsChangeMode] = useState(true);
   const [avatar, setAvatar] = useState(CONSTANTS.url.avatar);
-
+  const [isTakeFromCamera, setIsTakeFromCamera] = useState(true);
+  const [isPicking, setIsPicking] = useState(false);
   useEffect(() => {
     if (user?.avatarUrl) {
       setAvatar(user.avatarUrl);
@@ -65,7 +69,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
     shopProfile.refetch();
   }, [isChangeMode]);
 
-  const pickImage = async () => {
+  const pickImage = async (isPickByCam: boolean = false) => {
     if (Platform.OS !== "web") {
       const { status: libraryStatus } =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -85,37 +89,50 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
       }
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-    });
+    if (isPickByCam) {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5,
+      });
 
-    if (!result.canceled && result.assets) {
-      setAvatar(result.assets[0].uri);
-      handleSaveAvatar(result.assets[0].uri);
+      if (!result.canceled && result.assets) {
+        handleSaveAvatar(result.assets[0].uri);
+      }
+    } else {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets) {
+        handleSaveAvatar(result.assets[0].uri);
+      }
     }
   };
 
   const handleSaveAvatar = async (imageURI: string) => {
     try {
+      setIsPicking(false);
       if (!imageURI) {
-        Alert.alert("Lỗi", "Không có ảnh nào được chọn.");
+        Alert.alert("Oops", "Không có ảnh nào được chọn.");
         return;
       }
 
       const response = await fetch(imageURI);
       const blob = await response.blob();
-      console.log("blob.size: ", blob.size);
+      // console.log("blob.size: ", blob.size);
 
       // Check if file size is within limit (5 MB in bytes)
       const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
       if (blob.size > MAX_FILE_SIZE) {
-        Alert.alert("Lỗi", "Ảnh vượt quá dung lượng cho phép 5 MB.");
+        Alert.alert("Oops", "Ảnh vượt quá dung lượng cho phép 5 MB.");
         return;
       }
-
+      setAvatar(imageURI);
       const fileName = `shop-avatar.${getExtensionFromMimeType(blob.type)}`;
       const formData = new FormData();
       formData.append("file", {
@@ -123,7 +140,6 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
         name: fileName,
         type: blob.type,
       } as any);
-
       // Upload the image
       const res = await apiClient.put("storage/file/upload", formData, {
         headers: {
@@ -138,13 +154,12 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
           logoUrl: data.value.url,
         })
         .then((res) => {
-          console.log(
-            "data.value.url: ",
-            data.value.url,
-            res.data?.value?.logoUrl
-          );
+          // console.log(
+          //   "data.value.url: ",
+          //   data.value.url,
+          //   res.data?.value?.logoUrl
+          // );
         });
-      await shopProfile.refetch();
       Toast.show({
         type: "success",
         text1: "Hoàn tất",
@@ -152,13 +167,15 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
       });
     } catch (error: any) {
       setAvatar(user.avatarUrl);
-      console.log(error, error?.response?.data);
+      // console.log(error, error?.response?.data);
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
           error?.response?.data?.value?.File[0] ||
           "Yêu cầu bị từ chối, vui lòng thử lại sau!"
       );
+    } finally {
+      shopProfile.refetch();
     }
   };
 
@@ -174,13 +191,45 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
           borderRadius: 100,
         }}
       >
+        <CustomModal
+          title="     Chọn hình ảnh"
+          hasHeader={false}
+          isOpen={isPicking}
+          setIsOpen={(value) => setIsPicking(value)}
+          titleStyleClasses="text-center flex-1"
+          containerStyleClasses="w-72"
+          onBackdropPress={() => {
+            console.log("-------");
+            setIsPicking(false);
+          }}
+        >
+          <Text className="text-center text-[12px] font-semibold">
+            Chọn hình ảnh
+          </Text>
+          <View className="flex-row items-center justify-center gap-x-8 mt-4 p-2">
+            <TouchableOpacity
+              onPress={() => pickImage(true)}
+              className="justify-center items-center bg-[#fefce8] p-2 w-[100px] rounded-lg"
+            >
+              <Ionicons name="camera-outline" size={40} color="#fb923c" />
+              <Text className="mt-1">Chụp hình</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => pickImage(false)}
+              className="justify-center items-center bg-[#fefce8] p-2 w-[100px] rounded-lg"
+            >
+              <Ionicons name="images-outline" size={40} color="#fb923c" />
+              <Text className="mt-1">Thư viện</Text>
+            </TouchableOpacity>
+          </View>
+        </CustomModal>
         <Avatar.Image size={140} source={{ uri: avatar }} />
         <IconButton
           icon="camera"
           iconColor={"#a78bfa"}
           size={24}
           style={{ position: "absolute", right: -10, bottom: -10 }}
-          onPress={pickImage}
+          onPress={() => setIsPicking(true)}
           disabled={!isChangeMode}
         />
       </View>

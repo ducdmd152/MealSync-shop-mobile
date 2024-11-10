@@ -11,6 +11,8 @@ interface Props {
   children: ReactNode;
   containerStyleClasses?: string;
   titleStyleClasses?: string;
+  hasHeader?: boolean;
+  onBackdropPress?: () => void;
 }
 const CustomModal = ({
   title,
@@ -20,26 +22,31 @@ const CustomModal = ({
   containerStyleClasses = "",
   titleStyleClasses = "",
   close,
+  hasHeader = true,
+  onBackdropPress = () => {},
 }: Props) => {
   return (
-    <Modal isVisible={isOpen}>
+    <Modal isVisible={isOpen} onBackdropPress={() => onBackdropPress()}>
       <View
-        style={{ flex: 1, zIndex: 100 }}
+        // style={{ flex: 1, zIndex: 100 }}
         className="justify-center items-center"
       >
         <View
           className={`bg-white p-4 rounded-lg w-80 ${containerStyleClasses}`}
         >
-          <View className="flex-row items-center justify-between">
-            <Text className={titleStyleClasses}>{title}</Text>
-            <TouchableOpacity
-              onPress={() => {
-                (close || setIsOpen)(false);
-              }}
-            >
-              <Ionicons name="close-outline" size={24} color="gray" />
-            </TouchableOpacity>
-          </View>
+          {hasHeader && (
+            <View className="flex-row items-center justify-between">
+              <Text className={titleStyleClasses}>{title}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  (close || setIsOpen)(false);
+                }}
+              >
+                <Ionicons name="close-outline" size={24} color="gray" />
+              </TouchableOpacity>
+            </View>
+          )}
+
           {children}
         </View>
       </View>
