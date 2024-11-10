@@ -3,6 +3,7 @@ import { Alert } from "react-native";
 import apiClient from "./api-services/api-client";
 import sessionService from "./session-service";
 import ValueResponse from "@/types/responses/ValueReponse";
+import { endpoints } from "./api-services/api-service-instances";
 
 const mimeToExtension = {
   "image/jpeg": "jpg",
@@ -44,7 +45,7 @@ export const uploadPreviewImage = async (uri: string) => {
   } as any);
   // Upload the image
   const result = await apiClient.put<ValueResponse<{ url: string }>>(
-    "storage/file/upload",
+    endpoints.STORAGE_FILE_UPLOAD,
     formData,
     {
       headers: {
@@ -53,12 +54,30 @@ export const uploadPreviewImage = async (uri: string) => {
       },
     }
   );
-  return result.data.value?.url;
+  return result.data.value?.url || CONSTANTS.url.noImageAvailable;
+};
+
+export const deleteImageOnServer = async (url: string) => {
+  try {
+    await apiClient.delete(endpoints.STORAGE_FILE_DELETE, {
+      headers: {
+        Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+      },
+      params: {
+        url,
+      },
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to delete image:", error);
+    return false;
+  }
 };
 
 const imageService = {
   getExtensionFromMimeType,
   uploadPreviewImage,
+  deleteImageOnServer,
 };
 
 export default imageService;

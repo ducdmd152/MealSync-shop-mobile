@@ -23,7 +23,8 @@ export const endpoints = {
   BALANCE: "shop-owner/wallet/summary",
   WALLET_TRANSACTIONS: "shop-owner/walet-transaction",
   STAFF_LIST: "shop-owner/delivery-staff",
-  STORAGE_UPLOAD: "storage/file/upload",
+  STORAGE_FILE_UPLOAD: "storage/file/upload",
+  STORAGE_FILE_DELETE: "storage/file/delete",
   SHOP_LOGO_UPDATE: "shop-owner/logo/update",
   ACCOUNT_AVATAR_UPDATE: "shop-owner/logo/update",
 };

@@ -242,6 +242,11 @@ const utilService = {
       return null;
     }
   },
+  waitForCondition: async (condition: () => boolean, interval = 100) => {
+    while (!condition()) {
+      await new Promise((resolve) => setTimeout(resolve, interval));
+    }
+  },
 };
 
 export default utilService;

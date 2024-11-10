@@ -18,9 +18,12 @@ import CustomModal from "../common/CustomModal";
 import { useState } from "react";
 import CONSTANTS from "@/constants/data";
 import * as ImagePicker from "expo-image-picker";
+import imageService from "@/services/image-service";
 interface PreviewImageUploadProps extends ViewProps {
   uris: string[];
   setUris: (uri: string[]) => void;
+  isImageHandling: boolean;
+  setIsImageHandling: (value: boolean) => void;
   aspect?: [number, number];
   imageWrapperStyle?: ViewStyle;
   imageWrapperStyleClasses?: string;
@@ -29,10 +32,13 @@ interface PreviewImageUploadProps extends ViewProps {
   isViewOnly?: boolean;
   imageWidth?: number;
   maxNumberOfPics?: number;
+  isHideAddWhenMax?: boolean;
 }
 const PreviewMultiImagesUpload = ({
   uris,
   setUris,
+  isImageHandling,
+  setIsImageHandling,
   aspect = [1, 1],
   imageWrapperStyle = {},
   imageWrapperStyleClasses = "",
@@ -40,6 +46,7 @@ const PreviewMultiImagesUpload = ({
   imageStyleClasses = "",
   imageWidth = 100,
   maxNumberOfPics = 5,
+  isHideAddWhenMax = true,
   ...props
 }: PreviewImageUploadProps) => {
   const [isSelectPicking, setIsSelectPicking] = useState(false);
@@ -97,21 +104,35 @@ const PreviewMultiImagesUpload = ({
       Alert.alert("Oops", `Vui lòng thử lại.`);
     }
   };
-
-  const addToList = (uri: string) => {
+  // console.log("uris: ", uris);
+  const addToList = async (uri: string) => {
     if (uris.includes(uri)) return;
+    setIsImageHandling(true);
+    const beforeAnyUpdate = [...uris];
     setUris(uris.concat([uri]));
+    try {
+      const url =
+        (await imageService.uploadPreviewImage(uri)) ||
+        CONSTANTS.url.noImageAvailable;
+      setUris(uris.filter((item) => item != uri).concat([url]));
+    } catch (error: any) {
+      // console.log(error?.response?.data);
+      Alert.alert("Oops!", "Xử lí hình ảnh lỗi, vui lòng thử lại!");
+      setUris(beforeAnyUpdate);
+    } finally {
+      setIsImageHandling(false);
+    }
   };
 
   const removeOutList = (uri: string) => {
-    console.log("removing: ", uri, uris.includes(uri));
     if (!uris.includes(uri)) return;
     setUris(uris.filter((item) => item != uri));
+    imageService.deleteImageOnServer(uri);
   };
   return (
     <View {...props}>
       <View
-        className={`w-full flex-row ${imageWrapperStyleClasses}`}
+        className={`w-full flex-row flex-wrap gap-y-2 ${imageWrapperStyleClasses}`}
         style={{
           backgroundColor: "white",
           ...imageWrapperStyle,
@@ -169,30 +190,32 @@ const PreviewMultiImagesUpload = ({
           </View>
         ))}
 
-        <TouchableOpacity
-          className="overflow-hidden rounded-lg"
-          onPress={() => {
-            if (uris.length == maxNumberOfPics) {
-              Alert.alert(
-                "Oops",
-                `Bạn chỉ có thể chọn tối đa ${maxNumberOfPics} hình ảnh!`
-              );
-              return;
-            }
-            setIsSelectPicking(true);
-          }}
-        >
-          <Image
-            style={{
-              height: (aspect[1] / aspect[0]) * imageWidth,
-              width: imageWidth,
-              ...imageStyle,
+        {(uris.length != maxNumberOfPics || isHideAddWhenMax == false) && (
+          <TouchableOpacity
+            className="overflow-hidden rounded-lg"
+            onPress={() => {
+              if (uris.length == maxNumberOfPics) {
+                Alert.alert(
+                  "Oops",
+                  `Bạn chỉ có thể chọn tối đa ${maxNumberOfPics} hình ảnh!`
+                );
+                return;
+              }
+              setIsSelectPicking(true);
             }}
-            className={`w-full justify-center items-center rounded-lg ${imageStyle}`}
-            resizeMode="cover"
-            source={{ uri: CONSTANTS.url.addNewImage }}
-          />
-        </TouchableOpacity>
+          >
+            <Image
+              style={{
+                height: (aspect[1] / aspect[0]) * imageWidth,
+                width: imageWidth,
+                ...imageStyle,
+              }}
+              className={`w-full justify-center items-center rounded-lg ${imageStyle}`}
+              resizeMode="cover"
+              source={{ uri: CONSTANTS.url.addNewImage }}
+            />
+          </TouchableOpacity>
+        )}
 
         {/* <IconButton
           icon="camera"

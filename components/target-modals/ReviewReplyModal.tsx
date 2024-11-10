@@ -19,6 +19,8 @@ import { useFocusEffect } from "expo-router";
 import ImageUpload from "../common/ImageUpload";
 import CustomButton from "../custom/CustomButton";
 import apiClient from "@/services/api-services/api-client";
+import PreviewMultiImagesUpload from "../images/PreviewMultiImagesUpload";
+import utilService from "@/services/util-service";
 interface Props {
   containerStyleClasses?: string;
   imageStyleClasses?: string;
@@ -32,6 +34,7 @@ interface ReviewReplyRequest {
   comment: string;
   imageUrls: string[];
 }
+
 const ReviewReplyModal = ({
   containerStyleClasses = "",
   titleStyleClasses = "",
@@ -39,6 +42,7 @@ const ReviewReplyModal = ({
 }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const globalReviewReplyState = useGlobalReviewReplyState();
+  const [isImageHandling, setImageHandling] = useState(true);
   const [request, setRequest] = useState<ReviewReplyRequest>({
     orderId: globalReviewReplyState.id,
     comment: "",
@@ -54,8 +58,13 @@ const ReviewReplyModal = ({
     }, [globalReviewReplyState])
   );
   const onSubmit = async () => {
+    if (request.comment.length == 0) {
+      Alert.alert("Oops", "Vui lòng điền câu trả lời!");
+      return;
+    }
+    setIsSubmitting(true);
+    await utilService.waitForCondition(() => !isImageHandling);
     try {
-      setIsSubmitting(true);
       const response = await apiClient.post(`shop-onwer/review`, {
         ...request,
       });
@@ -119,31 +128,14 @@ const ReviewReplyModal = ({
                   placeholderTextColor="#888"
                 />
               </View>
-              <View className="flex-row gap-x-2 mt-1">
-                <ImageUpload
-                  containerStyleClasses="mt-2 w-full bg-red"
-                  uri={
-                    request.imageUrls.length == 0
-                      ? CONSTANTS.url.pickNewImage
-                      : request.imageUrls[0]
-                  }
-                  setUri={(uri: string) => {
-                    setRequest({
-                      ...request,
-                      imageUrls: [uri],
-                    });
-                  }}
-                  imageStyleObject={{ aspect: 1, width: 70, height: 70 }}
-                  updateButton={
-                    <CustomButton
-                      title="Lưu"
-                      containerStyleClasses="bg-white  bg-[#227B94] h-8"
-                      textStyleClasses="text-sm text-white"
-                      handlePress={() => {}}
-                    />
-                  }
-                />
-              </View>
+              <PreviewMultiImagesUpload
+                isImageHandling={isImageHandling}
+                setIsImageHandling={setImageHandling}
+                maxNumberOfPics={3}
+                uris={request.imageUrls}
+                setUris={(uris) => setRequest({ ...request, imageUrls: uris })}
+                imageWidth={80}
+              />
               <CustomButton
                 title="Hoàn tất trả lời"
                 isLoading={isSubmitting}
