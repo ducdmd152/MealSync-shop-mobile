@@ -65,9 +65,9 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
     const prevExtendCategories = extendCategories;
     setExtendCategories(data);
     try {
-      console.log("Update categories order: ", {
-        ids: extendCategories.map((category) => category.id),
-      });
+      // console.log("Update categories order: ", {
+      //   ids: extendCategories.map((category) => category.id),
+      // });
 
       const response = await apiClient.put("shop-owner/category/re-arrange", {
         ids: extendCategories.map((category) => category.id),

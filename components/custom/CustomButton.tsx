@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-interface CustomButtonProps {
+export interface CustomButtonProps {
   title: string;
 
   handlePress: () => void;

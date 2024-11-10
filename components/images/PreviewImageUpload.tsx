@@ -18,7 +18,7 @@ import CustomModal from "../common/CustomModal";
 import { useState } from "react";
 import CONSTANTS from "@/constants/data";
 import * as ImagePicker from "expo-image-picker";
-interface PreviewImageUploadProps extends ViewProps {
+export interface PreviewImageUploadProps extends ViewProps {
   uri: string;
   setUri: (uri: string) => void;
   aspect?: [number, number];
@@ -27,6 +27,7 @@ interface PreviewImageUploadProps extends ViewProps {
   imageStyle?: ImageStyle;
   imageStyleClasses?: string;
   isViewOnly?: boolean;
+  afterPickImage?: (uri: string) => void;
 }
 const PreviewImageUpload = ({
   uri,
@@ -36,6 +37,7 @@ const PreviewImageUpload = ({
   imageWrapperStyleClasses = "",
   imageStyle = {},
   imageStyleClasses = "",
+  afterPickImage = (uri: string) => {},
   ...props
 }: PreviewImageUploadProps) => {
   const [isSelectPicking, setIsSelectPicking] = useState(false);
@@ -87,6 +89,7 @@ const PreviewImageUpload = ({
         return;
       } else {
         setUri(result.assets[0].uri);
+        afterPickImage(result.assets[0].uri);
       }
     } else if (!result.canceled) {
       setIsSelectPicking(true);
