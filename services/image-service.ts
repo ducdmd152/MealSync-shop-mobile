@@ -83,6 +83,7 @@ const imageService = {
   getExtensionFromMimeType,
   uploadPreviewImage,
   deleteImageOnServer,
+  isLocalImage,
 };
 
 export default imageService;

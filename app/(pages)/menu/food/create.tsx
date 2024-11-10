@@ -29,7 +29,10 @@ import FetchResponse, {
 } from "@/types/responses/FetchResponse";
 import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import { useFormik } from "formik";
+import imageService from "@/services/image-service";
+import CONSTANTS from "@/constants/data";
 import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
+import PreviewImageUpload from "@/components/images/PreviewImageUpload";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -39,14 +42,14 @@ const validationSchema = Yup.object().shape({
   shopCategoryId: Yup.number().min(0, "Danh mục cửa hàng là bắt buộc"),
 });
 const formatPrice = (value: number) => {
-  console.log(
-    "Price:",
-    value,
-    new Intl.NumberFormat("vi-VN", {
-      style: "decimal",
-      maximumFractionDigits: 0,
-    }).format(value)
-  );
+  // console.log(
+  //   "Price:",
+  //   value,
+  //   new Intl.NumberFormat("vi-VN", {
+  //     style: "decimal",
+  //     maximumFractionDigits: 0,
+  //   }).format(value)
+  // );
   return new Intl.NumberFormat("vi-VN", {
     style: "decimal",
     maximumFractionDigits: 0,
@@ -71,6 +74,7 @@ const FoodCreate = () => {
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
     []
   );
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const [selectedOperatingSlots, setSelectedOperatingSlots] = useState<
     string[]
   >([]);
@@ -165,11 +169,19 @@ const FoodCreate = () => {
     onSubmit: async (values) => {
       let toReturn = false;
       const submit = async () => {
+        setIsSubmiting(true);
         try {
+          let imageUrl = "";
+          if (imageService.isLocalImage(imageURI))
+            imageUrl =
+              (await imageService.uploadPreviewImage(imageURI)) ||
+              CONSTANTS.url.noImageAvailable;
+          else imageUrl = imageURI;
+          setImageURI(imageUrl);
           // Construct the data object to send to the API
           const foodData = {
             ...values,
-            imgUrl: imageURI,
+            imgUrl: imageUrl,
             status: isAvailable ? 1 : 2,
             price: Number(values.price),
             optionGroups: selectedOptionGroups.map((item) =>
@@ -185,7 +197,7 @@ const FoodCreate = () => {
             "shop-owner/food/create",
             foodData
           );
-          console.log("RESPONSE : ", foodData, response);
+          // console.log("RESPONSE : ", foodData, response);
 
           // Handle successful response
           Alert.alert("Hoàn tất", "Món ăn đã được tạo thành công");
@@ -195,8 +207,11 @@ const FoodCreate = () => {
             "Xảy ra lỗi khi tạo món",
             error?.response?.data?.error?.message || "Vui lòng thử lại!"
           );
+        } finally {
+          setIsSubmiting(false);
         }
       };
+
       if (selectedOperatingSlots.length === 0 && isAvailable) {
         Alert.alert(
           "Vui lòng chọn khung giờ",
@@ -232,21 +247,17 @@ const FoodCreate = () => {
       <View className="p-4 bg-white">
         <View className="items-start">
           <Text className="text-lg font-semibold">Ảnh mô tả</Text>
-          <ImageUpload
-            containerStyleClasses="mt-2"
+          <PreviewImageUpload
+            isAutoShadow={true}
+            imageWrapperStyle={{
+              width: 90,
+            }}
+            aspect={[1, 1]}
             uri={imageURI}
             setUri={(uri: string) => {
               setImageURI(uri);
+              // console.log("uri: ", uri);
             }}
-            imageStyleObject={{ height: 90, width: 90 }}
-            updateButton={
-              <CustomButton
-                title="Lưu"
-                containerStyleClasses="bg-white  bg-[#227B94] h-8"
-                textStyleClasses="text-sm text-white"
-                handlePress={() => {}}
-              />
-            }
           />
           <Text className="italic text-gray-700 mt-2">
             Tối đa 5MB, nhận diện tệp .PNG, .JPG
@@ -279,8 +290,8 @@ const FoodCreate = () => {
             multiline={true}
             numberOfLines={2}
             otherStyleClasses="mt-5"
-            otherInputStyleClasses="h-19 items-start"
-            otherTextInputStyleClasses="text-sm h-17 mt-2"
+            otherInputStyleClasses="h-24 items-start"
+            otherTextInputStyleClasses="text-sm h-20 mt-2 font-normal"
             // isRequired={true}
             placeholder="Nhập mô tả món..."
             value={formik.values.description}
@@ -494,6 +505,7 @@ const FoodCreate = () => {
         </View>
         <CustomButton
           title="Hoàn tất"
+          isLoading={isSubmiting}
           containerStyleClasses="mt-5 bg-primary"
           textStyleClasses="text-white"
           handlePress={formik.handleSubmit}

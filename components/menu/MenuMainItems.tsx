@@ -528,7 +528,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
             <Text className="bg-gray-100 rounded-xl px-4 py-2 ">Đã ẩn</Text>
           </View>
         </ScrollView>
-        <View className="gap-y-2 pb-[250px]">
+        <View className="gap-y-2 pb-[272px]">
           {isLoading && (
             <ActivityIndicator animating={isLoading} color="#FCF450" />
           )}
