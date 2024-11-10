@@ -47,7 +47,8 @@ const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
   );
   const [user, setUser] = useState({
     avatarUrl:
-      shopProfile.data?.value.shopOwnerAvatar || CONSTANTS.url.shopLogoDefault,
+      shopProfile.data?.value.shopOwnerAvatar ||
+      CONSTANTS.url.userAvatarDefault,
     fullname: shopProfile.data?.value.shopOwnerName || "--------------",
   });
   const [isChangeMode, setIsChangeMode] = useState(true);
@@ -128,13 +129,17 @@ const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
       // console.log("blob.size: ", blob.size);
 
       // Check if file size is within limit (5 MB in bytes)
-      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-      if (blob.size > MAX_FILE_SIZE) {
-        Alert.alert("Oops", "Ảnh vượt quá dung lượng cho phép 5 MB.");
+      if (blob.size > CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_BYTE) {
+        Alert.alert(
+          "Oops",
+          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`
+        );
         return;
       }
       setAvatar(imageURI);
-      const fileName = `shop-avatar.${getExtensionFromMimeType(blob.type)}`;
+      const fileName = `shop-owner-avatar.${getExtensionFromMimeType(
+        blob.type
+      )}`;
       const formData = new FormData();
       formData.append("file", {
         uri: imageURI,
@@ -142,18 +147,16 @@ const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
         type: blob.type,
       } as any);
       // Upload the image
-      const res = await apiClient.put("storage/file/upload", formData, {
-        headers: {
-          Authorization: `Bearer ${await sessionService.getAuthToken()}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      // const res = await apiClient.put("storage/file/upload", formData, {
+      //   headers: {
+      //     Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
 
-      const data = res.data as { value: { url: string } };
+      // const data = res.data as { value: { avatarUrl: string } };
       await apiClient
-        .put(endpoints.ACCOUNT_AVATAR_UPDATE, {
-          logoUrl: data.value.url,
-        })
+        .put(endpoints.ACCOUNT_AVATAR_UPDATE, formData)
         .then((res) => {
           // console.log(
           //   "data.value.url: ",
