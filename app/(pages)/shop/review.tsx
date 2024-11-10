@@ -289,7 +289,7 @@ const Review = () => {
                       >
                         <Image
                           source={{ uri: imageUrl }}
-                          className="w-[90px] h-[90px]"
+                          className="w-[90px] h-[90px] rounded-md"
                           resizeMode="cover"
                         />
                       </TouchableOpacity>
@@ -352,7 +352,7 @@ const Review = () => {
                   </Text>
                   {review.reviews[1].imageUrls.length > 0 && (
                     <View className="flex-row gap-x-2 mt-1">
-                      {review.reviews[0].imageUrls.map((imageUrl) => (
+                      {review.reviews[1].imageUrls.map((imageUrl) => (
                         <TouchableOpacity
                           key={imageUrl}
                           onPress={() => {
@@ -362,7 +362,7 @@ const Review = () => {
                         >
                           <Image
                             source={{ uri: imageUrl }}
-                            className="w-[90px] h-[90px]"
+                            className="w-[90px] h-[90px] rounded-md"
                             resizeMode="cover"
                           />
                         </TouchableOpacity>
