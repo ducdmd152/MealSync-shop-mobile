@@ -19,6 +19,7 @@ import { useState } from "react";
 import CONSTANTS from "@/constants/data";
 import * as ImagePicker from "expo-image-picker";
 import imageService from "@/services/image-service";
+import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 interface PreviewImageUploadProps extends ViewProps {
   uris: string[];
   setUris: (uri: string[]) => void;
@@ -49,6 +50,7 @@ const PreviewMultiImagesUpload = ({
   isHideAddWhenMax = true,
   ...props
 }: PreviewImageUploadProps) => {
+  const globalImageViewState = useGlobalImageViewingState();
   const [isSelectPicking, setIsSelectPicking] = useState(false);
   const [wrapperWidth, setWrapperWidth] = useState(0);
 
@@ -143,10 +145,14 @@ const PreviewMultiImagesUpload = ({
         }}
       >
         {uris.map((uri) => (
-          <View
+          <TouchableOpacity
             key={uri}
             className="relative "
             style={{ position: "relative" }}
+            onPress={() => {
+              globalImageViewState.setUrl(uri);
+              globalImageViewState.setIsModalVisible(true);
+            }}
           >
             <Image
               style={{
@@ -187,7 +193,7 @@ const PreviewMultiImagesUpload = ({
                 <Ionicons name="close-outline" size={24} color="#eef2ff" />
               </TouchableOpacity>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
 
         {(uris.length != maxNumberOfPics || isHideAddWhenMax == false) && (
