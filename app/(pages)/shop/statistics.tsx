@@ -23,6 +23,7 @@ import sessionService from "@/services/session-service";
 import utilService from "@/services/util-service";
 import CONSTANTS from "@/constants/data";
 import { FoodStatus } from "@/types/models/FoodModel";
+import { RefreshControl } from "react-native-gesture-handler";
 interface FoodStatistics {
   id: number;
   name: string;
@@ -71,7 +72,7 @@ const Statistics = () => {
       apiClient
         .get(endpoints.SHOP_STATISTICS, {
           headers: {
-            Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+            // Authorization: `Bearer ${await sessionService.getAuthToken()}`,
           },
           params: {
             startDate: fromDate.toISOString(),
@@ -95,7 +96,17 @@ const Statistics = () => {
     }, [])
   );
   return (
-    <PageLayoutWrapper>
+    <PageLayoutWrapper
+      refreshControl={
+        <RefreshControl
+          tintColor={"#FCF450"}
+          onRefresh={() => {
+            statistics.refetch();
+          }}
+          refreshing={statistics.isRefetching}
+        />
+      }
+    >
       <View className="w-full  bg-gray-000 flex-col rounded-xl items-center justify-center mb-3 border-green-100 border-2 py-8 gap-y-2">
         <View className="justify-center items-center flex-row">
           <Text className="font-semibold text-[48px] text-green-500 ">
