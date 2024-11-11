@@ -51,12 +51,13 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
             Authorization: `Bearer ${await sessionService.getAuthToken()}`,
           },
           params: {
+            title: searchQuery,
             pageIndex: 1,
             pageSize: 100_000_000,
           },
         })
         .then((response) => response.data),
-    []
+    [searchQuery]
   );
   useEffect(() => {
     setTmpOptionGroups(optionGroups?.value?.items || []);
@@ -95,7 +96,7 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                   // router.replace("/menu/option-group/link");
                 } catch (error: any) {
                   setTmpOptionGroups(oldTmpOptionGroups);
-                  console.log(error);
+                  // console.log(error);
                   if (error.response && error.response.status === 500) {
                     Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
                   } else
@@ -146,7 +147,7 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                   // router.replace("/menu/option-group/link");
                 } catch (error: any) {
                   setTmpOptionGroups(oldTmpOptionGroups);
-                  console.log(error);
+                  // console.log(error);
                   if (error.response && error.response.status === 500) {
                     Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
                   } else
