@@ -311,7 +311,7 @@ const OptionGroupUpdate: React.FC = () => {
       type: isMultiSelect ? 2 : 1,
       status: isAvailable ? 1 : 2,
     };
-    // console.log("Submit data:", data);
+    console.log("Submit data:", data);
     try {
       setIsLoading(true);
       const response = await apiClient.put(
@@ -441,7 +441,7 @@ const OptionGroupUpdate: React.FC = () => {
                         }
                         Alert.alert(
                           "Xác nhận thay đổi",
-                          `Bạn có chắc muốn ${
+                          `Bạn muốn ${
                             item.status === 1 ? "tạm ẩn" : "bật có sẵn"
                           } lựa chọn này không?`,
                           item.status == 1

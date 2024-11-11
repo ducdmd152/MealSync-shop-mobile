@@ -184,20 +184,20 @@ const FoodCreate = () => {
             imgUrl: imageUrl,
             status: isAvailable ? 1 : 2,
             price: Number(values.price),
-            optionGroups: selectedOptionGroups.map((item) =>
+            foodOptionGroups: selectedOptionGroups.map((item) =>
               Number(item)
             ) as number[],
             operatingSlots: selectedOperatingSlots.map((item) =>
               Number(item)
             ) as number[],
           };
-          console.log("FOOD DATA: ", foodData);
+          console.log("CREATE FOOD DATA: ", foodData);
           // Send POST request to the API
           const response = await apiClient.post(
             "shop-owner/food/create",
             foodData
           );
-          // console.log("RESPONSE : ", foodData, response);
+          console.log("RESPONSE : ", response);
 
           // Handle successful response
           Alert.alert("Hoàn tất", "Món ăn đã được tạo thành công");

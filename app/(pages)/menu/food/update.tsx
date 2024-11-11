@@ -255,20 +255,20 @@ const FoodUpdate = () => {
             status: status,
             isSoldOut: isSoldOut,
             price: Number(values.price),
-            optionGroups: selectedOptionGroups.map((item) =>
+            foodOptionGroups: selectedOptionGroups.map((item) =>
               Number(item)
             ) as number[],
             operatingSlots: selectedOperatingSlots.map((item) =>
               Number(item)
             ) as number[],
           };
-          console.log("FOOD DATA: ", foodData);
+          console.log("FOOD DATA UPDATE: ", foodData);
           // Send POST request to the API
           const response = await apiClient.put(
             "shop-owner/food/update",
             foodData
           );
-          console.log("RESPONSE : ", foodData, response);
+          console.log("RESPONSE : ", response);
 
           // Handle successful response
           Alert.alert("Hoàn tất", "Món đã được cập nhật!");

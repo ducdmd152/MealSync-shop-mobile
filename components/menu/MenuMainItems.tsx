@@ -372,7 +372,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
           <View className="gap-y-2 pb-2">
             {item.foods?.map((food) => (
               <View
-                key={food.id}
+                key={food.id + (Math.random() % 1_00_000_000)}
                 className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
               >
                 <View className="flex-row items-start justify-between gap-2">
