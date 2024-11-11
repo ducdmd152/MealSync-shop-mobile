@@ -1,4 +1,4 @@
-import { View, Text, Alert } from "react-native";
+import { View, Text, Alert, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import Avatar from "react-native-paper/lib/typescript/components/Avatar/AvatarIcon";
 import AvatarChange from "@/components/common/AvatarChange";
@@ -425,18 +425,20 @@ const FoodCreate = () => {
             </Text>
           </View>
 
-          <View>
-            <FormField
-              title="Liên kết nhóm lựa chọn"
-              otherStyleClasses="mt-5"
-              otherInputStyleClasses="h-12"
-              otherTextInputStyleClasses="text-sm"
-              placeholder="0"
-              value={""}
-              handleChangeText={() => {}}
-              keyboardType="numeric"
-              labelOnly={true}
-            />
+          <View className="mt-5">
+            <View className="flex-row items-center justify-between">
+              <FormField
+                title="Liên kết nhóm lựa chọn"
+                otherStyleClasses=""
+                otherInputStyleClasses="h-12"
+                otherTextInputStyleClasses="text-sm"
+                placeholder="0"
+                value={""}
+                handleChangeText={() => {}}
+                keyboardType="numeric"
+                labelOnly={true}
+              />
+            </View>
             <Text className="text-[12px] text-gray-600 italic mt-1 ml-1 mb-2">
               Ví dụ: topping, kích cỡ, lượng đá,...
             </Text>
@@ -464,6 +466,11 @@ const FoodCreate = () => {
                 <Ionicons name="checkmark-outline" size={22} color="gray" />
               }
             />
+            <TouchableOpacity className="w-full mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white ">
+              <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
+                Sắp xếp thứ tự các nhóm đã chọn
+              </Text>
+            </TouchableOpacity>
           </View>
           <View>
             <FormField
