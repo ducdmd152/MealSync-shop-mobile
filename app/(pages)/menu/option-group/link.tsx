@@ -401,7 +401,7 @@ const OptionGroupLink = () => {
           textStyleClasses="text-white"
           handlePress={() => {
             setMenuSessionIndex(1);
-            router.push("/menu");
+            router.back();
           }}
         />
       </View>

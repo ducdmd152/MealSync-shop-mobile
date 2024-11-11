@@ -375,6 +375,7 @@ const OptionGroupUpdate: React.FC = () => {
                     otherTextInputStyleClasses="text-sm"
                     isRequired={true}
                     placeholder=""
+                    keyboardType="numeric"
                     readOnly={!item.isCalculatePrice}
                     value={formatPrice(item.price)}
                     handleChangeText={(text: string) => {
@@ -527,6 +528,7 @@ const OptionGroupUpdate: React.FC = () => {
                 otherTextInputStyleClasses="text-sm text-center"
                 isRequired={true}
                 placeholder="0"
+                keyboardType="numeric"
                 readOnly={!isMultiSelect}
                 value={minSelectText}
                 handleChangeText={(e) => {
@@ -538,6 +540,7 @@ const OptionGroupUpdate: React.FC = () => {
               />
               <FormField
                 title="Chọn tối đa"
+                keyboardType="numeric"
                 otherStyleClasses="w-[150px] ml-4"
                 otherInputStyleClasses="h-8"
                 otherTextInputStyleClasses="text-sm text-center"
@@ -612,7 +615,7 @@ const OptionGroupUpdate: React.FC = () => {
                       "Hoàn tất",
                       `Đã xóa nhóm lựa chọn "${optionGroupModel.title}"!`
                     );
-                    router.replace("/menu");
+                    router.back();
                   } catch (error: any) {
                     console.log(
                       error,
@@ -620,7 +623,7 @@ const OptionGroupUpdate: React.FC = () => {
                     );
                     if (error.response && error.response.status === 404) {
                       Alert.alert("Oops!", "Nhóm lựa chọn không còn tồn tại!");
-                      router.replace("/menu");
+                      router.back();
                     } else {
                       Alert.alert(
                         "Oops!",

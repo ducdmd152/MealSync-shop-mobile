@@ -369,6 +369,7 @@ const OptionGroupCreate: React.FC = () => {
                   />
                   <FormField
                     title="Giá thêm"
+                    keyboardType="numeric"
                     titleStyleClasses="text-[14px] ml-1"
                     otherStyleClasses="w-[160px] ml-2"
                     otherInputStyleClasses="h-10 border-gray-400"
@@ -441,7 +442,7 @@ const OptionGroupCreate: React.FC = () => {
                         }
                         Alert.alert(
                           "Xác nhận thay đổi",
-                          `Bạn có chắc muốn ${
+                          `Bạn muốn ${
                             item.status === 1 ? "tạm ẩn" : "bật có sẵn"
                           } lựa chọn này không?`,
                           item.status == 1
@@ -522,6 +523,7 @@ const OptionGroupCreate: React.FC = () => {
             <View className="flex-row mt-1">
               <FormField
                 title="Chọn tối thiểu"
+                keyboardType="numeric"
                 otherStyleClasses="w-[150px] ml-2"
                 otherInputStyleClasses="h-8"
                 otherTextInputStyleClasses="text-sm text-center"
@@ -538,6 +540,7 @@ const OptionGroupCreate: React.FC = () => {
               />
               <FormField
                 title="Chọn tối đa"
+                keyboardType="numeric"
                 otherStyleClasses="w-[150px] ml-4"
                 otherInputStyleClasses="h-8"
                 otherTextInputStyleClasses="text-sm text-center"
