@@ -44,13 +44,17 @@ const initialCategories = [
 interface FoodListResponse extends APICommonResponse {
   value: ShopCategoryModel[];
 }
-interface FoodListQuery {}
+interface FoodListQuery {
+  filterMode: number;
+}
 interface ExtendCategoryModel extends ShopCategoryModel {
   isCollapsible: boolean;
 }
 const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   const toast = useToast();
-  const [query, setQuery] = useState<FoodListQuery>({} as FoodListQuery);
+  const [query, setQuery] = useState<FoodListQuery>({
+    filterMode: 0,
+  } as FoodListQuery);
   const [extendCategories, setExtendCategories] = useState<
     ExtendCategoryModel[]
   >([]);
@@ -99,7 +103,13 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   } = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.FOOD_LIST,
     (): Promise<FoodListResponse> =>
-      apiClient.get(endpoints.FOOD_LIST).then((response) => response.data),
+      apiClient
+        .get(endpoints.FOOD_LIST, {
+          params: {
+            filterMode: query.filterMode,
+          },
+        })
+        .then((response) => response.data),
     [query]
   );
   useEffect(() => {
@@ -520,22 +530,72 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
         </View>
         <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
           <View className="w-full flex-row gap-2 items-center justify-between pb-2 ">
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 bg-secondary">
-              Tất cả
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Trong khung giờ
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Ngoài khung giờ
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Đang mở bán
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">
-              Tạm hết hàng
-            </Text>
-            <Text className="bg-gray-100 rounded-xl px-4 py-2 ">Đã ẩn</Text>
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, filterMode: 0 })}
+            >
+              <Text
+                className={`bg-gray-100 rounded-xl px-4 py-2 ${
+                  query.filterMode == 0 && "bg-secondary"
+                }`}
+              >
+                Tất cả
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, filterMode: 1 })}
+            >
+              <Text
+                className={`bg-gray-100 rounded-xl px-4 py-2 ${
+                  query.filterMode == 1 && "bg-secondary"
+                }`}
+              >
+                Trong khung giờ
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, filterMode: 2 })}
+            >
+              <Text
+                className={`bg-gray-100 rounded-xl px-4 py-2 ${
+                  query.filterMode == 2 && "bg-secondary"
+                }`}
+              >
+                Ngoài khung giờ
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, filterMode: 3 })}
+            >
+              <Text
+                className={`bg-gray-100 rounded-xl px-4 py-2 ${
+                  query.filterMode == 3 && "bg-secondary"
+                }`}
+              >
+                Đang mở bán
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, filterMode: 4 })}
+            >
+              <Text
+                className={`bg-gray-100 rounded-xl px-4 py-2 ${
+                  query.filterMode == 4 && "bg-secondary"
+                }`}
+              >
+                Tạm hết hàng
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setQuery({ ...query, filterMode: 5 })}
+            >
+              <Text
+                className={`bg-gray-100 rounded-xl px-4 py-2 ${
+                  query.filterMode == 5 && "bg-secondary"
+                }`}
+              >
+                Đã ẩn
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
         <View className="gap-y-2 pb-[272px]">
