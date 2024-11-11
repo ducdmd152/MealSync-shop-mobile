@@ -34,6 +34,11 @@ import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectLi
 import PreviewImageUpload from "@/components/images/PreviewImageUpload";
 import imageService from "@/services/image-service";
 import CONSTANTS from "@/constants/data";
+import { TouchableOpacity } from "react-native";
+import DraggableFlatList, {
+  RenderItemParams,
+} from "react-native-draggable-flatlist";
+import CustomModal from "@/components/common/CustomModal";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -72,6 +77,8 @@ const FoodUpdate = () => {
   const [description, setDescription] = useState(foodDetailModel.description);
   const [price, setPrice] = useState(foodDetailModel.price);
   const [isSubmiting, setIsSubmiting] = useState(false);
+  const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
+    useState(false);
   const [selectedShopCategory, setSelectedShopCategory] = useState(
     foodDetailModel.shopCategoryId
   );
@@ -313,6 +320,30 @@ const FoodUpdate = () => {
     },
   });
 
+  const getOptionGroup = (id: number) => {
+    return (
+      optionGroups?.value?.items.find((item) => item.id == id) || undefined
+    );
+  };
+  const sortedOptionGroupItems = [...(optionGroups?.value?.items || [])].sort(
+    (a, b) => {
+      const aIndex = selectedOptionGroups.indexOf(a.id.toString());
+      const bIndex = selectedOptionGroups.indexOf(b.id.toString());
+
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+
+      if (aIndex !== -1) {
+        return -1;
+      }
+      if (bIndex !== -1) {
+        return 1;
+      }
+      return 0;
+    }
+  );
+
   return (
     <PageLayoutWrapper>
       <View className="p-4 bg-white">
@@ -378,7 +409,7 @@ const FoodUpdate = () => {
             numberOfLines={2}
             otherStyleClasses="mt-5"
             otherInputStyleClasses="h-19 items-start"
-            otherTextInputStyleClasses="text-sm h-17 mt-2"
+            otherTextInputStyleClasses="p-1 text-sm font-medium h-17 mt-2"
             // isRequired={true}
             placeholder="Nhập mô tả món..."
             value={formik.values.description}
@@ -542,7 +573,7 @@ const FoodUpdate = () => {
               }
               setSelected={setSelectedOptionGroups}
               data={
-                optionGroups?.value?.items?.map((group: OptionGroupModel) => ({
+                sortedOptionGroupItems?.map((group: OptionGroupModel) => ({
                   key: group.id.toString(),
                   value: group.title,
                 })) || []
@@ -562,6 +593,14 @@ const FoodUpdate = () => {
                 <Ionicons name="checkmark-outline" size={22} color="gray" />
               }
             />
+            <TouchableOpacity
+              onPress={() => setIsRearrangeOptionGroupsInFood(true)}
+              className="w-full mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
+            >
+              <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
+                Sắp xếp thứ tự các nhóm đã chọn
+              </Text>
+            </TouchableOpacity>
           </View>
           <View>
             <FormField
@@ -689,6 +728,87 @@ const FoodUpdate = () => {
           textStyleClasses={`text-[16px] text-gray-900 ml-1 text-secondary`}
         />
       </View>
+      <CustomModal
+        title=""
+        hasHeader={false}
+        isOpen={isRearrangeOptionGroupsInFood}
+        setIsOpen={(value) => {
+          setIsRearrangeOptionGroupsInFood(value);
+        }}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[85%]"
+        onBackdropPress={() => {
+          setIsRearrangeOptionGroupsInFood(false);
+        }}
+      >
+        <Text className="text-center text-[12px] font-semibold">
+          Sắp xếp thứ tự hiển thị {"\n"} các nhóm đã chọn trên sản phẩm này
+        </Text>
+        <View
+          className="mt-3"
+          style={
+            {
+              // height: selectedOptionGroups.length * 120,
+            }
+          }
+        >
+          {!selectedOptionGroups.length && (
+            <View className="h-20 w-full items-center justify-center">
+              <Text className="text-[13.2px] text-center italic gray-700">
+                Bạn chưa liên kết với nhóm lựa chọn nào
+              </Text>
+              <CustomButton
+                title="Thoát"
+                containerStyleClasses="mt-5 bg-white border-gray-300 border-[2px] h-8"
+                textStyleClasses="text-white text-[14px] text-gray-500 font-normal"
+                handlePress={() => {
+                  setIsRearrangeOptionGroupsInFood(false);
+                }}
+              />
+            </View>
+          )}
+          <DraggableFlatList
+            style={{ width: "100%", flexGrow: 1 }}
+            data={selectedOptionGroups}
+            renderItem={({ item, drag }: RenderItemParams<string>) => {
+              return (
+                <View key={item}>
+                  <TouchableOpacity
+                    className="border-[1px] border-gray-200 flex-row justify-between items-center p-2 mb-2 rounded-lg"
+                    onLongPress={drag}
+                  >
+                    <Text className="w-full text-center text-[#14b8a6] font-semibold">
+                      {getOptionGroup(Number(item))?.title || "------"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+            keyExtractor={(item) => `option-group-${item}`}
+            onDragEnd={({ data }) => {
+              // console.log("Before drag: ", selectedOptionGroups);
+              // console.log("After drag: ", data);
+              setSelectedOptionGroups(data);
+            }}
+          />
+          {selectedOptionGroups.length > 0 && (
+            <CustomButton
+              title="Hoàn tất"
+              containerStyleClasses="mt-3 bg-secondary h-10"
+              textStyleClasses="text-white text-[14px]"
+              handlePress={() => {
+                setIsRearrangeOptionGroupsInFood(false);
+              }}
+            />
+          )}
+
+          {/* {getSelectedOptionGroups().map((item) => (
+            <View key={item.id}>
+              <Text>{item.title}</Text>
+            </View>
+          ))} */}
+        </View>
+      </CustomModal>
     </PageLayoutWrapper>
   );
 };

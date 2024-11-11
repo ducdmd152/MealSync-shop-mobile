@@ -322,8 +322,8 @@ const FoodCreate = () => {
             multiline={true}
             numberOfLines={2}
             otherStyleClasses="mt-5"
-            otherInputStyleClasses="h-24 items-start"
-            otherTextInputStyleClasses="text-sm h-20 mt-2 font-normal"
+            otherInputStyleClasses="h-19 items-start"
+            otherTextInputStyleClasses="p-1 text-sm h-17 mt-2 font-medium"
             // isRequired={true}
             placeholder="Nhập mô tả món..."
             value={formik.values.description}
