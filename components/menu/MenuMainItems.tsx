@@ -602,6 +602,11 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
           {isLoading && (
             <ActivityIndicator animating={isLoading} color="#FCF450" />
           )}
+          {!extendCategories.length && (
+            <Text className="text-gray-600 text-center mt-[-12px]">
+              Không tìm thấy danh mục và sản phẩm tương ứng
+            </Text>
+          )}
           <DraggableFlatList
             style={{ width: "100%", flexGrow: 1 }}
             data={extendCategories}
