@@ -242,6 +242,24 @@ const FoodCreate = () => {
     },
   });
 
+  const sortedOptionGroupItems = [...(optionGroups?.value?.items || [])].sort(
+    (a, b) => {
+      const aIndex = selectedOptionGroups.indexOf(a.id.toString());
+      const bIndex = selectedOptionGroups.indexOf(b.id.toString());
+
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+
+      if (aIndex !== -1) {
+        return -1;
+      }
+      if (bIndex !== -1) {
+        return 1;
+      }
+      return 0;
+    }
+  );
   return (
     <PageLayoutWrapper>
       <View className="p-4 bg-white">
@@ -409,7 +427,7 @@ const FoodCreate = () => {
 
           <View>
             <FormField
-              title="Liên kết nhóm lựa chọn phụ"
+              title="Liên kết nhóm lựa chọn"
               otherStyleClasses="mt-5"
               otherInputStyleClasses="h-12"
               otherTextInputStyleClasses="text-sm"
@@ -426,7 +444,7 @@ const FoodCreate = () => {
               selectedText="Liên kết đã chọn"
               setSelected={setSelectedOptionGroups}
               data={
-                optionGroups?.value?.items?.map((group: OptionGroupModel) => ({
+                sortedOptionGroupItems?.map((group: OptionGroupModel) => ({
                   key: group.id.toString(),
                   value: group.title,
                 })) || []
