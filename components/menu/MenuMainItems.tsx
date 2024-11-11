@@ -98,6 +98,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   const {
     data: categories,
     isLoading,
+    isFetching,
     error,
     refetch,
   } = useFetchWithRQWithFetchFunc(
@@ -602,7 +603,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
           {isLoading && (
             <ActivityIndicator animating={isLoading} color="#FCF450" />
           )}
-          {!extendCategories.length && (
+          {!isFetching && !extendCategories.length && (
             <Text className="text-gray-600 text-center mt-[-12px]">
               Không tìm thấy danh mục và sản phẩm tương ứng
             </Text>

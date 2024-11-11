@@ -33,6 +33,7 @@ import imageService from "@/services/image-service";
 import CONSTANTS from "@/constants/data";
 import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
 import PreviewImageUpload from "@/components/images/PreviewImageUpload";
+import CustomModal from "@/components/common/CustomModal";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -75,6 +76,9 @@ const FoodCreate = () => {
     []
   );
   const [isSubmiting, setIsSubmiting] = useState(false);
+  const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
+    useState(false);
+
   const [selectedOperatingSlots, setSelectedOperatingSlots] = useState<
     string[]
   >([]);
@@ -242,6 +246,13 @@ const FoodCreate = () => {
     },
   });
 
+  const getSelectedOptionGroups = () => {
+    return (
+      optionGroups?.value?.items.filter((item) =>
+        selectedOptionGroups.includes(item.id.toString())
+      ) || []
+    );
+  };
   const sortedOptionGroupItems = [...(optionGroups?.value?.items || [])].sort(
     (a, b) => {
       const aIndex = selectedOptionGroups.indexOf(a.id.toString());
@@ -466,7 +477,10 @@ const FoodCreate = () => {
                 <Ionicons name="checkmark-outline" size={22} color="gray" />
               }
             />
-            <TouchableOpacity className="w-full mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white ">
+            <TouchableOpacity
+              onPress={() => setIsRearrangeOptionGroupsInFood(true)}
+              className="w-full mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
+            >
               <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
                 Sắp xếp thứ tự các nhóm đã chọn
               </Text>
@@ -536,6 +550,37 @@ const FoodCreate = () => {
           handlePress={formik.handleSubmit}
         />
       </View>
+      <CustomModal
+        title=""
+        hasHeader={false}
+        isOpen={isRearrangeOptionGroupsInFood}
+        setIsOpen={(value) => {
+          setIsRearrangeOptionGroupsInFood(value);
+        }}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-64 min-h-[120px]"
+        onBackdropPress={() => {
+          setIsRearrangeOptionGroupsInFood(false);
+        }}
+      >
+        <Text className="text-center text-[12px] font-semibold">
+          Sắp xếp thứ tự hiển thị {"\n"} các nhóm đã chọn trên sản phẩm này
+        </Text>
+        <View className="flex-1 mt-3">
+          {getSelectedOptionGroups().length == 0 && (
+            <View className="flex-1 w-full items-center justify-center">
+              <Text className="text-[12px] text-center italic gray-700">
+                Bạn chưa liên kết với nhóm lựa chọn nào
+              </Text>
+            </View>
+          )}
+          {getSelectedOptionGroups().map((item) => (
+            <View key={item.id}>
+              <Text>{item.title}</Text>
+            </View>
+          ))}
+        </View>
+      </CustomModal>
     </PageLayoutWrapper>
   );
 };
