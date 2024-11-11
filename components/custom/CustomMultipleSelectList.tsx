@@ -16,6 +16,7 @@ import {
 
 interface CustomMultipleSelectListProps {
   setSelected: (val: any) => void;
+  selected: any[];
   placeholder?: string;
   boxStyles?: ViewStyle;
   inputStyles?: TextStyle;
@@ -52,6 +53,7 @@ const CustomMultipleSelectList: React.FC<CustomMultipleSelectListProps> = ({
   selectedText = "Selected text",
   fontFamily,
   setSelected,
+  selected,
   placeholder,
   boxStyles,
   inputStyles,
@@ -129,9 +131,16 @@ const CustomMultipleSelectList: React.FC<CustomMultipleSelectListProps> = ({
       setSelected(
         defaultOptions.map((item) => (save === "key" ? item?.key : item?.value))
       );
-      setSelectedVal(defaultOptions.map((item) => item?.value));
+      // setSelectedVal(defaultOptions.map((item) => item?.value));
     }
   });
+  useEffect(() => {
+    setSelectedVal(
+      data
+        .filter((item) => selected.includes(item.key))
+        .map((item) => item?.value)
+    );
+  }, [selected]);
 
   React.useEffect(() => {
     if (!_firstRender) {
@@ -345,7 +354,7 @@ const CustomMultipleSelectList: React.FC<CustomMultipleSelectListProps> = ({
                           if (existing != -1 && existing != undefined) {
                             let sv = [...selectedval];
                             sv.splice(existing, 1);
-                            setSelectedVal(sv);
+                            // setSelectedVal(sv);
 
                             setSelected((val: any) => {
                               let temp = [...val];
@@ -367,10 +376,10 @@ const CustomMultipleSelectList: React.FC<CustomMultipleSelectListProps> = ({
                               });
                             }
 
-                            setSelectedVal((val: any) => {
-                              let temp = [...new Set([...val, value])];
-                              return temp;
-                            });
+                            // setSelectedVal((val: any) => {
+                            //   let temp = [...new Set([...val, value])];
+                            //   return temp;
+                            // });
 
                             // onSelect()
                           }

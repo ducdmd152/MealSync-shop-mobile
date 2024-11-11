@@ -525,6 +525,7 @@ const FoodUpdate = () => {
             </Text>
             <CustomMultipleSelectList
               selectedText="Liên kết đã chọn"
+              selected={selectedOptionGroups}
               defaultOptions={
                 (
                   optionGroups?.value?.items?.map(
@@ -579,6 +580,7 @@ const FoodUpdate = () => {
               Chọn theo các khoảng thời gian hoạt động của cửa hàng
             </Text>
             <CustomMultipleSelectList
+              selected={selectedOperatingSlots}
               defaultOptions={(
                 operatingSlots?.value?.map((item: OperatingSlotModel) => ({
                   key: item.id.toString(),

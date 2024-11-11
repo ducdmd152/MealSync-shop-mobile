@@ -459,6 +459,7 @@ const FoodCreate = () => {
             <CustomMultipleSelectList
               selectedText="Liên kết đã chọn"
               setSelected={setSelectedOptionGroups}
+              selected={selectedOptionGroups}
               data={
                 sortedOptionGroupItems?.map((group: OptionGroupModel) => ({
                   key: group.id.toString(),
@@ -506,7 +507,14 @@ const FoodCreate = () => {
               Chọn theo các khoảng thời gian hoạt động của cửa hàng
             </Text>
             <CustomMultipleSelectList
+              // defaultOptions={
+              //   operatingSlots?.value?.map((item: OperatingSlotModel) => ({
+              //     key: item.id.toString(),
+              //     value: item.frameFormat,
+              //   })) || []
+              // }
               selectedText="Khoảng đã chọn"
+              selected={selectedOperatingSlots}
               setSelected={setSelectedOperatingSlots}
               data={
                 operatingSlots?.value?.map((item: OperatingSlotModel) => ({
@@ -577,11 +585,19 @@ const FoodCreate = () => {
             }
           }
         >
-          {selectedOptionGroups.length == 0 && (
-            <View className="flex-1 w-full items-center justify-center">
-              <Text className="text-[12px] text-center italic gray-700">
+          {!selectedOptionGroups.length && (
+            <View className="h-20 w-full items-center justify-center">
+              <Text className="text-[13.2px] text-center italic gray-700">
                 Bạn chưa liên kết với nhóm lựa chọn nào
               </Text>
+              <CustomButton
+                title="Thoát"
+                containerStyleClasses="mt-5 bg-white border-gray-300 border-[2px] h-8"
+                textStyleClasses="text-white text-[14px] text-gray-500 font-normal"
+                handlePress={() => {
+                  setIsRearrangeOptionGroupsInFood(false);
+                }}
+              />
             </View>
           )}
           <DraggableFlatList
@@ -594,7 +610,7 @@ const FoodCreate = () => {
                     className="border-[1px] border-gray-200 flex-row justify-between items-center p-2 mb-2 rounded-lg"
                     onLongPress={drag}
                   >
-                    <Text className="w-full text-center text-[#2dd4bf] font-semibold">
+                    <Text className="w-full text-center text-[#14b8a6] font-semibold">
                       {getOptionGroup(Number(item))?.title || "------"}
                     </Text>
                   </TouchableOpacity>
@@ -603,8 +619,8 @@ const FoodCreate = () => {
             }}
             keyExtractor={(item) => `option-group-${item}`}
             onDragEnd={({ data }) => {
-              console.log("Before drag: ", selectedOptionGroups);
-              console.log("After drag: ", data);
+              // console.log("Before drag: ", selectedOptionGroups);
+              // console.log("After drag: ", data);
               setSelectedOptionGroups(data);
             }}
           />

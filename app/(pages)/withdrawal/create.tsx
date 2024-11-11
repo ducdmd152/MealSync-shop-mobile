@@ -1,51 +1,36 @@
-import {
-  View,
-  Text,
-  Alert,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  SafeAreaView,
-} from "react-native";
-import React, { useEffect, useRef, useState } from "react";
-import PromotionModel, {
-  initPromotionSampleObject,
-  PromotionApplyType,
-  promotionApplyTypes,
-} from "@/types/models/PromotionModel";
-import dayjs from "dayjs";
-import apiClient from "@/services/api-services/api-client";
-import ValueResponse from "@/types/responses/ValueReponse";
-import { useToast } from "react-native-toast-notifications";
-import { router, useFocusEffect } from "expo-router";
-import { Searchbar, Switch, TouchableRipple } from "react-native-paper";
-import DateTimePicker from "react-native-ui-datepicker";
-import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
-import ImageUpload from "@/components/common/ImageUpload";
+import CustomModal from "@/components/common/CustomModal";
 import CustomButton from "@/components/custom/CustomButton";
-import { SelectList } from "react-native-dropdown-select-list";
-import utilService from "@/services/util-service";
-import { Ionicons } from "@expo/vector-icons";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import usePromotionModelState from "@/hooks/states/usePromotionModelState";
-import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
+import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
+import utilService from "@/services/util-service";
+import { BalanceModel } from "@/types/models/BalanceModel";
 import {
   BankInfoModel,
   BankListFetchResponse,
 } from "@/types/models/BankFetchResponse";
-import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
-import { BalanceModel } from "@/types/models/BalanceModel";
-import { px } from "framer-motion";
-import CustomModal from "@/components/common/CustomModal";
-import OTPTextView from "react-native-otp-textinput";
-import sessionService from "@/services/session-service";
-import { RefreshControl } from "react-native-gesture-handler";
 import { WITHDRAW_STATUSES_FILTER } from "@/types/models/WithdrawalModel";
+import ValueResponse from "@/types/responses/ValueReponse";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import { router, useFocusEffect } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { RefreshControl } from "react-native-gesture-handler";
+import OTPTextView from "react-native-otp-textinput";
+import { Searchbar } from "react-native-paper";
+import { useToast } from "react-native-toast-notifications";
 // Initialize the timezone plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
