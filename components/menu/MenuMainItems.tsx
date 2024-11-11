@@ -600,9 +600,9 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
           </View>
         </ScrollView>
         <View className="gap-y-2 pb-[272px]">
-          {isLoading && (
+          {/* {isLoading && (
             <ActivityIndicator animating={isLoading} color="#FCF450" />
-          )}
+          )} */}
           {!isFetching && !extendCategories.length && (
             <Text className="text-gray-600 text-center mt-[-12px]">
               Không tìm thấy danh mục và sản phẩm tương ứng
