@@ -36,6 +36,7 @@ export interface OrderDetailFoodModel {
   quantity: number;
   totalPrice: number;
   basicPrice: number;
+  note: string;
   optionGroups: OrderDetailOptionGroupModel[];
 }
 
@@ -53,6 +54,7 @@ export default interface OrderDetailModel {
   intendedReceiveDate: string;
   startTime: number;
   endTime: number;
+  note: string | null;
   customer: OrderDetailCustomerModel;
   promotion: string | null;
   deliveryPackage: string | null;

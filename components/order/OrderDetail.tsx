@@ -182,30 +182,43 @@ const OrderDetail = ({
                       </View>
                     </View>
 
-                    <View className="flex-row gap-x-2">
-                      <Text className="w-[28px]"></Text>
-                      {detail.optionGroups.map((option) => (
-                        <Text
-                          className="italic font-gray-500 text-[12px]"
-                          key={detail.id + option.optionGroupTitle}
-                        >
-                          {option.optionGroupTitle}:{" "}
-                          {option.options
-                            .map((item) => item.optionTitle)
-                            .join(", ")}
-                          {" ; "}
+                    {detail.optionGroups.length > 0 && (
+                      <View className="flex-row gap-x-2">
+                        <Text className="w-[28px]"></Text>
+                        {detail.optionGroups.map((option) => (
+                          <Text
+                            className="italic font-gray-500 text-[12px]"
+                            key={detail.id + option.optionGroupTitle}
+                          >
+                            {option.optionGroupTitle}:{" "}
+                            {option.options
+                              .map((item) => item.optionTitle)
+                              .join(", ")}
+                            {" ; "}
+                          </Text>
+                        ))}
+                      </View>
+                    )}
+
+                    {detail.note && (
+                      <View className="flex-row gap-x-2 mt-[2px]">
+                        <Text className="italic font-gray-500 text-[13.2px]">
+                          Ghi chú: {detail.note}
                         </Text>
-                      ))}
-                    </View>
-                    <View className="flex-row gap-x-2 mt-[2px]">
-                      <Text className="w-[28px]"></Text>
-                      <Text className="italic font-gray-500 text-[12px]">
-                        Ghi chú: ...
-                      </Text>
-                    </View>
+                      </View>
+                    )}
                   </View>
                 ))}
               </View>
+            </View>
+            <View className="mt-1 bg-white p-2">
+              <Text className="text-[14px] text-gray-500 font-semibold">
+                Ghi chú cho toàn đơn hàng
+              </Text>
+              <View className="mt-2 border-gray-300 border-[0.5px]" />
+              <Text className="mt-2 italic text-gray-5\600  text-[14px]">
+                {order.note || "Không có"}
+              </Text>
             </View>
             <View className="mt-2 bg-white p-2">
               <View className="py-2 gap-y-1">
