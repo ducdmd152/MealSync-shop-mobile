@@ -56,7 +56,7 @@ const DeliveryFrameDetail = ({
       {} as DeliveryPackageGroupDetailsModel
     );
   const [extendPKGs, setExtendPKGs] = useState<boolean[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [order, setOrder] = useState<OrderFetchModel>({} as OrderFetchModel);
   const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
   const globalOrderDetailState = useGlobalOrderDetailState();

@@ -39,3 +39,9 @@ export enum DeliveryPackageStatus {
   OnGoing = 2,
   Completed = 3,
 }
+
+export interface OwnDeliveryPackageModel extends DeliveryPackageModel {
+  startTime: number;
+  endTime: number;
+  intendedReceiveDate: string;
+}

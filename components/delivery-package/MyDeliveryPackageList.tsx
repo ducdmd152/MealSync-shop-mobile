@@ -1,10 +1,11 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Dimensions, Alert } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 import { FrameDateTime } from "@/types/models/TimeModel";
 import {
   DeliveryPackageModel,
   DeliveryPackageStatus,
+  OwnDeliveryPackageModel,
 } from "@/types/models/DeliveryPackageModel";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
@@ -21,14 +22,14 @@ import sessionService from "@/services/session-service";
 import utilService from "@/services/util-service";
 import { getOrderStatusDescription } from "@/types/models/OrderFetchModel";
 import { useFocusEffect } from "expo-router";
-
+import useGlobalMyPKGDetailsState from "@/hooks/states/useGlobalPKGDetailsState";
+import { BottomSheet } from "@rneui/themed";
+import DeliveryFrameDetail from "./DeliveryFrameDetail";
+import { Ionicons } from "@expo/vector-icons";
+import DeliveryPKGDetail from "./DeliveryPKGDetail";
+const detailBottomHeight = Dimensions.get("window").height - 100;
 interface Query extends FrameDateTime {
   status: number[];
-}
-interface MyDeliveryPackageModel extends DeliveryPackageModel {
-  startTime: number;
-  endTime: number;
-  intendedReceiveDate: string;
 }
 const STATUSES = [
   {
@@ -46,10 +47,15 @@ const STATUSES = [
 const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
   const isFocused = useRef(false);
   const globalTimeRangeFilter = useTimeRangeState();
+  const globalMyGKGDetailsState = useGlobalMyPKGDetailsState();
+  const [isDetailBottomSheetVisible, setIsDetailBottomSheetVisible] =
+    useState(false);
+  const [detailBottomSheetDisplay, setDetailBottomSheetDisplay] =
+    useState(true);
   const [statuses, setStatuses] = useState<Number[]>(STATUSES[0].value);
   const myPkgFetchResult = useFetchWithRQWithFetchFunc(
     [endpoints.MY_DELIVERY_PACKAGE_LIST],
-    async (): Promise<FetchOnlyListResponse<MyDeliveryPackageModel>> =>
+    async (): Promise<FetchOnlyListResponse<OwnDeliveryPackageModel>> =>
       apiClient
         .get(
           endpoints.MY_DELIVERY_PACKAGE_LIST +
@@ -120,6 +126,10 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
             <TouchableOpacity
               key={pkg.deliveryPackageId}
               className="bg-[#f9fafb] p-3 drop-shadow-sm rounded-lg border-[0.5px] border-gray-200"
+              onPress={() => {
+                globalMyGKGDetailsState.setModel(pkg);
+                setIsDetailBottomSheetVisible(true);
+              }}
             >
               <View className="flex-row items-center justify-between gap-2">
                 {/* <View className="flex-row items-center">
@@ -165,6 +175,45 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
           ))}
         </View>
       </ScrollView>
+
+      <BottomSheet
+        containerStyle={{
+          zIndex: 11,
+        }}
+        modalProps={{}}
+        isVisible={isDetailBottomSheetVisible}
+      >
+        {detailBottomSheetDisplay && (
+          <View
+            className={`p-4 bg-white rounded-t-lg min-h-[120px] bottom-0`}
+            style={{ height: detailBottomHeight }}
+          >
+            <TouchableOpacity
+              className="items-center"
+              onPress={() => setIsDetailBottomSheetVisible(false)}
+            >
+              <Ionicons name="chevron-down-outline" size={24} color="gray" />
+            </TouchableOpacity>
+            <View className="flex-1 mt-2">
+              <DeliveryPKGDetail
+                onClose={() => setIsDetailBottomSheetVisible(false)}
+                onNotFound={() => {
+                  setDetailBottomSheetDisplay(false);
+                  Alert.alert(
+                    `Gói vừa chọn không tồn tại.`,
+                    "Vui lòng thử lại!"
+                  );
+                  myPkgFetchResult.refetch();
+                  setTimeout(() => {
+                    setIsDetailBottomSheetVisible(false);
+                    setTimeout(() => setDetailBottomSheetDisplay(true), 1000);
+                  }, 1000);
+                }}
+              />
+            </View>
+          </View>
+        )}
+      </BottomSheet>
     </View>
   );
 };
