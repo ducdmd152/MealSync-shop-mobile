@@ -28,7 +28,6 @@ export interface DeliveryPackageGroupModel
   extends DeliveryPackageGroupDetailsModel {}
 
 export interface DeliveryPackageGroupDetailsModel {
-  intendedReceiveDate: string;
   startTime: number;
   endTime: number;
   deliveryPackageGroups: DeliveryPackageModel[];
@@ -68,4 +67,5 @@ export interface OwnDeliveryPackageModel extends DeliveryPackageModel {
   startTime: number;
   endTime: number;
   intendedReceiveDate: string;
+  deliveryDate: string;
 }

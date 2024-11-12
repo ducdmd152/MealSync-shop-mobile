@@ -139,15 +139,14 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
               </View> */}
                 <View className="flex-row">
                   <Text className="font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
-                    {utilService.formatTime(pkg.startTime || 1000) +
+                    {utilService.formatTime(pkg.startTime) +
                       " - " +
-                      utilService.formatTime(pkg.endTime || 1030)}
+                      utilService.formatTime(pkg.endTime)}
                   </Text>
                   <Text className="ml-2 bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
-                    {utilService.formatDateDdMmYyyy(
-                      pkg.intendedReceiveDate ||
-                        dayjs(globalTimeRangeFilter.date).format("YYYY/MM/DD")
-                    )}
+                    {dayjs(pkg.intendedReceiveDate)
+                      .local()
+                      .format("DD/MM/YYYY")}
                   </Text>
                 </View>
                 <View className="flex-row items-center">

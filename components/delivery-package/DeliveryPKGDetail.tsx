@@ -42,6 +42,7 @@ import useGPKGState from "@/hooks/states/useGPKGState";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 import useGlobalPKGDetailsState from "@/hooks/states/useGlobalPKGDetailsState";
 import DeliveryPackage from "@/app/(tabs)/delivery-package";
+import dayjs from "dayjs";
 interface Props {
   onNotFound?: () => void;
   containerStyleClasses?: string;
@@ -117,7 +118,7 @@ const DeliveryPKGDetail = ({
               utilService.formatTime(pkgDetails.endTime || 1030)}
           </Text>
           <Text className="ml-2 bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
-            {/* {utilService.formatDateDdMmYyyy(query.intendedReceiveDate)} */}
+            {dayjs(pkgDetails.deliveryDate).local().format("DD/MM/YYYY")}
           </Text>
         </View>
       </View>
