@@ -340,7 +340,6 @@ const DeliveryPKGDetail = ({
                                 );
                               }}
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
-                              disabled={order.status != OrderStatus.Preparing}
                             >
                               <Text className="text-[12px] text-white mr-1 text-center">
                                 Đi giao
@@ -350,6 +349,59 @@ const DeliveryPKGDetail = ({
                                 size={12}
                                 color="white"
                               />
+                            </TouchableOpacity>
+                          )}
+
+                        {order.status == OrderStatus.Delivering &&
+                          !utilService.isCurrentTimeGreaterThanEndTime({
+                            startTime: pkgDetails.startTime,
+                            endTime: pkgDetails.endTime,
+                            intendedReceiveDate: pkgDetails.deliveryDate,
+                          }) && (
+                            <TouchableOpacity
+                              onPress={() => {
+                                if (
+                                  utilService.isCurrentTimeGreaterThanEndTime({
+                                    startTime: pkgDetails.startTime,
+                                    endTime: pkgDetails.endTime,
+                                    intendedReceiveDate:
+                                      pkgDetails.deliveryDate,
+                                  })
+                                ) {
+                                  Alert.alert(
+                                    "Oops!",
+                                    "Đã quá thời gian gian hàng!"
+                                  );
+
+                                  return;
+                                }
+
+                                Alert.alert(
+                                  "Xác nhận",
+                                  `Chuyển đơn MS-${order.id} sang trạng thái giao hàng?`,
+                                  [
+                                    {
+                                      text: "Xác nhận",
+                                      onPress: async () => {
+                                        onDelivering([order.id]);
+                                      },
+                                    },
+                                    {
+                                      text: "Hủy",
+                                    },
+                                  ]
+                                );
+                              }}
+                              className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
+                            >
+                              <Text className="text-[12px] text-white mr-1 text-center">
+                                Xác nhận giao hàng
+                              </Text>
+                              {/* <Ionicons
+                                name="send-outline"
+                                size={12}
+                                color="white"
+                              /> */}
                             </TouchableOpacity>
                           )}
                       </View>
