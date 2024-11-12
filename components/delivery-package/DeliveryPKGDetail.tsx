@@ -360,37 +360,7 @@ const DeliveryPKGDetail = ({
                           }) && (
                             <TouchableOpacity
                               onPress={() => {
-                                if (
-                                  utilService.isCurrentTimeGreaterThanEndTime({
-                                    startTime: pkgDetails.startTime,
-                                    endTime: pkgDetails.endTime,
-                                    intendedReceiveDate:
-                                      pkgDetails.deliveryDate,
-                                  })
-                                ) {
-                                  Alert.alert(
-                                    "Oops!",
-                                    "Đã quá thời gian gian hàng!"
-                                  );
-
-                                  return;
-                                }
-
-                                Alert.alert(
-                                  "Xác nhận",
-                                  `Chuyển đơn MS-${order.id} sang trạng thái giao hàng?`,
-                                  [
-                                    {
-                                      text: "Xác nhận",
-                                      onPress: async () => {
-                                        onDelivering([order.id]);
-                                      },
-                                    },
-                                    {
-                                      text: "Hủy",
-                                    },
-                                  ]
-                                );
+                                // modal confirm open
                               }}
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
                             >
