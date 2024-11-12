@@ -175,7 +175,7 @@ const orderAPIService = {
     }
   },
   delivery: async (
-    orderId: number,
+    orderIds: number[],
     onSuccess: () => void,
     onWarning: (warningInfo: WarningMessageValue) => void,
     onFailure: (error: any) => void,
@@ -186,13 +186,10 @@ const orderAPIService = {
   ) => {
     try {
       setIsSubmitting(true);
-      const response = await apiClient.put(
-        `shop-owner/order/${orderId}/delivering`,
-        {
-          reason: "no-comment",
-          isConfirm: isConfirmWarning,
-        }
-      );
+      const response = await apiClient.put(`shop-owner/order/delivering`, {
+        ids: orderIds,
+        isConfirm: isConfirmWarning,
+      });
       const { value, isSuccess, isWarning, error } = response.data;
 
       if (isSuccess) {

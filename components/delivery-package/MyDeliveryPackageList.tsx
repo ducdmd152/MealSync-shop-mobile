@@ -108,7 +108,7 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
         refreshControl={
           <RefreshControl
             tintColor={"#FCF450"}
-            refreshing={myPkgFetchResult.isFetching}
+            refreshing={myPkgFetchResult.isLoading}
             onRefresh={() => {
               myPkgFetchResult.refetch();
             }}
@@ -195,7 +195,10 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
             </TouchableOpacity>
             <View className="flex-1 mt-2">
               <DeliveryPKGDetail
-                onClose={() => setIsDetailBottomSheetVisible(false)}
+                onClose={() => {
+                  setIsDetailBottomSheetVisible(false);
+                  myPkgFetchResult.refetch();
+                }}
                 onNotFound={() => {
                   setDetailBottomSheetDisplay(false);
                   Alert.alert(

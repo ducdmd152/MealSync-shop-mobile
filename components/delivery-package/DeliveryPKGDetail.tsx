@@ -43,6 +43,9 @@ import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState"
 import useGlobalPKGDetailsState from "@/hooks/states/useGlobalPKGDetailsState";
 import DeliveryPackage from "@/app/(tabs)/delivery-package";
 import dayjs from "dayjs";
+import orderAPIService from "@/services/api-services/order-api-service";
+import { useToast } from "react-native-toast-notifications";
+import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 interface Props {
   onNotFound?: () => void;
   containerStyleClasses?: string;
@@ -55,6 +58,7 @@ const DeliveryPKGDetail = ({
   containerStyleClasses = "",
   onClose,
 }: Props) => {
+  const toast = useToast();
   const globalPKGState = useGlobalPKGDetailsState();
   const { model: pkgDetails, setModel: setPKGDetails } = globalPKGState;
   const [extendPKGs, setExtendPKGs] = useState<boolean[]>([]);
@@ -86,6 +90,43 @@ const DeliveryPKGDetail = ({
     }, [])
   );
 
+  const onDelivering = (orderIds: number[], isConfirm = false) => {
+    orderAPIService.delivery(
+      orderIds,
+      () => {
+        toast.show(
+          orderIds.length == 1
+            ? `Đơn hàng MS-${orderIds[0]} đã được chuyển sang trạng thái giao hàng`
+            : `Chuyển sang trạng thái giao hàng thành công`,
+          {
+            type: "success",
+            duration: 2000,
+          }
+        );
+      },
+      (warningInfo: WarningMessageValue) => {
+        if (isConfirm) return;
+        Alert.alert("Xác nhận", warningInfo.message, [
+          {
+            text: "Xác nhận",
+            onPress: async () => {
+              onDelivering(orderIds, true);
+            },
+          },
+          {
+            text: "Hủy",
+          },
+        ]);
+      },
+      (error: any) => {
+        Alert.alert(
+          "Oops!",
+          error?.response?.data?.error?.message ||
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+        );
+      }
+    );
+  };
   const filteredOrders = () => {
     if (status == 0) return pkgDetails.orders;
     if (status == DeliveryPackageStatus.Pending)
@@ -246,6 +287,59 @@ const DeliveryPKGDetail = ({
                         >
                           {getOrderStatusDescription(order.status)?.description}
                         </Text>
+                        {order.status == OrderStatus.Preparing &&
+                          !utilService.isCurrentTimeGreaterThanEndTime({
+                            startTime: pkgDetails.startTime,
+                            endTime: pkgDetails.endTime,
+                            intendedReceiveDate: pkgDetails.deliveryDate,
+                          }) && (
+                            <TouchableOpacity
+                              onPress={() => {
+                                if (
+                                  utilService.isCurrentTimeGreaterThanEndTime({
+                                    startTime: pkgDetails.startTime,
+                                    endTime: pkgDetails.endTime,
+                                    intendedReceiveDate:
+                                      pkgDetails.deliveryDate,
+                                  })
+                                ) {
+                                  Alert.alert(
+                                    "Oops!",
+                                    "Đã quá thời gian đi giao!"
+                                  );
+
+                                  return;
+                                }
+
+                                Alert.alert(
+                                  "Xác nhận",
+                                  `Chuyển đơn MS-${order.id} sang trạng thái giao hàng?`,
+                                  [
+                                    {
+                                      text: "Xác nhận",
+                                      onPress: async () => {
+                                        onDelivering([order.id]);
+                                      },
+                                    },
+                                    {
+                                      text: "Hủy",
+                                    },
+                                  ]
+                                );
+                              }}
+                              className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
+                              disabled={order.status != OrderStatus.Preparing}
+                            >
+                              <Text className="text-[12px] text-white mr-1 text-center">
+                                Đi giao
+                              </Text>
+                              <Ionicons
+                                name="send-outline"
+                                size={12}
+                                color="white"
+                              />
+                            </TouchableOpacity>
+                          )}
                       </View>
                     </View>
                     <View className="flex-row justify-between items-center mt-[4px]">

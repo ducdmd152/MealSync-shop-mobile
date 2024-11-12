@@ -1,4 +1,5 @@
 import { FrameDateTime } from "@/types/models/TimeModel";
+import dayjs from "dayjs";
 
 export type TimeRange = {
   startTime: number;
@@ -115,8 +116,10 @@ const utilService = {
   },
   isCurrentTimeGreaterThanEndTime: (frame: FrameDateTime): boolean => {
     // Current time in UTC
-    const currentUTCDate = utilService.getCurrentUTCDate();
-    let [year, month, day] = frame.intendedReceiveDate.split("/");
+    const currentUTCDate = new Date();
+    let [year, month, day] = dayjs(frame.intendedReceiveDate)
+      .format("YYYY/MM/DD")
+      .split("/");
     let frameEndDateTime = new Date(
       Number(year),
       Number(month) - 1,
@@ -124,6 +127,12 @@ const utilService = {
       Math.floor(frame.endTime / 100),
       frame.endTime % 100
     );
+    // console.log(
+    //   "currentUTCDate > frameEndDateTime ",
+    //   currentUTCDate,
+    //   frameEndDateTime,
+    //   currentUTCDate > frameEndDateTime
+    // );
     return currentUTCDate > frameEndDateTime;
   },
   parseFormattedNumber: (formattedValue: string) => {
