@@ -46,13 +46,15 @@ import dayjs from "dayjs";
 import orderAPIService from "@/services/api-services/order-api-service";
 import { useToast } from "react-native-toast-notifications";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import Toast from "react-native-toast-message";
+
 interface Props {
   onNotFound?: () => void;
   containerStyleClasses?: string;
   onClose: () => void;
 }
 const initExtend = false;
-const detailBottomHeight = Dimensions.get("window").height - 220;
+const detailBottomHeight = Dimensions.get("window").height - 200;
 const DeliveryPKGDetail = ({
   onNotFound = () => {},
   containerStyleClasses = "",
@@ -94,15 +96,25 @@ const DeliveryPKGDetail = ({
     orderAPIService.delivery(
       orderIds,
       () => {
-        toast.show(
-          orderIds.length == 1
-            ? `Đơn hàng MS-${orderIds[0]} đã được chuyển sang trạng thái giao hàng`
-            : `Chuyển sang trạng thái giao hàng thành công`,
-          {
-            type: "success",
-            duration: 2000,
-          }
-        );
+        getPKGDetails();
+        // toast.show(
+        //   orderIds.length == 1
+        //     ? `Đơn hàng MS-${orderIds[0]} đã được chuyển sang trạng thái giao hàng`
+        //     : `Chuyển sang trạng thái giao hàng thành công`,
+        //   {
+        //     type: "success",
+        //     duration: 2000,
+        //   }
+        // );
+        Toast.show({
+          type: "success",
+          text1: "Hoàn tất",
+          text2:
+            orderIds.length == 1
+              ? `MS-${orderIds[0]} đã chuyển sang trạng thái giao hàng`
+              : `Chuyển sang trạng thái giao hàng thành công`,
+          // time: 15000
+        });
       },
       (warningInfo: WarningMessageValue) => {
         if (isConfirm) return;
@@ -376,6 +388,7 @@ const DeliveryPKGDetail = ({
           ))}
         </View>
       </ScrollView>
+      <Toast position="bottom" />
     </View>
   );
 };
