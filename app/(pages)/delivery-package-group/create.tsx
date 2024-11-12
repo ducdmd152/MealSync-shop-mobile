@@ -168,7 +168,7 @@ const DeliveryPackageGroupCreate = () => {
             utilService.formatTime(query.endTime)
           } ngày ${utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}`
         );
-        router.replace("/delivery-package");
+        router.back();
       } else if (isWarning) {
         if (requestData.isConfirm) return;
         const warningInfo = value as WarningMessageValue;
