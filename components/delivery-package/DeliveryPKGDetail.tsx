@@ -47,6 +47,8 @@ import orderAPIService from "@/services/api-services/order-api-service";
 import { useToast } from "react-native-toast-notifications";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import Toast from "react-native-toast-message";
+import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
+import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfirmModal";
 
 interface Props {
   onNotFound?: () => void;
@@ -69,6 +71,7 @@ const DeliveryPKGDetail = ({
   const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
   const globalOrderDetailState = useGlobalOrderDetailState();
   const [status, setStatus] = useState(0);
+  const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
   const getPKGDetails = async () => {
     setIsLoading(true);
     try {
@@ -360,7 +363,13 @@ const DeliveryPKGDetail = ({
                           }) && (
                             <TouchableOpacity
                               onPress={() => {
-                                // modal confirm open
+                                globalCompleteDeliveryConfirm.setId(order.id);
+                                globalCompleteDeliveryConfirm.setOnAfterCompleted(
+                                  () => getPKGDetails
+                                );
+                                globalCompleteDeliveryConfirm.setIsModalVisible(
+                                  true
+                                );
                               }}
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
                             >
@@ -411,6 +420,7 @@ const DeliveryPKGDetail = ({
         </View>
       </ScrollView>
       <Toast position="bottom" />
+      <CompleteDeliveryConfirmModal />
     </View>
   );
 };

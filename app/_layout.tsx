@@ -30,6 +30,7 @@ import ReviewReplyModal from "@/components/target-modals/ReviewReplyModal";
 import WithdrawDetailsModal from "@/components/target-modals/WithdrawDetailsModal";
 import StaffDetailsModal from "@/components/target-modals/StaffDetailsModal";
 import Toast from "react-native-toast-message";
+import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -115,6 +116,7 @@ export default function RootLayout() {
               <ReviewReplyModal />
               <StaffDetailsModal />
               <WithdrawDetailsModal titleStyleClasses="font-semibold" />
+              <CompleteDeliveryConfirmModal />
 
               {/* <FlashMessage position="bottom" /> */}
               {/* </KeyboardAvoidingView> */}
