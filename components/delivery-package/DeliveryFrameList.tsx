@@ -135,7 +135,13 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                 });
                 setIsDetailBottomSheetVisible(true);
               }}
-              key={(Math.random() % 100_000_000) + index}
+              key={
+                (Math.random() % 100_000_000) +
+                "$" +
+                (Math.random() % 100_000_000) +
+                "$" +
+                index
+              }
               className="p-3 drop-shadow-md rounded-lg shadow border-[0.5px] border-gray-200"
             >
               <View className="flex-row items-center justify-between gap-2">

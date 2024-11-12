@@ -13,6 +13,8 @@ export const endpoints = {
   FRAME_STAFF_INFO_LIST: "shop/shop-delivery-staff/available",
   UNCREATED_GPKG_FRAME_LIST: "shop-owner/delivery-package/time-frame/un-assign",
   DELIVERY_PACKAGE_GROUP_LIST: "shop-owner/delivery-package-group/interval",
+  MY_DELIVERY_PACKAGE_LIST: "shop-owner-staff/delivery-package",
+
   SHOP_PROFILE_FULL_INFO: "shop-owner/full-infor",
   PROMOTION_LIST: "shop-owner/promotion",
   HOME_STATISTICS: "shop-owner/order/statistics/summary",

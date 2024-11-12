@@ -33,3 +33,9 @@ export interface DeliveryPackageGroupDetailsModel {
   deliveryPackageGroups: DeliveryPackageModel[];
   unassignOrders: OrderFetchModel[];
 }
+
+export enum DeliveryPackageStatus {
+  Pending = 1,
+  OnGoing = 2,
+  Completed = 3,
+}
