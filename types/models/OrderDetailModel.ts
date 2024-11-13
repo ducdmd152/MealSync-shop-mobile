@@ -40,6 +40,17 @@ export interface OrderDetailFoodModel {
   optionGroups: OrderDetailOptionGroupModel[];
 }
 
+export interface OrderPromotionModel {
+  id: number;
+  title: string;
+  description: string;
+  bannerUrl: string | null;
+  amountRate: number;
+  amountValue: number;
+  minOrderValue: number;
+  applyType: number;
+  maximumApplyValue: number;
+}
 // Main interface for OrderDetail
 export default interface OrderDetailModel {
   id: number;
@@ -56,8 +67,9 @@ export default interface OrderDetailModel {
   endTime: number;
   note: string | null;
   customer: OrderDetailCustomerModel;
-  promotion: string | null;
-  deliveryPackage: string | null;
+  promotion: OrderPromotionModel | null;
   orderDetails: OrderDetailFoodModel[];
   shopDeliveryStaff: ShopDeliveryStaff | null;
+  // summary: food1 x3, food2 x4, food3 x3
+  // summaryShort: food1 x3 +7 món khác
 }
