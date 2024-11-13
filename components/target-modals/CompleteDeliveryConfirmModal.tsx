@@ -59,7 +59,8 @@ const CompleteDeliveryConfirmModal = ({
   onParentClose = () => {},
 }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isImageHandling, setImageHandling] = useState(true);
+  const [isImageHandling, setImageHandling] = useState(false);
+  const [imageHandleError, setImageHandleError] = useState<any>(false);
   const globalOrderDetailPageState = useOrderDetailPageState();
   const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
   const { model: order, setModel: setOrder } = globalCompleteDeliveryConfirm;
@@ -93,8 +94,14 @@ const CompleteDeliveryConfirmModal = ({
     }
   };
   useEffect(() => {
-    if (globalCompleteDeliveryConfirm.isModalVisible)
+    if (globalCompleteDeliveryConfirm.isModalVisible) {
       setIsOrderDetailViewMode(false);
+      setRequest({
+        reason: "",
+        reasonIndentity: 1, // 1. Shop 2. Customer
+        evidences: [],
+      });
+    }
   }, [globalCompleteDeliveryConfirm.isModalVisible]);
   useFocusEffect(
     useCallback(() => {
@@ -116,6 +123,8 @@ const CompleteDeliveryConfirmModal = ({
       .then((response) => {
         // console.log(response.data);
         onSuccess();
+        setOrder({ ...order, status: OrderStatus.Delivered });
+        getOrderDetail();
         Toast.show({
           type: "success",
           text1: "Hoàn tất",
@@ -130,6 +139,65 @@ const CompleteDeliveryConfirmModal = ({
         onError(error);
         return false;
       });
+  };
+  useEffect(() => {
+    if (!isImageHandling && isSubmitting) {
+      if (imageHandleError) {
+        setImageHandleError(false);
+        setIsSubmitting(false);
+        return;
+      }
+      requestFailDelivery();
+    }
+  }, [isImageHandling]);
+
+  const requestFailDelivery = () => {
+    apiClient
+      .put(
+        `shop-owner/order/${globalCompleteDeliveryConfirm.id}/delivery-fail`,
+        request
+      )
+      .then((response) => {
+        setOrder({ ...order, status: OrderStatus.FailDelivery });
+        getOrderDetail();
+        Toast.show({
+          type: "info",
+          text1: "Hoàn tất",
+          text2: `Giao thất bại đơn hàng MS-${globalCompleteDeliveryConfirm.id}`,
+          // time: 15000
+        });
+        setStep(0);
+        globalCompleteDeliveryConfirm.onAfterCompleted();
+        return true;
+      })
+      .catch((error: any) => {
+        Alert.alert(
+          "Oops!",
+          error?.response?.data?.error?.message ||
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+        );
+        return false;
+      })
+      .finally(() => {
+        console.log("finally:  setIsSubmitting(false)");
+        setIsSubmitting(false);
+      });
+  };
+  const submitFailDelivery = async () => {
+    if (request.reason.trim().length == 0) {
+      Alert.alert("Vui lòng thông mô tả tương tứng với lí do đã chọn.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    if (isImageHandling) return;
+
+    if (imageHandleError) {
+      setImageHandleError(false);
+      setIsSubmitting(false);
+      return;
+    }
+    requestFailDelivery();
   };
   const getActionComponent = (order: OrderFetchModel) => {
     if (
@@ -420,6 +488,8 @@ const CompleteDeliveryConfirmModal = ({
           />
         </View>
         <EvidencePreviewMultiImagesUpload
+          imageHandleError={imageHandleError}
+          setImageHandleError={setImageHandleError}
           isImageHandling={isImageHandling}
           setIsImageHandling={setImageHandling}
           maxNumberOfPics={3}
@@ -433,7 +503,9 @@ const CompleteDeliveryConfirmModal = ({
         isLoading={isSubmitting}
         containerStyleClasses="mt-5 bg-primary h-[40px]"
         textStyleClasses="text-white text-[14px]"
-        handlePress={() => {}}
+        handlePress={() => {
+          submitFailDelivery();
+        }}
       />
       <TouchableOpacity
         onPress={() => setStep(0)}

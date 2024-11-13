@@ -252,6 +252,7 @@ const utilService = {
     }
   },
   waitForCondition: async (condition: () => boolean, interval = 100) => {
+    console.log("condition: () => boolean:", condition());
     while (!condition()) {
       await new Promise((resolve) => setTimeout(resolve, interval));
     }

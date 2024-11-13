@@ -35,6 +35,8 @@ interface EvidencePreviewMultiImagesUploadProps extends ViewProps {
   imageWidth?: number;
   maxNumberOfPics?: number;
   isHideAddWhenMax?: boolean;
+  imageHandleError: any;
+  setImageHandleError: any;
 }
 const EvidencePreviewMultiImagesUpload = ({
   uris,
@@ -49,6 +51,9 @@ const EvidencePreviewMultiImagesUpload = ({
   imageWidth = 100,
   maxNumberOfPics = 5,
   isHideAddWhenMax = true,
+
+  imageHandleError,
+  setImageHandleError,
   ...props
 }: EvidencePreviewMultiImagesUploadProps) => {
   const globalImageViewState = useGlobalImageViewingState();
@@ -111,6 +116,8 @@ const EvidencePreviewMultiImagesUpload = ({
   const addToList = async (uri: string) => {
     if (uris.map((item) => item.imageUrl).includes(uri)) return;
     setIsImageHandling(true);
+    console.log("setIsImageHandling(true);");
+
     const beforeAnyUpdate = [...uris];
     setUris(
       uris.concat([
@@ -128,11 +135,13 @@ const EvidencePreviewMultiImagesUpload = ({
             { imageUrl: url, takePictureDateTime: new Date().toISOString() },
           ])
       );
+      console.log("upload hinh ok setIsImageHandling(false);");
+      setIsImageHandling(false);
     } catch (error: any) {
       // console.log(error?.response?.data);
       Alert.alert("Oops!", "Xử lí hình ảnh lỗi, vui lòng thử lại!");
       setUris(beforeAnyUpdate);
-    } finally {
+      setImageHandleError(true);
       setIsImageHandling(false);
     }
   };

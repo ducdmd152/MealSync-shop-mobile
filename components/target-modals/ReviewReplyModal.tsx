@@ -43,7 +43,7 @@ const ReviewReplyModal = ({
 }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const globalReviewReplyState = useGlobalReviewReplyState();
-  const [isImageHandling, setImageHandling] = useState(true);
+  const [isImageHandling, setImageHandling] = useState(false);
   const [request, setRequest] = useState<ReviewReplyRequest>({
     orderId: globalReviewReplyState.id,
     comment: "",

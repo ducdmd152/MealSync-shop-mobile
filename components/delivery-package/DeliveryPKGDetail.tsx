@@ -213,169 +213,173 @@ const DeliveryPKGDetail = ({
             minHeight: detailBottomHeight,
           }}
         >
-          {pkgDetails.dormitories.map((dorm) => (
-            <View
-              key={dorm.id}
-              className="mt-1 border-gray-100 border-[1px] p-2 rounded-md"
-            >
-              <Text className="text-[15px]">
-                {dorm.id == 1 ? "KTX Khu A" : "KTX Khu B"} ({dorm.total} đơn)
-              </Text>
-              <Text className="text-[12px] text-gray-600">
-                {dorm.delivering} đang giao | {dorm.successful} đã giao |{" "}
-                {dorm.failed} giao thất bại | {dorm.waiting} chưa giao
-              </Text>
-              <View className="border-[0.5px] border-gray-200 my-1" />
-              {filteredOrders()
-                .filter((order) => order.dormitoryId == dorm.id)
-                .map((order) => (
-                  <TouchableOpacity
-                    key={order.id}
-                    onPress={() => {
-                      globalCompleteDeliveryConfirm.setId(order.id);
-                      globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
-                        getPKGDetails()
-                      );
-                      globalCompleteDeliveryConfirm.setIsModalVisible(true);
-                      globalCompleteDeliveryConfirm.setModel(order);
-                      globalCompleteDeliveryConfirm.setStep(0);
-                    }}
-                    className="mt-1 p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
-                  >
-                    <View className="flex-row items-center justify-between">
-                      <View className="flex-row items-center">
-                        <Text className="text-[10px] bg-gray-100 text-gray-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
-                          MS-{order.id}
-                        </Text>
-                      </View>
-                      <View className="flex-row gap-x-1 items-center">
-                        {/* <Text className="ml-2   bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded ">
+          {pkgDetails.dormitories &&
+            pkgDetails.dormitories.map((dorm) => (
+              <View
+                key={dorm.id}
+                className="mt-1 border-gray-100 border-[1px] p-2 rounded-md"
+              >
+                <Text className="text-[15px]">
+                  {dorm.id == 1 ? "KTX Khu A" : "KTX Khu B"} ({dorm.total} đơn)
+                </Text>
+                <Text className="text-[12px] text-gray-600">
+                  {dorm.delivering} đang giao | {dorm.successful} đã giao |{" "}
+                  {dorm.failed} giao thất bại | {dorm.waiting} chưa giao
+                </Text>
+                <View className="border-[0.5px] border-gray-200 my-1" />
+                {filteredOrders()
+                  .filter((order) => order.dormitoryId == dorm.id)
+                  .map((order) => (
+                    <TouchableOpacity
+                      key={order.id}
+                      onPress={() => {
+                        globalCompleteDeliveryConfirm.setId(order.id);
+                        globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
+                          getPKGDetails()
+                        );
+                        globalCompleteDeliveryConfirm.setIsModalVisible(true);
+                        globalCompleteDeliveryConfirm.setModel(order);
+                        globalCompleteDeliveryConfirm.setStep(0);
+                      }}
+                      className="mt-1 p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
+                    >
+                      <View className="flex-row items-center justify-between">
+                        <View className="flex-row items-center">
+                          <Text className="text-[10px] bg-gray-100 text-gray-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
+                            MS-{order.id}
+                          </Text>
+                        </View>
+                        <View className="flex-row gap-x-1 items-center">
+                          {/* <Text className="ml-2   bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded ">
                                 {order.dormitoryId == 1
                                   ? "Đến KTX khu A"
                                   : "Đến KTX khu B"}
                               </Text> */}
-                        <Text
-                          className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
-                            getOrderStatusDescription(order.status)?.bgColor
-                          }`}
-                          style={{
-                            backgroundColor: getOrderStatusDescription(
-                              order.status
-                            )?.bgColor,
-                          }}
-                        >
-                          {getOrderStatusDescription(order.status)?.description}
-                        </Text>
-                        {order.status == OrderStatus.Preparing &&
-                          !utilService.isCurrentTimeGreaterThanEndTime({
-                            startTime: pkgDetails.startTime,
-                            endTime: pkgDetails.endTime,
-                            intendedReceiveDate: pkgDetails.deliveryDate,
-                          }) && (
-                            <TouchableOpacity
-                              onPress={() => {
-                                orderUIService.onDelivery(
-                                  order,
-                                  () => {
-                                    getPKGDetails();
-                                  },
-                                  () => {
-                                    setOrders(
-                                      orders
-                                        .filter((item) => item.id != order.id)
-                                        .concat({
-                                          ...order,
-                                          status: OrderStatus.Delivering,
-                                        })
-                                    );
-                                    const toast = Toast.show({
-                                      type: "success",
-                                      text1: "Hoàn tất",
-                                      text2: `MS-${order.id} đã chuyển sang trạng thái giao hàng`,
-                                    });
-                                  },
-                                  (error) => {
-                                    Alert.alert(
-                                      "Oops!",
-                                      error?.response?.data?.error?.message ||
-                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                    );
-                                  }
-                                );
-                              }}
-                              className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
-                            >
-                              <Text className="text-[12px] text-white mr-1 text-center">
-                                Đi giao
-                              </Text>
-                              <Ionicons
-                                name="send-outline"
-                                size={12}
-                                color="white"
-                              />
-                            </TouchableOpacity>
-                          )}
+                          <Text
+                            className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
+                              getOrderStatusDescription(order.status)?.bgColor
+                            }`}
+                            style={{
+                              backgroundColor: getOrderStatusDescription(
+                                order.status
+                              )?.bgColor,
+                            }}
+                          >
+                            {
+                              getOrderStatusDescription(order.status)
+                                ?.description
+                            }
+                          </Text>
+                          {order.status == OrderStatus.Preparing &&
+                            !utilService.isCurrentTimeGreaterThanEndTime({
+                              startTime: pkgDetails.startTime,
+                              endTime: pkgDetails.endTime,
+                              intendedReceiveDate: pkgDetails.deliveryDate,
+                            }) && (
+                              <TouchableOpacity
+                                onPress={() => {
+                                  orderUIService.onDelivery(
+                                    order,
+                                    () => {
+                                      getPKGDetails();
+                                    },
+                                    () => {
+                                      setOrders(
+                                        orders
+                                          .filter((item) => item.id != order.id)
+                                          .concat({
+                                            ...order,
+                                            status: OrderStatus.Delivering,
+                                          })
+                                      );
+                                      const toast = Toast.show({
+                                        type: "success",
+                                        text1: "Hoàn tất",
+                                        text2: `MS-${order.id} đã chuyển sang trạng thái giao hàng`,
+                                      });
+                                    },
+                                    (error) => {
+                                      Alert.alert(
+                                        "Oops!",
+                                        error?.response?.data?.error?.message ||
+                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                      );
+                                    }
+                                  );
+                                }}
+                                className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
+                              >
+                                <Text className="text-[12px] text-white mr-1 text-center">
+                                  Đi giao
+                                </Text>
+                                <Ionicons
+                                  name="send-outline"
+                                  size={12}
+                                  color="white"
+                                />
+                              </TouchableOpacity>
+                            )}
 
-                        {order.status == OrderStatus.Delivering &&
-                          !utilService.isCurrentTimeGreaterThanEndTime({
-                            startTime: pkgDetails.startTime,
-                            endTime: pkgDetails.endTime,
-                            intendedReceiveDate: pkgDetails.deliveryDate,
-                          }) && (
-                            <TouchableOpacity
-                              onPress={async () => {
-                                globalCompleteDeliveryConfirm.setId(order.id);
-                                globalCompleteDeliveryConfirm.setOnAfterCompleted(
-                                  () => getPKGDetails()
-                                );
-                                globalCompleteDeliveryConfirm.setIsModalVisible(
-                                  true
-                                );
-                                globalCompleteDeliveryConfirm.setModel(order);
-                                globalCompleteDeliveryConfirm.setStep(0);
-                              }}
-                              className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
-                            >
-                              <Text className="text-[12px] text-white mr-1 text-center">
-                                Xác nhận giao
-                              </Text>
-                              {/* <Ionicons
+                          {order.status == OrderStatus.Delivering &&
+                            !utilService.isCurrentTimeGreaterThanEndTime({
+                              startTime: pkgDetails.startTime,
+                              endTime: pkgDetails.endTime,
+                              intendedReceiveDate: pkgDetails.deliveryDate,
+                            }) && (
+                              <TouchableOpacity
+                                onPress={async () => {
+                                  globalCompleteDeliveryConfirm.setId(order.id);
+                                  globalCompleteDeliveryConfirm.setOnAfterCompleted(
+                                    () => getPKGDetails()
+                                  );
+                                  globalCompleteDeliveryConfirm.setIsModalVisible(
+                                    true
+                                  );
+                                  globalCompleteDeliveryConfirm.setModel(order);
+                                  globalCompleteDeliveryConfirm.setStep(0);
+                                }}
+                                className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
+                              >
+                                <Text className="text-[12px] text-white mr-1 text-center">
+                                  Xác nhận giao
+                                </Text>
+                                {/* <Ionicons
                                 name="send-outline"
                                 size={12}
                                 color="white"
                               /> */}
-                            </TouchableOpacity>
-                          )}
+                              </TouchableOpacity>
+                            )}
+                        </View>
                       </View>
-                    </View>
-                    <View className="flex-row justify-between items-center mt-[4px]">
-                      <View className="flex-1 flex-row justify-start items-center gap-2">
-                        {/* <Image
-                          source={{
-                            uri: order.orderDetails[0].imageUrl,
-                          }}
-                          resizeMode="cover"
-                          className="h-[12px] w-[12px] rounded-md opacity-85"
-                        />
-                        <Text className="text-xs italic text-gray-500">
-                          {order.orderDetailSummaryShort}
-                        </Text> */}
+                      <View className="flex-row justify-between items-center mt-[4px]">
+                        <View className="flex-1 flex-row justify-start items-center gap-2">
+                          <Image
+                            source={{
+                              uri: order.orderDetails[0].imageUrl,
+                            }}
+                            resizeMode="cover"
+                            className="h-[12px] w-[12px] rounded-md opacity-85"
+                          />
+                          <Text className="text-xs italic text-gray-500">
+                            {order.orderDetailSummaryShort}
+                          </Text>
+                        </View>
+                        <View className="flex-row gap-x-1 items-center">
+                          <Text
+                            className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
+                          >
+                            {utilService.formatPrice(
+                              order.totalPrice - order.totalPromotion
+                            )}{" "}
+                            ₫
+                          </Text>
+                        </View>
                       </View>
-                      <View className="flex-row gap-x-1 items-center">
-                        <Text
-                          className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
-                        >
-                          {utilService.formatPrice(
-                            order.totalPrice - order.totalPromotion
-                          )}{" "}
-                          ₫
-                        </Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-            </View>
-          ))}
+                    </TouchableOpacity>
+                  ))}
+              </View>
+            ))}
         </View>
       </ScrollView>
       <Toast position="bottom" />
