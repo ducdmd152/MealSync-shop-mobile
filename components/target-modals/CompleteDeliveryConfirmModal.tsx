@@ -16,6 +16,10 @@ import utilService from "@/services/util-service";
 import { getOrderStatusDescription } from "@/types/models/OrderFetchModel";
 import * as Clipboard from "expo-clipboard";
 import dayjs from "dayjs";
+import { TextInput } from "react-native";
+import { DeliveryFailModel } from "@/types/models/DeliveryFailModel";
+import PreviewMultiImagesUpload from "../images/PreviewMultiImagesUpload";
+import EvidencePreviewMultiImagesUpload from "../images/EvidencePreviewMultiImagesUpload";
 interface Props {
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -36,8 +40,15 @@ const CompleteDeliveryConfirmModal = ({
   imageStyleClasses = "",
 }: Props) => {
   const globalPKGState = useGlobalMyPKGDetailsState();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImageHandling, setImageHandling] = useState(true);
   const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
   const { step, setStep } = globalCompleteDeliveryConfirm;
+  const [request, setRequest] = useState<DeliveryFailModel>({
+    reason: "",
+    reasonIndentity: 1, // 1. Shop 2. Customer
+    evidences: [],
+  });
   const handleDeliverySuccess = async (
     data: string,
     onSuccess: () => void,
@@ -187,17 +198,37 @@ const CompleteDeliveryConfirmModal = ({
   );
   const failSubmitStep = (
     <View className="gap-y-2 py-2">
+      <View className="gap-y-2 mt-1">
+        <View>
+          <Text className="font-medium">Mô tả lí do</Text>
+          <TextInput
+            className="border border-gray-300 mt-1 rounded p-2 h-16 bg-white"
+            placeholder="Nhập lí do..."
+            value={request.reason}
+            onChangeText={(text) => setRequest({ ...request, reason: text })}
+            multiline
+            placeholderTextColor="#888"
+          />
+        </View>
+        <EvidencePreviewMultiImagesUpload
+          isImageHandling={isImageHandling}
+          setIsImageHandling={setImageHandling}
+          maxNumberOfPics={3}
+          uris={request.evidences}
+          setUris={(uris) => setRequest({ ...request, evidences: uris })}
+          imageWidth={80}
+        />
+      </View>
+      <CustomButton
+        title="Xác nhận giao hàng thất bại"
+        isLoading={isSubmitting}
+        containerStyleClasses="mt-5 bg-primary h-[40px]"
+        textStyleClasses="text-white text-[14px]"
+        handlePress={() => {}}
+      />
       <TouchableOpacity
         onPress={() => setStep(0)}
-        className="flex-row bg-primary justify-center gap-x-2 p-2 py-3 border-[1px] border-gray-200 rounded-xl"
-      >
-        <Text className="text-[14px] text-center text-white font-semibold align-center">
-          Xác nhận giao hàng thất bại
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setStep(0)}
-        className="flex-row justify-center gap-x-2 p-2 border-[1px] border-gray-200 rounded-lg"
+        className="flex-row justify-center p-2 border-[1px] border-gray-200 rounded-lg"
       >
         <Ionicons name="arrow-back-outline" size={14} color="#475569" />
         <Text className="text-[12px] text-center text-gray-600 font-semibold align-center">
