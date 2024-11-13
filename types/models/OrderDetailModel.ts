@@ -1,3 +1,4 @@
+import OrderFetchModel from "./OrderFetchModel";
 import { ShopDeliveryStaff } from "./StaffInfoModel";
 
 // Interface for customer details
@@ -52,24 +53,7 @@ export interface OrderPromotionModel {
   maximumApplyValue: number;
 }
 // Main interface for OrderDetail
-export default interface OrderDetailModel {
-  id: number;
-  status: number;
-  buildingId: number;
-  buildingName: string;
-  totalPromotion: number;
-  totalPrice: number;
-  orderDate: string;
-  receiveAt: string | null;
-  completedAt: string | null;
-  intendedReceiveDate: string;
-  startTime: number;
-  endTime: number;
-  note: string | null;
-  customer: OrderDetailCustomerModel;
-  promotion: OrderPromotionModel | null;
-  orderDetails: OrderDetailFoodModel[];
-  shopDeliveryStaff: ShopDeliveryStaff | null;
+export default interface OrderDetailModel extends OrderFetchModel {
   // summary: food1 x3, food2 x4, food3 x3
   // summaryShort: food1 x3 +7 món khác
 }

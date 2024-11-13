@@ -128,10 +128,7 @@ const CompleteDeliveryConfirmModal = ({
             <View className="flex-row justify-start items-center gap-2">
               <Text className="text-xs italic text-gray-500">Tóm tắt đơn:</Text>
               <Text className="text-xs italic text-gray-500">
-                {order.foods[0].name}{" "}
-                {order.foods[0].quantity > 1 && " x" + order.foods[0].quantity}
-                {order.foods.length > 1 &&
-                  " +" + (order.foods.length - 1) + " món khác"}
+                {order.orderDetailSummary}
               </Text>
             </View>
             <View className="flex-row gap-x-1 items-center">

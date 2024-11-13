@@ -1,3 +1,8 @@
+import {
+  OrderDetailCustomerModel as OrderCustomerModel,
+  OrderDetailFoodModel,
+  OrderPromotionModel,
+} from "./OrderDetailModel";
 import { ShopDeliveryStaff } from "./StaffInfoModel";
 
 export interface OrderFetchCustomerModel {
@@ -16,8 +21,9 @@ export interface OrderFetchFoodModel {
 export default interface OrderFetchModel {
   id: number;
   status: number;
-  buildingId: number;
   dormitoryId: number;
+  dormitoryName: string;
+  buildingId: number;
   buildingName: string;
   totalPromotion: number;
   totalPrice: number;
@@ -27,10 +33,13 @@ export default interface OrderFetchModel {
   intendedReceiveDate: string;
   startTime: number;
   endTime: number;
-  totalPages: number;
-  customer: OrderFetchCustomerModel;
-  foods: OrderFetchFoodModel[];
+  note: string | null;
+  customer: OrderCustomerModel;
+  promotion: OrderPromotionModel | null;
+  orderDetails: OrderDetailFoodModel[];
   shopDeliveryStaff: ShopDeliveryStaff | null;
+  orderDetailSummary: string;
+  orderDetailSummaryShort: string;
 }
 
 export enum OrderStatus {

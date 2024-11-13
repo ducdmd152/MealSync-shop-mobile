@@ -59,6 +59,7 @@ import utilService from "@/services/util-service";
 import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
 import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
+import { Dormitories } from "@/types/models/ShopProfileModel";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -408,20 +409,18 @@ const Order = () => {
                   <View className="flex-row justify-start items-center gap-2">
                     <Image
                       source={{
-                        uri: order.foods[0].imageUrl,
+                        uri: order.orderDetails[0].imageUrl,
                       }}
                       resizeMode="cover"
                       className="h-[36px] w-[40px] rounded-md opacity-85"
                     />
                     <View className="">
                       <Text className="text-md italic text-gray-500">
-                        {order.foods[0].name}{" "}
-                        {order.foods[0].quantity > 1 &&
-                          " x" + order.foods[0].quantity}
+                        {order.orderDetailSummaryShort.split("+")[0]}
                       </Text>
-                      {order.foods.length > 1 && (
+                      {order.orderDetails.length > 1 && (
                         <Text className="text-md italic text-gray-500">
-                          +{order.foods.length - 1} sản phẩm khác
+                          +{order.orderDetailSummary.split("+")[1]}
                         </Text>
                       )}
                     </View>
@@ -436,7 +435,7 @@ const Order = () => {
                       })}{" "}
                       {new Date(order.orderDate).toLocaleDateString()}
                       {"\n"} */}
-                        {order.dormitoryId == 1
+                        {order.dormitoryId == Dormitories.A
                           ? "Giao đến KTX khu A"
                           : "Giao đến KTX khu B"}
                       </Text>
