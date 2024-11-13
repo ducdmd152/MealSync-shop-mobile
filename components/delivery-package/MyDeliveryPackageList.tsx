@@ -162,9 +162,12 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
                       {dorm.id == 1 ? "KTX Khu A" : "KTX Khu B"} ({dorm.total}{" "}
                       đơn)
                     </Text>
-                    <Text className="text-[12px] text-gray-600">
-                      {dorm.waiting} chưa giao | {dorm.delivering} đang giao |{" "}
-                      {dorm.successful} đã giao | {dorm.failed} giao thất bại
+                    <Text className="text-[11px] text-gray-600">
+                      {dorm.waiting} chưa giao |{" "}
+                      <Text className="text-[#06b6d4]">
+                        {dorm.delivering} đang giao
+                      </Text>{" "}
+                      | {dorm.successful} đã giao | {dorm.failed} giao thất bại
                     </Text>
                     {/* <View className="border-[0.5px] border-gray-200 my-1" /> */}
                   </View>

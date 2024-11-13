@@ -1,8 +1,8 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React, { ReactNode } from "react";
 import Modal from "react-native-modal";
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 interface Props {
   title: string;
   isOpen: boolean;

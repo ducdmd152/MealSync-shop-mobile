@@ -21,6 +21,7 @@ import utilService from "@/services/util-service";
 import sessionService from "@/services/session-service";
 import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import CustomButton from "../custom/CustomButton";
+import * as ImagePicker from "expo-image-picker";
 import OrderFetchModel, {
   getOrderStatusDescription,
   OrderStatus,
@@ -187,7 +188,7 @@ const DeliveryPKGDetail = ({
             setStatus(0);
           }}
         >
-          <Text className="text-center text-[12px]">
+          <Text className="text-center text-[11px]">
             Tất cả {"\n"}({pkgDetails.total} đơn)
           </Text>
         </TouchableOpacity>
@@ -201,8 +202,8 @@ const DeliveryPKGDetail = ({
             setStatus(DeliveryPackageStatus.Pending);
           }}
         >
-          <Text className="text-center text-[12px]">
-            Chưa giao ({pkgDetails.waiting} đơn)
+          <Text className="text-center text-[11px]">
+            Chưa giao{"\n"}({pkgDetails.waiting} đơn)
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -215,8 +216,8 @@ const DeliveryPKGDetail = ({
             setStatus(DeliveryPackageStatus.OnGoing);
           }}
         >
-          <Text className="text-center text-[12px]">
-            Đang giao ({pkgDetails.delivering} đơn)
+          <Text className="text-center text-[11px]">
+            Đang giao{"\n"}({pkgDetails.delivering} đơn)
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -229,8 +230,8 @@ const DeliveryPKGDetail = ({
             setStatus(DeliveryPackageStatus.Completed);
           }}
         >
-          <Text className="text-center text-[12px]">
-            Hoàn tất ({pkgDetails.successful + pkgDetails.failed} đơn)
+          <Text className="text-center text-[11px]">
+            Hoàn tất{"\n"}({pkgDetails.successful + pkgDetails.failed} đơn)
           </Text>
         </TouchableOpacity>
       </View>
@@ -362,7 +363,7 @@ const DeliveryPKGDetail = ({
                             intendedReceiveDate: pkgDetails.deliveryDate,
                           }) && (
                             <TouchableOpacity
-                              onPress={() => {
+                              onPress={async () => {
                                 globalCompleteDeliveryConfirm.setId(order.id);
                                 globalCompleteDeliveryConfirm.setOnAfterCompleted(
                                   () => getPKGDetails

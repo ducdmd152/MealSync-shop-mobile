@@ -1,6 +1,8 @@
 import { Camera, CameraView } from "expo-camera";
-import { Stack } from "expo-router";
+import { Stack, useFocusEffect } from "expo-router";
 import {
+  ActivityIndicator,
+  Alert,
   AppState,
   Dimensions,
   Linking,
@@ -8,47 +10,30 @@ import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
+  Text,
   View,
   ViewProps,
 } from "react-native";
-import { useEffect, useRef, useState } from "react";
-import { ScanOverlay } from "@/components/common/ScanOverlay";
-import { rect, rrect } from "@shopify/react-native-skia";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Modal from "react-native-modal";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 interface AreaQRScannerProps extends ViewProps {
   innerDimension: number;
+  handleQRCode: (
+    data: string,
+    onSuccess: () => void,
+    onError: (error: any) => void
+  ) => Promise<boolean>;
 }
 const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
   innerDimension,
+  handleQRCode,
   ...props
 }) => {
-  const boxRef = useRef<View | null>(null);
-  const outer = rrect(rect(0, 0, screenWidth, screenHeight), 0, 0);
-  const [inner, setInner] = useState(
-    rrect(
-      rect(
-        screenWidth / 2 - innerDimension / 2,
-        screenWidth / 2 - innerDimension / 2,
-        innerDimension,
-        innerDimension
-      ),
-      50,
-      50
-    )
-  );
   const qrLock = useRef(false);
   const appState = useRef(AppState.currentState);
-
-  useEffect(() => {
-    if (boxRef.current) {
-      boxRef.current.measure((x, y, width, height, pageX, pageY) => {
-        setInner(
-          rrect(rect(pageX, pageY, innerDimension, innerDimension), 50, 50)
-        );
-      });
-    }
-  }, [boxRef.current]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (
@@ -65,23 +50,28 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
     };
   }, []);
 
-  const isQRInsideInnerRect = (
-    qrX: number,
-    qrY: number,
-    qrWidth: number,
-    qrHeight: number
-  ): boolean => {
-    return (
-      qrX >= inner.rect.x &&
-      qrY >= inner.rect.y &&
-      qrX + qrWidth <= inner.rect.x + innerDimension &&
-      qrY + qrHeight <= inner.rect.y + innerDimension
-    );
-  };
+  const [hasPermission, setHasPermission] = useState<boolean>(false);
+  const [permissionResponse, setPermissionResponse] = useState<any>(null);
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        setHasPermission(status == "granted");
+        setPermissionResponse(status);
+        if (status != "granted")
+          Alert.alert("Oops", "Vui lòng cho phép truy cập camera để tiếp tục.");
+      })();
+    }, [])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      qrLock.current = false;
+    }, [])
+  );
 
   return (
     <View
-      ref={boxRef}
       style={{
         width: innerDimension,
         height: innerDimension,
@@ -95,38 +85,57 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
         style={StyleSheet.absoluteFillObject}
         facing="back"
         onBarcodeScanned={({ data, bounds }) => {
-          if (
-            // isQRInsideInnerRect(
-            //   bounds.origin.x,
-            //   bounds.origin.y,
-            //   bounds.size.width,
-            //   bounds.size.height
-            // ) &&
-            data &&
-            !qrLock.current
-          ) {
-            console.log(
-              "This component : ",
-              inner.rect.x,
-              inner.rect.y,
-              inner.rect.x + innerDimension,
-              inner.rect.y + innerDimension
-            );
-            console.log(
-              "isQRInsideInnerRect : ",
-              bounds.origin.x,
-              bounds.origin.y,
-              bounds.size.width,
-              bounds.size.height
-            );
-            // qrLock.current = true;
+          if (data && !qrLock.current) {
+            qrLock.current = true;
+
             setTimeout(async () => {
               //   await Linking.openURL(data);
               console.log("QR Code: ", data);
-            }, 500);
+              qrLock.current = true;
+              handleQRCode(
+                data,
+                () => {
+                  setIsSubmitting(true);
+                },
+                (error: any) => {
+                  setIsSubmitting(false);
+                  Alert.alert(
+                    "Oops!",
+                    error?.response?.data?.error?.message ||
+                      "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+                    [
+                      {
+                        text: "Thử lại",
+                        onPress: async () => {
+                          setTimeout(() => {
+                            qrLock.current = false;
+                          }, 1000);
+                        },
+                      },
+                      {
+                        text: "Hủy",
+                      },
+                    ]
+                  );
+                }
+              );
+            }, 400);
           }
         }}
       />
+      <Modal isVisible={isSubmitting} onBackdropPress={() => {}}>
+        <View
+          // style={{ flex: 1, zIndex: 100 }}
+          className="justify-center items-center"
+        >
+          <View className="p-4 rounded-md backdrop-blur-sm bg-white/80">
+            <Text className="font-medium mb-2">
+              Quét mã thành công, đang xử lí yêu cầu
+            </Text>
+            <ActivityIndicator animating={true} color="#FCF450" />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
