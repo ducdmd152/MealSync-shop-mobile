@@ -22,6 +22,7 @@ import { TextInput } from "react-native";
 import { DeliveryFailModel } from "@/types/models/DeliveryFailModel";
 import PreviewMultiImagesUpload from "../images/PreviewMultiImagesUpload";
 import EvidencePreviewMultiImagesUpload from "../images/EvidencePreviewMultiImagesUpload";
+import { SelectList } from "react-native-dropdown-select-list";
 interface Props {
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -188,6 +189,31 @@ const CompleteDeliveryConfirmModal = ({
   const failSubmitStep = (
     <View className="gap-y-2 py-2">
       <View className="gap-y-2 mt-1">
+        <View>
+          <Text className="font-medium">Lí do</Text>
+          <SelectList
+            setSelected={(selected: number | string) =>
+              setRequest({ ...request, reasonIndentity: Number(selected) })
+            }
+            data={[
+              {
+                key: 1,
+                value: "Do phía cửa hàng",
+              },
+              {
+                key: 2,
+                value: "Do phía khách hàng",
+              },
+            ]}
+            save="key"
+            search={false}
+            defaultOption={{
+              key: 1,
+              value: "Do phía cửa hàng",
+            }}
+          />
+        </View>
+
         <View>
           <Text className="font-medium">Mô tả lí do</Text>
           <TextInput
