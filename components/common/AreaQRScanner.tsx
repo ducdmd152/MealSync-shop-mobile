@@ -112,9 +112,9 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
                           }, 1000);
                         },
                       },
-                      {
-                        text: "Hủy",
-                      },
+                      // {
+                      //   text: "Hủy",
+                      // },
                     ]
                   );
                 }

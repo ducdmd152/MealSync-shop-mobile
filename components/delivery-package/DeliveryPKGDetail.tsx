@@ -57,7 +57,7 @@ interface Props {
   onClose: () => void;
 }
 const initExtend = false;
-const detailBottomHeight = Dimensions.get("window").height - 200;
+const detailBottomHeight = Dimensions.get("window").height - 240;
 const DeliveryPKGDetail = ({
   onNotFound = () => {},
   containerStyleClasses = "",
@@ -96,7 +96,7 @@ const DeliveryPKGDetail = ({
     }, [])
   );
 
-  const onDelivery = () => {
+  const onDelivery = (order: OrderFetchModel) => {
     if (
       utilService.isCurrentTimeGreaterThanEndTime({
         startTime: pkgDetails.startTime,
@@ -111,12 +111,12 @@ const DeliveryPKGDetail = ({
 
     Alert.alert(
       "Xác nhận",
-      `Chuyển đơn MS-${globalCompleteDeliveryConfirm.id} sang trạng thái giao hàng?`,
+      `Chuyển đơn MS-${order.id} sang trạng thái giao hàng?`,
       [
         {
           text: "Xác nhận",
           onPress: async () => {
-            onDelivering([globalCompleteDeliveryConfirm.id]);
+            onDelivering([order.id]);
           },
         },
         {
@@ -199,7 +199,7 @@ const DeliveryPKGDetail = ({
           <CustomButton
             title={`Đi giao`}
             handlePress={() => {
-              onDelivery();
+              onDelivery(order);
             }}
             containerStyleClasses="w-full h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10"
             // iconRight={
@@ -316,6 +316,7 @@ const DeliveryPKGDetail = ({
         </TouchableOpacity>
       </View>
       <ScrollView
+        style={{ flexShrink: 1 }}
         refreshControl={
           <RefreshControl
             tintColor={"#FCF450"}
@@ -327,7 +328,7 @@ const DeliveryPKGDetail = ({
         }
       >
         <View
-          className="gap-y-2 mt-[2px] ml-1"
+          className="gap-y-2 mt-[2px] ml-1 "
           style={{
             minHeight: detailBottomHeight,
           }}
@@ -401,7 +402,7 @@ const DeliveryPKGDetail = ({
                           }) && (
                             <TouchableOpacity
                               onPress={() => {
-                                onDelivery();
+                                onDelivery(order);
                               }}
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
                             >
@@ -426,7 +427,7 @@ const DeliveryPKGDetail = ({
                               onPress={async () => {
                                 globalCompleteDeliveryConfirm.setId(order.id);
                                 globalCompleteDeliveryConfirm.setOnAfterCompleted(
-                                  () => getPKGDetails
+                                  () => getPKGDetails()
                                 );
                                 globalCompleteDeliveryConfirm.setIsModalVisible(
                                   true

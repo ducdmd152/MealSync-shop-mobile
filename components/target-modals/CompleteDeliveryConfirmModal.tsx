@@ -13,7 +13,9 @@ import AreaQRScanner from "../common/AreaQRScanner";
 import apiClient from "@/services/api-services/api-client";
 import Toast from "react-native-toast-message";
 import utilService from "@/services/util-service";
-import { getOrderStatusDescription } from "@/types/models/OrderFetchModel";
+import OrderFetchModel, {
+  getOrderStatusDescription,
+} from "@/types/models/OrderFetchModel";
 import * as Clipboard from "expo-clipboard";
 import dayjs from "dayjs";
 import { TextInput } from "react-native";
@@ -43,6 +45,7 @@ const CompleteDeliveryConfirmModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImageHandling, setImageHandling] = useState(true);
   const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
+  const [order, setOrder] = useState<OrderFetchModel>();
   const { step, setStep } = globalCompleteDeliveryConfirm;
   const [request, setRequest] = useState<DeliveryFailModel>({
     reason: "",
@@ -69,7 +72,7 @@ const CompleteDeliveryConfirmModal = ({
           text2: `Đã giao hàng thành công đơn MS-${globalCompleteDeliveryConfirm.id}`,
           // time: 15000
         });
-        globalCompleteDeliveryConfirm.setIsModalVisible(false);
+
         globalCompleteDeliveryConfirm.onAfterCompleted();
         return true;
       })
@@ -78,10 +81,13 @@ const CompleteDeliveryConfirmModal = ({
         return false;
       });
   };
-
+  useEffect(() => {
+    if (globalCompleteDeliveryConfirm.isModalVisible)
+      setOrder(globalCompleteDeliveryConfirm.model);
+  }, [globalCompleteDeliveryConfirm.model]);
   const selectActionStep = (
     <View>
-      {globalCompleteDeliveryConfirm.model?.id && (
+      {order?.id && (
         <View className="mt-2 bg-white p-2">
           <Text className="text-[15px] text-gray-600 font-semibold">
             Thông tin nhận hàng
@@ -90,51 +96,41 @@ const CompleteDeliveryConfirmModal = ({
           <View className="mt-3 border-gray-300 border-[0.5px]" />
           <View className="py-2">
             <Text className="text-[14px] text-gray-700 font-semibold">
-              {globalCompleteDeliveryConfirm.model.customer?.fullName}
+              {order.customer?.fullName}
             </Text>
             <TouchableOpacity
               onPress={() => {
-                Alert.alert("Số điện thoại", "Bạn muốn gọi điện?", [
+                Alert.alert("Số điện thoại", "", [
                   {
-                    text:
-                      "Gọi " +
-                      globalCompleteDeliveryConfirm.model.customer?.phoneNumber,
+                    text: "Gọi " + order.customer?.phoneNumber,
                     onPress: () =>
-                      Linking.openURL(
-                        `tel:${globalCompleteDeliveryConfirm.model.customer?.phoneNumber}`
-                      ),
+                      Linking.openURL(`tel:${order.customer?.phoneNumber}`),
                   },
                   {
                     text: "Sao chép",
                     onPress: () =>
-                      Clipboard.setString(
-                        globalCompleteDeliveryConfirm.model.customer
-                          ?.phoneNumber
-                      ),
+                      Clipboard.setString(order.customer?.phoneNumber),
                   },
                   { text: "Hủy", style: "cancel" },
                 ]);
               }}
             >
               <Text className="text-[14px] text-gray-700 font-semibold text-[#0e7490]">
-                {globalCompleteDeliveryConfirm.model.customer?.phoneNumber}
+                {order.customer?.phoneNumber}
               </Text>
             </TouchableOpacity>
             <Text className="text-[14px] text-gray-700 font-semibold italic">
-              {globalCompleteDeliveryConfirm.model?.buildingName}
+              {order?.buildingName}
             </Text>
           </View>
           <View className="mt-[4px]">
             <View className="flex-row justify-start items-center gap-2">
               <Text className="text-xs italic text-gray-500">Tóm tắt đơn:</Text>
               <Text className="text-xs italic text-gray-500">
-                {globalCompleteDeliveryConfirm.model.foods[0].name}{" "}
-                {globalCompleteDeliveryConfirm.model.foods[0].quantity > 1 &&
-                  " x" + globalCompleteDeliveryConfirm.model.foods[0].quantity}
-                {globalCompleteDeliveryConfirm.model.foods.length > 1 &&
-                  " +" +
-                    (globalCompleteDeliveryConfirm.model.foods.length - 1) +
-                    " món khác"}
+                {order.foods[0].name}{" "}
+                {order.foods[0].quantity > 1 && " x" + order.foods[0].quantity}
+                {order.foods.length > 1 &&
+                  " +" + (order.foods.length - 1) + " món khác"}
               </Text>
             </View>
             <View className="flex-row gap-x-1 items-center">
@@ -143,8 +139,7 @@ const CompleteDeliveryConfirmModal = ({
                 className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
               >
                 {utilService.formatPrice(
-                  globalCompleteDeliveryConfirm.model.totalPrice -
-                    globalCompleteDeliveryConfirm.model.totalPromotion
+                  order.totalPrice - order.totalPromotion
                 )}{" "}
                 ₫
               </Text>
@@ -154,17 +149,11 @@ const CompleteDeliveryConfirmModal = ({
           <View className="py-2 ">
             <Text className="text-[14px] text-gray-700">Khung nhận hàng:</Text>
             <Text className="text-[14px] text-gray-700 font-semibold">
-              {dayjs(
-                globalCompleteDeliveryConfirm.model.intendedReceiveDate
-              ).format("DD/MM/YYYY") +
+              {dayjs(order.intendedReceiveDate).format("DD/MM/YYYY") +
                 " | " +
-                utilService.formatTime(
-                  globalCompleteDeliveryConfirm.model.startTime
-                ) +
+                utilService.formatTime(order.startTime) +
                 " - " +
-                utilService.formatTime(
-                  globalCompleteDeliveryConfirm.model.endTime
-                )}
+                utilService.formatTime(order.endTime)}
             </Text>
           </View>
         </View>
@@ -264,29 +253,24 @@ const CompleteDeliveryConfirmModal = ({
             </TouchableOpacity> */}
           </View>
           <View className="mt-2 justify-center items-center">
-            <Text
-              className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
-                getOrderStatusDescription(
-                  globalCompleteDeliveryConfirm.model.status
-                )?.bgColor
-              }`}
-              style={{
-                backgroundColor: getOrderStatusDescription(
-                  globalCompleteDeliveryConfirm.model.status
-                )?.bgColor,
-              }}
-            >
-              {
-                getOrderStatusDescription(
-                  globalCompleteDeliveryConfirm.model.status
-                )?.description
-              }
-            </Text>
+            {order != undefined && (
+              <Text
+                className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
+                  getOrderStatusDescription(order.status)?.bgColor
+                }`}
+                style={{
+                  backgroundColor: getOrderStatusDescription(order.status)
+                    ?.bgColor,
+                }}
+              >
+                {getOrderStatusDescription(order.status)?.description}
+              </Text>
+            )}
           </View>
           {stepComponents[step]}
         </View>
       </View>
-      {/* <Toast position="bottom" /> */}
+      <Toast position="bottom" />
     </Modal>
   );
 };
