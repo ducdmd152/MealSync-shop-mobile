@@ -7,6 +7,9 @@ import { Ionicons } from "@expo/vector-icons";
 import CONSTANTS from "@/constants/data";
 import CustomButton from "../custom/CustomButton";
 import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
+import { router } from "expo-router";
+import useGlobalMyPKGDetailsState from "@/hooks/states/useGlobalPKGDetailsState";
+import AreaQRScanner from "../common/AreaQRScanner";
 interface Props {
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -21,6 +24,7 @@ const CompleteDeliveryConfirmModal = ({
   titleStyleClasses = "",
   imageStyleClasses = "",
 }: Props) => {
+  const globalPKGState = useGlobalMyPKGDetailsState();
   const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
   //   console.log(screenWidth, screenHeight);
   return (
@@ -47,6 +51,9 @@ const CompleteDeliveryConfirmModal = ({
             >
               <Ionicons name="close-outline" size={24} color="gray" />
             </TouchableOpacity> */}
+          </View>
+          <View className="mt-2">
+            <AreaQRScanner innerDimension={300} />
           </View>
           <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white">
             <View className="flex-1">
