@@ -190,10 +190,10 @@ const DeliveryPKGDetail = ({
     return pkgDetails.orders;
   };
 
-  const getActionComponent = (status: number) => {
-    if (status < OrderStatus.Preparing || status > OrderStatus.Delivering)
+  const getActionComponent = (order: OrderFetchModel) => {
+    if (order.status < OrderStatus.Preparing || status > OrderStatus.Delivering)
       return <View></View>;
-    if (status == OrderStatus.Preparing)
+    if (order.status == OrderStatus.Preparing)
       return (
         <View className="mt-3 w-full items-center justify-between bg-white">
           <CustomButton
@@ -215,7 +215,7 @@ const DeliveryPKGDetail = ({
           />
         </View>
       );
-    if (status == OrderStatus.Delivering)
+    if (order.status == OrderStatus.Delivering)
       return (
         <View className="mt-3 w-full items-center justify-between bg-white">
           <CustomButton
@@ -364,7 +364,7 @@ const DeliveryPKGDetail = ({
                           : `MS-${order.id} | Chi tiết đơn hàng`
                       );
                       globalCompleteDeliveryConfirm.setActionComponents(
-                        getActionComponent(order.status)
+                        getActionComponent(order)
                       );
                     }}
                     className="mt-1 p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
@@ -437,7 +437,7 @@ const DeliveryPKGDetail = ({
                                   `MS-${order.id} | Xác nhận giao hàng`
                                 );
                                 globalCompleteDeliveryConfirm.setActionComponents(
-                                  getActionComponent(order.status)
+                                  getActionComponent(order)
                                 );
                               }}
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
