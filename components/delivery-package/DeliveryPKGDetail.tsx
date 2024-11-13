@@ -50,6 +50,7 @@ import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import Toast from "react-native-toast-message";
 import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
 import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfirmModal";
+import orderUIService from "@/services/order-ui-service";
 
 interface Props {
   onNotFound?: () => void;
@@ -68,13 +69,16 @@ const DeliveryPKGDetail = ({
   const { model: pkgDetails, setModel: setPKGDetails } = globalPKGState;
   const [extendPKGs, setExtendPKGs] = useState<boolean[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isReLoading, setIsReLoading] = useState(false);
   const [order, setOrder] = useState<OrderFetchModel>({} as OrderFetchModel);
   const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
   const globalOrderDetailState = useGlobalOrderDetailState();
+  const [orders, setOrders] = useState<OrderFetchModel[]>([]);
   const [status, setStatus] = useState(0);
   const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
-  const getPKGDetails = async () => {
+  const getPKGDetails = async (isFirstTime = false) => {
     setIsLoading(true);
+    if (!isFirstTime) setIsReLoading(true);
     try {
       const response = await apiClient.get<
         FetchValueResponse<OwnDeliveryPackageModel>
@@ -87,159 +91,35 @@ const DeliveryPKGDetail = ({
       onNotFound();
     } finally {
       setIsLoading(false);
+      setIsReLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!isLoading) {
+      setOrders(pkgDetails?.orders || []);
+    }
+  }, [pkgDetails?.orders]);
 
   useFocusEffect(
     useCallback(() => {
-      getPKGDetails();
+      getPKGDetails(true);
     }, [])
   );
 
-  const onDelivery = (order: OrderFetchModel) => {
-    if (
-      utilService.isCurrentTimeGreaterThanEndTime({
-        startTime: pkgDetails.startTime,
-        endTime: pkgDetails.endTime,
-        intendedReceiveDate: pkgDetails.deliveryDate,
-      })
-    ) {
-      Alert.alert("Oops!", "Đã quá thời gian đi giao!");
-
-      return;
-    }
-
-    Alert.alert(
-      "Xác nhận",
-      `Chuyển đơn MS-${order.id} sang trạng thái giao hàng?`,
-      [
-        {
-          text: "Xác nhận",
-          onPress: async () => {
-            onDelivering([order.id]);
-          },
-        },
-        {
-          text: "Hủy",
-        },
-      ]
-    );
-  };
-  const onDelivering = (orderIds: number[], isConfirm = false) => {
-    orderAPIService.delivery(
-      orderIds,
-      () => {
-        getPKGDetails();
-        // toast.show(
-        //   orderIds.length == 1
-        //     ? `Đơn hàng MS-${orderIds[0]} đã được chuyển sang trạng thái giao hàng`
-        //     : `Chuyển sang trạng thái giao hàng thành công`,
-        //   {
-        //     type: "success",
-        //     duration: 2000,
-        //   }
-        // );
-        Toast.show({
-          type: "success",
-          text1: "Hoàn tất",
-          text2:
-            orderIds.length == 1
-              ? `MS-${orderIds[0]} đã chuyển sang trạng thái giao hàng`
-              : `Chuyển sang trạng thái giao hàng thành công`,
-          // time: 15000
-        });
-      },
-      (warningInfo: WarningMessageValue) => {
-        if (isConfirm) return;
-        Alert.alert("Xác nhận", warningInfo.message, [
-          {
-            text: "Xác nhận",
-            onPress: async () => {
-              onDelivering(orderIds, true);
-            },
-          },
-          {
-            text: "Hủy",
-          },
-        ]);
-      },
-      (error: any) => {
-        Alert.alert(
-          "Oops!",
-          error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-        );
-      }
-    );
-  };
   const filteredOrders = () => {
+    console.log("orders: ", orders);
     if (status == 0) return pkgDetails.orders;
     if (status == DeliveryPackageStatus.Pending)
-      return pkgDetails.orders.filter(
-        (order) => order.status < OrderStatus.Delivering
-      );
+      return orders.filter((order) => order.status < OrderStatus.Delivering);
     if (status == DeliveryPackageStatus.OnGoing)
-      return pkgDetails.orders.filter(
-        (order) => order.status == OrderStatus.Delivering
-      );
+      return orders.filter((order) => order.status == OrderStatus.Delivering);
     if (status == DeliveryPackageStatus.Completed)
-      return pkgDetails.orders.filter(
-        (order) => order.status > OrderStatus.Delivering
-      );
+      return orders.filter((order) => order.status > OrderStatus.Delivering);
 
     return pkgDetails.orders;
   };
 
-  const getActionComponent = (order: OrderFetchModel) => {
-    if (order.status < OrderStatus.Preparing || status > OrderStatus.Delivering)
-      return <View></View>;
-    if (order.status == OrderStatus.Preparing)
-      return (
-        <View className="mt-3 w-full items-center justify-between bg-white">
-          <CustomButton
-            title={`Đi giao`}
-            handlePress={() => {
-              onDelivery(order);
-            }}
-            containerStyleClasses="w-full h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10"
-            // iconRight={
-            //   <View className="ml-2">
-            //     <Ionicons
-            //       name="send-outline"
-            //       size={14}
-            //       color="white"
-            //     />
-            //   </View>
-            // }
-            textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white"
-          />
-        </View>
-      );
-    if (order.status == OrderStatus.Delivering)
-      return (
-        <View className="mt-3 w-full items-center justify-between bg-white">
-          <CustomButton
-            title={`Giao thành công`}
-            handlePress={() => {
-              globalCompleteDeliveryConfirm.setStep(1);
-            }}
-            containerStyleClasses="w-full h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
-            // iconLeft={
-            //   <Ionicons name="filter-outline" size={21} color="white" />
-            // }
-            textStyleClasses="text-[12px] text-center text-gray-900 ml-1 text-white text-gray-800"
-          />
-          <CustomButton
-            title="Giao thất bại"
-            handlePress={() => {
-              globalCompleteDeliveryConfirm.setStep(2);
-            }}
-            containerStyleClasses="w-full mt-2 h-[40px] px-2 bg-transparent border-2 border-gray-200 border-[#fecaca] bg-[#fef2f2] font-semibold z-10 ml-1 "
-            textStyleClasses="text-[12px] text-center text-gray-900 ml-1 text-white text-gray-700 text-[#f87171]"
-          />
-        </View>
-      );
-  };
   return (
     <View className="flex-1">
       <View className="flex-row items-center justify-between gap-2">
@@ -320,9 +200,9 @@ const DeliveryPKGDetail = ({
         refreshControl={
           <RefreshControl
             tintColor={"#FCF450"}
-            refreshing={isLoading}
+            refreshing={isLoading && !isReLoading}
             onRefresh={() => {
-              getPKGDetails();
+              getPKGDetails(false);
             }}
           />
         }
@@ -353,20 +233,12 @@ const DeliveryPKGDetail = ({
                     key={order.id}
                     onPress={() => {
                       globalCompleteDeliveryConfirm.setId(order.id);
-                      globalCompleteDeliveryConfirm.setOnAfterCompleted(
-                        () => getPKGDetails
+                      globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
+                        getPKGDetails()
                       );
                       globalCompleteDeliveryConfirm.setIsModalVisible(true);
                       globalCompleteDeliveryConfirm.setModel(order);
                       globalCompleteDeliveryConfirm.setStep(0);
-                      globalCompleteDeliveryConfirm.setTitle(
-                        order.status == OrderStatus.Delivering
-                          ? `MS-${order.id} | Xác nhận đơn hàng`
-                          : `MS-${order.id} | Chi tiết đơn hàng`
-                      );
-                      globalCompleteDeliveryConfirm.setActionComponents(
-                        getActionComponent(order)
-                      );
                     }}
                     className="mt-1 p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
                   >
@@ -402,7 +274,34 @@ const DeliveryPKGDetail = ({
                           }) && (
                             <TouchableOpacity
                               onPress={() => {
-                                onDelivery(order);
+                                orderUIService.onDelivery(
+                                  order,
+                                  () => {
+                                    getPKGDetails();
+                                  },
+                                  () => {
+                                    setOrders(
+                                      orders
+                                        .filter((item) => item.id != order.id)
+                                        .concat({
+                                          ...order,
+                                          status: OrderStatus.Delivering,
+                                        })
+                                    );
+                                    const toast = Toast.show({
+                                      type: "success",
+                                      text1: "Hoàn tất",
+                                      text2: `MS-${order.id} đã chuyển sang trạng thái giao hàng`,
+                                    });
+                                  },
+                                  (error) => {
+                                    Alert.alert(
+                                      "Oops!",
+                                      error?.response?.data?.error?.message ||
+                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                    );
+                                  }
+                                );
                               }}
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
                             >
@@ -434,12 +333,6 @@ const DeliveryPKGDetail = ({
                                 );
                                 globalCompleteDeliveryConfirm.setModel(order);
                                 globalCompleteDeliveryConfirm.setStep(0);
-                                globalCompleteDeliveryConfirm.setTitle(
-                                  `MS-${order.id} | Xác nhận giao hàng`
-                                );
-                                globalCompleteDeliveryConfirm.setActionComponents(
-                                  getActionComponent(order)
-                                );
                               }}
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
                             >
@@ -457,20 +350,16 @@ const DeliveryPKGDetail = ({
                     </View>
                     <View className="flex-row justify-between items-center mt-[4px]">
                       <View className="flex-1 flex-row justify-start items-center gap-2">
-                        <Image
+                        {/* <Image
                           source={{
-                            uri: order.foods[0].imageUrl,
+                            uri: order.orderDetails[0].imageUrl,
                           }}
                           resizeMode="cover"
                           className="h-[12px] w-[12px] rounded-md opacity-85"
                         />
                         <Text className="text-xs italic text-gray-500">
-                          {order.foods[0].name}{" "}
-                          {order.foods[0].quantity > 1 &&
-                            " x" + order.foods[0].quantity}
-                          {order.foods.length > 1 &&
-                            " +" + (order.foods.length - 1) + " món khác"}
-                        </Text>
+                          {order.orderDetailSummaryShort}
+                        </Text> */}
                       </View>
                       <View className="flex-row gap-x-1 items-center">
                         <Text
@@ -490,7 +379,10 @@ const DeliveryPKGDetail = ({
         </View>
       </ScrollView>
       <Toast position="bottom" />
-      <CompleteDeliveryConfirmModal />
+      <CompleteDeliveryConfirmModal
+        onParentOpen={() => globalPKGState.setIsDetailsModalVisible(true)}
+        onParentClose={() => globalPKGState.setIsDetailsModalVisible(false)}
+      />
     </View>
   );
 };
