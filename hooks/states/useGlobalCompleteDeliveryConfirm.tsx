@@ -1,4 +1,7 @@
-import { filterStatuses, OrderStatus } from "@/types/models/OrderFetchModel";
+import OrderFetchModel, {
+  filterStatuses,
+  OrderStatus,
+} from "@/types/models/OrderFetchModel";
 import { create } from "zustand";
 interface GlobalCompleteDeliveryConfirm {
   id: number;
@@ -7,6 +10,10 @@ interface GlobalCompleteDeliveryConfirm {
   setIsModalVisible: (param: boolean) => void;
   onAfterCompleted: () => void;
   setOnAfterCompleted: (func: () => void) => void;
+  step: number; // 0. choose action 1. Scan QR Successful Code 2. Failed Delivery Submit
+  setStep: (step: number) => void;
+  model: OrderFetchModel;
+  setModel: (model: OrderFetchModel) => void;
 }
 
 const useGlobalCompleteDeliveryConfirm = create<GlobalCompleteDeliveryConfirm>(
@@ -17,6 +24,10 @@ const useGlobalCompleteDeliveryConfirm = create<GlobalCompleteDeliveryConfirm>(
     setIsModalVisible: (param: boolean) => set({ isModalVisible: param }),
     onAfterCompleted: () => {},
     setOnAfterCompleted: (func: () => void) => set({ onAfterCompleted: func }),
+    step: 0,
+    setStep: (step: number) => set({ step: step }),
+    model: {} as OrderFetchModel,
+    setModel: (model: OrderFetchModel) => set({ model: model }),
   })
 );
 

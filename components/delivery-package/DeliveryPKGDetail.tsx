@@ -371,6 +371,8 @@ const DeliveryPKGDetail = ({
                                 globalCompleteDeliveryConfirm.setIsModalVisible(
                                   true
                                 );
+                                globalCompleteDeliveryConfirm.setModel(order);
+                                globalCompleteDeliveryConfirm.setStep(0);
                               }}
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
                             >
