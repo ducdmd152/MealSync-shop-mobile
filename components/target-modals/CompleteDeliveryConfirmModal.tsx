@@ -159,27 +159,8 @@ const CompleteDeliveryConfirmModal = ({
         </View>
       )}
 
-      <View className="mt-3 w-full items-center justify-between bg-white">
-        <CustomButton
-          title={`Giao thành công`}
-          handlePress={() => {
-            setStep(1);
-          }}
-          containerStyleClasses="w-full h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
-          // iconLeft={
-          //   <Ionicons name="filter-outline" size={21} color="white" />
-          // }
-          textStyleClasses="text-[12px] text-center text-gray-900 ml-1 text-white text-gray-800"
-        />
-        <CustomButton
-          title="Giao thất bại"
-          handlePress={() => {
-            setStep(2);
-          }}
-          containerStyleClasses="w-full mt-2 h-[40px] px-2 bg-transparent border-2 border-gray-200 border-[#fecaca] bg-[#fef2f2] font-semibold z-10 ml-1 "
-          textStyleClasses="text-[12px] text-center text-gray-900 ml-1 text-white text-gray-700 text-[#f87171]"
-        />
-      </View>
+      {globalCompleteDeliveryConfirm.actionComponents != null &&
+        globalCompleteDeliveryConfirm.actionComponents}
     </View>
   );
   const confirmSuccessStep = (
@@ -241,7 +222,7 @@ const CompleteDeliveryConfirmModal = ({
             <Text
               className={`flex-1 text-center font-semibold ${titleStyleClasses}`}
             >
-              MS-{globalCompleteDeliveryConfirm.id} | Xác nhận giao hàng
+              {globalCompleteDeliveryConfirm.title}
             </Text>
             {/* <TouchableOpacity
               onPress={() => {
@@ -250,6 +231,26 @@ const CompleteDeliveryConfirmModal = ({
             >
               <Ionicons name="close-outline" size={24} color="gray" />
             </TouchableOpacity> */}
+          </View>
+          <View className="mt-2 justify-center items-center">
+            <Text
+              className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
+                getOrderStatusDescription(
+                  globalCompleteDeliveryConfirm.model.status
+                )?.bgColor
+              }`}
+              style={{
+                backgroundColor: getOrderStatusDescription(
+                  globalCompleteDeliveryConfirm.model.status
+                )?.bgColor,
+              }}
+            >
+              {
+                getOrderStatusDescription(
+                  globalCompleteDeliveryConfirm.model.status
+                )?.description
+              }
+            </Text>
           </View>
           {stepComponents[step]}
         </View>

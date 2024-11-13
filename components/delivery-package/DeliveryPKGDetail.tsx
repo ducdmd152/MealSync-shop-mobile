@@ -160,6 +160,57 @@ const DeliveryPKGDetail = ({
 
     return pkgDetails.orders;
   };
+
+  const getActionComponent = (status: number) => {
+    if (status < OrderStatus.Preparing || status > OrderStatus.Delivering)
+      return <View></View>;
+    if (status == OrderStatus.Preparing)
+      return (
+        <View className="mt-3 w-full items-center justify-between bg-white">
+          <CustomButton
+            title={`Đi giao`}
+            handlePress={() => {
+              globalCompleteDeliveryConfirm.setStep(1);
+            }}
+            containerStyleClasses="w-full h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10"
+            // iconRight={
+            //   <View className="ml-2">
+            //     <Ionicons
+            //       name="send-outline"
+            //       size={14}
+            //       color="white"
+            //     />
+            //   </View>
+            // }
+            textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white"
+          />
+        </View>
+      );
+    if (status == OrderStatus.Delivering)
+      return (
+        <View className="mt-3 w-full items-center justify-between bg-white">
+          <CustomButton
+            title={`Giao thành công`}
+            handlePress={() => {
+              globalCompleteDeliveryConfirm.setStep(1);
+            }}
+            containerStyleClasses="w-full h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
+            // iconLeft={
+            //   <Ionicons name="filter-outline" size={21} color="white" />
+            // }
+            textStyleClasses="text-[12px] text-center text-gray-900 ml-1 text-white text-gray-800"
+          />
+          <CustomButton
+            title="Giao thất bại"
+            handlePress={() => {
+              globalCompleteDeliveryConfirm.setStep(2);
+            }}
+            containerStyleClasses="w-full mt-2 h-[40px] px-2 bg-transparent border-2 border-gray-200 border-[#fecaca] bg-[#fef2f2] font-semibold z-10 ml-1 "
+            textStyleClasses="text-[12px] text-center text-gray-900 ml-1 text-white text-gray-700 text-[#f87171]"
+          />
+        </View>
+      );
+  };
   return (
     <View className="flex-1">
       <View className="flex-row items-center justify-between gap-2">
@@ -271,11 +322,19 @@ const DeliveryPKGDetail = ({
                   <TouchableOpacity
                     key={order.id}
                     onPress={() => {
-                      // globalOrderDetailState.setId(order.id);
-                      // globalOrderDetailState.setIsActionsShowing(true);
-                      // globalOrderDetailState.setIsDetailBottomSheetVisible(
-                      //   true
-                      // );
+                      globalCompleteDeliveryConfirm.setId(order.id);
+                      globalCompleteDeliveryConfirm.setOnAfterCompleted(
+                        () => getPKGDetails
+                      );
+                      globalCompleteDeliveryConfirm.setIsModalVisible(true);
+                      globalCompleteDeliveryConfirm.setModel(order);
+                      globalCompleteDeliveryConfirm.setStep(0);
+                      globalCompleteDeliveryConfirm.setTitle(
+                        `MS-${globalCompleteDeliveryConfirm.id} | Chi tiết đơn hàng`
+                      );
+                      globalCompleteDeliveryConfirm.setActionComponents(
+                        getActionComponent(order.status)
+                      );
                     }}
                     className="mt-1 p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
                   >
@@ -373,6 +432,12 @@ const DeliveryPKGDetail = ({
                                 );
                                 globalCompleteDeliveryConfirm.setModel(order);
                                 globalCompleteDeliveryConfirm.setStep(0);
+                                globalCompleteDeliveryConfirm.setTitle(
+                                  `MS-${globalCompleteDeliveryConfirm.id} | Xác nhận giao hàng`
+                                );
+                                globalCompleteDeliveryConfirm.setActionComponents(
+                                  getActionComponent(order.status)
+                                );
                               }}
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
                             >

@@ -2,6 +2,7 @@ import OrderFetchModel, {
   filterStatuses,
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
+import { ReactNode } from "react";
 import { create } from "zustand";
 interface GlobalCompleteDeliveryConfirm {
   id: number;
@@ -14,6 +15,10 @@ interface GlobalCompleteDeliveryConfirm {
   setStep: (step: number) => void;
   model: OrderFetchModel;
   setModel: (model: OrderFetchModel) => void;
+  title: string;
+  setTitle: (title: string) => void;
+  actionComponents: ReactNode | null;
+  setActionComponents: (actionComponents: ReactNode | null) => void;
 }
 
 const useGlobalCompleteDeliveryConfirm = create<GlobalCompleteDeliveryConfirm>(
@@ -28,6 +33,11 @@ const useGlobalCompleteDeliveryConfirm = create<GlobalCompleteDeliveryConfirm>(
     setStep: (step: number) => set({ step: step }),
     model: {} as OrderFetchModel,
     setModel: (model: OrderFetchModel) => set({ model: model }),
+    title: "",
+    setTitle: (title: string) => set({ title: title }),
+    actionComponents: null,
+    setActionComponents: (actionComponents: ReactNode | null) =>
+      set({ actionComponents: actionComponents }),
   })
 );
 
