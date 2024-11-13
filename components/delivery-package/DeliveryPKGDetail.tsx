@@ -96,6 +96,35 @@ const DeliveryPKGDetail = ({
     }, [])
   );
 
+  const onDelivery = () => {
+    if (
+      utilService.isCurrentTimeGreaterThanEndTime({
+        startTime: pkgDetails.startTime,
+        endTime: pkgDetails.endTime,
+        intendedReceiveDate: pkgDetails.deliveryDate,
+      })
+    ) {
+      Alert.alert("Oops!", "Đã quá thời gian đi giao!");
+
+      return;
+    }
+
+    Alert.alert(
+      "Xác nhận",
+      `Chuyển đơn MS-${globalCompleteDeliveryConfirm.id} sang trạng thái giao hàng?`,
+      [
+        {
+          text: "Xác nhận",
+          onPress: async () => {
+            onDelivering([globalCompleteDeliveryConfirm.id]);
+          },
+        },
+        {
+          text: "Hủy",
+        },
+      ]
+    );
+  };
   const onDelivering = (orderIds: number[], isConfirm = false) => {
     orderAPIService.delivery(
       orderIds,
@@ -170,7 +199,7 @@ const DeliveryPKGDetail = ({
           <CustomButton
             title={`Đi giao`}
             handlePress={() => {
-              globalCompleteDeliveryConfirm.setStep(1);
+              onDelivery();
             }}
             containerStyleClasses="w-full h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10"
             // iconRight={
@@ -330,7 +359,9 @@ const DeliveryPKGDetail = ({
                       globalCompleteDeliveryConfirm.setModel(order);
                       globalCompleteDeliveryConfirm.setStep(0);
                       globalCompleteDeliveryConfirm.setTitle(
-                        `MS-${globalCompleteDeliveryConfirm.id} | Chi tiết đơn hàng`
+                        order.status == OrderStatus.Delivering
+                          ? `MS-${order.id} | Xác nhận đơn hàng`
+                          : `MS-${order.id} | Chi tiết đơn hàng`
                       );
                       globalCompleteDeliveryConfirm.setActionComponents(
                         getActionComponent(order.status)
@@ -370,37 +401,7 @@ const DeliveryPKGDetail = ({
                           }) && (
                             <TouchableOpacity
                               onPress={() => {
-                                if (
-                                  utilService.isCurrentTimeGreaterThanEndTime({
-                                    startTime: pkgDetails.startTime,
-                                    endTime: pkgDetails.endTime,
-                                    intendedReceiveDate:
-                                      pkgDetails.deliveryDate,
-                                  })
-                                ) {
-                                  Alert.alert(
-                                    "Oops!",
-                                    "Đã quá thời gian đi giao!"
-                                  );
-
-                                  return;
-                                }
-
-                                Alert.alert(
-                                  "Xác nhận",
-                                  `Chuyển đơn MS-${order.id} sang trạng thái giao hàng?`,
-                                  [
-                                    {
-                                      text: "Xác nhận",
-                                      onPress: async () => {
-                                        onDelivering([order.id]);
-                                      },
-                                    },
-                                    {
-                                      text: "Hủy",
-                                    },
-                                  ]
-                                );
+                                onDelivery();
                               }}
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
                             >
@@ -433,7 +434,7 @@ const DeliveryPKGDetail = ({
                                 globalCompleteDeliveryConfirm.setModel(order);
                                 globalCompleteDeliveryConfirm.setStep(0);
                                 globalCompleteDeliveryConfirm.setTitle(
-                                  `MS-${globalCompleteDeliveryConfirm.id} | Xác nhận giao hàng`
+                                  `MS-${order.id} | Xác nhận giao hàng`
                                 );
                                 globalCompleteDeliveryConfirm.setActionComponents(
                                   getActionComponent(order.status)
@@ -442,7 +443,7 @@ const DeliveryPKGDetail = ({
                               className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
                             >
                               <Text className="text-[12px] text-white mr-1 text-center">
-                                Xác nhận giao hàng
+                                Xác nhận giao
                               </Text>
                               {/* <Ionicons
                                 name="send-outline"
