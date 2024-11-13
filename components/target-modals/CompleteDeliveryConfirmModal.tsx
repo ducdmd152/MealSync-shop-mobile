@@ -76,13 +76,13 @@ const CompleteDeliveryConfirmModal = ({
         <View className="mt-3 border-gray-300 border-[0.5px]" />
         <View className="py-2">
           <Text className="text-[14px] text-gray-700 font-semibold">
-            {globalCompleteDeliveryConfirm.model.customer.fullName}
+            {globalCompleteDeliveryConfirm.model.customer?.fullName}
           </Text>
           <Text className="text-[14px] text-gray-700 font-semibold">
-            {globalCompleteDeliveryConfirm.model.customer.phoneNumber}
+            {globalCompleteDeliveryConfirm.model.customer?.phoneNumber}
           </Text>
           <Text className="text-[14px] text-gray-700 font-semibold italic">
-            {globalCompleteDeliveryConfirm.model.buildingName}
+            {globalCompleteDeliveryConfirm.model?.buildingName}
           </Text>
         </View>
         <View className="mt-1 border-gray-300 border-[0.3px]" />
@@ -103,44 +103,40 @@ const CompleteDeliveryConfirmModal = ({
           </Text>
         </View>
       </View>
-      <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white">
-        <View className="flex-1">
-          <CustomButton
-            title={`Giao thành công`}
-            handlePress={() => {
-              setStep(1);
-            }}
-            containerStyleClasses="h-[44px] px-2 bg-transparent border-0 border-gray-200 bg-[#4ade80] font-semibold z-10"
-            // iconLeft={
-            //   <Ionicons name="filter-outline" size={21} color="white" />
-            // }
-            textStyleClasses="text-[12px] text-center text-gray-900 ml-1 text-white text-gray-800"
-          />
-        </View>
-        <View className="flex-1">
-          <CustomButton
-            title="Giao thất bại"
-            handlePress={() => {
-              setStep(2);
-            }}
-            containerStyleClasses="flex-1 h-[44px] px-2 bg-transparent border-0 border-gray-200 bg-[#fda4af] font-semibold z-10 ml-1 "
-            textStyleClasses="text-[12px] text-center text-gray-900 ml-1 text-white text-gray-700"
-          />
-        </View>
+      <View className="mt-3 w-full items-center justify-between bg-white">
+        <CustomButton
+          title={`Giao thành công`}
+          handlePress={() => {
+            setStep(1);
+          }}
+          containerStyleClasses="w-full h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
+          // iconLeft={
+          //   <Ionicons name="filter-outline" size={21} color="white" />
+          // }
+          textStyleClasses="text-[12px] text-center text-gray-900 ml-1 text-white text-gray-800"
+        />
+        <CustomButton
+          title="Giao thất bại"
+          handlePress={() => {
+            setStep(2);
+          }}
+          containerStyleClasses="w-full mt-2 h-[40px] px-2 bg-transparent border-2 border-gray-200 border-[#fecaca] bg-[#fef2f2] font-semibold z-10 ml-1 "
+          textStyleClasses="text-[12px] text-center text-gray-900 ml-1 text-white text-gray-700 text-[#f87171]"
+        />
       </View>
     </View>
   );
   const confirmSuccessStep = (
     <View className="gap-y-2 py-2">
-      <Text className="text-[12px] text-center text-green-500 font-semibold">
-        Quét mã xác nhận giao thành công
-      </Text>
-      <View className="mt-2">
+      <View className="mt-2 bg-gray-200 p-1 items-center justify-center rounded-xl">
         <AreaQRScanner
-          innerDimension={300}
+          innerDimension={280}
           handleQRCode={handleDeliverySuccess}
         />
       </View>
+      <Text className="text-[12px] text-center text-green-500 font-semibold">
+        Quét mã xác nhận giao thành công
+      </Text>
       <TouchableOpacity
         onPress={() => setStep(0)}
         className="flex-row justify-center gap-x-2 p-2 border-[1px] border-gray-200 rounded-lg"
@@ -153,10 +149,24 @@ const CompleteDeliveryConfirmModal = ({
     </View>
   );
   const failSubmitStep = (
-    <View className="flex-1">
-      <Text className={`flex-1 text-center font-semibold ${titleStyleClasses}`}>
-        Giao hàng thất bại
-      </Text>
+    <View className="gap-y-2 py-2">
+      <TouchableOpacity
+        onPress={() => setStep(0)}
+        className="flex-row bg-primary justify-center gap-x-2 p-2 py-3 border-[1px] border-gray-200 rounded-xl"
+      >
+        <Text className="text-[14px] text-center text-white font-semibold align-center">
+          Xác nhận giao hàng thất bại
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => setStep(0)}
+        className="flex-row justify-center gap-x-2 p-2 border-[1px] border-gray-200 rounded-lg"
+      >
+        <Ionicons name="arrow-back-outline" size={14} color="#475569" />
+        <Text className="text-[12px] text-center text-gray-600 font-semibold align-center">
+          {"Quay lại"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
   const stepComponents = [selectActionStep, confirmSuccessStep, failSubmitStep];
@@ -169,7 +179,7 @@ const CompleteDeliveryConfirmModal = ({
     >
       <View style={{ zIndex: 100 }} className="justify-center items-center ">
         <View
-          className={`bg-white p-1 rounded-lg p-4 ${containerStyleClasses}`}
+          className={`w-80 bg-white p-1 rounded-lg p-4 ${containerStyleClasses}`}
         >
           <View className="flex-row items-center justify-between">
             <Text
