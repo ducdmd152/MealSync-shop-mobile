@@ -58,7 +58,7 @@ interface Props {
   onClose: () => void;
 }
 const initExtend = false;
-const detailBottomHeight = Dimensions.get("window").height - 240;
+const detailBottomHeight = Dimensions.get("window").height - 150;
 const DeliveryPKGDetail = ({
   onNotFound = () => {},
   containerStyleClasses = "",
@@ -304,6 +304,7 @@ const DeliveryPKGDetail = ({
                                         error?.response?.data?.error?.message ||
                                           "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                                       );
+                                      getPKGDetails();
                                     }
                                   );
                                 }}
