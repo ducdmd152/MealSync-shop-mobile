@@ -251,6 +251,29 @@ const utilService = {
       return null;
     }
   },
+  getRoleFromToken: (token: string): number | null => {
+    try {
+      // Tách các phần của token (Header, Payload, Signature)
+      const payloadBase64 = token.split(".")[1];
+
+      // Giải mã payload từ Base64Url sang chuỗi JSON
+      const payloadJson = atob(
+        payloadBase64.replace(/_/g, "/").replace(/-/g, "+")
+      );
+
+      // Chuyển chuỗi JSON thành đối tượng
+      const payload = JSON.parse(payloadJson);
+
+      // Trả về email nếu có, hoặc null nếu không tìm thấy
+      return (
+        payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"] ||
+        null
+      );
+    } catch (error) {
+      console.error("Lỗi khi giải mã token:", error);
+      return null;
+    }
+  },
   waitForCondition: async (condition: () => boolean, interval = 100) => {
     console.log("condition: () => boolean:", condition());
     while (!condition()) {

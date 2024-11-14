@@ -48,6 +48,9 @@ const SignIn = () => {
         await sessionService.setAuthToken(
           response.data?.value?.tokenResponse?.accessToken || ""
         );
+        await sessionService.setAuthRole(
+          response.data?.value?.accountResponse?.roleId || 2
+        );
         // console.log(await sessionService.getAuthToken());
         // navigation.dispatch(
         //   CommonActions.reset({

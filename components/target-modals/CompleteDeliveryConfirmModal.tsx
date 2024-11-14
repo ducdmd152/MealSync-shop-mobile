@@ -34,6 +34,7 @@ import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState"
 import useOrderDetailPageState from "@/hooks/states/useOrderDetailPageState";
 import OrderDetail from "../order/OrderDetail";
 import DeliveryOrderDetail from "../order/DeliveryOrderDetail";
+import sessionService from "@/services/session-service";
 interface Props {
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -65,6 +66,7 @@ const CompleteDeliveryConfirmModal = ({
   const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
   const { model: order, setModel: setOrder } = globalCompleteDeliveryConfirm;
   const { step, setStep } = globalCompleteDeliveryConfirm;
+  const [authRole, setAuthRole] = useState(0);
   const [request, setRequest] = useState<DeliveryFailModel>({
     reason: "",
     reasonIndentity: 1, // 1. Shop 2. Customer
@@ -95,6 +97,9 @@ const CompleteDeliveryConfirmModal = ({
   };
   useEffect(() => {
     if (globalCompleteDeliveryConfirm.isModalVisible) {
+      (async () => {
+        setAuthRole((await sessionService.getAuthRole()) || 0);
+      })();
       setIsOrderDetailViewMode(false);
       setRequest({
         reason: "",
@@ -379,20 +384,30 @@ const CompleteDeliveryConfirmModal = ({
                 <Text className="text-xs italic text-gray-500">
                   Tóm tắt đơn:
                 </Text>
-                <Text className="text-xs italic text-gray-500">
+                <Text className="flex-1 text-[12px] font-medium me-2 px-1 py-1 rounded">
                   {order.orderDetailSummary}
                 </Text>
               </View>
               <View className="flex-row gap-x-1 items-center">
                 <Text className="text-xs italic text-gray-500">Tổng tiền:</Text>
                 <Text
-                  className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
+                  className={`flex-1 text-[14px] text-secondary font-medium me-2 px-2.5 py-1 rounded `}
                 >
                   {utilService.formatPrice(
                     order.totalPrice - order.totalPromotion
                   )}{" "}
                   ₫
                 </Text>
+                <TouchableOpacity
+                  onPress={() => {}}
+                  className="mt-2 justify-center items-center ml-2 rounded-sm overflow-hidden"
+                >
+                  <Text
+                    className={`text-[11px] font-medium me-2 px-2.5 py-0.5 rounded text-[#227B94]`}
+                  >
+                    Chi tiết
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
             <View className="mt-1 border-gray-300 border-[0.3px]" />
@@ -584,7 +599,7 @@ const CompleteDeliveryConfirmModal = ({
               }}
               className="mt-2 justify-center items-center ml-2 rounded-sm overflow-hidden"
             >
-              {order != undefined && (
+              {order != undefined && authRole == 2 && (
                 <Text
                   className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded`}
                   style={{
