@@ -35,6 +35,9 @@ import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
 import { router, useFocusEffect } from "expo-router";
 import useGPKGState from "@/hooks/states/useGPKGState";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
+import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
+import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfirmModal";
+import CustomModal from "../common/CustomModal";
 interface Props {
   query: FrameDateTime;
   selectedDetail: DeliveryPackageGroupDetailsModel;
@@ -54,6 +57,7 @@ const DeliveryFrameDetail = ({
   onClose,
 }: Props) => {
   const globalGPKGState = useGPKGState();
+  const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
   const [isEditable, setIsEditable] = useState(true);
   const gPKGDetails = selectedDetail;
   const setGPKGDetails = setSelectedDetail;
@@ -217,11 +221,15 @@ const DeliveryFrameDetail = ({
                             <TouchableOpacity
                               key={order.id}
                               onPress={() => {
-                                // globalOrderDetailState.setId(order.id);
-                                // globalOrderDetailState.setIsActionsShowing(true);
-                                // globalOrderDetailState.setIsDetailBottomSheetVisible(
-                                //   true
-                                // );
+                                globalCompleteDeliveryConfirm.setId(order.id);
+                                globalCompleteDeliveryConfirm.setOnAfterCompleted(
+                                  () => getGPKGDetails()
+                                );
+                                globalCompleteDeliveryConfirm.setIsModalVisible(
+                                  true
+                                );
+                                globalCompleteDeliveryConfirm.setModel(order);
+                                globalCompleteDeliveryConfirm.setStep(0);
                               }}
                               className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
                             >
@@ -450,15 +458,19 @@ const DeliveryFrameDetail = ({
         />
       )}
 
-      {/* <Portal> */}
-      <ModalPaper
-        visible={isOpenOrderAssign}
-        onDismiss={() => setIsOpenOrderAssign(false)}
-        contentContainerStyle={{
-          backgroundColor: "white",
-          padding: 20,
-          margin: 5,
-          zIndex: 1000,
+      <CompleteDeliveryConfirmModal
+        onParentOpen={() => {}}
+        onParentClose={() => {}}
+      />
+      <CustomModal
+        title={`MS-${order.id} Chi tiết đặt hàng`}
+        hasHeader={false}
+        isOpen={isOpenOrderAssign}
+        setIsOpen={(value) => setIsOpenOrderAssign(value)}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[98%]"
+        onBackdropPress={() => {
+          setIsOpenOrderAssign(false);
         }}
       >
         <OrderDeliveryAssign
@@ -469,7 +481,20 @@ const DeliveryFrameDetail = ({
           order={order}
           isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
         />
-      </ModalPaper>
+      </CustomModal>
+      {/* <Portal> */}
+      {/* <ModalPaper
+        visible={isOpenOrderAssign}
+        onDismiss={() => setIsOpenOrderAssign(false)}
+        contentContainerStyle={{
+          backgroundColor: "white",
+          padding: 20,
+          margin: 5,
+          zIndex: 1000,
+        }}
+      >
+        
+      </ModalPaper> */}
       {/* </Portal> */}
     </View>
   );

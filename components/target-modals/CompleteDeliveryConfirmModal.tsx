@@ -97,7 +97,7 @@ const CompleteDeliveryConfirmModal = ({
       setIsReloading(false);
     }
   };
-  console.log("isOrderDetailViewMode: ", isOrderDetailViewMode);
+  // console.log("isOrderDetailViewMode: ", isOrderDetailViewMode);
   useEffect(() => {
     if (globalCompleteDeliveryConfirm.isModalVisible) {
       (async () => {
@@ -625,78 +625,81 @@ const CompleteDeliveryConfirmModal = ({
           {stepComponents[step]}
         </View>
       </View>
-      <CustomModal
-        title={`MS-${order.id} Chi tiết đặt hàng`}
-        // hasHeader={false}
-        isOpen={isViewOrderFoodDetail}
-        setIsOpen={(value) => setIsViewOrderFoodDetail(value)}
-        titleStyleClasses="text-center flex-1"
-        containerStyleClasses="w-72"
-        onBackdropPress={() => {
-          setIsViewOrderFoodDetail(false);
-        }}
-      >
-        <View className="mt-2 bg-white p-2">
-          <Text className="text-[14px] text-gray-600 font-semibold">
-            Chi tiết đặt món
-          </Text>
-          <View className="mt-3 border-gray-300 border-[0.5px]" />
-          <View className="pt-4 gap-y-2">
-            {order.orderDetails.map((detail) => (
-              <View key={detail.id}>
-                <View className="flex-row justify-between">
-                  <View className="flex-row gap-x-2">
-                    <Text className="font-semibold w-[28px]">
-                      x{detail.quantity}
-                    </Text>
-                    <Text className="font-semibold">{detail.name}</Text>
-                  </View>
-                  <View>
-                    <Text className="font-semibold">
-                      {utilService.formatPrice(detail.totalPrice)}₫
-                    </Text>
-                  </View>
-                </View>
-
-                {detail.optionGroups.length > 0 && (
-                  <View className="flex-row gap-x-2">
-                    <Text className="w-[28px]"></Text>
-                    {detail.optionGroups.map((option) => (
-                      <Text
-                        className="italic font-gray-500 text-[12px]"
-                        key={detail.id + option.optionGroupTitle}
-                      >
-                        {option.optionGroupTitle}:{" "}
-                        {option.options
-                          .map((item) => item.optionTitle)
-                          .join(", ")}
-                        {" ; "}
+      {order.id != undefined && (
+        <CustomModal
+          title={`MS-${order.id} Chi tiết đặt hàng`}
+          // hasHeader={false}
+          isOpen={isViewOrderFoodDetail}
+          setIsOpen={(value) => setIsViewOrderFoodDetail(value)}
+          titleStyleClasses="text-center flex-1"
+          containerStyleClasses="w-72"
+          onBackdropPress={() => {
+            setIsViewOrderFoodDetail(false);
+          }}
+        >
+          <View className="mt-2 bg-white p-2">
+            <Text className="text-[14px] text-gray-600 font-semibold">
+              Chi tiết đặt món
+            </Text>
+            <View className="mt-3 border-gray-300 border-[0.5px]" />
+            <View className="pt-4 gap-y-2">
+              {order.orderDetails.map((detail) => (
+                <View key={detail.id}>
+                  <View className="flex-row justify-between">
+                    <View className="flex-row gap-x-2">
+                      <Text className="font-semibold w-[28px]">
+                        x{detail.quantity}
                       </Text>
-                    ))}
+                      <Text className="font-semibold">{detail.name}</Text>
+                    </View>
+                    <View>
+                      <Text className="font-semibold">
+                        {utilService.formatPrice(detail.totalPrice)}₫
+                      </Text>
+                    </View>
                   </View>
-                )}
 
-                {detail.note && (
-                  <View className="flex-row gap-x-2 mt-[2px]">
-                    <Text className="italic font-gray-500 text-[13.2px]">
-                      Ghi chú: {detail.note}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            ))}
+                  {detail.optionGroups.length > 0 && (
+                    <View className="flex-row gap-x-2">
+                      <Text className="w-[28px]"></Text>
+                      {detail.optionGroups.map((option) => (
+                        <Text
+                          className="italic font-gray-500 text-[12px]"
+                          key={detail.id + option.optionGroupTitle}
+                        >
+                          {option.optionGroupTitle}:{" "}
+                          {option.options
+                            .map((item) => item.optionTitle)
+                            .join(", ")}
+                          {" ; "}
+                        </Text>
+                      ))}
+                    </View>
+                  )}
+
+                  {detail.note && (
+                    <View className="flex-row gap-x-2 mt-[2px]">
+                      <Text className="italic font-gray-500 text-[13.2px]">
+                        Ghi chú: {detail.note}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
-        <View className="mt-1 bg-white p-2">
-          <Text className="text-[14px] text-gray-500 font-semibold">
-            Ghi chú cho toàn đơn hàng
-          </Text>
-          <View className="mt-2 border-gray-300 border-[0.5px]" />
-          <Text className="mt-2 italic text-gray-5\600  text-[14px]">
-            {order.note || "Không có"}
-          </Text>
-        </View>
-      </CustomModal>
+          <View className="mt-1 bg-white p-2">
+            <Text className="text-[14px] text-gray-500 font-semibold">
+              Ghi chú cho toàn đơn hàng
+            </Text>
+            <View className="mt-2 border-gray-300 border-[0.5px]" />
+            <Text className="mt-2 italic text-gray-5\600  text-[14px]">
+              {order.note || "Không có"}
+            </Text>
+          </View>
+        </CustomModal>
+      )}
+
       <Toast position="bottom" />
     </Modal>
   );

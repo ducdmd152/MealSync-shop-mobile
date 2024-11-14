@@ -27,6 +27,8 @@ import CustomButton from "@/components/custom/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-toast-notifications";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
+import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
 interface GPKGCreateRequest {
   isConfirm: boolean;
   deliveryPackages: {
@@ -40,6 +42,8 @@ export interface GPKGQuery {
   intendedReceiveDate: string;
 }
 const DeliveryPackageGroupCreate = () => {
+  const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
+
   const toast = useToast();
   const [query, setQuery] = useState<GPKGQuery>({
     startTime: 0,
@@ -76,6 +80,10 @@ const DeliveryPackageGroupCreate = () => {
         .then((response) => response.data),
     [query]
   );
+  const onRefresh = () => {
+    orderFetchResult?.refetch();
+    deliveryPersonFetchResult.refetch();
+  };
 
   function getUnassignedOrders(): OrderFetchModel[] {
     const allOrders = orderFetchResult?.data?.value.items || [];
@@ -260,9 +268,13 @@ const DeliveryPackageGroupCreate = () => {
             <TouchableOpacity
               key={order.id}
               onPress={() => {
-                // setOrderDetailId(order.id);
-                // setOrder(order);
-                // setIsDetailBottomSheetVisible(true);
+                globalCompleteDeliveryConfirm.setId(order.id);
+                globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
+                  onRefresh()
+                );
+                globalCompleteDeliveryConfirm.setIsModalVisible(true);
+                globalCompleteDeliveryConfirm.setModel(order);
+                globalCompleteDeliveryConfirm.setStep(0);
               }}
               className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
             >
@@ -341,9 +353,13 @@ const DeliveryPackageGroupCreate = () => {
             <TouchableOpacity
               key={order.id}
               onPress={() => {
-                // setOrderDetailId(order.id);
-                // setOrder(order);
-                // setIsDetailBottomSheetVisible(true);
+                globalCompleteDeliveryConfirm.setId(order.id);
+                globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
+                  onRefresh()
+                );
+                globalCompleteDeliveryConfirm.setIsModalVisible(true);
+                globalCompleteDeliveryConfirm.setModel(order);
+                globalCompleteDeliveryConfirm.setStep(0);
               }}
               className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
             >
@@ -442,6 +458,10 @@ const DeliveryPackageGroupCreate = () => {
           />
         </View>
       )}
+      <CompleteDeliveryConfirmModal
+        onParentOpen={() => {}}
+        onParentClose={() => {}}
+      />
     </PageLayoutWrapper>
   );
 };

@@ -201,7 +201,9 @@ const OrderDeliveryAssign = ({
       ) : (
         <View>
           <TouchableOpacity
-            className="mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md"
+            className={`mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md ${
+              order.shopDeliveryStaff?.id == 0 && "bg-green-100"
+            }`}
             onPress={() =>
               setStaffInfo(staffInfoListData?.value[0].staffInfor || staffInfo)
             }
@@ -235,7 +237,10 @@ const OrderDeliveryAssign = ({
               .map((staff) => (
                 <TouchableOpacity
                   key={staff.staffInfor.id}
-                  className="mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md"
+                  className={`mt-2 flex-row px-[4px] py-[8px] border-2 border-gray-200 rounded-md ${
+                    order.shopDeliveryStaff?.id == staff.staffInfor.id &&
+                    "bg-green-100"
+                  }`}
                   onPress={() => setStaffInfo(staff.staffInfor)}
                 >
                   {staffInfo.id == staff.staffInfor.id ? (
