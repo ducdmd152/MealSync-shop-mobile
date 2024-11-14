@@ -34,21 +34,26 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
   const qrLock = useRef(false);
   const appState = useRef(AppState.currentState);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", (nextAppState) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === "active"
-      ) {
-        qrLock.current = false;
-      }
-      appState.current = nextAppState;
-    });
+  // useEffect(() => {
+  //   const subscription = AppState.addEventListener("change", (nextAppState) => {
+  //     if (
+  //       appState.current.match(/inactive|background/) &&
+  //       nextAppState === "active"
+  //     ) {
+  //       qrLock.current = false;
+  //     }
+  //     appState.current = nextAppState;
+  //   });
 
-    return () => {
-      subscription.remove();
-    };
-  }, []);
+  //   return () => {
+  //     subscription.remove();
+  //   };
+  // }, []);
+  useFocusEffect(
+    useCallback(() => {
+      qrLock.current = false;
+    }, [])
+  );
 
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [permissionResponse, setPermissionResponse] = useState<any>(null);
@@ -86,16 +91,18 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
         facing="back"
         onBarcodeScanned={({ data, bounds }) => {
           if (data && !qrLock.current) {
+            console.log("QR Code: ", data);
+            setIsSubmitting(true);
             qrLock.current = true;
 
             setTimeout(async () => {
               //   await Linking.openURL(data);
-              console.log("QR Code: ", data);
+
               qrLock.current = true;
               handleQRCode(
                 data,
                 () => {
-                  setIsSubmitting(true);
+                  setIsSubmitting(false);
                 },
                 (error: any) => {
                   setIsSubmitting(false);
@@ -119,7 +126,7 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
                   );
                 }
               );
-            }, 400);
+            }, 100);
           }
         }}
       />

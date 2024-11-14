@@ -355,29 +355,30 @@ const DeliveryPackageGroupUpdate = () => {
                   <Text className="ml-2  font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
                     {order.dormitoryId == 1 ? "Đến KTX khu A" : "Đến KTX khu B"}
                   </Text>
-                  <TouchableOpacity
-                    onPress={() => {
-                      remove(currentDeliveryPersonId, order.id);
-                      // toast.show(
-                      //   `Đơn hàng MS-${order.id} chuyển về chưa phân công giao hàng.`,
-                      //   {
-                      //     type: "info",
-                      //     duration: 1500,
-                      //   }
-                      // );
-                    }}
-                    className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-gray-400`}
-                    disabled={order.status > OrderStatus.Delivering}
-                  >
-                    <Text className="text-[12px] text-white mr-1">
-                      Bỏ phân công
-                    </Text>
-                    <Ionicons
-                      name="chevron-down-outline"
-                      size={14}
-                      color="white"
-                    />
-                  </TouchableOpacity>
+                  {order.status <= OrderStatus.Delivering && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        remove(currentDeliveryPersonId, order.id);
+                        // toast.show(
+                        //   `Đơn hàng MS-${order.id} chuyển về chưa phân công giao hàng.`,
+                        //   {
+                        //     type: "info",
+                        //     duration: 1500,
+                        //   }
+                        // );
+                      }}
+                      className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-gray-400`}
+                    >
+                      <Text className="text-[12px] text-white mr-1">
+                        Bỏ phân công
+                      </Text>
+                      <Ionicons
+                        name="chevron-down-outline"
+                        size={14}
+                        color="white"
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
               <View className="flex-row justify-between items-center mt-[4px]">
@@ -442,35 +443,37 @@ const DeliveryPackageGroupUpdate = () => {
                   <Text className="ml-2  font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
                     {order.dormitoryId == 1 ? "Đến KTX khu A" : "Đến KTX khu B"}
                   </Text>
-                  <TouchableOpacity
-                    onPress={() => {
-                      assign(currentDeliveryPersonId, order.id);
-                      // toast.show(
-                      //   `Đơn MS-${
-                      //     order.id
-                      //   } được phân công giao hàng cho ${utilService.shortenName(
-                      //     getCurrentPerson()?.staffInfor.fullName || ""
-                      //   )}${
-                      //     getCurrentPerson()?.staffInfor.id == 0 && " (bạn)"
-                      //   }.`,
-                      //   {
-                      //     type: "info",
-                      //     duration: 1500,
-                      //   }
-                      // );
-                    }}
-                    className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
-                    disabled={order.status != OrderStatus.Preparing}
-                  >
-                    <Text className="text-[12px] text-white mr-1">
-                      Phân công
-                    </Text>
-                    <Ionicons
-                      name="chevron-up-outline"
-                      size={14}
-                      color="white"
-                    />
-                  </TouchableOpacity>
+                  {order.status <= OrderStatus.Delivering && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        assign(currentDeliveryPersonId, order.id);
+                        // toast.show(
+                        //   `Đơn MS-${
+                        //     order.id
+                        //   } được phân công giao hàng cho ${utilService.shortenName(
+                        //     getCurrentPerson()?.staffInfor.fullName || ""
+                        //   )}${
+                        //     getCurrentPerson()?.staffInfor.id == 0 && " (bạn)"
+                        //   }.`,
+                        //   {
+                        //     type: "info",
+                        //     duration: 1500,
+                        //   }
+                        // );
+                      }}
+                      className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
+                      disabled={order.status != OrderStatus.Preparing}
+                    >
+                      <Text className="text-[12px] text-white mr-1">
+                        Phân công
+                      </Text>
+                      <Ionicons
+                        name="chevron-up-outline"
+                        size={14}
+                        color="white"
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
               <View className="flex-row justify-between items-center mt-[4px]">

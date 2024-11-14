@@ -294,7 +294,7 @@ const DeliveryPKGDetail = ({
                                           })
                                       );
                                       const toast = Toast.show({
-                                        type: "success",
+                                        type: "info",
                                         text1: "Hoàn tất",
                                         text2: `MS-${order.id} đã chuyển sang trạng thái giao hàng`,
                                       });

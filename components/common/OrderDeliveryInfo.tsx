@@ -12,8 +12,9 @@ import { OrderDeliveryInfoModel } from "@/types/models/DeliveryInfoModel";
 import dayjs from "dayjs";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import ImageViewingModal from "../target-modals/ImageViewingModal";
-import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
-import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfirmModal";
+import { useFocusEffect } from "expo-router";
+import CustomModal from "./CustomModal";
+import FailDeliveryUpdate from "./FailDeliveryUpdate";
 
 const OrderDeliveryInfo = ({
   order,
@@ -23,9 +24,9 @@ const OrderDeliveryInfo = ({
   containerStyleClasses?: string;
 }) => {
   const globalImageViewState = useGlobalImageViewingState();
-  const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
-
   const [isEditable, setIsEditable] = useState(true);
+  const [isUpdateFailDelivery, setIsUpdateFailDelivery] = useState(false);
+
   const fetch = useFetchWithRQWithFetchFunc(
     [`shop-owner/order/${order.id}/delivery-infor`],
     async (): Promise<FetchValueResponse<OrderDeliveryInfoModel>> =>
@@ -34,17 +35,20 @@ const OrderDeliveryInfo = ({
         .then((response) => response.data),
     []
   );
-  useEffect(() => {
-    fetch.refetch();
-    const endFrameDate = dayjs(
-      dayjs(order.intendedReceiveDate)
-        .local()
-        .set("hour", Math.floor(order.endTime / 100))
-        .set("minute", order.endTime % 100)
-        .toDate()
-    ).add(2, "hours");
-    setIsEditable(new Date() > endFrameDate.toDate());
-  }, [order.id]);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetch.refetch();
+      const endFrameDate = dayjs(
+        dayjs(order.intendedReceiveDate)
+          .local()
+          .set("hour", Math.floor(order.endTime / 100))
+          .set("minute", order.endTime % 100)
+          .toDate()
+      ).add(2, "hours");
+
+      setIsEditable(!(new Date() > endFrameDate.toDate()));
+    }, [])
+  );
 
   console.log("fetch.data?.value: ", fetch.data?.value);
   const getOrderDeliveryInfo = () => {
@@ -53,7 +57,7 @@ const OrderDeliveryInfo = ({
       return (
         <View>
           <View className="flex-row items-center justify-between ">
-            <Text className="text-[14px] font-semibold text-gray-700">
+            <Text className="text-[12px] font-semibold text-gray-700">
               Trạng thái giao hàng
             </Text>
             <Text
@@ -83,49 +87,42 @@ const OrderDeliveryInfo = ({
             </Text>
           </View>
           <View className="p-1 bg-gray-200 rounded-md mt-1">
-            <View>
-              <Text className="text-gray-700 font-medium">
+            <View className="flex-row items-center justify-between">
+              <Text className="text-gray-600 font-medium">
                 {/* Lí do: <Text className="italic"></Text> */}
                 {info?.deliveryFaileEvidence.reasonIndentity
                   ? "Do phía cửa hàng"
                   : "Do phía khách hàng"}
               </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  //   const endFrameDate = dayjs(
-                  //     dayjs(order.intendedReceiveDate)
-                  //       .local()
-                  //       .set("hour", Math.floor(order.endTime / 100))
-                  //       .set("minute", order.endTime % 100)
-                  //       .toDate()
-                  //   ).add(2, "hours");
-                  //   if (new Date() > endFrameDate.toDate()) {
-                  //     setIsEditable(false);
-                  //     Alert.alert(
-                  //       "Oops!",
-                  //       "Đã quá thời gian để thực hiện thao tác này!"
-                  //     );
-                  //     return;
-                  //   }
-                  globalCompleteDeliveryConfirm.setIsShowActionale(true);
-                  globalCompleteDeliveryConfirm.setId(order.id);
-                  globalCompleteDeliveryConfirm.setOnAfterCompleted(() => {
-                    // fetch.refetch()
-                  });
-                  globalCompleteDeliveryConfirm.setIsModalVisible(true);
-                  globalCompleteDeliveryConfirm.setModel(order);
-                  globalCompleteDeliveryConfirm.setStep(0);
-                }}
-                className="mt-2 justify-center items-center ml-2 rounded-sm overflow-hidden"
-              >
-                <Text
-                  className={`text-[14px] font-medium me-2 px-2.5 py-0.5 rounded text-[#227B94]`}
+              {isEditable && (
+                <TouchableOpacity
+                  onPress={() => {
+                    const endFrameDate = dayjs(
+                      dayjs(order.intendedReceiveDate)
+                        .local()
+                        .set("hour", Math.floor(order.endTime / 100))
+                        .set("minute", order.endTime % 100)
+                        .toDate()
+                    ).add(2, "hours");
+                    if (new Date() > endFrameDate.toDate()) {
+                      setIsEditable(false);
+                      Alert.alert(
+                        "Oops!",
+                        "Đã quá thời gian để thực hiện thao tác này!"
+                      );
+                      return;
+                    }
+                    setIsUpdateFailDelivery(true);
+                  }}
+                  className="justify-center items-center ml-2 mr-2 rounded-sm overflow-hidden"
                 >
-                  Chi tiết
-                </Text>
-              </TouchableOpacity>
+                  <Text className={`text-[12px] font-medium  text-[#227B94]`}>
+                    Chỉnh sửa
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
-            <Text className="mt-1 text-gray-700">
+            <Text className="mt-1 text-gray-600 text-[12.8px]">
               Mô tả:{" "}
               <Text className="italic">
                 {info?.deliveryFaileEvidence.reason || "Không có mô tả"}
@@ -210,7 +207,29 @@ const OrderDeliveryInfo = ({
         </View>
       )}
       <ImageViewingModal />
-      <CompleteDeliveryConfirmModal />
+      {fetch?.data?.value.deliveryStatus == 2 && (
+        <CustomModal
+          title={`MS-${order.id} Chi tiết đặt hàng`}
+          hasHeader={false}
+          isOpen={isUpdateFailDelivery}
+          setIsOpen={(value) => setIsUpdateFailDelivery(value)}
+          titleStyleClasses="text-center flex-1"
+          containerStyleClasses="w-[98%]"
+          onBackdropPress={() => {
+            setIsUpdateFailDelivery(false);
+          }}
+        >
+          <FailDeliveryUpdate
+            order={order}
+            failDeliveryInfo={fetch?.data?.value}
+            afterCompleted={() => {
+              fetch.refetch();
+              setIsUpdateFailDelivery(false);
+            }}
+            cancel={() => setIsUpdateFailDelivery(false)}
+          />
+        </CustomModal>
+      )}
     </View>
   );
 };

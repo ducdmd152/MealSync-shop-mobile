@@ -60,6 +60,7 @@ import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
 import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 import { Dormitories } from "@/types/models/ShopProfileModel";
+import Toast from "react-native-toast-message";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -472,10 +473,15 @@ const Order = () => {
                                   orderAPIService.confirm(
                                     order.id,
                                     () => {
-                                      Alert.alert(
-                                        "Hoàn tất",
-                                        `Đơn hàng MS-${order.id} đã được xác nhận!`
-                                      );
+                                      const toast = Toast.show({
+                                        type: "info",
+                                        text1: "Hoàn tất",
+                                        text2: `Đơn hàng MS-${order.id} đã được xác nhận!`,
+                                      });
+                                      // Alert.alert(
+                                      //   "Hoàn tất",
+                                      //   `Đơn hàng MS-${order.id} đã được xác nhận!`
+                                      // );
                                       setCacheOrderList(
                                         cacheOrderList.map((item) =>
                                           item.id != order.id
@@ -524,10 +530,15 @@ const Order = () => {
                                   orderAPIService.reject(
                                     order.id,
                                     () => {
-                                      Alert.alert(
-                                        "Hoàn tất",
-                                        `Đã từ chối đơn hàng MS-${order.id}!`
-                                      );
+                                      const toast = Toast.show({
+                                        type: "warning",
+                                        text1: "Hoàn tất",
+                                        text2: `Đã từ chối đơn hàng MS-${order.id}!`,
+                                      });
+                                      // Alert.alert(
+                                      //   "Hoàn tất",
+                                      //   `Đã từ chối đơn hàng MS-${order.id}!`
+                                      // );
                                       setCacheOrderList(
                                         cacheOrderList.map((item) =>
                                           item.id != order.id
@@ -573,10 +584,15 @@ const Order = () => {
                                   orderAPIService.prepare(
                                     order.id,
                                     () => {
-                                      Alert.alert(
-                                        "Hoàn tất",
-                                        `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
-                                      );
+                                      const toast = Toast.show({
+                                        type: "info",
+                                        text1: "Hoàn tất",
+                                        text2: `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
+                                      });
+                                      // Alert.alert(
+                                      //   "Hoàn tất",
+                                      //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
+                                      // );
                                       setCacheOrderList(
                                         cacheOrderList.map((item) =>
                                           item.id != order.id
@@ -599,10 +615,15 @@ const Order = () => {
                                               orderAPIService.prepare(
                                                 order.id,
                                                 () => {
-                                                  Alert.alert(
-                                                    "Hoàn tất",
-                                                    `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
-                                                  );
+                                                  const toast = Toast.show({
+                                                    type: "info",
+                                                    text1: "Hoàn tất",
+                                                    text2: `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
+                                                  });
+                                                  // Alert.alert(
+                                                  //   "Hoàn tất",
+                                                  //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
+                                                  // );
                                                   setCacheOrderList(
                                                     cacheOrderList.map((item) =>
                                                       item.id != order.id
@@ -673,10 +694,15 @@ const Order = () => {
                                   orderAPIService.cancel(
                                     order.id,
                                     () => {
-                                      Alert.alert(
-                                        "Hoàn tất",
-                                        `Đã hủy đơn hàng MS-${order.id}!`
-                                      );
+                                      // Alert.alert(
+                                      //   "Hoàn tất",
+                                      //   `Đã hủy đơn hàng MS-${order.id}!`
+                                      // );
+                                      const toast = Toast.show({
+                                        type: "warning",
+                                        text1: "Hoàn tất",
+                                        text2: `Đã hủy đơn hàng MS-${order.id}!`,
+                                      });
                                       setCacheOrderList(
                                         cacheOrderList.map((item) =>
                                           item.id != order.id
@@ -704,10 +730,15 @@ const Order = () => {
                                               orderAPIService.cancel(
                                                 order.id,
                                                 () => {
-                                                  Alert.alert(
-                                                    "Hoàn tất",
-                                                    `Đã hủy đơn hàng MS-${order.id}!`
-                                                  );
+                                                  const toast = Toast.show({
+                                                    type: "warning",
+                                                    text1: "Hoàn tất",
+                                                    text2: `Đã hủy đơn hàng MS-${order.id}!`,
+                                                  });
+                                                  // Alert.alert(
+                                                  //   "Hoàn tất",
+                                                  //   `Đã hủy đơn hàng MS-${order.id}!`
+                                                  // );
                                                   setCacheOrderList(
                                                     cacheOrderList.map((item) =>
                                                       item.id != order.id
@@ -944,6 +975,7 @@ const Order = () => {
         )}
       </BottomSheet> */}
       <OrderDetailBottomSheet />
+      <Toast position="bottom" />
     </View>
   );
 };

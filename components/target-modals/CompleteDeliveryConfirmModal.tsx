@@ -1,44 +1,44 @@
-import { View, Text, Image, Dimensions, Alert, Linking } from "react-native";
+import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
+import useOrderDetailPageState from "@/hooks/states/useOrderDetailPageState";
+import apiClient from "@/services/api-services/api-client";
+import orderUIService from "@/services/order-ui-service";
+import sessionService from "@/services/session-service";
+import utilService from "@/services/util-service";
+import { DeliveryFailModel } from "@/types/models/DeliveryInfoModel";
+import OrderFetchModel, {
+  getOrderStatusDescription,
+  OrderStatus,
+} from "@/types/models/OrderFetchModel";
+import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
+import ValueResponse from "@/types/responses/ValueReponse";
+import { Ionicons } from "@expo/vector-icons";
+import dayjs from "dayjs";
+import * as Clipboard from "expo-clipboard";
+import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
-import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
-import Modal from "react-native-modal";
+import {
+  Alert,
+  Dimensions,
+  Linking,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { SelectList } from "react-native-dropdown-select-list";
 import {
   RefreshControl,
   ScrollView,
   TouchableOpacity,
 } from "react-native-gesture-handler";
-import { Ionicons } from "@expo/vector-icons";
-import CONSTANTS from "@/constants/data";
-import CustomButton from "../custom/CustomButton";
-import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
-import { router, useFocusEffect } from "expo-router";
-import useGlobalMyPKGDetailsState from "@/hooks/states/useGlobalPKGDetailsState";
-import AreaQRScanner from "../common/AreaQRScanner";
-import apiClient from "@/services/api-services/api-client";
+import Modal from "react-native-modal";
 import Toast from "react-native-toast-message";
-import utilService from "@/services/util-service";
-import OrderFetchModel, {
-  getOrderStatusDescription,
-  OrderStatus,
-} from "@/types/models/OrderFetchModel";
-import * as Clipboard from "expo-clipboard";
-import dayjs from "dayjs";
-import { TextInput } from "react-native";
-import { DeliveryFailModel } from "@/types/models/DeliveryInfoModel";
-import PreviewMultiImagesUpload from "../images/PreviewMultiImagesUpload";
-import EvidencePreviewMultiImagesUpload from "../images/EvidencePreviewMultiImagesUpload";
-import { SelectList } from "react-native-dropdown-select-list";
-import orderUIService from "@/services/order-ui-service";
-import ValueResponse from "@/types/responses/ValueReponse";
-import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
-import useOrderDetailPageState from "@/hooks/states/useOrderDetailPageState";
-import OrderDetail from "../order/OrderDetail";
-import DeliveryOrderDetail from "../order/DeliveryOrderDetail";
-import sessionService from "@/services/session-service";
+import AreaQRScanner from "../common/AreaQRScanner";
 import CustomModal from "../common/CustomModal";
-import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
-import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
 import OrderDeliveryInfo from "../common/OrderDeliveryInfo";
+import CustomButton from "../custom/CustomButton";
+import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
+import EvidencePreviewMultiImagesUpload from "../images/EvidencePreviewMultiImagesUpload";
+import DeliveryOrderDetail from "../order/DeliveryOrderDetail";
 interface Props {
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -153,13 +153,16 @@ const CompleteDeliveryConfirmModal = ({
           text2: `Đã giao hàng thành công đơn MS-${globalCompleteDeliveryConfirm.id}`,
           // time: 15000
         });
-
+        setStep(0);
         globalCompleteDeliveryConfirm.onAfterCompleted();
         return true;
       })
       .catch((error: any) => {
         onError(error);
         return false;
+      })
+      .finally(() => {
+        // setStep(0);
       });
   };
   useEffect(() => {
@@ -201,7 +204,7 @@ const CompleteDeliveryConfirmModal = ({
         return false;
       })
       .finally(() => {
-        console.log("finally:  setIsSubmitting(false)");
+        globalCompleteDeliveryConfirm.onAfterCompleted();
         setIsSubmitting(false);
       });
   };
@@ -255,7 +258,7 @@ const CompleteDeliveryConfirmModal = ({
                       setOrder({ ...order, status: OrderStatus.Delivering });
                       getOrderDetail();
                       const toast = Toast.show({
-                        type: "success",
+                        type: "info",
                         text1: "Hoàn tất",
                         text2: `MS-${order.id} đã chuyển sang trạng thái giao hàng`,
                       });
@@ -275,8 +278,7 @@ const CompleteDeliveryConfirmModal = ({
                 textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white"
               />
             )}
-          {(order.status == OrderStatus.Preparing ||
-            order.status == OrderStatus.Delivering) && (
+          {order.status == OrderStatus.Preparing && (
             <CustomButton
               title={
                 order.shopDeliveryStaff == null
@@ -590,9 +592,10 @@ const CompleteDeliveryConfirmModal = ({
   return (
     <Modal
       isVisible={globalCompleteDeliveryConfirm.isModalVisible}
-      onBackdropPress={() =>
-        globalCompleteDeliveryConfirm.setIsModalVisible(false)
-      }
+      onBackdropPress={() => {
+        globalCompleteDeliveryConfirm.setIsModalVisible(false);
+        globalCompleteDeliveryConfirm.onAfterCompleted();
+      }}
     >
       <View style={{ zIndex: 100 }} className="justify-center items-center ">
         <View
@@ -742,7 +745,7 @@ const CompleteDeliveryConfirmModal = ({
         </CustomModal>
       )}
       <CustomModal
-        title={`MS-${order.id} Chi tiết đặt hàng`}
+        title={``}
         hasHeader={false}
         isOpen={isOpenOrderAssign}
         setIsOpen={(value) => setIsOpenOrderAssign(value)}
