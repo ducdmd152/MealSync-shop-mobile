@@ -32,6 +32,7 @@ export interface DeliveryPackageGroupDetailsModel {
   endTime: number;
   deliveryPackageGroups: DeliveryPackageModel[];
   unassignOrders: OrderFetchModel[];
+  intendedReceiveDate: string;
 }
 
 export enum DeliveryPackageStatus {

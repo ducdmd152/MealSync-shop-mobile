@@ -8,7 +8,10 @@ import { router, useFocusEffect } from "expo-router";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
-import { DeliveryPackageGroupModel } from "@/types/models/DeliveryPackageModel";
+import {
+  DeliveryPackageGroupDetailsModel,
+  DeliveryPackageGroupModel,
+} from "@/types/models/DeliveryPackageModel";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import sessionService from "@/services/session-service";
@@ -31,6 +34,10 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
   const [detailQuery, setDetailQuery] = useState<FrameDateTime>(
     {} as FrameDateTime
   );
+  const [selectedDetail, setSelectedDetail] =
+    useState<DeliveryPackageGroupDetailsModel>(
+      {} as DeliveryPackageGroupDetailsModel
+    );
   const gpkgFetchResult = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.DELIVERY_PACKAGE_GROUP_LIST.concat([
       "delivery-frame-list",
@@ -126,6 +133,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
           {(gpkgFetchResult.data?.value || []).map((gPKG, index) => (
             <TouchableOpacity
               onPress={() => {
+                setSelectedDetail(gPKG);
                 setDetailQuery({
                   startTime: gPKG.startTime,
                   endTime: gPKG.endTime,
@@ -204,6 +212,8 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
             </TouchableOpacity>
             <View className="flex-1 mt-2">
               <DeliveryFrameDetail
+                selectedDetail={selectedDetail}
+                setSelectedDetail={setSelectedDetail}
                 onClose={() => setIsDetailBottomSheetVisible(false)}
                 query={detailQuery}
                 onNotFound={() => {

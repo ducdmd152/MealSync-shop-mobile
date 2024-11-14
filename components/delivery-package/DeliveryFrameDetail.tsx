@@ -32,18 +32,22 @@ import {
 } from "react-native-paper";
 import OrderDeliveryAssign from "./OrderDeliveryAssign";
 import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import useGPKGState from "@/hooks/states/useGPKGState";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 interface Props {
   query: FrameDateTime;
+  selectedDetail: DeliveryPackageGroupDetailsModel;
+  setSelectedDetail: (model: DeliveryPackageGroupDetailsModel) => void;
   onNotFound?: () => void;
   containerStyleClasses?: string;
   onClose: () => void;
 }
 const initExtend = false;
-const detailBottomHeight = Dimensions.get("window").height - 220;
+const detailBottomHeight = Dimensions.get("window").height - 150;
 const DeliveryFrameDetail = ({
+  selectedDetail,
+  setSelectedDetail,
   query,
   onNotFound = () => {},
   containerStyleClasses = "",
@@ -51,14 +55,19 @@ const DeliveryFrameDetail = ({
 }: Props) => {
   const globalGPKGState = useGPKGState();
   const [isEditable, setIsEditable] = useState(true);
-  const [gPKGDetails, setGPKGDetails] =
-    useState<DeliveryPackageGroupDetailsModel>();
+  const gPKGDetails = selectedDetail;
+  const setGPKGDetails = setSelectedDetail;
+  // const [gPKGDetails, setGPKGDetails] =
+  //   useState<DeliveryPackageGroupDetailsModel>();
   const [extendPKGs, setExtendPKGs] = useState<boolean[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isReloading, setIsReLoading] = useState(false);
+
   const [order, setOrder] = useState<OrderFetchModel>({} as OrderFetchModel);
   const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
-  const getGPKGDetails = async () => {
+  const getGPKGDetails = async (isFirstTime = false) => {
     setIsLoading(true);
+    if (!isFirstTime) setIsReLoading(true);
     try {
       const response = await apiClient.get<
         FetchValueResponse<DeliveryPackageGroupDetailsModel>
@@ -75,12 +84,16 @@ const DeliveryFrameDetail = ({
       onNotFound();
     } finally {
       setIsLoading(false);
+      setIsReLoading(false);
     }
   };
-  useEffect(() => {
-    getGPKGDetails();
-    setIsEditable(!utilService.isCurrentTimeGreaterThanEndTime(query));
-  }, [query]);
+  useFocusEffect(
+    React.useCallback(() => {
+      getGPKGDetails(true);
+      setIsEditable(!utilService.isCurrentTimeGreaterThanEndTime(query));
+    }, [])
+  );
+
   // console.log("getCurrentUTCDate", utilService.getCurrentUTCDate());
   const getIsExtendPGK = (index: number) => {
     if (!gPKGDetails?.deliveryPackageGroups) return !initExtend;
@@ -100,7 +113,7 @@ const DeliveryFrameDetail = ({
     });
   };
 
-  console.log("gPKGDetails: ", gPKGDetails);
+  // console.log("gPKGDetails: ", gPKGDetails);
   return (
     <View className="flex-1">
       <View className="flex-row items-center justify-between gap-2">
@@ -127,8 +140,9 @@ const DeliveryFrameDetail = ({
         refreshControl={
           <RefreshControl
             tintColor={"#FCF450"}
-            refreshing={isLoading}
+            refreshing={isReloading}
             onRefresh={() => {
+              // console.log("Refreshing");
               getGPKGDetails();
             }}
           />
@@ -309,12 +323,11 @@ const DeliveryFrameDetail = ({
           <View className="p-1 border-2 border-gray-200 rounded-md">
             <Text className="mt-1 italic text-gray-700 text-center mb-1 text-[10px]">
               Danh sách đơn hàng đang trống{" "}
-              {!isLoading &&
-                `(${gPKGDetails?.unassignOrders?.length || 0} đơn hàng)`}
+              {`(${gPKGDetails?.unassignOrders?.length || 0} đơn hàng)`}
             </Text>
-            {isLoading && (
+            {/* {isLoading && (
               <ActivityIndicator animating={true} color="#FCF450" />
-            )}
+            )} */}
             {gPKGDetails?.unassignOrders
               // .filter((order) => order.dormitoryId == dorm.id)
               ?.map((order) => (
