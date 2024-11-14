@@ -411,9 +411,12 @@ const CompleteDeliveryConfirmModal = ({
             {!order.receiveAt && (
               <View className="py-2 ">
                 <Text className="text-[14px] text-gray-700">
+                  Trạng thái giao hàng
+                </Text>
+                <Text className="text-[12px] text-gray-700">
                   Đã nhận hàng vào:
                 </Text>
-                <Text className="text-[14px] text-gray-700 font-semibold">
+                <Text className="text-[12px] text-gray-700 font-semibold">
                   {dayjs(order.receiveAt || new Date())
                     .local()
                     .format("HH:mm DD/MM/YYYY")}
