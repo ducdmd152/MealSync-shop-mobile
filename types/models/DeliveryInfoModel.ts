@@ -8,3 +8,10 @@ export interface DeliveryFailModel {
   reasonIndentity: number; // 1. Shop 2. Customer
   evidences: ImageEvidenceModel[];
 }
+export interface OrderDeliveryInfoModel {
+  id: number;
+  lastestDeliveryFailAt: string;
+  receiveAt: string;
+  deliveryStatus: number;
+  deliveryFaileEvidence: DeliveryFailModel;
+}

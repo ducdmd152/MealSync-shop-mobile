@@ -91,7 +91,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
         />
       </View>
 
-      <View className="w-full gap-2 p-4 pt-1">
+      <View className="w-full gap-2 p-4 pt-1 flex-1">
         <View className="w-full">
           {/* <Searchbar
             style={{
@@ -113,7 +113,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
         )}
 
         <ScrollView
-          className="gap-y-2 pb-[250px]"
+          className="flex-1"
           refreshControl={
             <RefreshControl
               tintColor={"#FCF450"}
@@ -124,72 +124,76 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
             />
           }
         >
-          {!gpkgFetchResult.isFetching &&
-            !gpkgFetchResult.data?.value.length && (
-              <Text className="text-gray-600 text-center pt-8">
-                Không có phân công đã tạo tương ứng.
-              </Text>
-            )}
-          {(gpkgFetchResult.data?.value || []).map((gPKG, index) => (
-            <TouchableOpacity
-              onPress={() => {
-                setSelectedDetail(gPKG);
-                setDetailQuery({
-                  startTime: gPKG.startTime,
-                  endTime: gPKG.endTime,
-                  intendedReceiveDate: utilService.formatDateTimeToYyyyMmDd(
-                    gPKG.intendedReceiveDate
-                  ),
-                });
-                setIsDetailBottomSheetVisible(true);
-              }}
-              key={
-                (Math.random() % 100_000_000) +
-                "$" +
-                (Math.random() % 100_000_000) +
-                "$" +
-                index
-              }
-              className="p-3 drop-shadow-md rounded-lg shadow border-[0.5px] border-gray-200"
-            >
-              <View className="flex-row items-center justify-between gap-2">
-                <View className="flex-row">
-                  <Text className="font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
-                    {utilService.formatTime(gPKG.startTime) +
-                      " - " +
-                      utilService.formatTime(gPKG.endTime)}
-                  </Text>
-                  <Text className="ml-2 bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
-                    {utilService.formatDateDdMmYyyy(gPKG.intendedReceiveDate)}
-                  </Text>
-                </View>
-                <View className="flex-row items-center">
-                  {/* <Text className="text-[12px] font-semibold bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
+          <View className="pb-[80px] gap-y-2">
+            {!gpkgFetchResult.isFetching &&
+              !gpkgFetchResult.data?.value.length && (
+                <Text className="text-gray-600 text-center pt-8">
+                  Không có phân công đã tạo tương ứng.
+                </Text>
+              )}
+            {(gpkgFetchResult.data?.value || []).map((gPKG, index) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedDetail(gPKG);
+                  setDetailQuery({
+                    startTime: gPKG.startTime,
+                    endTime: gPKG.endTime,
+                    intendedReceiveDate: utilService.formatDateTimeToYyyyMmDd(
+                      gPKG.intendedReceiveDate
+                    ),
+                  });
+                  setIsDetailBottomSheetVisible(true);
+                }}
+                key={
+                  (Math.random() % 100_000_000) +
+                  "$" +
+                  (Math.random() % 100_000_000) +
+                  "$" +
+                  index
+                }
+                className="p-3 drop-shadow-md rounded-lg shadow border-[0.5px] border-gray-200"
+              >
+                <View className="flex-row items-center justify-between gap-2">
+                  <View className="flex-row">
+                    <Text className="font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
+                      {utilService.formatTime(gPKG.startTime) +
+                        " - " +
+                        utilService.formatTime(gPKG.endTime)}
+                    </Text>
+                    <Text className="ml-2 bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
+                      {utilService.formatDateDdMmYyyy(gPKG.intendedReceiveDate)}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center">
+                    {/* <Text className="text-[12px] font-semibold bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100">
                       GPKG-{123 + index}
                     </Text> */}
+                  </View>
                 </View>
-              </View>
 
-              <View className="gap-y-2 mt-1 ml-1">
-                {gPKG.deliveryPackageGroups.map((pkg) => (
-                  <Text
-                    key={pkg.deliveryPackageId}
-                    className="text-[11.5px] text-gray-700 font-semibold"
-                  >
-                    {utilService.shortenName(pkg.shopDeliveryStaff.fullName)}{" "}
-                    {pkg.shopDeliveryStaff.id == 0 && (
-                      <Text className="italic">{"(bạn) "}</Text>
-                    )}
-                    - {pkg.total} đơn (
-                    {pkg.dormitories
-                      .map((dorm) => `${dorm.total}${dorm.id == 1 ? "A" : "B"}`)
-                      .join(", ")}
-                    ) - Hoàn tất {pkg.successful + pkg.failed}/{pkg.total}
-                  </Text>
-                ))}
-              </View>
-            </TouchableOpacity>
-          ))}
+                <View className="gap-y-2 mt-1 ml-1">
+                  {gPKG.deliveryPackageGroups.map((pkg) => (
+                    <Text
+                      key={pkg.deliveryPackageId}
+                      className="text-[11.5px] text-gray-700 font-semibold"
+                    >
+                      {utilService.shortenName(pkg.shopDeliveryStaff.fullName)}{" "}
+                      {pkg.shopDeliveryStaff.id == 0 && (
+                        <Text className="italic">{"(bạn) "}</Text>
+                      )}
+                      - {pkg.total} đơn (
+                      {pkg.dormitories
+                        .map(
+                          (dorm) => `${dorm.total}${dorm.id == 1 ? "A" : "B"}`
+                        )
+                        .join(", ")}
+                      ) - Hoàn tất {pkg.successful + pkg.failed}/{pkg.total}
+                    </Text>
+                  ))}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
         </ScrollView>
       </View>
       <BottomSheet

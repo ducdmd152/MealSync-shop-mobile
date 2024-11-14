@@ -24,7 +24,7 @@ import OrderFetchModel, {
 import * as Clipboard from "expo-clipboard";
 import dayjs from "dayjs";
 import { TextInput } from "react-native";
-import { DeliveryFailModel } from "@/types/models/DeliveryFailModel";
+import { DeliveryFailModel } from "@/types/models/DeliveryInfoModel";
 import PreviewMultiImagesUpload from "../images/PreviewMultiImagesUpload";
 import EvidencePreviewMultiImagesUpload from "../images/EvidencePreviewMultiImagesUpload";
 import { SelectList } from "react-native-dropdown-select-list";
@@ -38,6 +38,7 @@ import sessionService from "@/services/session-service";
 import CustomModal from "../common/CustomModal";
 import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
+import OrderDeliveryInfo from "../common/OrderDeliveryInfo";
 interface Props {
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -436,7 +437,11 @@ const CompleteDeliveryConfirmModal = ({
                 <Text className="text-xs italic text-gray-500">
                   Tóm tắt đơn:
                 </Text>
-                <Text className="flex-1 text-[12px] font-medium me-2 px-1 py-1 rounded">
+                <Text
+                  className="flex-1 text-[12px] font-medium me-2 px-1 py-1 rounded"
+                  ellipsizeMode="tail"
+                  numberOfLines={1}
+                >
                   {order.orderDetailSummary}
                 </Text>
               </View>
@@ -477,21 +482,10 @@ const CompleteDeliveryConfirmModal = ({
                   utilService.formatTime(order.endTime)}
               </Text>
             </View>
-            {!order.receiveAt && (
-              <View className="py-2 ">
-                <Text className="text-[14px] text-gray-700">
-                  Trạng thái giao hàng
-                </Text>
-                <Text className="text-[12px] text-gray-700">
-                  Đã nhận hàng vào:
-                </Text>
-                <Text className="text-[12px] text-gray-700 font-semibold">
-                  {dayjs(order.receiveAt || new Date())
-                    .local()
-                    .format("HH:mm DD/MM/YYYY")}
-                </Text>
-              </View>
-            )}
+            <OrderDeliveryInfo
+              order={order}
+              containerStyleClasses={"py-2 bg-gray-200 p-2 mx-[-8px] "}
+            />
           </View>
         ))}
 

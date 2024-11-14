@@ -23,8 +23,10 @@ const ImageViewingModal = ({
       isVisible={globalImageViewState.isModalVisible}
       onBackdropPress={() => globalImageViewState.setIsModalVisible(false)}
     >
-      <View style={{ zIndex: 100 }} className="justify-center items-center">
-        <View className={`bg-white p-1 rounded-lg ${containerStyleClasses}`}>
+      <View style={{ zIndex: 100 }} className="justify-center items-center ">
+        <View
+          className={`bg-white p-1 rounded-lg ${containerStyleClasses} relative`}
+        >
           {/* <View className="flex-row items-center justify-end">
             <TouchableOpacity
               onPress={() => {
@@ -41,6 +43,11 @@ const ImageViewingModal = ({
             className={`w-[${240}px] rounded-lg aspect-square ${imageStyleClasses}`}
             resizeMode="contain"
           />
+          {globalImageViewState.description && (
+            <Text className="italic mt-1 text-center text-yellow-600">
+              {globalImageViewState.description}
+            </Text>
+          )}
         </View>
       </View>
     </Modal>

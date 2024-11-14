@@ -20,7 +20,8 @@ import CONSTANTS from "@/constants/data";
 import * as ImagePicker from "expo-image-picker";
 import imageService from "@/services/image-service";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
-import { ImageEvidenceModel } from "@/types/models/DeliveryFailModel";
+import { ImageEvidenceModel } from "@/types/models/DeliveryInfoModel";
+import dayjs from "dayjs";
 interface EvidencePreviewMultiImagesUploadProps extends ViewProps {
   uris: ImageEvidenceModel[];
   setUris: (uri: ImageEvidenceModel[]) => void;
@@ -171,7 +172,10 @@ const EvidencePreviewMultiImagesUpload = ({
             style={{ position: "relative" }}
             onPress={() => {
               globalImageViewState.setUrl(uri.imageUrl);
-              // globalImageViewState.setDescription(ReactNode)
+              globalImageViewState.setDescription(
+                "Cập nhật vào " +
+                  dayjs(uri.takePictureDateTime).format("HH:mm DD/MM/YYYY")
+              );
               globalImageViewState.setIsModalVisible(true);
             }}
           >

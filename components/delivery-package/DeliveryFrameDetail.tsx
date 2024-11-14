@@ -235,7 +235,7 @@ const DeliveryFrameDetail = ({
                                 globalCompleteDeliveryConfirm.setModel(order);
                                 globalCompleteDeliveryConfirm.setStep(0);
                               }}
-                              className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
+                              className="p-[4px] my-[1px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
                             >
                               <View className="flex-row items-center justify-between">
                                 <View className="flex-row items-center">

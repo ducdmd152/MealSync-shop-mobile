@@ -151,6 +151,7 @@ const PreviewMultiImagesUpload = ({
             style={{ position: "relative" }}
             onPress={() => {
               globalImageViewState.setUrl(uri);
+              globalImageViewState.setDescription("");
               globalImageViewState.setIsModalVisible(true);
             }}
           >

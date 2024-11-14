@@ -284,6 +284,8 @@ const Review = () => {
                         key={imageUrl}
                         onPress={() => {
                           globalImageViewState.setUrl(imageUrl);
+                          globalImageViewState.setDescription("");
+
                           globalImageViewState.setIsModalVisible(true);
                         }}
                       >
