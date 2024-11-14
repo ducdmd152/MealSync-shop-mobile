@@ -35,6 +35,7 @@ import useOrderDetailPageState from "@/hooks/states/useOrderDetailPageState";
 import OrderDetail from "../order/OrderDetail";
 import DeliveryOrderDetail from "../order/DeliveryOrderDetail";
 import sessionService from "@/services/session-service";
+import CustomModal from "../common/CustomModal";
 interface Props {
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -75,6 +76,7 @@ const CompleteDeliveryConfirmModal = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isOrderDetailViewMode, setIsOrderDetailViewMode] = useState(false);
   const [isReloading, setIsReloading] = useState(false);
+  const [isViewOrderFoodDetail, setIsViewOrderFoodDetail] = useState(false);
   const getOrderDetail = async (isRefetching = false) => {
     setIsLoading(true);
     if (isRefetching) setIsReloading(true);
@@ -95,10 +97,14 @@ const CompleteDeliveryConfirmModal = ({
       setIsReloading(false);
     }
   };
+  console.log("isOrderDetailViewMode: ", isOrderDetailViewMode);
   useEffect(() => {
     if (globalCompleteDeliveryConfirm.isModalVisible) {
       (async () => {
-        setAuthRole((await sessionService.getAuthRole()) || 0);
+        const roleId = utilService.getRoleFromToken(
+          (await sessionService.getAuthToken()) || ""
+        );
+        setAuthRole(roleId);
       })();
       setIsOrderDetailViewMode(false);
       setRequest({
@@ -379,7 +385,7 @@ const CompleteDeliveryConfirmModal = ({
                 {order?.buildingName}
               </Text>
             </View>
-            <View className="mt-[4px]">
+            <View className="mt-[4px] pb-1 border-b-[1px] border-gray-200">
               <View className="flex-row justify-start items-center gap-2">
                 <Text className="text-xs italic text-gray-500">
                   Tóm tắt đơn:
@@ -391,7 +397,7 @@ const CompleteDeliveryConfirmModal = ({
               <View className="flex-row gap-x-1 items-center">
                 <Text className="text-xs italic text-gray-500">Tổng tiền:</Text>
                 <Text
-                  className={`flex-1 text-[14px] text-secondary font-medium me-2 px-2.5 py-1 rounded `}
+                  className={`flex-1 text-[17px] text-secondary font-medium me-2 px-2.5 py-1 rounded `}
                 >
                   {utilService.formatPrice(
                     order.totalPrice - order.totalPromotion
@@ -399,18 +405,20 @@ const CompleteDeliveryConfirmModal = ({
                   ₫
                 </Text>
                 <TouchableOpacity
-                  onPress={() => {}}
+                  onPress={() => {
+                    setIsViewOrderFoodDetail(true);
+                  }}
                   className="mt-2 justify-center items-center ml-2 rounded-sm overflow-hidden"
                 >
                   <Text
-                    className={`text-[11px] font-medium me-2 px-2.5 py-0.5 rounded text-[#227B94]`}
+                    className={`text-[14px] font-medium me-2 px-2.5 py-0.5 rounded text-[#227B94]`}
                   >
                     Chi tiết
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
-            <View className="mt-1 border-gray-300 border-[0.3px]" />
+            {/* <View className="mt-2 border-gray-300 border-[0.4px]" /> */}
             <View className="py-2 ">
               <Text className="text-[14px] text-gray-700">
                 Khung nhận hàng:
@@ -617,6 +625,78 @@ const CompleteDeliveryConfirmModal = ({
           {stepComponents[step]}
         </View>
       </View>
+      <CustomModal
+        title={`MS-${order.id} Chi tiết đặt hàng`}
+        // hasHeader={false}
+        isOpen={isViewOrderFoodDetail}
+        setIsOpen={(value) => setIsViewOrderFoodDetail(value)}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-72"
+        onBackdropPress={() => {
+          setIsViewOrderFoodDetail(false);
+        }}
+      >
+        <View className="mt-2 bg-white p-2">
+          <Text className="text-[14px] text-gray-600 font-semibold">
+            Chi tiết đặt món
+          </Text>
+          <View className="mt-3 border-gray-300 border-[0.5px]" />
+          <View className="pt-4 gap-y-2">
+            {order.orderDetails.map((detail) => (
+              <View key={detail.id}>
+                <View className="flex-row justify-between">
+                  <View className="flex-row gap-x-2">
+                    <Text className="font-semibold w-[28px]">
+                      x{detail.quantity}
+                    </Text>
+                    <Text className="font-semibold">{detail.name}</Text>
+                  </View>
+                  <View>
+                    <Text className="font-semibold">
+                      {utilService.formatPrice(detail.totalPrice)}₫
+                    </Text>
+                  </View>
+                </View>
+
+                {detail.optionGroups.length > 0 && (
+                  <View className="flex-row gap-x-2">
+                    <Text className="w-[28px]"></Text>
+                    {detail.optionGroups.map((option) => (
+                      <Text
+                        className="italic font-gray-500 text-[12px]"
+                        key={detail.id + option.optionGroupTitle}
+                      >
+                        {option.optionGroupTitle}:{" "}
+                        {option.options
+                          .map((item) => item.optionTitle)
+                          .join(", ")}
+                        {" ; "}
+                      </Text>
+                    ))}
+                  </View>
+                )}
+
+                {detail.note && (
+                  <View className="flex-row gap-x-2 mt-[2px]">
+                    <Text className="italic font-gray-500 text-[13.2px]">
+                      Ghi chú: {detail.note}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+        </View>
+        <View className="mt-1 bg-white p-2">
+          <Text className="text-[14px] text-gray-500 font-semibold">
+            Ghi chú cho toàn đơn hàng
+          </Text>
+          <View className="mt-2 border-gray-300 border-[0.5px]" />
+          <Text className="mt-2 italic text-gray-5\600  text-[14px]">
+            {order.note || "Không có"}
+          </Text>
+        </View>
+      </CustomModal>
       <Toast position="bottom" />
     </Modal>
   );

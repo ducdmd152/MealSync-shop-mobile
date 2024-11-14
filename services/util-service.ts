@@ -251,7 +251,7 @@ const utilService = {
       return null;
     }
   },
-  getRoleFromToken: (token: string): number | null => {
+  getRoleFromToken: (token: string): number => {
     try {
       // Tách các phần của token (Header, Payload, Signature)
       const payloadBase64 = token.split(".")[1];
@@ -265,13 +265,16 @@ const utilService = {
       const payload = JSON.parse(payloadJson);
 
       // Trả về email nếu có, hoặc null nếu không tìm thấy
-      return (
-        payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"] ||
-        null
-      );
+      return payload[
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"
+      ]
+        ? Number(
+            payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"]
+          )
+        : 0;
     } catch (error) {
       console.error("Lỗi khi giải mã token:", error);
-      return null;
+      return 0;
     }
   },
   waitForCondition: async (condition: () => boolean, interval = 100) => {
