@@ -268,13 +268,14 @@ const DeliveryPackageGroupCreate = () => {
             <TouchableOpacity
               key={order.id}
               onPress={() => {
+                globalCompleteDeliveryConfirm.setIsShowActionale(false);
+                globalCompleteDeliveryConfirm.setStep(0);
                 globalCompleteDeliveryConfirm.setId(order.id);
                 globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
                   onRefresh()
                 );
                 globalCompleteDeliveryConfirm.setIsModalVisible(true);
                 globalCompleteDeliveryConfirm.setModel(order);
-                globalCompleteDeliveryConfirm.setStep(0);
               }}
               className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
             >
@@ -353,13 +354,14 @@ const DeliveryPackageGroupCreate = () => {
             <TouchableOpacity
               key={order.id}
               onPress={() => {
+                globalCompleteDeliveryConfirm.setIsShowActionale(false);
+                globalCompleteDeliveryConfirm.setStep(0);
                 globalCompleteDeliveryConfirm.setId(order.id);
                 globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
                   onRefresh()
                 );
                 globalCompleteDeliveryConfirm.setIsModalVisible(true);
                 globalCompleteDeliveryConfirm.setModel(order);
-                globalCompleteDeliveryConfirm.setStep(0);
               }}
               className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
             >

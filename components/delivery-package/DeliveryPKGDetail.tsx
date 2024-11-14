@@ -233,6 +233,7 @@ const DeliveryPKGDetail = ({
                     <TouchableOpacity
                       key={order.id}
                       onPress={() => {
+                        globalCompleteDeliveryConfirm.setIsShowActionale(true);
                         globalCompleteDeliveryConfirm.setId(order.id);
                         globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
                           getPKGDetails()
@@ -329,6 +330,10 @@ const DeliveryPKGDetail = ({
                             }) && (
                               <TouchableOpacity
                                 onPress={async () => {
+                                  globalCompleteDeliveryConfirm.setIsShowActionale(
+                                    true
+                                  );
+
                                   globalCompleteDeliveryConfirm.setId(order.id);
                                   globalCompleteDeliveryConfirm.setOnAfterCompleted(
                                     () => getPKGDetails()

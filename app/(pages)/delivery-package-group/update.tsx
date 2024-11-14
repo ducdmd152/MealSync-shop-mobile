@@ -333,6 +333,8 @@ const DeliveryPackageGroupUpdate = () => {
             <TouchableOpacity
               key={order.id}
               onPress={() => {
+                globalCompleteDeliveryConfirm.setIsShowActionale(false);
+
                 globalCompleteDeliveryConfirm.setId(order.id);
                 globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
                   onRefresh()
@@ -418,6 +420,8 @@ const DeliveryPackageGroupUpdate = () => {
             <TouchableOpacity
               key={order.id}
               onPress={() => {
+                globalCompleteDeliveryConfirm.setIsShowActionale(false);
+
                 globalCompleteDeliveryConfirm.setId(order.id);
                 globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
                   onRefresh()

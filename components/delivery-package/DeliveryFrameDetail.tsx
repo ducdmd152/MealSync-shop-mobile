@@ -221,6 +221,10 @@ const DeliveryFrameDetail = ({
                             <TouchableOpacity
                               key={order.id}
                               onPress={() => {
+                                globalCompleteDeliveryConfirm.setIsShowActionale(
+                                  true
+                                );
+
                                 globalCompleteDeliveryConfirm.setId(order.id);
                                 globalCompleteDeliveryConfirm.setOnAfterCompleted(
                                   () => getGPKGDetails()
@@ -343,6 +347,7 @@ const DeliveryFrameDetail = ({
                 <TouchableOpacity
                   key={order.id}
                   onPress={() => {
+                    globalCompleteDeliveryConfirm.setIsShowActionale(true);
                     globalCompleteDeliveryConfirm.setId(order.id);
                     globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
                       getGPKGDetails()
