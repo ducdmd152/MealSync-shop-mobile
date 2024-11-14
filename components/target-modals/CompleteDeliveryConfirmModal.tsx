@@ -36,6 +36,8 @@ import OrderDetail from "../order/OrderDetail";
 import DeliveryOrderDetail from "../order/DeliveryOrderDetail";
 import sessionService from "@/services/session-service";
 import CustomModal from "../common/CustomModal";
+import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
+import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
 interface Props {
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -60,6 +62,7 @@ const CompleteDeliveryConfirmModal = ({
   onParentOpen = () => {},
   onParentClose = () => {},
 }: Props) => {
+  const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImageHandling, setImageHandling] = useState(false);
   const [imageHandleError, setImageHandleError] = useState<any>(false);
@@ -97,8 +100,13 @@ const CompleteDeliveryConfirmModal = ({
       setIsReloading(false);
     }
   };
+  const onRefresh = () => {
+    getOrderDetail();
+    globalCompleteDeliveryConfirm.onAfterCompleted();
+  };
   // console.log("isOrderDetailViewMode: ", isOrderDetailViewMode);
   useEffect(() => {
+    setIsOpenOrderAssign(false);
     if (globalCompleteDeliveryConfirm.isModalVisible) {
       (async () => {
         const roleId = utilService.getRoleFromToken(
@@ -116,7 +124,9 @@ const CompleteDeliveryConfirmModal = ({
   }, [globalCompleteDeliveryConfirm.isModalVisible]);
   useFocusEffect(
     useCallback(() => {
-      if (globalCompleteDeliveryConfirm.isModalVisible) getOrderDetail(true);
+      if (globalCompleteDeliveryConfirm.isModalVisible) {
+        getOrderDetail(true);
+      }
     }, [])
   );
 
@@ -211,111 +221,147 @@ const CompleteDeliveryConfirmModal = ({
     requestFailDelivery();
   };
   const getActionComponent = (order: OrderFetchModel) => {
-    if (
-      order.status < OrderStatus.Preparing ||
-      order.status > OrderStatus.Delivering
-    )
-      return <View></View>;
-    if (order.status == OrderStatus.Preparing)
+    if (authRole == 2) {
       return (
-        <View className="mt-3 w-full items-center justify-between bg-white">
-          <CustomButton
-            title={`Đi giao`}
-            handlePress={() => {
-              orderUIService.onDelivery(
-                order,
-                () => {
-                  getOrderDetail();
-                  globalCompleteDeliveryConfirm.onAfterCompleted();
-                },
-                () => {
-                  setOrder({ ...order, status: OrderStatus.Delivering });
-                  getOrderDetail();
-                  const toast = Toast.show({
-                    type: "success",
-                    text1: "Hoàn tất",
-                    text2: `MS-${order.id} đã chuyển sang trạng thái giao hàng`,
-                  });
-                },
-                (error) => {
+        <View className=" w-full bg-white">
+          {order.status == OrderStatus.Preparing &&
+            order.shopDeliveryStaff?.id == 0 && (
+              <CustomButton
+                title={`Đi giao`}
+                handlePress={() => {
+                  if (
+                    utilService.isCurrentTimeGreaterThanEndTime({
+                      startTime: order.startTime,
+                      endTime: order.endTime,
+                      intendedReceiveDate: order.intendedReceiveDate,
+                    })
+                  ) {
+                    getOrderDetail();
+                    globalCompleteDeliveryConfirm.onAfterCompleted();
+                    Alert.alert(
+                      "Oops!",
+                      "Đã quá thời gian để thực hiện thao tác này!"
+                    );
+                    return;
+                  }
+                  orderUIService.onDelivery(
+                    order,
+                    () => {
+                      getOrderDetail();
+                      globalCompleteDeliveryConfirm.onAfterCompleted();
+                    },
+                    () => {
+                      setOrder({ ...order, status: OrderStatus.Delivering });
+                      getOrderDetail();
+                      const toast = Toast.show({
+                        type: "success",
+                        text1: "Hoàn tất",
+                        text2: `MS-${order.id} đã chuyển sang trạng thái giao hàng`,
+                      });
+                    },
+                    (error) => {
+                      getOrderDetail();
+                      globalCompleteDeliveryConfirm.onAfterCompleted();
+                      Alert.alert(
+                        "Oops!",
+                        error?.response?.data?.error?.message ||
+                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                      );
+                    }
+                  );
+                }}
+                containerStyleClasses="w-full mt-2 h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10"
+                textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white"
+              />
+            )}
+          {(order.status == OrderStatus.Preparing ||
+            order.status == OrderStatus.Delivering) && (
+            <CustomButton
+              title={
+                order.shopDeliveryStaff == null
+                  ? `Phân công giao hàng`
+                  : `Thay đổi phân công`
+              }
+              handlePress={() => {
+                if (
+                  utilService.isCurrentTimeGreaterThanEndTime({
+                    startTime: order.startTime,
+                    endTime: order.endTime,
+                    intendedReceiveDate: order.intendedReceiveDate,
+                  })
+                ) {
                   getOrderDetail();
                   globalCompleteDeliveryConfirm.onAfterCompleted();
                   Alert.alert(
                     "Oops!",
-                    error?.response?.data?.error?.message ||
-                      "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                    "Đã quá thời gian để thực hiện thao tác này!"
                   );
+                  return;
                 }
-              );
-            }}
-            containerStyleClasses="w-full h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10"
-            // iconRight={
-            //   <View className="ml-2">
-            //     <Ionicons
-            //       name="send-outline"
-            //       size={14}
-            //       color="white"
-            //     />
-            //   </View>
-            // }
-            textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white"
-          />
+                setIsOpenOrderAssign(true);
+              }}
+              containerStyleClasses={`w-full mt-2 h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10 ${
+                order.shopDeliveryStaff != null && "bg-white"
+              }`}
+              textStyleClasses={`text-[14px] text-center text-gray-900 ml-1 text-white${
+                order.shopDeliveryStaff != null && " text-[#06b6d4]"
+              }`}
+            />
+          )}
+          {order.status == OrderStatus.Delivering &&
+            order.shopDeliveryStaff?.id == 0 && (
+              <CustomButton
+                title={`Giao thành công`}
+                handlePress={() => {
+                  if (
+                    utilService.isCurrentTimeGreaterThanEndTime({
+                      startTime: order.startTime,
+                      endTime: order.endTime,
+                      intendedReceiveDate: order.intendedReceiveDate,
+                    })
+                  ) {
+                    getOrderDetail();
+                    globalCompleteDeliveryConfirm.onAfterCompleted();
+                    Alert.alert(
+                      "Oops!",
+                      "Đã quá thời gian để thực hiện thao tác này!"
+                    );
+                    return;
+                  }
+                  globalCompleteDeliveryConfirm.setStep(1);
+                }}
+                containerStyleClasses="w-full mt-2 h-[42px]  px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
+                textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white text-gray-800"
+              />
+            )}
+          {order.status == OrderStatus.Delivering && (
+            <CustomButton
+              title="Giao thất bại"
+              handlePress={() => {
+                if (
+                  utilService.isCurrentTimeGreaterThanEndTime({
+                    startTime: order.startTime,
+                    endTime: order.endTime,
+                    intendedReceiveDate: order.intendedReceiveDate,
+                  })
+                ) {
+                  getOrderDetail();
+                  globalCompleteDeliveryConfirm.onAfterCompleted();
+                  Alert.alert(
+                    "Oops!",
+                    "Đã quá thời gian để thực hiện thao tác này!"
+                  );
+                  return;
+                }
+                globalCompleteDeliveryConfirm.setStep(2);
+              }}
+              containerStyleClasses="w-full mt-2 mt-2 h-[40px] px-2 bg-transparent border-2 border-gray-200 border-[#fecaca] bg-[#fef2f2] font-semibold z-10 ml-1 "
+              textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white text-gray-700 text-[#f87171]"
+            />
+          )}
         </View>
       );
-    if (order.status == OrderStatus.Delivering)
-      return (
-        <View className="mt-3 w-full items-center justify-between bg-white">
-          <CustomButton
-            title={`Giao thành công`}
-            handlePress={() => {
-              if (
-                utilService.isCurrentTimeGreaterThanEndTime({
-                  startTime: order.startTime,
-                  endTime: order.endTime,
-                  intendedReceiveDate: order.intendedReceiveDate,
-                })
-              ) {
-                getOrderDetail();
-                globalCompleteDeliveryConfirm.onAfterCompleted();
-                Alert.alert(
-                  "Oops!",
-                  "Đã quá thời gian để thực hiện thao tác này!"
-                );
-                return;
-              }
-              globalCompleteDeliveryConfirm.setStep(1);
-            }}
-            containerStyleClasses="w-full h-[42px]  px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
-            // iconLeft={
-            //   <Ionicons name="filter-outline" size={21} color="white" />
-            // }
-            textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white text-gray-800"
-          />
-          <CustomButton
-            title="Giao thất bại"
-            handlePress={() => {
-              if (
-                utilService.isCurrentTimeGreaterThanEndTime({
-                  startTime: order.startTime,
-                  endTime: order.endTime,
-                  intendedReceiveDate: order.intendedReceiveDate,
-                })
-              ) {
-                getOrderDetail();
-                globalCompleteDeliveryConfirm.onAfterCompleted();
-                Alert.alert(
-                  "Oops!",
-                  "Đã quá thời gian để thực hiện thao tác này!"
-                );
-                return;
-              }
-              globalCompleteDeliveryConfirm.setStep(2);
-            }}
-            containerStyleClasses="w-full mt-2 h-[40px] px-2 bg-transparent border-2 border-gray-200 border-[#fecaca] bg-[#fef2f2] font-semibold z-10 ml-1 "
-            textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white text-gray-700 text-[#f87171]"
-          />
-        </View>
-      );
+    }
   };
 
   const selectActionStep = (
@@ -449,7 +495,9 @@ const CompleteDeliveryConfirmModal = ({
           </View>
         ))}
 
-      {order && getActionComponent(order)}
+      {order.id != undefined &&
+        globalCompleteDeliveryConfirm.isShowActionale &&
+        getActionComponent(order)}
     </View>
   );
   const confirmSuccessStep = (
@@ -627,19 +675,19 @@ const CompleteDeliveryConfirmModal = ({
       </View>
       {order.id != undefined && (
         <CustomModal
-          title={`MS-${order.id} Chi tiết đặt hàng`}
-          // hasHeader={false}
+          title={`MS-${order.id} | Chi tiết đặt món`}
+          hasHeader={false}
           isOpen={isViewOrderFoodDetail}
           setIsOpen={(value) => setIsViewOrderFoodDetail(value)}
-          titleStyleClasses="text-center flex-1"
+          titleStyleClasses="text-center flex-1 text-[14px] text-gray-600 font-semibold"
           containerStyleClasses="w-72"
           onBackdropPress={() => {
             setIsViewOrderFoodDetail(false);
           }}
         >
-          <View className="mt-2 bg-white p-2">
-            <Text className="text-[14px] text-gray-600 font-semibold">
-              Chi tiết đặt món
+          <View className="bg-white p-2">
+            <Text className="text-[14px] text-gray-600 font-semibold text-center mt-[-8px]">
+              {`MS-${order.id} | Chi tiết đặt món`}
             </Text>
             <View className="mt-3 border-gray-300 border-[0.5px]" />
             <View className="pt-4 gap-y-2">
@@ -689,7 +737,7 @@ const CompleteDeliveryConfirmModal = ({
             </View>
           </View>
           <View className="mt-1 bg-white p-2">
-            <Text className="text-[14px] text-gray-500 font-semibold">
+            <Text className="text-[14px] text-gray-500 font-medium italic">
               Ghi chú cho toàn đơn hàng
             </Text>
             <View className="mt-2 border-gray-300 border-[0.5px]" />
@@ -699,7 +747,26 @@ const CompleteDeliveryConfirmModal = ({
           </View>
         </CustomModal>
       )}
-
+      <CustomModal
+        title={`MS-${order.id} Chi tiết đặt hàng`}
+        hasHeader={false}
+        isOpen={isOpenOrderAssign}
+        setIsOpen={(value) => setIsOpenOrderAssign(value)}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[98%]"
+        onBackdropPress={() => {
+          setIsOpenOrderAssign(false);
+        }}
+      >
+        <OrderDeliveryAssign
+          onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
+            onRefresh();
+            setIsOpenOrderAssign(false);
+          }}
+          order={order}
+          isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
+        />
+      </CustomModal>
       <Toast position="bottom" />
     </Modal>
   );

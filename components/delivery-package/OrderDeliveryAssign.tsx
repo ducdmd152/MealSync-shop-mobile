@@ -22,6 +22,7 @@ import orderAPIService from "@/services/api-services/order-api-service";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import { useToast } from "react-native-toast-notifications";
 import { useFocusEffect } from "expo-router";
+import Toast from "react-native-toast-message";
 
 interface Props {
   onComplete: (shopDeliveryStaff: ShopDeliveryStaff) => void;
@@ -105,15 +106,23 @@ const OrderDeliveryAssign = ({
               order.id,
               staffInfo.id,
               (shopDeliveryStaff: ShopDeliveryStaff) => {
-                toast.show(
-                  `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+                // toast.show(
+                //   `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+                //     staffInfo.id == 0 ? "bạn" : staffInfo.fullName
+                //   }!`,
+                //   {
+                //     type: "success",
+                //     duration: 5000,
+                //   }
+                // );
+                Toast.show({
+                  type: "info",
+                  text1: "Hoàn tất",
+                  text2: `Đơn hàng MS-${order.id} sẽ được giao bởi ${
                     staffInfo.id == 0 ? "bạn" : staffInfo.fullName
                   }!`,
-                  {
-                    type: "success",
-                    duration: 5000,
-                  }
-                );
+                  // time: 15000
+                });
                 // Alert.alert(
                 //   "Hoàn tất",
                 //   `Đơn hàng MS-${order.id} sẽ được giao bởi ${

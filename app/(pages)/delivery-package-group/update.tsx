@@ -301,7 +301,7 @@ const DeliveryPackageGroupUpdate = () => {
             {deliveryPersonFetchResult.data?.value.map((person, index) => (
               <TouchableOpacity
                 key={person.staffInfor.id}
-                className={`flex-row items-center gap-x-1 bg-gray-100 rounded-xl px-2 py-2 ${
+                className={`flex-row items-center gap-x-1 bg-gray-100 rounded-xl px-2 pr-3 py-2 ${
                   currentDeliveryPersonId == person.staffInfor.id
                     ? "bg-secondary"
                     : ""
@@ -315,7 +315,8 @@ const DeliveryPackageGroupUpdate = () => {
                 />
                 <Text>
                   {utilService.shortenName(person.staffInfor.fullName)}
-                  {person.staffInfor.id == 0 && " (bạn)"}
+                  {person.staffInfor.id == 0 && " (bạn)"}{" "}
+                  {`(${getAssignedOrdersOf(person.staffInfor.id).length})`}
                 </Text>
               </TouchableOpacity>
             ))}
