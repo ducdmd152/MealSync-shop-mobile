@@ -31,6 +31,8 @@ import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import useGPKGState from "@/hooks/states/useGPKGState";
 import { DeliveryPackageGroupDetailsModel } from "@/types/models/DeliveryPackageModel";
 import { ActivityIndicator, TouchableRipple } from "react-native-paper";
+import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
+import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
 interface GPKGCreateRequest {
   isConfirm: boolean;
   deliveryPackages: {
@@ -44,6 +46,7 @@ export interface GPKGQuery {
   intendedReceiveDate: string;
 }
 const DeliveryPackageGroupUpdate = () => {
+  const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
   const toast = useToast();
   const { query, setQuery } = useGPKGState();
   const [isEditable, setIsEditable] = useState(true);
@@ -116,6 +119,10 @@ const DeliveryPackageGroupUpdate = () => {
         .then((response) => response.data),
     [query]
   );
+  const onRefresh = () => {
+    getGPKGDetails();
+    deliveryPersonFetchResult.refetch();
+  };
   const checkIsLoading = () =>
     isDetailsLoading || deliveryPersonFetchResult.isFetching;
   useFocusEffect(
@@ -131,7 +138,7 @@ const DeliveryPackageGroupUpdate = () => {
         "Oops!",
         "Khung giờ này đã quá thời hạn để chỉnh sửa phân công!"
       );
-      router.replace("/delivery-package");
+      router.back();
     }
   }, [isEditable]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -229,7 +236,7 @@ const DeliveryPackageGroupUpdate = () => {
             utilService.formatTime(query.endTime)
           } ngày ${utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}`
         );
-        router.replace("/delivery-package");
+        // router.back();
       } else if (isWarning) {
         if (requestData.isConfirm) return;
         const warningInfo = value as WarningMessageValue;
@@ -325,9 +332,13 @@ const DeliveryPackageGroupUpdate = () => {
             <TouchableOpacity
               key={order.id}
               onPress={() => {
-                // setOrderDetailId(order.id);
-                // setOrder(order);
-                // setIsDetailBottomSheetVisible(true);
+                globalCompleteDeliveryConfirm.setId(order.id);
+                globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
+                  onRefresh()
+                );
+                globalCompleteDeliveryConfirm.setIsModalVisible(true);
+                globalCompleteDeliveryConfirm.setModel(order);
+                globalCompleteDeliveryConfirm.setStep(0);
               }}
               className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
             >
@@ -353,7 +364,7 @@ const DeliveryPackageGroupUpdate = () => {
                       // );
                     }}
                     className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-gray-400`}
-                    disabled={order.status != OrderStatus.Preparing}
+                    disabled={order.status > OrderStatus.Delivering}
                   >
                     <Text className="text-[12px] text-white mr-1">
                       Bỏ phân công
@@ -406,9 +417,13 @@ const DeliveryPackageGroupUpdate = () => {
             <TouchableOpacity
               key={order.id}
               onPress={() => {
-                // setOrderDetailId(order.id);
-                // setOrder(order);
-                // setIsDetailBottomSheetVisible(true);
+                globalCompleteDeliveryConfirm.setId(order.id);
+                globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
+                  onRefresh()
+                );
+                globalCompleteDeliveryConfirm.setIsModalVisible(true);
+                globalCompleteDeliveryConfirm.setModel(order);
+                globalCompleteDeliveryConfirm.setStep(0);
               }}
               className="p-[4px] px-[6px] bg-white border-2 border-gray-300 rounded-lg"
             >

@@ -261,39 +261,40 @@ const DeliveryFrameDetail = ({
                                         ?.description
                                     }
                                   </Text>
-                                  {isEditable && (
-                                    <TouchableOpacity
-                                      onPress={() => {
-                                        if (
-                                          utilService.isCurrentTimeGreaterThanEndTime(
-                                            query
-                                          )
-                                        ) {
-                                          Alert.alert(
-                                            "Oops!",
-                                            "Đã quá thời gian cho phép chỉnh sửa!"
-                                          );
-                                          setIsEditable(false);
-                                          return;
+                                  {isEditable &&
+                                    order.status <= OrderStatus.Delivering && (
+                                      <TouchableOpacity
+                                        onPress={() => {
+                                          if (
+                                            utilService.isCurrentTimeGreaterThanEndTime(
+                                              query
+                                            )
+                                          ) {
+                                            Alert.alert(
+                                              "Oops!",
+                                              "Đã quá thời gian cho phép chỉnh sửa!"
+                                            );
+                                            setIsEditable(false);
+                                            return;
+                                          }
+                                          setOrder(order);
+                                          setIsOpenOrderAssign(true);
+                                        }}
+                                        className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
+                                        disabled={
+                                          order.status > OrderStatus.Delivering
                                         }
-                                        setOrder(order);
-                                        setIsOpenOrderAssign(true);
-                                      }}
-                                      className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
-                                      disabled={
-                                        order.status != OrderStatus.Preparing
-                                      }
-                                    >
-                                      <Text className="text-[12px] text-white mr-1">
-                                        Thay đổi
-                                      </Text>
-                                      <Ionicons
-                                        name="person-outline"
-                                        size={12}
-                                        color="white"
-                                      />
-                                    </TouchableOpacity>
-                                  )}
+                                      >
+                                        <Text className="text-[12px] text-white mr-1">
+                                          Thay đổi
+                                        </Text>
+                                        <Ionicons
+                                          name="person-outline"
+                                          size={12}
+                                          color="white"
+                                        />
+                                      </TouchableOpacity>
+                                    )}
                                 </View>
                               </View>
                               <View className="flex-row justify-between items-center mt-[4px]">
@@ -360,7 +361,7 @@ const DeliveryFrameDetail = ({
                           ? "Đến KTX khu A"
                           : "Đến KTX khu B"}
                       </Text>
-                      {isEditable && (
+                      {isEditable && order.status <= OrderStatus.Delivering && (
                         <TouchableOpacity
                           onPress={() => {
                             if (
@@ -377,7 +378,7 @@ const DeliveryFrameDetail = ({
                             setIsOpenOrderAssign(true);
                           }}
                           className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
-                          disabled={order.status != OrderStatus.Preparing}
+                          disabled={order.status > OrderStatus.Delivering}
                         >
                           <Text className="text-[12px] text-white mr-1">
                             Phân công
