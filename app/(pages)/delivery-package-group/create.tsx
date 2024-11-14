@@ -305,18 +305,14 @@ const DeliveryPackageGroupCreate = () => {
                 <View className="flex-1 flex-row justify-start items-center gap-2">
                   <Image
                     source={{
-                      uri: order.foods[0].imageUrl,
+                      uri: order.orderDetails[0].imageUrl,
                     }}
                     resizeMode="cover"
                     className="h-[12px] w-[12px] rounded-md opacity-85"
                   />
                   <View className="">
                     <Text className="text-xs italic text-gray-500">
-                      {order.foods[0].name}{" "}
-                      {order.foods[0].quantity > 1 &&
-                        " x" + order.foods[0].quantity}
-                      {order.foods.length > 1 &&
-                        " +" + (order.foods.length - 1) + " món khác"}
+                      {order.orderDetailSummaryShort}
                     </Text>
                   </View>
                 </View>
@@ -396,18 +392,14 @@ const DeliveryPackageGroupCreate = () => {
                 <View className="flex-1 flex-row justify-start items-center gap-2">
                   <Image
                     source={{
-                      uri: order.foods[0].imageUrl,
+                      uri: order.orderDetails[0].imageUrl,
                     }}
                     resizeMode="cover"
                     className="h-[12px] w-[12px] rounded-md opacity-85"
                   />
                   <View className="">
                     <Text className="text-xs italic text-gray-500">
-                      {order.foods[0].name}{" "}
-                      {order.foods[0].quantity > 1 &&
-                        " x" + order.foods[0].quantity}
-                      {order.foods.length > 1 &&
-                        " +" + (order.foods.length - 1) + " món khác"}
+                      {order.orderDetailSummaryShort}
                     </Text>
                   </View>
                 </View>
