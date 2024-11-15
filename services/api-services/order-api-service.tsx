@@ -186,10 +186,13 @@ const orderAPIService = {
   ) => {
     try {
       setIsSubmitting(true);
-      const response = await apiClient.put(`shop-owner/order/delivering`, {
-        ids: orderIds,
-        isConfirm: isConfirmWarning,
-      });
+      const response = await apiClient.put(
+        `shop-owner-staff/order/delivering`,
+        {
+          ids: orderIds,
+          isConfirm: isConfirmWarning,
+        }
+      );
       const { value, isSuccess, isWarning, error } = response.data;
 
       if (isSuccess) {

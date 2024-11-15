@@ -36,7 +36,8 @@
         {
           "photosPermission": "Cho phép ứng dụng sẽ truy cập thư viện của bạn."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

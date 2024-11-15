@@ -53,7 +53,10 @@ const FailDeliveryUpdate = ({
   const requestFailDelivery = () => {
     console.log("request data: ", request);
     apiClient
-      .put(`shop-owner/order/${failDeliveryInfo.id}/delivery-fail`, request)
+      .put(
+        `shop-owner-staff/order/${failDeliveryInfo.id}/delivery-fail`,
+        request
+      )
       .then((response) => {
         afterCompleted();
         Toast.show({

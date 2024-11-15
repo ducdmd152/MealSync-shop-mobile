@@ -162,7 +162,7 @@ const CompleteDeliveryConfirmModal = ({
     const qrCodeResult: QRCodeResultModel = JSON.parse(data);
     return await apiClient
       .put(
-        `shop-owner/order/${globalCompleteDeliveryConfirm.id}/delivered`,
+        `shop-owner-staff/order/${globalCompleteDeliveryConfirm.id}/delivered`,
         qrCodeResult
       )
       .then((response) => {
@@ -202,7 +202,7 @@ const CompleteDeliveryConfirmModal = ({
   const requestFailDelivery = () => {
     apiClient
       .put(
-        `shop-owner/order/${globalCompleteDeliveryConfirm.id}/delivery-fail`,
+        `shop-owner-staff/order/${globalCompleteDeliveryConfirm.id}/delivery-fail`,
         request
       )
       .then((response) => {

@@ -33,6 +33,7 @@ import TimeRangeSelect from "@/components/common/TimeRangeSelect";
 import DeliveryFrameList from "@/components/delivery-package/DeliveryFrameList";
 import MyDeliveryPackageList from "@/components/delivery-package/MyDeliveryPackageList";
 import { useFocusEffect } from "expo-router";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 interface DeliveryPackageFetchQuery extends PagingRequestQuery {
   status: number[];
   id: string;
@@ -52,6 +53,7 @@ const formatDate = (dateString: string): string => {
   return date.toLocaleDateString("en-GB");
 };
 const StaffDeliveryPackage = () => {
+  const globalAuthState = useGlobalAuthState();
   const globalTimeRangeState = useTimeRangeState();
   const [isFilterBottomSheetVisible, setIsFilterBottomSheetVisible] =
     useState(false);
@@ -69,7 +71,11 @@ const StaffDeliveryPackage = () => {
     ]),
     (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
       apiClient
-        .get(endpoints.OPERATING_SLOT_LIST)
+        .get(
+          globalAuthState.roleId == 2
+            ? endpoints.OPERATING_SLOT_LIST
+            : "shop-staff/operating-slot"
+        )
         .then((response) => response.data),
     []
   );

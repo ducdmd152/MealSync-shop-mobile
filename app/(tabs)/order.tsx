@@ -157,7 +157,7 @@ const Order = () => {
     error: orderFetchError,
     refetch: orderFetchRefetch,
   } = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.ORDER_LIST.concat(["order-list-page"]),
+    REACT_QUERY_CACHE_KEYS.ORDER_LIST.concat(["order-tab-page"]),
     async (): Promise<FetchResponse<OrderFetchModel>> =>
       apiClient
         .get(

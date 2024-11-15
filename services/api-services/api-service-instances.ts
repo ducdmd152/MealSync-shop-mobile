@@ -9,6 +9,7 @@ export const endpoints = {
   PLATFORM_CATEGORY_LIST: "platform-category",
   OPTION_GROUP_LIST: "shop-owner/option-group",
   OPERATING_SLOT_LIST: "shop-owner/operating-slot",
+  STAFF_OPERATING_SLOT_LIST: "shop-staff/operating-slot",
   ORDER_LIST: "shop-owner/order",
   FRAME_STAFF_INFO_LIST: "shop/shop-delivery-staff/available",
   UNCREATED_GPKG_FRAME_LIST: "shop-owner/delivery-package/time-frame/un-assign",
