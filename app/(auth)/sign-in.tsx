@@ -9,6 +9,7 @@ import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 import apiClient from "@/services/api-services/api-client";
 import sessionService from "@/services/session-service";
 import { CommonActions } from "@react-navigation/native";
+import utilService from "@/services/util-service";
 
 interface FormValues {
   email: string;
@@ -44,13 +45,15 @@ const SignIn = () => {
           loginContext: 2,
           ...values,
         });
+        const token = response.data?.value?.tokenResponse?.accessToken || "";
         // console.log(response.data);
         await sessionService.setAuthToken(
           response.data?.value?.tokenResponse?.accessToken || ""
         );
-        await sessionService.setAuthRole(
-          response.data?.value?.accountResponse?.roleId || 2
-        );
+
+        if ((await utilService.getRoleFromToken(token)) == 2) {
+          router.replace("/home");
+        } else router.replace("/staff-home");
         // console.log(await sessionService.getAuthToken());
         // navigation.dispatch(
         //   CommonActions.reset({
@@ -58,7 +61,6 @@ const SignIn = () => {
         //     routes: [{ name: "home" }],
         //   })
         // );
-        router.replace("/home");
       } catch (error: any) {
         // console.log(error);
         if (error.response && error.response.status === 403) {

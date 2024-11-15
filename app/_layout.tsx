@@ -31,6 +31,7 @@ import WithdrawDetailsModal from "@/components/target-modals/WithdrawDetailsModa
 import StaffDetailsModal from "@/components/target-modals/StaffDetailsModal";
 import Toast from "react-native-toast-message";
 import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
+import utilService from "@/services/util-service";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -39,25 +40,19 @@ export default function RootLayout() {
   const [loaded, setLoaded] = useState(false);
   const colorScheme = useColorScheme();
   const [isCheckedAuth, setIsCheckedAuth] = useState(false);
-  const [fontsLoaded, error] = useFonts({
-    "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
-    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
-    "Poppins-ExtraLight": require("../assets/fonts/Poppins-ExtraLight.ttf"),
-    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
-    "Poppins-Medium": require("../assets/fonts/Poppins-Medium.ttf"),
-    "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
-    "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
-  });
+  const [fontsLoaded, setFontsLoaded] = useState(true);
 
-  useEffect(() => {
-    if (error) throw error;
-
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, error]);
+  // const [fontsLoaded, error] = useFonts({
+  //   "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
+  //   "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
+  //   "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
+  //   "Poppins-ExtraLight": require("../assets/fonts/Poppins-ExtraLight.ttf"),
+  //   "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
+  //   "Poppins-Medium": require("../assets/fonts/Poppins-Medium.ttf"),
+  //   "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
+  //   "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
+  //   "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
+  // });
 
   useEffect(() => {
     setLoaded(fontsLoaded && isCheckedAuth); // list of loaded statuses
@@ -73,9 +68,13 @@ export default function RootLayout() {
     setIsCheckedAuth(true);
     const checkAuth = async () => {
       const token = await sessionService.getAuthToken();
-      if (token) {
-        router.replace("/home");
+      if (!token) {
+        setIsCheckedAuth(true);
+        return;
       }
+      if ((await utilService.getRoleFromToken(token)) == 2) {
+        router.replace("/home");
+      } else router.replace("/staff-home");
       setIsCheckedAuth(true);
     };
 
@@ -109,6 +108,10 @@ export default function RootLayout() {
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="(pages)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="(delivery-staff)"
+                  options={{ headerShown: false }}
+                />
                 <Stack.Screen name="+not-found" />
               </Stack>
               <OrderDetailBottomSheet />
