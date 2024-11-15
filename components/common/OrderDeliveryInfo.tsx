@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import OrderFetchModel, {
   getOrderStatusDescription,
   OrderStatus,
@@ -16,13 +16,16 @@ import { useFocusEffect } from "expo-router";
 import CustomModal from "./CustomModal";
 import FailDeliveryUpdate from "./FailDeliveryUpdate";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
+import utilService from "@/services/util-service";
 
 const OrderDeliveryInfo = ({
   order,
   containerStyleClasses = "",
+  assignNode,
 }: {
   order: OrderFetchModel;
   containerStyleClasses?: string;
+  assignNode: ReactNode;
 }) => {
   const globalAuthState = useGlobalAuthState();
 
@@ -202,12 +205,13 @@ const OrderDeliveryInfo = ({
               resizeMode="cover"
               className="h-[15px] w-[15px] rounded-md opacity-85"
             />
-            <Text className="text-[13.5px]">
-              {order.shopDeliveryStaff.fullName}
+            <Text className="text-[12.8px] flex-1">
+              {utilService.shortenName(order.shopDeliveryStaff.fullName)}
               {(order.shopDeliveryStaff.id == 0 ||
                 globalAuthState.roleId != 2) &&
                 " (bạn)"}
             </Text>
+            {assignNode}
           </View>
         </View>
       )}

@@ -132,6 +132,28 @@ const CompleteDeliveryConfirmModal = ({
   }, [globalCompleteDeliveryConfirm.isModalVisible]);
   useFocusEffect(useCallback(() => {}, []));
 
+  const actionInTimeValidation = (justOver = false) => {
+    const inTime = getInFrameTime(
+      order.startTime,
+      order.endTime,
+      order.intendedReceiveDate
+    );
+    if (inTime > 0) {
+      getOrderDetail();
+      setInFrameTime(inTime);
+      globalCompleteDeliveryConfirm.onAfterCompleted();
+      Alert.alert("Oops!", "Đã quá thời gian để thực hiện thao tác này!");
+      return false;
+    }
+    if (!justOver && inTime < 0) {
+      getOrderDetail();
+      setInFrameTime(inTime);
+      globalCompleteDeliveryConfirm.onAfterCompleted();
+      Alert.alert("Oops!", "Chưa đến thời gian để thực hiện thao tác này!");
+      return false;
+    }
+    return true;
+  };
   const handleDeliverySuccess = async (
     data: string,
     onSuccess: () => void,
@@ -265,16 +287,7 @@ const CompleteDeliveryConfirmModal = ({
                     order.endTime,
                     order.intendedReceiveDate
                   );
-                  if (inTime > 0) {
-                    getOrderDetail();
-                    setInFrameTime(inTime);
-                    globalCompleteDeliveryConfirm.onAfterCompleted();
-                    Alert.alert(
-                      "Oops!",
-                      "Đã quá thời gian để thực hiện thao tác này!"
-                    );
-                    return;
-                  }
+                  if (!actionInTimeValidation()) return;
                   orderUIService.onDelivery(
                     order,
                     () => {
@@ -305,59 +318,32 @@ const CompleteDeliveryConfirmModal = ({
                 textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white"
               />
             )}
-          {order.status == OrderStatus.Preparing && (
-            <CustomButton
-              title={
-                order.shopDeliveryStaff == null
-                  ? `Phân công giao hàng`
-                  : `Thay đổi phân công`
-              }
-              handlePress={() => {
-                if (
-                  utilService.isCurrentTimeGreaterThanEndTime({
-                    startTime: order.startTime,
-                    endTime: order.endTime,
-                    intendedReceiveDate: order.intendedReceiveDate,
-                  })
-                ) {
-                  getOrderDetail();
-                  globalCompleteDeliveryConfirm.onAfterCompleted();
-                  Alert.alert(
-                    "Oops!",
-                    "Đã quá thời gian để thực hiện thao tác này!"
-                  );
-                  return;
+          {order.status == OrderStatus.Preparing &&
+            order.shopDeliveryStaff == null && (
+              <CustomButton
+                title={
+                  order.shopDeliveryStaff == null
+                    ? `Phân công giao hàng`
+                    : `Thay đổi phân công`
                 }
-                setIsOpenOrderAssign(true);
-              }}
-              containerStyleClasses={`w-full mt-2 h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10 ${
-                order.shopDeliveryStaff != null && "bg-white"
-              }`}
-              textStyleClasses={`text-[14px] text-center text-gray-900 ml-1 text-white${
-                order.shopDeliveryStaff != null && " text-[#06b6d4]"
-              }`}
-            />
-          )}
+                handlePress={() => {
+                  if (!actionInTimeValidation(true)) return;
+                  setIsOpenOrderAssign(true);
+                }}
+                containerStyleClasses={`w-full mt-2 h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10 ${
+                  order.shopDeliveryStaff != null && "bg-white"
+                }`}
+                textStyleClasses={`text-[14px] text-center text-gray-900 ml-1 text-white${
+                  order.shopDeliveryStaff != null && " text-[#06b6d4]"
+                }`}
+              />
+            )}
           {order.status == OrderStatus.Delivering &&
             order.shopDeliveryStaff?.id == 0 && (
               <CustomButton
                 title={`Giao thành công`}
                 handlePress={() => {
-                  if (
-                    utilService.isCurrentTimeGreaterThanEndTime({
-                      startTime: order.startTime,
-                      endTime: order.endTime,
-                      intendedReceiveDate: order.intendedReceiveDate,
-                    })
-                  ) {
-                    getOrderDetail();
-                    globalCompleteDeliveryConfirm.onAfterCompleted();
-                    Alert.alert(
-                      "Oops!",
-                      "Đã quá thời gian để thực hiện thao tác này!"
-                    );
-                    return;
-                  }
+                  if (!actionInTimeValidation()) return;
                   globalCompleteDeliveryConfirm.setStep(1);
                 }}
                 containerStyleClasses="w-full mt-2 h-[42px]  px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
@@ -368,21 +354,7 @@ const CompleteDeliveryConfirmModal = ({
             <CustomButton
               title="Giao thất bại"
               handlePress={() => {
-                if (
-                  utilService.isCurrentTimeGreaterThanEndTime({
-                    startTime: order.startTime,
-                    endTime: order.endTime,
-                    intendedReceiveDate: order.intendedReceiveDate,
-                  })
-                ) {
-                  getOrderDetail();
-                  globalCompleteDeliveryConfirm.onAfterCompleted();
-                  Alert.alert(
-                    "Oops!",
-                    "Đã quá thời gian để thực hiện thao tác này!"
-                  );
-                  return;
-                }
+                if (!actionInTimeValidation()) return;
                 globalCompleteDeliveryConfirm.setStep(2);
               }}
               containerStyleClasses="w-full mt-2 mt-2 h-[40px] px-2 bg-transparent border-2 border-gray-200 border-[#fecaca] bg-[#fef2f2] font-semibold z-10 ml-1 "
@@ -398,21 +370,7 @@ const CompleteDeliveryConfirmModal = ({
           <CustomButton
             title={`Đi giao`}
             handlePress={() => {
-              if (
-                utilService.isCurrentTimeGreaterThanEndTime({
-                  startTime: order.startTime,
-                  endTime: order.endTime,
-                  intendedReceiveDate: order.intendedReceiveDate,
-                })
-              ) {
-                // getOrderDetail();
-                Alert.alert(
-                  "Oops!",
-                  "Đã quá thời gian để thực hiện thao tác này!"
-                );
-                globalCompleteDeliveryConfirm.onAfterCompleted();
-                return;
-              }
+              if (!actionInTimeValidation()) return;
               orderUIService.onDelivery(
                 order,
                 () => {
@@ -448,21 +406,7 @@ const CompleteDeliveryConfirmModal = ({
           <CustomButton
             title={`Giao thành công`}
             handlePress={() => {
-              if (
-                utilService.isCurrentTimeGreaterThanEndTime({
-                  startTime: order.startTime,
-                  endTime: order.endTime,
-                  intendedReceiveDate: order.intendedReceiveDate,
-                })
-              ) {
-                getOrderDetail();
-                globalCompleteDeliveryConfirm.onAfterCompleted();
-                Alert.alert(
-                  "Oops!",
-                  "Đã quá thời gian để thực hiện thao tác này!"
-                );
-                return;
-              }
+              if (!actionInTimeValidation()) return;
               globalCompleteDeliveryConfirm.setStep(1);
             }}
             containerStyleClasses="w-full mt-2 h-[42px]  px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
@@ -473,21 +417,7 @@ const CompleteDeliveryConfirmModal = ({
           <CustomButton
             title="Giao thất bại"
             handlePress={() => {
-              if (
-                utilService.isCurrentTimeGreaterThanEndTime({
-                  startTime: order.startTime,
-                  endTime: order.endTime,
-                  intendedReceiveDate: order.intendedReceiveDate,
-                })
-              ) {
-                getOrderDetail();
-                globalCompleteDeliveryConfirm.onAfterCompleted();
-                Alert.alert(
-                  "Oops!",
-                  "Đã quá thời gian để thực hiện thao tác này!"
-                );
-                return;
-              }
+              if (!actionInTimeValidation()) return;
               globalCompleteDeliveryConfirm.setStep(2);
             }}
             containerStyleClasses="w-full mt-2 mt-2 h-[40px] px-2 bg-transparent border-2 border-gray-200 border-[#fecaca] bg-[#fef2f2] font-semibold z-10 ml-1 "
@@ -618,6 +548,22 @@ const CompleteDeliveryConfirmModal = ({
             <OrderDeliveryInfo
               order={order}
               containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
+              assignNode={
+                order.shopDeliveryStaff != null && inFrameTime == 0 ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (!actionInTimeValidation(true)) return;
+                      setIsOpenOrderAssign(true);
+                    }}
+                  >
+                    <Text className="p-1 my-[-1] text-[12px] font-medium text-[#0891b2]">
+                      Thay đổi
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View></View>
+                )
+              }
             />
           </View>
         ))}
