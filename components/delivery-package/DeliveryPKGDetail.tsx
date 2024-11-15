@@ -1,56 +1,34 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-  Alert,
-} from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { FrameDateTime } from "@/types/models/TimeModel";
-import OrderDetailModel from "@/types/models/OrderDetailModel";
+import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
+import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
+import useGlobalPKGDetailsState from "@/hooks/states/useGlobalPKGDetailsState";
 import apiClient from "@/services/api-services/api-client";
+import orderUIService from "@/services/order-ui-service";
+import utilService from "@/services/util-service";
 import {
-  DeliveryPackageGroupDetailsModel,
-  DeliveryPackageGroupModel,
   DeliveryPackageStatus,
   OwnDeliveryPackageModel,
 } from "@/types/models/DeliveryPackageModel";
-import { FetchValueResponse } from "@/types/responses/FetchResponse";
-import utilService from "@/services/util-service";
-import sessionService from "@/services/session-service";
-import { RefreshControl, ScrollView } from "react-native-gesture-handler";
-import CustomButton from "../custom/CustomButton";
-import * as ImagePicker from "expo-image-picker";
 import OrderFetchModel, {
   getOrderStatusDescription,
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import { Ionicons } from "@expo/vector-icons";
-import { boolean } from "yup";
-import {
-  ActivityIndicator,
-  Portal,
-  Modal as ModalPaper,
-} from "react-native-paper";
-import OrderDeliveryAssign from "./OrderDeliveryAssign";
-import {
-  ShopDeliveryStaff,
-  ShopDeliveryStaffStatus,
-} from "@/types/models/StaffInfoModel";
-import { router, useFocusEffect } from "expo-router";
-import useGPKGState from "@/hooks/states/useGPKGState";
-import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
-import useGlobalPKGDetailsState from "@/hooks/states/useGlobalPKGDetailsState";
-import DeliveryPackage from "@/app/(tabs)/delivery-package";
 import dayjs from "dayjs";
-import orderAPIService from "@/services/api-services/order-api-service";
-import { useToast } from "react-native-toast-notifications";
-import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Alert,
+  Dimensions,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
-import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
+import { useToast } from "react-native-toast-notifications";
 import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfirmModal";
-import orderUIService from "@/services/order-ui-service";
 
 interface Props {
   onNotFound?: () => void;

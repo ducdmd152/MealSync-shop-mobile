@@ -32,6 +32,7 @@ import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 import TimeRangeSelect from "@/components/common/TimeRangeSelect";
 import DeliveryFrameList from "@/components/delivery-package/DeliveryFrameList";
 import MyDeliveryPackageList from "@/components/delivery-package/MyDeliveryPackageList";
+import { useFocusEffect } from "expo-router";
 interface DeliveryPackageFetchQuery extends PagingRequestQuery {
   status: number[];
   id: string;
@@ -118,9 +119,6 @@ const StaffDeliveryPackage = () => {
   const setDeliveryPackageIndex = usePathState(
     (state) => state.setDeliveryPackageIndex
   );
-  useEffect(() => {
-    if (index != deliveryPackageIndex) setIndex(deliveryPackageIndex);
-  }, [deliveryPackageIndex]);
   return (
     <View className="w-full h-full bg-white text-black relative">
       <CustomButton
@@ -142,7 +140,10 @@ const StaffDeliveryPackage = () => {
         <View className="p-4 bg-white rounded-t-lg min-h-[120px]">
           <TouchableOpacity
             className="items-center"
-            onPress={() => setIsFilterBottomSheetVisible(false)}
+            onPress={() => {
+              operatingSlotsRefetch();
+              setIsFilterBottomSheetVisible(false);
+            }}
           >
             <Ionicons name="chevron-down-outline" size={24} color="gray" />
           </TouchableOpacity>
