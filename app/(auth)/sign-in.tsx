@@ -10,6 +10,7 @@ import apiClient from "@/services/api-services/api-client";
 import sessionService from "@/services/session-service";
 import { CommonActions } from "@react-navigation/native";
 import utilService from "@/services/util-service";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 
 interface FormValues {
   email: string;
@@ -18,6 +19,7 @@ interface FormValues {
 
 const SignIn = () => {
   const navigation = useNavigation();
+  const globalAuthState = useGlobalAuthState();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -47,11 +49,19 @@ const SignIn = () => {
         });
         const token = response.data?.value?.tokenResponse?.accessToken || "";
         // console.log(response.data);
-        await sessionService.setAuthToken(
+        const roleId =
+          response.data?.value?.accountResponse?.roleName == "ShopOwner"
+            ? 2
+            : 3;
+        sessionService.setAuthToken(
           response.data?.value?.tokenResponse?.accessToken || ""
         );
+        sessionService.setAuthRole(roleId);
 
-        if ((await utilService.getRoleFromToken(token)) == 2) {
+        globalAuthState.setToken(token);
+        globalAuthState.setRoleId(roleId);
+        console.log("roleId: ", token, roleId);
+        if (roleId == 2) {
           router.replace("/home");
         } else router.replace("/staff-home");
         // console.log(await sessionService.getAuthToken());

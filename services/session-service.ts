@@ -24,7 +24,7 @@ const sessionService = {
   },
   getAuthRole: async () => {
     const role = await AsyncStorage.getItem("auth-role");
-    return role ? parseInt(role, 10) : null;
+    return parseInt(role || "", 10);
   },
   setAuthRole: async (role: number) => {
     await AsyncStorage.setItem("auth-role", role.toString()); // 2: Shop Owner, 3: Shop Delivery Staff

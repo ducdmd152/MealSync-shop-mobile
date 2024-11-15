@@ -110,9 +110,7 @@ const CompleteDeliveryConfirmModal = ({
     setIsOpenOrderAssign(false);
     if (globalCompleteDeliveryConfirm.isModalVisible) {
       (async () => {
-        const roleId = utilService.getRoleFromToken(
-          (await sessionService.getAuthToken()) || ""
-        );
+        const roleId = await sessionService.getAuthRole();
         setAuthRole(roleId);
       })();
       setIsOrderDetailViewMode(false);

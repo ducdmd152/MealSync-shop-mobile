@@ -32,6 +32,7 @@ import StaffDetailsModal from "@/components/target-modals/StaffDetailsModal";
 import Toast from "react-native-toast-message";
 import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 import utilService from "@/services/util-service";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,6 +42,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [isCheckedAuth, setIsCheckedAuth] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState(true);
+  const globalAuthState = useGlobalAuthState();
 
   // const [fontsLoaded, error] = useFonts({
   //   "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -72,9 +74,15 @@ export default function RootLayout() {
         setIsCheckedAuth(true);
         return;
       }
-      if ((await utilService.getRoleFromToken(token)) == 2) {
+      const roleId = await sessionService.getAuthRole();
+      globalAuthState.setToken(token);
+      globalAuthState.setRoleId(roleId);
+      if (roleId == 2) {
         router.replace("/home");
-      } else router.replace("/staff-home");
+      }
+      if (roleId == 3) router.replace("/staff-home");
+      else {
+      }
       setIsCheckedAuth(true);
     };
 

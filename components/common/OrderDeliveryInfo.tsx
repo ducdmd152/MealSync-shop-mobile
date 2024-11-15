@@ -15,6 +15,7 @@ import ImageViewingModal from "../target-modals/ImageViewingModal";
 import { useFocusEffect } from "expo-router";
 import CustomModal from "./CustomModal";
 import FailDeliveryUpdate from "./FailDeliveryUpdate";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 
 const OrderDeliveryInfo = ({
   order,
@@ -23,6 +24,8 @@ const OrderDeliveryInfo = ({
   order: OrderFetchModel;
   containerStyleClasses?: string;
 }) => {
+  const globalAuthState = useGlobalAuthState();
+
   const globalImageViewState = useGlobalImageViewingState();
   const [isEditable, setIsEditable] = useState(true);
   const [isUpdateFailDelivery, setIsUpdateFailDelivery] = useState(false);
@@ -86,7 +89,7 @@ const OrderDeliveryInfo = ({
               Giao hàng thất bại
             </Text>
           </View>
-          <View className="p-1 bg-gray-200 rounded-md mt-1">
+          <View className="p-1 bg-blue-200 rounded-md mt-1">
             <View className="flex-row items-center justify-between">
               <Text className="text-gray-600 font-medium">
                 {/* Lí do: <Text className="italic"></Text> */}
@@ -201,7 +204,9 @@ const OrderDeliveryInfo = ({
             />
             <Text className="text-[13.5px]">
               {order.shopDeliveryStaff.fullName}
-              {order.shopDeliveryStaff.id == 0 && " (bạn)"}
+              {(order.shopDeliveryStaff.id == 0 ||
+                globalAuthState.roleId != 2) &&
+                " (bạn)"}
             </Text>
           </View>
         </View>
