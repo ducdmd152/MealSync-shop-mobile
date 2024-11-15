@@ -53,43 +53,43 @@ const OrderDeliveryInfo = ({
     }, [])
   );
 
-  console.log("fetch.data?.value: ", fetch.data?.value);
+  // console.log("fetch.data?.value: ", fetch.data?.value);
   const getOrderDeliveryInfo = () => {
     const info = fetch.data?.value;
     if (info?.deliveryStatus == 1)
       return (
         <View>
           <View className="flex-row items-center justify-between ">
-            <Text className="text-[12px] font-semibold text-gray-700">
+            {/* <Text className="text-[12px] font-semibold text-gray-700">
               Trạng thái giao hàng
-            </Text>
+            </Text> */}
             <Text
               className={`text-[9px] font-medium me-2 px-2.5 py-0.5 rounded bg-green-400 `}
             >
               Giao hàng thành công
             </Text>
+            <Text
+              className={`text-[10px] me-2 py-1 text-right italic text-gray-500 `}
+            >
+              {dayjs(info?.receiveAt).local().format("HH:mm DD/MM/YYYY")}
+            </Text>
           </View>
-          <Text
-            className={`text-[10px] me-2 py-1 text-right italic text-gray-500 `}
-          >
-            Đã giao: {dayjs(info?.receiveAt).local().format("HH:mm DD/MM/YYYY")}
-          </Text>
         </View>
       );
     if (info?.deliveryStatus == 2)
       return (
         <View>
           <View className="flex-row items-center justify-between ">
-            <Text className="text-[14px] font-semibold text-gray-700">
+            {/* <Text className="text-[14px] font-semibold text-gray-700">
               Trạng thái giao hàng
-            </Text>
+            </Text> */}
             <Text
               className={`text-[9px] font-medium me-2 px-2.5 py-0.5 rounded bg-red-400 `}
             >
               Giao hàng thất bại
             </Text>
           </View>
-          <View className="p-1 bg-blue-200 rounded-md mt-1">
+          <View className="p-1 bg-[#fff7ed] rounded-md mt-1">
             <View className="flex-row items-center justify-between">
               <Text className="text-gray-600 font-medium">
                 {/* Lí do: <Text className="italic"></Text> */}
@@ -190,7 +190,7 @@ const OrderDeliveryInfo = ({
     <View
       className={`rounded-md ${containerStyleClasses} ${
         fetch.data?.value.deliveryStatus == 1 && "bg-green-100"
-      } ${fetch.data?.value.deliveryStatus == 2 && "bg-red-100"}`}
+      } ${fetch.data?.value.deliveryStatus == 2 && "bg-[#fef2f2]"}`}
     >
       {getOrderDeliveryInfo()}
       {order.shopDeliveryStaff && (

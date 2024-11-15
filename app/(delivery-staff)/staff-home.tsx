@@ -83,22 +83,22 @@ const StaffDeliveryPackage = () => {
       .toLocaleDateString("sv-SE")
       .replace(/-/g, "/"),
   } as DeliveryPackageFetchQuery);
-  // useEffect(() => {
-  //   if (
-  //     !isOperatingSlotsLoading &&
-  //     !isOperatingSlotsRefetching &&
-  //     operatingSlots?.value &&
-  //     operatingSlots?.value.length &&
-  //     (globalTimeRangeState.minTime != operatingSlots.value[0].startTime ||
-  //       globalTimeRangeState.maxTime !=
-  //         operatingSlots.value[operatingSlots.value.length - 1].endTime)
-  //   ) {
-  //     globalTimeRangeState.setMinTime(operatingSlots.value[0].startTime);
-  //     globalTimeRangeState.setMaxTime(
-  //       operatingSlots.value[operatingSlots.value.length - 1].endTime
-  //     );
-  //   }
-  // }, [operatingSlots, isOperatingSlotsLoading, isOperatingSlotsRefetching]);
+  useEffect(() => {
+    if (
+      !isOperatingSlotsLoading &&
+      !isOperatingSlotsRefetching &&
+      operatingSlots?.value &&
+      operatingSlots?.value.length &&
+      (globalTimeRangeState.minTime != operatingSlots.value[0].startTime ||
+        globalTimeRangeState.maxTime !=
+          operatingSlots.value[operatingSlots.value.length - 1].endTime)
+    ) {
+      globalTimeRangeState.setMinTime(operatingSlots.value[0].startTime);
+      globalTimeRangeState.setMaxTime(
+        operatingSlots.value[operatingSlots.value.length - 1].endTime
+      );
+    }
+  }, [operatingSlots, isOperatingSlotsLoading, isOperatingSlotsRefetching]);
   useEffect(() => {
     if (globalTimeRangeState.isEditing) return;
     setQuery({

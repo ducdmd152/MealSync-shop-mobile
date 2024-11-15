@@ -72,6 +72,7 @@ const CompleteDeliveryConfirmModal = ({
   const { model: order, setModel: setOrder } = globalCompleteDeliveryConfirm;
   const { step, setStep } = globalCompleteDeliveryConfirm;
   const [authRole, setAuthRole] = useState(0);
+  const [inFrameTime, setInFrameTime] = useState(0); // -1 : before 0 : in 1 : after
   const [request, setRequest] = useState<DeliveryFailModel>({
     reason: "",
     reasonIndentity: 1, // 1. Shop 2. Customer
@@ -119,15 +120,17 @@ const CompleteDeliveryConfirmModal = ({
         reasonIndentity: 1, // 1. Shop 2. Customer
         evidences: [],
       });
+      // getOrderDetail(true);
+      setInFrameTime(
+        getInFrameTime(
+          order.startTime,
+          order.endTime,
+          order.intendedReceiveDate
+        )
+      );
     }
   }, [globalCompleteDeliveryConfirm.isModalVisible]);
-  useFocusEffect(
-    useCallback(() => {
-      if (globalCompleteDeliveryConfirm.isModalVisible) {
-        getOrderDetail(true);
-      }
-    }, [])
-  );
+  useFocusEffect(useCallback(() => {}, []));
 
   const handleDeliverySuccess = async (
     data: string,
@@ -222,23 +225,49 @@ const CompleteDeliveryConfirmModal = ({
     }
     requestFailDelivery();
   };
+
+  const getInFrameTime = (
+    startTime: number,
+    endTime: number,
+    intendedReceiveDate: string
+  ) => {
+    const startFrameDate = dayjs(
+      dayjs(intendedReceiveDate)
+        .local()
+        .set("hour", Math.floor(startTime / 100))
+        .set("minute", order.endTime % 100)
+        .toDate()
+    );
+    const endFrameDate = dayjs(
+      dayjs(intendedReceiveDate)
+        .local()
+        .set("hour", Math.floor(endTime / 100))
+        .set("minute", endTime % 100)
+        .toDate()
+    );
+    const current = new Date();
+    if (current < startFrameDate.toDate()) return -1;
+    if (current > endFrameDate.toDate()) return 1;
+    return 0;
+  };
   const getActionComponent = (order: OrderFetchModel) => {
     if (authRole == 2) {
       return (
         <View className=" w-full bg-white">
           {order.status == OrderStatus.Preparing &&
+            inFrameTime == 0 &&
             order.shopDeliveryStaff?.id == 0 && (
               <CustomButton
                 title={`Đi giao`}
                 handlePress={() => {
-                  if (
-                    utilService.isCurrentTimeGreaterThanEndTime({
-                      startTime: order.startTime,
-                      endTime: order.endTime,
-                      intendedReceiveDate: order.intendedReceiveDate,
-                    })
-                  ) {
+                  const inTime = getInFrameTime(
+                    order.startTime,
+                    order.endTime,
+                    order.intendedReceiveDate
+                  );
+                  if (inTime > 0) {
                     getOrderDetail();
+                    setInFrameTime(inTime);
                     globalCompleteDeliveryConfirm.onAfterCompleted();
                     Alert.alert(
                       "Oops!",
@@ -363,6 +392,110 @@ const CompleteDeliveryConfirmModal = ({
         </View>
       );
     }
+    return (
+      <View className=" w-full bg-white">
+        {order.status == OrderStatus.Preparing && inFrameTime == 0 && (
+          <CustomButton
+            title={`Đi giao`}
+            handlePress={() => {
+              if (
+                utilService.isCurrentTimeGreaterThanEndTime({
+                  startTime: order.startTime,
+                  endTime: order.endTime,
+                  intendedReceiveDate: order.intendedReceiveDate,
+                })
+              ) {
+                // getOrderDetail();
+                Alert.alert(
+                  "Oops!",
+                  "Đã quá thời gian để thực hiện thao tác này!"
+                );
+                globalCompleteDeliveryConfirm.onAfterCompleted();
+                return;
+              }
+              orderUIService.onDelivery(
+                order,
+                () => {
+                  getOrderDetail();
+                  globalCompleteDeliveryConfirm.onAfterCompleted();
+                },
+                () => {
+                  setOrder({ ...order, status: OrderStatus.Delivering });
+                  getOrderDetail();
+                  const toast = Toast.show({
+                    type: "info",
+                    text1: "Hoàn tất",
+                    text2: `MS-${order.id} đã chuyển sang trạng thái giao hàng`,
+                  });
+                },
+                (error) => {
+                  getOrderDetail();
+                  globalCompleteDeliveryConfirm.onAfterCompleted();
+                  Alert.alert(
+                    "Oops!",
+                    error?.response?.data?.error?.message ||
+                      "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                  );
+                }
+              );
+            }}
+            containerStyleClasses="w-full mt-2 h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10"
+            textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white"
+          />
+        )}
+
+        {order.status == OrderStatus.Delivering && (
+          <CustomButton
+            title={`Giao thành công`}
+            handlePress={() => {
+              if (
+                utilService.isCurrentTimeGreaterThanEndTime({
+                  startTime: order.startTime,
+                  endTime: order.endTime,
+                  intendedReceiveDate: order.intendedReceiveDate,
+                })
+              ) {
+                getOrderDetail();
+                globalCompleteDeliveryConfirm.onAfterCompleted();
+                Alert.alert(
+                  "Oops!",
+                  "Đã quá thời gian để thực hiện thao tác này!"
+                );
+                return;
+              }
+              globalCompleteDeliveryConfirm.setStep(1);
+            }}
+            containerStyleClasses="w-full mt-2 h-[42px]  px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
+            textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white text-gray-800"
+          />
+        )}
+        {order.status == OrderStatus.Delivering && (
+          <CustomButton
+            title="Giao thất bại"
+            handlePress={() => {
+              if (
+                utilService.isCurrentTimeGreaterThanEndTime({
+                  startTime: order.startTime,
+                  endTime: order.endTime,
+                  intendedReceiveDate: order.intendedReceiveDate,
+                })
+              ) {
+                getOrderDetail();
+                globalCompleteDeliveryConfirm.onAfterCompleted();
+                Alert.alert(
+                  "Oops!",
+                  "Đã quá thời gian để thực hiện thao tác này!"
+                );
+                return;
+              }
+              globalCompleteDeliveryConfirm.setStep(2);
+            }}
+            containerStyleClasses="w-full mt-2 mt-2 h-[40px] px-2 bg-transparent border-2 border-gray-200 border-[#fecaca] bg-[#fef2f2] font-semibold z-10 ml-1 "
+            textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white text-gray-700 text-[#f87171]"
+          />
+        )}
+      </View>
+    );
   };
 
   const selectActionStep = (
@@ -484,7 +617,7 @@ const CompleteDeliveryConfirmModal = ({
             </View>
             <OrderDeliveryInfo
               order={order}
-              containerStyleClasses={"py-2 bg-gray-200 p-2 mx-[-8px] "}
+              containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
             />
           </View>
         ))}
@@ -592,7 +725,7 @@ const CompleteDeliveryConfirmModal = ({
       isVisible={globalCompleteDeliveryConfirm.isModalVisible}
       onBackdropPress={() => {
         globalCompleteDeliveryConfirm.setIsModalVisible(false);
-        globalCompleteDeliveryConfirm.onAfterCompleted();
+        // globalCompleteDeliveryConfirm.onAfterCompleted();
       }}
     >
       <View style={{ zIndex: 100 }} className="justify-center items-center ">
@@ -690,10 +823,10 @@ const CompleteDeliveryConfirmModal = ({
                 <View key={detail.id}>
                   <View className="flex-row justify-between">
                     <View className="flex-row gap-x-2">
+                      <Text className="font-semibold ">{detail.name}</Text>
                       <Text className="font-semibold w-[28px]">
                         x{detail.quantity}
                       </Text>
-                      <Text className="font-semibold">{detail.name}</Text>
                     </View>
                     <View>
                       <Text className="font-semibold">
