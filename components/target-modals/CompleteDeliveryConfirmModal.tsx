@@ -19,6 +19,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
+  Keyboard,
   Linking,
   Text,
   TextInput,
@@ -87,17 +88,24 @@ const CompleteDeliveryConfirmModal = ({
     if (isRefetching) setIsReloading(true);
     try {
       const response = await apiClient.get<ValueResponse<OrderFetchModel>>(
-        `shop-owner/order/${globalCompleteDeliveryConfirm.id}`
+        `shop-owner-staff/order/${globalCompleteDeliveryConfirm.id}`
       );
       setOrder({ ...response.data.value });
     } catch (error: any) {
+      console.log(error);
       globalCompleteDeliveryConfirm.onAfterCompleted();
       globalCompleteDeliveryConfirm.setIsModalVisible(false);
       setIsViewOrderFoodDetail(false);
       Alert.alert(
-        "Oops",
-        `Không tìm thấy đơn hàng MS-${globalCompleteDeliveryConfirm.id}!`
+        "Oops!",
+        error?.response?.data?.error?.message ||
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
       );
+      console.log(error?.response?.data?.error);
+      // Alert.alert(
+      //   "Oops",
+      //   `Không tìm thấy đơn hàng MS-${globalCompleteDeliveryConfirm.id}!`
+      // );
     } finally {
       setIsLoading(false);
       setIsReloading(false);
@@ -128,7 +136,7 @@ const CompleteDeliveryConfirmModal = ({
         reasonIndentity: 1, // 1. Shop 2. Customer
         evidences: [],
       });
-      // getOrderDetail(true);
+      getOrderDetail(true);
       setInFrameTime(
         utilService.getInFrameTime(
           order.startTime,
@@ -265,6 +273,7 @@ const CompleteDeliveryConfirmModal = ({
             order.shopDeliveryStaff?.id == 0 && (
               <CustomButton
                 title={`Đi giao`}
+                isLoading={isSubmitting}
                 handlePress={() => {
                   const inTime = utilService.getInFrameTime(
                     order.startTime,
@@ -537,6 +546,7 @@ const CompleteDeliveryConfirmModal = ({
               containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
               assignNode={
                 order.shopDeliveryStaff != null &&
+                globalCompleteDeliveryConfirm.isShowActionale &&
                 authRole == 2 &&
                 inFrameTime == 0 ? (
                   <TouchableOpacity
@@ -545,7 +555,7 @@ const CompleteDeliveryConfirmModal = ({
                       setIsOpenOrderAssign(true);
                     }}
                   >
-                    <Text className="p-[0.5] my-[-1] text-[12px] font-medium text-[#0891b2]">
+                    <Text className="p-[0.5] my-[-1] text-[11px] font-medium text-[#0891b2]">
                       Thay đổi
                     </Text>
                   </TouchableOpacity>
@@ -664,7 +674,11 @@ const CompleteDeliveryConfirmModal = ({
         // globalCompleteDeliveryConfirm.onAfterCompleted();
       }}
     >
-      <View style={{ zIndex: 100 }} className="justify-center items-center ">
+      <View
+        // onTouchEnd={() => Keyboard.dismiss()}
+        style={{ zIndex: 100 }}
+        className="justify-center items-center "
+      >
         <View
           className={`w-80 bg-white p-1 rounded-lg p-4 ${containerStyleClasses}`}
         >

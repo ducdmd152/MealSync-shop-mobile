@@ -30,7 +30,6 @@ import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
 import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 import TimeRangeSelect from "@/components/common/TimeRangeSelect";
-import DeliveryFrameList from "@/components/delivery-package/DeliveryFrameList";
 import MyDeliveryPackageList from "@/components/delivery-package/MyDeliveryPackageList";
 import { useFocusEffect } from "expo-router";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";

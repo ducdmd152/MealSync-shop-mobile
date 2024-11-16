@@ -203,9 +203,9 @@ const OrderDeliveryInfo = ({
             <Image
               source={{ uri: order.shopDeliveryStaff.avatarUrl }}
               resizeMode="cover"
-              className="h-[15px] w-[15px] rounded-md opacity-85"
+              className="h-[14px] w-[14px] rounded-md opacity-85"
             />
-            <Text className="text-[12.8px] flex-1">
+            <Text className="text-[11px] flex-1">
               {utilService.shortenName(order.shopDeliveryStaff.fullName)}
               {(order.shopDeliveryStaff.id == 0 ||
                 globalAuthState.roleId != 2) &&

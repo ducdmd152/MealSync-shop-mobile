@@ -128,7 +128,7 @@ const DeliveryPKGDetail = ({
       {!isNotFound && (
         <View className="mt-3 w-full flex-row items-center justify-between pb-2">
           <TouchableOpacity
-            className={`flex-1 mx-[2px] bg-gray-100 rounded-lg px-3 py-2   ${
+            className={`flex-1 mx-[2px] bg-gray-100 rounded-lg px-2 py-2   ${
               status == 0 ? "bg-secondary" : "bg-gray-100"
             }`}
             onPress={() => {
@@ -140,7 +140,7 @@ const DeliveryPKGDetail = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`flex-1 mx-[2px] bg-gray-100 rounded-lg px-3 py-2   ${
+            className={`flex-1 mx-[2px] bg-gray-100 rounded-lg px-2 py-2   ${
               status == DeliveryPackageStatus.Pending
                 ? "bg-secondary"
                 : "bg-gray-100"
@@ -154,7 +154,7 @@ const DeliveryPKGDetail = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`flex-1 mx-[2px] bg-gray-100 rounded-lg px-3 py-2   ${
+            className={`flex-1 mx-[2px] bg-gray-100 rounded-lg px-2 py-2   ${
               status == DeliveryPackageStatus.OnGoing
                 ? "bg-secondary"
                 : "bg-gray-100"
@@ -168,7 +168,7 @@ const DeliveryPKGDetail = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`flex-1 mx-[2px] bg-gray-100 rounded-lg px-3 py-2   ${
+            className={`flex-1 mx-[2px] bg-gray-100 rounded-lg px-2 py-2   ${
               status == DeliveryPackageStatus.Completed
                 ? "bg-secondary"
                 : "bg-gray-100"

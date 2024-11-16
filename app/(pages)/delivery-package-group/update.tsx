@@ -462,7 +462,6 @@ const DeliveryPackageGroupUpdate = () => {
                         // );
                       }}
                       className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
-                      disabled={order.status != OrderStatus.Preparing}
                     >
                       <Text className="text-[12px] text-white mr-1">
                         Phân công
