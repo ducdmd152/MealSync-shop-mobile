@@ -21,7 +21,8 @@ export default function TabLayout() {
           headerShown: true,
           tabBarStyle: {
             height: 68,
-            paddingBottom: 12,
+            paddingBottom: 6,
+            paddingTop: 8,
           },
         }}
       >

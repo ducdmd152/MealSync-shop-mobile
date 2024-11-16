@@ -21,8 +21,8 @@ export default function DeliveryStaffLayout() {
           headerShown: true,
           tabBarStyle: {
             height: 68,
-            paddingBottom: 8,
-            paddingTop: 8,
+            paddingBottom: 6,
+            paddingTop: 7,
           },
         }}
       >
