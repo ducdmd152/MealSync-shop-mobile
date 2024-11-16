@@ -326,7 +326,7 @@ const DeliveryPackageGroupUpdate = () => {
     </View>
   );
   const currentPersonArea = (
-    <View className="border-2 border-gray-300 flex-1 p-2">
+    <View className="border-2 border-gray-300 flex-1 min-h-[40%] p-2">
       <ScrollView>
         <View className="gap-y-[4px]">
           {getAssignedOrdersOf(currentDeliveryPersonId).map((order) => (

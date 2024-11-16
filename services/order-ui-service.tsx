@@ -42,7 +42,8 @@ const onDelivery = (
   order: OrderFetchModel,
   onRefresh: () => void,
   onSuccess: () => void,
-  onError: (error: any) => void
+  onError: (error: any) => void,
+  onBeforeSubmit = () => {}
 ) => {
   if (
     utilService.isCurrentTimeGreaterThanEndTime({
@@ -63,6 +64,7 @@ const onDelivery = (
       {
         text: "Xác nhận",
         onPress: async () => {
+          onBeforeSubmit();
           onMultiDelivery([order.id], onSuccess, onError);
         },
       },

@@ -49,16 +49,13 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
   //     subscription.remove();
   //   };
   // }, []);
-  useFocusEffect(
-    useCallback(() => {
-      qrLock.current = false;
-    }, [])
-  );
 
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [permissionResponse, setPermissionResponse] = useState<any>(null);
   useFocusEffect(
     useCallback(() => {
+      console.log("Hello, welcome QR Scanner!");
+      qrLock.current = false;
       (async () => {
         const { status } = await Camera.requestCameraPermissionsAsync();
         setHasPermission(status == "granted");
@@ -66,12 +63,6 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
         if (status != "granted")
           Alert.alert("Oops", "Vui lòng cho phép truy cập camera để tiếp tục.");
       })();
-    }, [])
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      qrLock.current = false;
     }, [])
   );
 
