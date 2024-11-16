@@ -536,7 +536,9 @@ const CompleteDeliveryConfirmModal = ({
               order={order}
               containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
               assignNode={
-                order.shopDeliveryStaff != null && inFrameTime == 0 ? (
+                order.shopDeliveryStaff != null &&
+                authRole == 2 &&
+                inFrameTime == 0 ? (
                   <TouchableOpacity
                     onPress={() => {
                       if (!actionInTimeValidation(true)) return;

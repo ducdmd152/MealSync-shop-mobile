@@ -120,7 +120,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
     error: operatingSlotsError,
     refetch: operatingSlotsRefetch,
   } = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST.concat(["order-range-select"]),
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST,
     (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)

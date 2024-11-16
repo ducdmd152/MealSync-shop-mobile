@@ -59,6 +59,7 @@ const StaffDeliveryPackage = () => {
     useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isRangePickerVisible, setRangePickerVisibility] = useState(false);
+
   const {
     data: operatingSlots,
     isLoading: isOperatingSlotsLoading,
@@ -66,9 +67,7 @@ const StaffDeliveryPackage = () => {
     refetch: operatingSlotsRefetch,
     isRefetching: isOperatingSlotsRefetching,
   } = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST.concat([
-      "delivery-package-page",
-    ]),
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST,
     (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
       apiClient
         .get(
@@ -79,6 +78,7 @@ const StaffDeliveryPackage = () => {
         .then((response) => response.data),
     []
   );
+
   const [query, setQuery] = useState<DeliveryPackageFetchQuery>({
     status: [0],
     id: "",
@@ -95,11 +95,13 @@ const StaffDeliveryPackage = () => {
       !isOperatingSlotsLoading &&
       !isOperatingSlotsRefetching &&
       operatingSlots?.value &&
-      operatingSlots?.value.length &&
-      (globalTimeRangeState.minTime != operatingSlots.value[0].startTime ||
-        globalTimeRangeState.maxTime !=
-          operatingSlots.value[operatingSlots.value.length - 1].endTime)
+      operatingSlots?.value.length
+      // &&
+      // (globalTimeRangeState.minTime != operatingSlots.value[0].startTime ||
+      //   globalTimeRangeState.maxTime !=
+      //     operatingSlots.value[operatingSlots.value.length - 1].endTime)
     ) {
+      console.log("operatingSlots?.value: ", operatingSlots?.value);
       globalTimeRangeState.setMinTime(operatingSlots.value[0].startTime);
       globalTimeRangeState.setMaxTime(
         operatingSlots.value[operatingSlots.value.length - 1].endTime
@@ -118,6 +120,11 @@ const StaffDeliveryPackage = () => {
     });
   }, [globalTimeRangeState]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      operatingSlotsRefetch();
+    }, [])
+  );
   const [index, setIndex] = useState(0);
   const deliveryPackageIndex = usePathState(
     (state) => state.deliveryPackageIndex
