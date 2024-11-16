@@ -30,8 +30,33 @@ const tens = [
   "chín mươi",
 ];
 const scales = ["", "nghìn", "triệu", "tỷ"];
-
+const getInFrameTime = (
+  startTime: number,
+  endTime: number,
+  intendedReceiveDate: string
+) => {
+  const startFrameDate = dayjs(
+    dayjs(intendedReceiveDate)
+      .local()
+      .set("hour", Math.floor(startTime / 100))
+      .set("minute", startTime % 100)
+      .toDate()
+  );
+  const endFrameDate = dayjs(
+    dayjs(intendedReceiveDate)
+      .local()
+      .set("hour", Math.floor(endTime / 100))
+      .set("minute", endTime % 100)
+      .toDate()
+  );
+  const current = new Date();
+  // console.log("current: ", current, startFrameDate, endFrameDate);
+  if (current < startFrameDate.toDate()) return -1;
+  if (current > endFrameDate.toDate()) return 1;
+  return 0;
+};
 const utilService = {
+  getInFrameTime,
   formatTime: (time: number): string => {
     const hours = Math.floor(time / 100)
       .toString()

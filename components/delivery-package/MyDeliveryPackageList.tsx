@@ -128,6 +128,9 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
               className="bg-[#f9fafb] p-3 drop-shadow-sm rounded-lg border-[0.5px] border-gray-200"
               onPress={() => {
                 globalMyGKGDetailsState.setModel(pkg);
+                globalMyGKGDetailsState.setOnAfterCompleted(() =>
+                  myPkgFetchResult.refetch()
+                );
                 setIsDetailBottomSheetVisible(true);
               }}
             >

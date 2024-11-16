@@ -93,6 +93,7 @@ const CompleteDeliveryConfirmModal = ({
     } catch (error: any) {
       globalCompleteDeliveryConfirm.onAfterCompleted();
       globalCompleteDeliveryConfirm.setIsModalVisible(false);
+      setIsViewOrderFoodDetail(false);
       Alert.alert(
         "Oops",
         `Không tìm thấy đơn hàng MS-${globalCompleteDeliveryConfirm.id}!`
@@ -106,6 +107,13 @@ const CompleteDeliveryConfirmModal = ({
     getOrderDetail();
     globalCompleteDeliveryConfirm.onAfterCompleted();
   };
+  // useEffect(() => {
+  //   if (!globalCompleteDeliveryConfirm.isModalVisible) {
+  //     setIsOpenOrderAssign(false);
+  //     setIsViewOrderFoodDetail(false);
+  //     setIsOrderDetailViewMode(false);
+  //   }
+  // }, [globalCompleteDeliveryConfirm.isModalVisible]);
   // console.log("isOrderDetailViewMode: ", isOrderDetailViewMode);
   useEffect(() => {
     setIsOpenOrderAssign(false);
@@ -122,7 +130,7 @@ const CompleteDeliveryConfirmModal = ({
       });
       // getOrderDetail(true);
       setInFrameTime(
-        getInFrameTime(
+        utilService.getInFrameTime(
           order.startTime,
           order.endTime,
           order.intendedReceiveDate
@@ -133,7 +141,7 @@ const CompleteDeliveryConfirmModal = ({
   useFocusEffect(useCallback(() => {}, []));
 
   const actionInTimeValidation = (justOver = false) => {
-    const inTime = getInFrameTime(
+    const inTime = utilService.getInFrameTime(
       order.startTime,
       order.endTime,
       order.intendedReceiveDate
@@ -248,30 +256,6 @@ const CompleteDeliveryConfirmModal = ({
     requestFailDelivery();
   };
 
-  const getInFrameTime = (
-    startTime: number,
-    endTime: number,
-    intendedReceiveDate: string
-  ) => {
-    const startFrameDate = dayjs(
-      dayjs(intendedReceiveDate)
-        .local()
-        .set("hour", Math.floor(startTime / 100))
-        .set("minute", order.endTime % 100)
-        .toDate()
-    );
-    const endFrameDate = dayjs(
-      dayjs(intendedReceiveDate)
-        .local()
-        .set("hour", Math.floor(endTime / 100))
-        .set("minute", endTime % 100)
-        .toDate()
-    );
-    const current = new Date();
-    if (current < startFrameDate.toDate()) return -1;
-    if (current > endFrameDate.toDate()) return 1;
-    return 0;
-  };
   const getActionComponent = (order: OrderFetchModel) => {
     if (authRole == 2) {
       return (
@@ -282,7 +266,7 @@ const CompleteDeliveryConfirmModal = ({
               <CustomButton
                 title={`Đi giao`}
                 handlePress={() => {
-                  const inTime = getInFrameTime(
+                  const inTime = utilService.getInFrameTime(
                     order.startTime,
                     order.endTime,
                     order.intendedReceiveDate
@@ -365,7 +349,10 @@ const CompleteDeliveryConfirmModal = ({
       );
     }
     return (
-      <View className=" w-full bg-white">
+      <View
+        className=" w-full bg-white"
+        onTouchEnd={() => console.log("confirm modal")}
+      >
         {order.status == OrderStatus.Preparing && inFrameTime == 0 && (
           <CustomButton
             title={`Đi giao`}
@@ -556,7 +543,7 @@ const CompleteDeliveryConfirmModal = ({
                       setIsOpenOrderAssign(true);
                     }}
                   >
-                    <Text className="p-1 my-[-1] text-[12px] font-medium text-[#0891b2]">
+                    <Text className="p-[0.5] my-[-1] text-[12px] font-medium text-[#0891b2]">
                       Thay đổi
                     </Text>
                   </TouchableOpacity>
@@ -669,6 +656,7 @@ const CompleteDeliveryConfirmModal = ({
   return (
     <Modal
       isVisible={globalCompleteDeliveryConfirm.isModalVisible}
+      backdropOpacity={0.25}
       onBackdropPress={() => {
         globalCompleteDeliveryConfirm.setIsModalVisible(false);
         // globalCompleteDeliveryConfirm.onAfterCompleted();
@@ -834,8 +822,8 @@ const CompleteDeliveryConfirmModal = ({
       >
         <OrderDeliveryAssign
           onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
-            onRefresh();
             setIsOpenOrderAssign(false);
+            onRefresh();
           }}
           order={order}
           isNeedForReconfimation={order.shopDeliveryStaff ? false : true}

@@ -38,6 +38,7 @@ import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState"
 import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
 import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfirmModal";
 import CustomModal from "../common/CustomModal";
+import Toast from "react-native-toast-message";
 interface Props {
   query: FrameDateTime;
   selectedDetail: DeliveryPackageGroupDetailsModel;
@@ -506,6 +507,7 @@ const DeliveryFrameDetail = ({
         
       </ModalPaper> */}
       {/* </Portal> */}
+      <Toast position="bottom" />
     </View>
   );
 };
