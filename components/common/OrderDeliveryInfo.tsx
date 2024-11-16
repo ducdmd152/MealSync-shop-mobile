@@ -34,10 +34,10 @@ const OrderDeliveryInfo = ({
   const [isUpdateFailDelivery, setIsUpdateFailDelivery] = useState(false);
 
   const fetch = useFetchWithRQWithFetchFunc(
-    [`shop-owner/order/${order.id}/delivery-infor`],
+    [`shop-owner-staff/order/${order.id}/delivery-infor`],
     async (): Promise<FetchValueResponse<OrderDeliveryInfoModel>> =>
       apiClient
-        .get(`shop-owner/order/${order.id}/delivery-infor`)
+        .get(`shop-owner-staff/order/${order.id}/delivery-infor`)
         .then((response) => response.data),
     []
   );

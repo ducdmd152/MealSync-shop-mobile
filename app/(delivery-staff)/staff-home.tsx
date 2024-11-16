@@ -94,13 +94,12 @@ const StaffDeliveryPackage = () => {
       !isOperatingSlotsLoading &&
       !isOperatingSlotsRefetching &&
       operatingSlots?.value &&
-      operatingSlots?.value.length
-      // &&
-      // (globalTimeRangeState.minTime != operatingSlots.value[0].startTime ||
-      //   globalTimeRangeState.maxTime !=
-      //     operatingSlots.value[operatingSlots.value.length - 1].endTime)
+      operatingSlots?.value.length &&
+      (globalTimeRangeState.minTime != operatingSlots.value[0].startTime ||
+        globalTimeRangeState.maxTime !=
+          operatingSlots.value[operatingSlots.value.length - 1].endTime)
     ) {
-      console.log("operatingSlots?.value: ", operatingSlots?.value);
+      // console.log("operatingSlots?.value: ", operatingSlots?.value);
       globalTimeRangeState.setMinTime(operatingSlots.value[0].startTime);
       globalTimeRangeState.setMaxTime(
         operatingSlots.value[operatingSlots.value.length - 1].endTime
@@ -272,6 +271,12 @@ const StaffDeliveryPackage = () => {
           />
         </View>
       </BottomSheet>
+      {/* <CustomButton
+        title="Gói giao của bạn"
+        handlePress={() => {}}
+        containerStyleClasses={` px-2  h-[40px] rounded-none border-primary-100 bg-white border-y-[1px] ${""}`}
+        textStyleClasses={`text-sm text-primary-100`}
+      /> */}
       <MyDeliveryPackageList beforeGo={() => setDeliveryPackageIndex(index)} />
     </View>
   );

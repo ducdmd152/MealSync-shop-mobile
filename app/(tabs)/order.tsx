@@ -358,7 +358,7 @@ const Order = () => {
               color="#FCF450"
             />
           )}
-          <View className="gap-y-2 pb-[154px]">
+          <View className="gap-y-2 pb-[192px]">
             {!cacheOrderList.length && (
               <Text className="text-gray-600 text-center pt-8">
                 Không có đơn hàng tương ứng.
