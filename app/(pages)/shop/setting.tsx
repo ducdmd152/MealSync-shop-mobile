@@ -529,7 +529,9 @@ const Setting = () => {
                   ? Alert.alert(
                       "Hoàn tất",
                       `Đã thêm khoảng hoạt động ${operatingSlot.title.trim()} : ${
-                        operatingSlot.timeSlot
+                        utilService.formatTime(operatingSlot.startTime) +
+                        " - " +
+                        utilService.formatTime(operatingSlot.endTime)
                       }`
                     )
                   : Alert.alert(
