@@ -151,7 +151,7 @@ const OrderDetail = ({
             }
           >
             <View className="bg-white p-2">
-              <Text className="text-[15px] text-gray-600 font-semibold">
+              <Text className="text-[15px] text-gray-600 font-semibold text-[#0891b2]">
                 Thông tin nhận hàng
               </Text>
               <View className="mt-3 border-gray-300 border-[0.5px]" />
@@ -211,7 +211,7 @@ const OrderDetail = ({
               </View>
             </View>
             <View className="mt-4 bg-white p-2">
-              <Text className="text-[15px] text-gray-600 font-semibold">
+              <Text className="text-[15px] text-gray-600 font-semibold text-[#0891b2]">
                 Chi tiết đơn hàng
               </Text>
               <View className="mt-3 border-gray-300 border-[0.5px]" />
@@ -271,7 +271,7 @@ const OrderDetail = ({
                 {order.note || "Không có"}
               </Text>
             </View>
-            <View className="mt-2 bg-white p-2">
+            <View className="mt-2 bg-white p-2 bg-[#fffbeb]">
               <View className="py-2 gap-y-1">
                 <View className="flex-row items-center justify-between">
                   <Text className="text-[14px] text-gray-700 ">
