@@ -145,6 +145,7 @@ export default function RootLayout() {
           </ToastProvider>
         </ThemeProvider>
       </TanStackProvider>
+      <Toast />
     </GestureHandlerRootView>
   );
 }

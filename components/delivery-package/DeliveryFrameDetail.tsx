@@ -486,6 +486,14 @@ const DeliveryFrameDetail = ({
       >
         <OrderDeliveryAssign
           onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
+            Toast.show({
+              type: "info",
+              text1: "Hoàn tất",
+              text2: `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+                shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
+              }!`,
+              // time: 15000
+            });
             setIsOpenOrderAssign(false);
             getGPKGDetails();
           }}

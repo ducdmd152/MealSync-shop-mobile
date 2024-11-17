@@ -115,14 +115,14 @@ const OrderDeliveryAssign = ({
                 //     duration: 5000,
                 //   }
                 // );
-                Toast.show({
-                  type: "info",
-                  text1: "Hoàn tất",
-                  text2: `Đơn hàng MS-${order.id} sẽ được giao bởi ${
-                    staffInfo.id == 0 ? "bạn" : staffInfo.fullName
-                  }!`,
-                  // time: 15000
-                });
+                // Toast.show({
+                //   type: "info",
+                //   text1: "Hoàn tất",
+                //   text2: `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+                //     staffInfo.id == 0 ? "bạn" : staffInfo.fullName
+                //   }!`,
+                //   // time: 15000
+                // });
                 // Alert.alert(
                 //   "Hoàn tất",
                 //   `Đơn hàng MS-${order.id} sẽ được giao bởi ${
