@@ -832,7 +832,7 @@ const Setting = () => {
                       `Bạn muốn tạm ngưng nhận đơn hôm nay hay tạm dừng hoạt động của cửa hàng?`,
                       [
                         {
-                          text: "Tạm ngưng nhận đơn",
+                          text: "Ngưng nhận đơn hôm nay",
                           onPress: async () => {
                             onChangeShopStatusSubmit(2, true, () => {
                               shopProfile.refetch();
