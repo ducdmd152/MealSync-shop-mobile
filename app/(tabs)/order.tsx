@@ -111,7 +111,6 @@ const Order = () => {
   const [isRangePickerVisible, setRangePickerVisibility] = useState(false);
   const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
   const [isFocusing, setIsFocusing] = React.useState(false);
-
   const [searchText, setSearchText] = useState("");
   const [isQueryChanging, setIsQueryChanging] = useState(true);
   const globalOrderStatusesFilterState = useOrderStatusFilterState();
@@ -282,6 +281,15 @@ const Order = () => {
                 ...order,
                 shopDeliveryStaff: shopDeliveryStaff,
               });
+              simpleToast.show(
+                `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+                  shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
+                }!`,
+                {
+                  type: "success",
+                  duration: 3000,
+                }
+              );
             }}
             order={order}
             isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
@@ -457,398 +465,471 @@ const Order = () => {
                   </View>
                 </View>
                 <View className="flex-row justify-end mt-2 gap-x-1">
-                  {order.status == OrderStatus.Pending && (
-                    <View className="flex-row items-center gap-x-1">
-                      <TouchableOpacity
-                        onPress={() => {
-                          Alert.alert(
-                            "Xác nhận",
-                            `Xác nhận đơn hàng MS-${order.id}?`,
-                            [
-                              {
-                                text: "Đồng ý",
-                                onPress: async () => {
-                                  orderAPIService.confirm(
-                                    order.id,
-                                    () => {
-                                      // const toast = Toast.show({
-                                      //   type: "info",
-                                      //   text1: "Hoàn tất",
-                                      //   text2: `Đơn hàng MS-${order.id} đã được xác nhận!`,
-                                      // });
-                                      simpleToast.show(
-                                        `Đơn hàng MS-${order.id} đã được xác nhận!`,
-                                        {
-                                          type: "info",
-                                          duration: 1500,
-                                        }
-                                      );
-                                      // Alert.alert(
-                                      //   "Hoàn tất",
-                                      //   `Đơn hàng MS-${order.id} đã được xác nhận!`
-                                      // );
-                                      setCacheOrderList(
-                                        cacheOrderList.map((item) =>
-                                          item.id != order.id
-                                            ? item
-                                            : {
-                                                ...order,
-                                                status: OrderStatus.Confirmed,
-                                              }
-                                        )
-                                      );
-                                    },
-                                    (warningInfo: WarningMessageValue) => {},
-                                    (error: any) => {
-                                      Alert.alert(
-                                        "Oops!",
-                                        error?.response?.data?.error?.message ||
-                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                      );
-                                    }
-                                  );
-                                },
-                              },
-                              {
-                                text: "Hủy",
-                              },
-                            ]
-                          );
-                        }}
-                        className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                      >
-                        <Text className="text-[13.5px]">Nhận đơn</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => {
-                          Alert.alert(
-                            "Xác nhận",
-                            `Bạn chắc chắn từ chối đơn hàng MS-${order.id} không?`,
-                            [
-                              {
-                                text: "Hủy",
-                                style: "cancel",
-                              },
-                              {
-                                text: "Đồng ý",
-                                onPress: async () => {
-                                  orderAPIService.reject(
-                                    order.id,
-                                    () => {
-                                      // const toast = Toast.show({
-                                      //   type: "warning",
-                                      //   text1: "Hoàn tất",
-                                      //   text2: `Đã từ chối đơn hàng MS-${order.id}!`,
-                                      // });
-                                      simpleToast.show(
-                                        `Đã từ chối đơn hàng MS-${order.id}!`,
-                                        {
-                                          type: "info",
-                                          duration: 1500,
-                                        }
-                                      );
-                                      // Alert.alert(
-                                      //   "Hoàn tất",
-                                      //   `Đã từ chối đơn hàng MS-${order.id}!`
-                                      // );
-                                      setCacheOrderList(
-                                        cacheOrderList.map((item) =>
-                                          item.id != order.id
-                                            ? item
-                                            : {
-                                                ...order,
-                                                status: OrderStatus.Rejected,
-                                              }
-                                        )
-                                      );
-                                    },
-                                    (warningInfo: WarningMessageValue) => {},
-                                    (error: any) => {
-                                      Alert.alert(
-                                        "Oops!",
-                                        error?.response?.data?.error?.message ||
-                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                      );
-                                    }
-                                  );
-                                },
-                              },
-                            ]
-                          );
-                        }}
-                        className="bg-white border-[#fda4af] bg-[#fda4af] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                      >
-                        <Text className="text-[13.2px]">Từ chối</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                  {order.status == OrderStatus.Confirmed && (
-                    <View className="flex-row items-center gap-x-1">
-                      <TouchableOpacity
-                        onPress={() => {
-                          Alert.alert(
-                            "Xác nhận",
-                            `Bắt đầu chuẩn bị đơn hàng MS-${order.id}?`,
-                            [
-                              {
-                                text: "Đồng ý",
-                                onPress: async () => {
-                                  orderAPIService.prepare(
-                                    order.id,
-                                    () => {
-                                      // const toast = Toast.show({
-                                      //   type: "info",
-                                      //   text1: "Hoàn tất",
-                                      //   text2: `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
-                                      // });
-                                      simpleToast.show(
-                                        `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
-                                        {
-                                          type: "info",
-                                          duration: 1500,
-                                        }
-                                      );
-                                      // Alert.alert(
-                                      //   "Hoàn tất",
-                                      //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
-                                      // );
-                                      setCacheOrderList(
-                                        cacheOrderList.map((item) =>
-                                          item.id != order.id
-                                            ? item
-                                            : {
-                                                ...order,
-                                                status: OrderStatus.Preparing,
-                                              }
-                                        )
-                                      );
-                                    },
-                                    (warningInfo: WarningMessageValue) => {
-                                      Alert.alert(
-                                        "Xác nhận",
-                                        warningInfo.message,
-                                        [
+                  {order.status == OrderStatus.Pending &&
+                    utilService.getInFrameTime(
+                      order.startTime,
+                      order.endTime,
+                      order.intendedReceiveDate
+                    ) <= 0 && (
+                      <View className="flex-row items-center gap-x-1">
+                        <TouchableOpacity
+                          onPress={() => {
+                            const inTime = utilService.getInFrameTime(
+                              order.startTime,
+                              order.endTime,
+                              order.intendedReceiveDate
+                            );
+                            if (inTime > 0) {
+                              orderFetchRefetch();
+                              Alert.alert(
+                                "Oops!",
+                                "Đã quá thời gian để thực hiện thao tác này!"
+                              );
+                              return false;
+                            }
+                            Alert.alert(
+                              "Xác nhận",
+                              `Xác nhận đơn hàng MS-${order.id}?`,
+                              [
+                                {
+                                  text: "Đồng ý",
+                                  onPress: async () => {
+                                    orderAPIService.confirm(
+                                      order.id,
+                                      () => {
+                                        // const toast = Toast.show({
+                                        //   type: "info",
+                                        //   text1: "Hoàn tất",
+                                        //   text2: `Đơn hàng MS-${order.id} đã được xác nhận!`,
+                                        // });
+                                        simpleToast.show(
+                                          `Đơn hàng MS-${order.id} đã được xác nhận!`,
                                           {
-                                            text: "Đồng ý",
-                                            onPress: async () => {
-                                              orderAPIService.prepare(
-                                                order.id,
-                                                () => {
-                                                  // const toast = Toast.show({
-                                                  //   type: "info",
-                                                  //   text1: "Hoàn tất",
-                                                  //   text2: `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
-                                                  // });
-                                                  simpleToast.show(
-                                                    `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
-                                                    {
-                                                      type: "info",
-                                                      duration: 1500,
-                                                    }
-                                                  );
-                                                  // Alert.alert(
-                                                  //   "Hoàn tất",
-                                                  //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
-                                                  // );
-                                                  setCacheOrderList(
-                                                    cacheOrderList.map((item) =>
-                                                      item.id != order.id
-                                                        ? item
-                                                        : {
-                                                            ...order,
-                                                            status:
-                                                              OrderStatus.Preparing,
-                                                          }
-                                                    )
-                                                  );
-                                                },
-                                                (
-                                                  warningInfo: WarningMessageValue
-                                                ) => {},
-                                                (error: any) => {
-                                                  Alert.alert(
-                                                    "Oops!",
-                                                    error?.response?.data?.error
-                                                      ?.message ||
-                                                      "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                                  );
-                                                },
-                                                true
-                                              );
+                                            type: "info",
+                                            duration: 1500,
+                                          }
+                                        );
+                                        // Alert.alert(
+                                        //   "Hoàn tất",
+                                        //   `Đơn hàng MS-${order.id} đã được xác nhận!`
+                                        // );
+                                        setCacheOrderList(
+                                          cacheOrderList.map((item) =>
+                                            item.id != order.id
+                                              ? item
+                                              : {
+                                                  ...order,
+                                                  status: OrderStatus.Confirmed,
+                                                }
+                                          )
+                                        );
+                                      },
+                                      (warningInfo: WarningMessageValue) => {},
+                                      (error: any) => {
+                                        Alert.alert(
+                                          "Oops!",
+                                          error?.response?.data?.error
+                                            ?.message ||
+                                            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                        );
+                                      }
+                                    );
+                                  },
+                                },
+                                {
+                                  text: "Hủy",
+                                },
+                              ]
+                            );
+                          }}
+                          className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                        >
+                          <Text className="text-[13.5px]">Nhận đơn</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => {
+                            Alert.alert(
+                              "Xác nhận",
+                              `Bạn chắc chắn từ chối đơn hàng MS-${order.id} không?`,
+                              [
+                                {
+                                  text: "Hủy",
+                                  style: "cancel",
+                                },
+                                {
+                                  text: "Đồng ý",
+                                  onPress: async () => {
+                                    orderAPIService.reject(
+                                      order.id,
+                                      () => {
+                                        // const toast = Toast.show({
+                                        //   type: "warning",
+                                        //   text1: "Hoàn tất",
+                                        //   text2: `Đã từ chối đơn hàng MS-${order.id}!`,
+                                        // });
+                                        simpleToast.show(
+                                          `Đã từ chối đơn hàng MS-${order.id}!`,
+                                          {
+                                            type: "info",
+                                            duration: 1500,
+                                          }
+                                        );
+                                        // Alert.alert(
+                                        //   "Hoàn tất",
+                                        //   `Đã từ chối đơn hàng MS-${order.id}!`
+                                        // );
+                                        setCacheOrderList(
+                                          cacheOrderList.map((item) =>
+                                            item.id != order.id
+                                              ? item
+                                              : {
+                                                  ...order,
+                                                  status: OrderStatus.Rejected,
+                                                }
+                                          )
+                                        );
+                                      },
+                                      (warningInfo: WarningMessageValue) => {},
+                                      (error: any) => {
+                                        Alert.alert(
+                                          "Oops!",
+                                          error?.response?.data?.error
+                                            ?.message ||
+                                            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                        );
+                                      }
+                                    );
+                                  },
+                                },
+                              ]
+                            );
+                          }}
+                          className="bg-white border-[#fda4af] bg-[#fda4af] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                        >
+                          <Text className="text-[13.2px]">Từ chối</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  {order.status == OrderStatus.Confirmed &&
+                    utilService.getInFrameTime(
+                      order.startTime,
+                      order.endTime,
+                      order.intendedReceiveDate
+                    ) <= 0 && (
+                      <View className="flex-row items-center gap-x-1">
+                        <TouchableOpacity
+                          onPress={() => {
+                            const inTime = utilService.getInFrameTime(
+                              order.startTime,
+                              order.endTime,
+                              order.intendedReceiveDate
+                            );
+                            if (inTime > 0) {
+                              orderFetchRefetch();
+                              Alert.alert(
+                                "Oops!",
+                                "Đã quá thời gian để thực hiện thao tác này!"
+                              );
+                              return false;
+                            }
+                            Alert.alert(
+                              "Xác nhận",
+                              `Bắt đầu chuẩn bị đơn hàng MS-${order.id}?`,
+                              [
+                                {
+                                  text: "Đồng ý",
+                                  onPress: async () => {
+                                    orderAPIService.prepare(
+                                      order.id,
+                                      () => {
+                                        // const toast = Toast.show({
+                                        //   type: "info",
+                                        //   text1: "Hoàn tất",
+                                        //   text2: `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
+                                        // });
+                                        simpleToast.show(
+                                          `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
+                                          {
+                                            type: "info",
+                                            duration: 1500,
+                                          }
+                                        );
+                                        // Alert.alert(
+                                        //   "Hoàn tất",
+                                        //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
+                                        // );
+                                        setCacheOrderList(
+                                          cacheOrderList.map((item) =>
+                                            item.id != order.id
+                                              ? item
+                                              : {
+                                                  ...order,
+                                                  status: OrderStatus.Preparing,
+                                                }
+                                          )
+                                        );
+                                      },
+                                      (warningInfo: WarningMessageValue) => {
+                                        Alert.alert(
+                                          "Xác nhận",
+                                          warningInfo.message,
+                                          [
+                                            {
+                                              text: "Đồng ý",
+                                              onPress: async () => {
+                                                orderAPIService.prepare(
+                                                  order.id,
+                                                  () => {
+                                                    // const toast = Toast.show({
+                                                    //   type: "info",
+                                                    //   text1: "Hoàn tất",
+                                                    //   text2: `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
+                                                    // });
+                                                    simpleToast.show(
+                                                      `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
+                                                      {
+                                                        type: "info",
+                                                        duration: 1500,
+                                                      }
+                                                    );
+                                                    // Alert.alert(
+                                                    //   "Hoàn tất",
+                                                    //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
+                                                    // );
+                                                    setCacheOrderList(
+                                                      cacheOrderList.map(
+                                                        (item) =>
+                                                          item.id != order.id
+                                                            ? item
+                                                            : {
+                                                                ...order,
+                                                                status:
+                                                                  OrderStatus.Preparing,
+                                                              }
+                                                      )
+                                                    );
+                                                  },
+                                                  (
+                                                    warningInfo: WarningMessageValue
+                                                  ) => {},
+                                                  (error: any) => {
+                                                    Alert.alert(
+                                                      "Oops!",
+                                                      error?.response?.data
+                                                        ?.error?.message ||
+                                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                                    );
+                                                  },
+                                                  true
+                                                );
+                                              },
                                             },
-                                          },
-                                          {
-                                            text: "Hủy",
-                                          },
-                                        ]
-                                      );
-                                    },
-                                    (error: any) => {
-                                      Alert.alert(
-                                        "Oops!",
-                                        error?.response?.data?.error?.message ||
-                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                      );
-                                    },
-                                    false
-                                  );
-                                },
-                              },
-                              {
-                                text: "Hủy",
-                              },
-                            ]
-                          );
-                        }}
-                        className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                      >
-                        <Text className="text-[13.5px]">Chuẩn bị</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => {
-                          Alert.alert(
-                            "Xác nhận",
-                            `Bạn chắc chắn hủy đơn hàng MS-${order.id} không?`,
-                            [
-                              {
-                                text: "Không",
-                                // style: "cancel",
-                              },
-                              {
-                                text: "Xác nhận hủy",
-                                onPress: async () => {
-                                  orderAPIService.cancel(
-                                    order.id,
-                                    () => {
-                                      // Alert.alert(
-                                      //   "Hoàn tất",
-                                      //   `Đã hủy đơn hàng MS-${order.id}!`
-                                      // );
-                                      // const toast = Toast.show({
-                                      //   type: "warning",
-                                      //   text1: "Hoàn tất",
-                                      //   text2: `Đã hủy đơn hàng MS-${order.id}!`,
-                                      // });
-                                      simpleToast.show(
-                                        `Đã hủy đơn hàng MS-${order.id}!`,
-                                        {
-                                          type: "info",
-                                          duration: 1500,
-                                        }
-                                      );
-                                      setCacheOrderList(
-                                        cacheOrderList.map((item) =>
-                                          item.id != order.id
-                                            ? item
-                                            : {
-                                                ...order,
-                                                status: OrderStatus.Cancelled,
-                                              }
-                                        )
-                                      );
-                                    },
-                                    (warningInfo: WarningMessageValue) => {
-                                      Alert.alert(
-                                        "Xác nhận",
-                                        warningInfo?.message ||
-                                          `Đơn hàng MS-${order.id} đã gần đến giờ đi giao (<=1h), bạn sẽ bị đánh cảnh cáo nếu tiếp tục hủy?`,
-                                        [
-                                          {
-                                            text: "Không",
-                                            // style: "cancel",
-                                          },
-                                          {
-                                            text: "Xác nhận hủy",
-                                            onPress: async () => {
-                                              orderAPIService.cancel(
-                                                order.id,
-                                                () => {
-                                                  // const toast = Toast.show({
-                                                  //   type: "warning",
-                                                  //   text1: "Hoàn tất",
-                                                  //   text2: `Đã hủy đơn hàng MS-${order.id}!`,
-                                                  // });
-                                                  simpleToast.show(
-                                                    `Đã hủy đơn hàng MS-${order.id}!`,
-                                                    {
-                                                      type: "info",
-                                                      duration: 1500,
-                                                    }
-                                                  );
-                                                  // Alert.alert(
-                                                  //   "Hoàn tất",
-                                                  //   `Đã hủy đơn hàng MS-${order.id}!`
-                                                  // );
-                                                  setCacheOrderList(
-                                                    cacheOrderList.map((item) =>
-                                                      item.id != order.id
-                                                        ? item
-                                                        : {
-                                                            ...order,
-                                                            status:
-                                                              OrderStatus.Cancelled,
-                                                          }
-                                                    )
-                                                  );
-                                                },
-                                                (
-                                                  warningInfo: WarningMessageValue
-                                                ) => {},
-                                                (error: any) => {
-                                                  Alert.alert(
-                                                    "Oops!",
-                                                    error?.response?.data?.error
-                                                      ?.message ||
-                                                      "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                                  );
-                                                },
-                                                true
-                                              );
+                                            {
+                                              text: "Hủy",
                                             },
-                                          },
-                                        ]
-                                      );
-                                    },
-                                    (error: any) => {
-                                      Alert.alert(
-                                        "Oops!",
-                                        error?.response?.data?.error?.message ||
-                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                      );
-                                    },
-                                    false
-                                  );
+                                          ]
+                                        );
+                                      },
+                                      (error: any) => {
+                                        Alert.alert(
+                                          "Oops!",
+                                          error?.response?.data?.error
+                                            ?.message ||
+                                            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                        );
+                                      },
+                                      false
+                                    );
+                                  },
                                 },
-                              },
-                            ]
-                          );
-                        }}
-                        className="bg-white border-[#d6d3d1] bg-[#d6d3d1] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                      >
-                        <Text className="text-[13.2px]">Hủy</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                  {order.status == OrderStatus.Preparing && (
-                    <View className="flex-row items-center gap-x-1">
-                      <TouchableOpacity
-                        onPress={() => {
-                          setOrderDetailId(order.id);
-                          globalOrderDetailState.setId(order.id);
-                          setOrder(order);
-                          setIsOpenOrderAssign(true);
-                        }}
-                        // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                        className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                      >
-                        <Text className="text-[13.5px]">
-                          {order.shopDeliveryStaff
-                            ? "Thay đổi người giao"
-                            : "Chọn người giao hàng"}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
+                                {
+                                  text: "Hủy",
+                                },
+                              ]
+                            );
+                          }}
+                          className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                        >
+                          <Text className="text-[13.5px]">Chuẩn bị</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => {
+                            const inTime = utilService.getInFrameTime(
+                              order.startTime,
+                              order.endTime,
+                              order.intendedReceiveDate
+                            );
+                            if (inTime > 0) {
+                              orderFetchRefetch();
+                              Alert.alert(
+                                "Oops!",
+                                "Đã quá thời gian để thực hiện thao tác này!"
+                              );
+                              return false;
+                            }
+                            Alert.alert(
+                              "Xác nhận",
+                              `Bạn chắc chắn hủy đơn hàng MS-${order.id} không?`,
+                              [
+                                {
+                                  text: "Không",
+                                  // style: "cancel",
+                                },
+                                {
+                                  text: "Xác nhận hủy",
+                                  onPress: async () => {
+                                    orderAPIService.cancel(
+                                      order.id,
+                                      () => {
+                                        // Alert.alert(
+                                        //   "Hoàn tất",
+                                        //   `Đã hủy đơn hàng MS-${order.id}!`
+                                        // );
+                                        // const toast = Toast.show({
+                                        //   type: "warning",
+                                        //   text1: "Hoàn tất",
+                                        //   text2: `Đã hủy đơn hàng MS-${order.id}!`,
+                                        // });
+                                        simpleToast.show(
+                                          `Đã hủy đơn hàng MS-${order.id}!`,
+                                          {
+                                            type: "info",
+                                            duration: 1500,
+                                          }
+                                        );
+                                        setCacheOrderList(
+                                          cacheOrderList.map((item) =>
+                                            item.id != order.id
+                                              ? item
+                                              : {
+                                                  ...order,
+                                                  status: OrderStatus.Cancelled,
+                                                }
+                                          )
+                                        );
+                                      },
+                                      (warningInfo: WarningMessageValue) => {
+                                        Alert.alert(
+                                          "Xác nhận",
+                                          warningInfo?.message ||
+                                            `Đơn hàng MS-${order.id} đã gần đến giờ đi giao (<=1h), bạn sẽ bị đánh cảnh cáo nếu tiếp tục hủy?`,
+                                          [
+                                            {
+                                              text: "Không",
+                                              // style: "cancel",
+                                            },
+                                            {
+                                              text: "Xác nhận hủy",
+                                              onPress: async () => {
+                                                orderAPIService.cancel(
+                                                  order.id,
+                                                  () => {
+                                                    // const toast = Toast.show({
+                                                    //   type: "warning",
+                                                    //   text1: "Hoàn tất",
+                                                    //   text2: `Đã hủy đơn hàng MS-${order.id}!`,
+                                                    // });
+                                                    simpleToast.show(
+                                                      `Đã hủy đơn hàng MS-${order.id}!`,
+                                                      {
+                                                        type: "info",
+                                                        duration: 1500,
+                                                      }
+                                                    );
+                                                    // Alert.alert(
+                                                    //   "Hoàn tất",
+                                                    //   `Đã hủy đơn hàng MS-${order.id}!`
+                                                    // );
+                                                    setCacheOrderList(
+                                                      cacheOrderList.map(
+                                                        (item) =>
+                                                          item.id != order.id
+                                                            ? item
+                                                            : {
+                                                                ...order,
+                                                                status:
+                                                                  OrderStatus.Cancelled,
+                                                              }
+                                                      )
+                                                    );
+                                                  },
+                                                  (
+                                                    warningInfo: WarningMessageValue
+                                                  ) => {},
+                                                  (error: any) => {
+                                                    Alert.alert(
+                                                      "Oops!",
+                                                      error?.response?.data
+                                                        ?.error?.message ||
+                                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                                    );
+                                                  },
+                                                  true
+                                                );
+                                              },
+                                            },
+                                          ]
+                                        );
+                                      },
+                                      (error: any) => {
+                                        Alert.alert(
+                                          "Oops!",
+                                          error?.response?.data?.error
+                                            ?.message ||
+                                            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                        );
+                                      },
+                                      false
+                                    );
+                                  },
+                                },
+                              ]
+                            );
+                          }}
+                          className="bg-white border-[#d6d3d1] bg-[#d6d3d1] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                        >
+                          <Text className="text-[13.2px]">Hủy</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  {order.status == OrderStatus.Preparing &&
+                    utilService.getInFrameTime(
+                      order.startTime,
+                      order.endTime,
+                      order.intendedReceiveDate
+                    ) <= 0 && (
+                      <View className="flex-row items-center gap-x-1">
+                        <TouchableOpacity
+                          onPress={() => {
+                            const inTime = utilService.getInFrameTime(
+                              order.startTime,
+                              order.endTime,
+                              order.intendedReceiveDate
+                            );
+                            if (inTime > 0) {
+                              orderFetchRefetch();
+                              Alert.alert(
+                                "Oops!",
+                                "Đã quá thời gian để thực hiện thao tác này!"
+                              );
+                              return false;
+                            }
+                            setOrderDetailId(order.id);
+                            globalOrderDetailState.setId(order.id);
+                            setOrder(order);
+                            setIsOpenOrderAssign(true);
+                          }}
+                          // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                          className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                        >
+                          <Text className="text-[13.5px]">
+                            {order.shopDeliveryStaff
+                              ? "Thay đổi người giao"
+                              : "Chọn người giao hàng"}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
                   {/* <TouchableOpacity
                     onPress={() => {}}
                     className="bg-white border-[#227B94] border-[1px] rounded-md items-center justify-center px-[6px] py-[0px]"
@@ -1015,7 +1096,7 @@ const Order = () => {
         )}
       </BottomSheet> */}
       <OrderDetailBottomSheet />
-      <Toast position="bottom" />
+      {/* <Toast position="bottom" /> */}
     </View>
   );
 };

@@ -1,5 +1,6 @@
 import React from "react";
 import { RefreshControlProps, SafeAreaView, ScrollView } from "react-native";
+import Toast from "react-native-toast-message";
 
 interface PageLayoutWrapperProps {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ const PageLayoutWrapper: React.FC<PageLayoutWrapperProps> = ({
 }) => {
   return (
     <SafeAreaView className="flex-1 bg-white relative">
+      <Toast />
       {isScroll ? (
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
