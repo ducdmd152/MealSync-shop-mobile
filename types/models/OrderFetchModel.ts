@@ -75,7 +75,7 @@ export const orderStatusDescMapping = [
   {
     value: OrderStatus.Cancelled,
     description: "Đơn hủy",
-    bgColor: "#f5f5f5",
+    bgColor: "#e2e8f0",
   },
   {
     value: OrderStatus.Preparing,
