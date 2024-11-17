@@ -638,7 +638,7 @@ const OrderDetail = ({
                                       `Đã hủy đơn hàng MS-${order.id}!`
                                     );
                                     const toast = Toast.show({
-                                      type: "warning",
+                                      type: "info",
                                       text1: `MS-${order.id}`,
                                       text2: `Đã hủy đơn hàng MS-${order.id}!`,
                                     });
@@ -672,7 +672,7 @@ const OrderDetail = ({
                                               order.id,
                                               () => {
                                                 const toast = Toast.show({
-                                                  type: "warning",
+                                                  type: "info",
                                                   text1: `MS-${order.id}`,
                                                   text2: `Đã hủy đơn hàng MS-${order.id}!`,
                                                 });
@@ -813,7 +813,7 @@ const OrderDetail = ({
         <OrderDeliveryAssign
           onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
             Toast.show({
-              type: "warning",
+              type: "info",
               text1: `MS-${order.id}`,
               text2: `Đơn hàng MS-${order.id} sẽ được giao bởi ${
                 shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName

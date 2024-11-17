@@ -567,7 +567,7 @@ const Order = () => {
                                       order.id,
                                       () => {
                                         // const toast = Toast.show({
-                                        //   type: "warning",
+                                        //   type: "info",
                                         //   text1: "Hoàn tất",
                                         //   text2: `Đã từ chối đơn hàng MS-${order.id}!`,
                                         // });
@@ -790,7 +790,7 @@ const Order = () => {
                                         //   `Đã hủy đơn hàng MS-${order.id}!`
                                         // );
                                         // const toast = Toast.show({
-                                        //   type: "warning",
+                                        //   type: "info",
                                         //   text1: "Hoàn tất",
                                         //   text2: `Đã hủy đơn hàng MS-${order.id}!`,
                                         // });
@@ -829,7 +829,7 @@ const Order = () => {
                                                   order.id,
                                                   () => {
                                                     // const toast = Toast.show({
-                                                    //   type: "warning",
+                                                    //   type: "info",
                                                     //   text1: "Hoàn tất",
                                                     //   text2: `Đã hủy đơn hàng MS-${order.id}!`,
                                                     // });
