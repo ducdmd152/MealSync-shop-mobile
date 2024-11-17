@@ -481,6 +481,7 @@ const OrderDetail = ({
                 ) <= 0 && (
                   <View className="flex-row items-center gap-x-1">
                     <TouchableOpacity
+                      className="flex-1 bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
                       onPress={() => {
                         const inTime = utilService.getInFrameTime(
                           order.startTime,
@@ -598,9 +599,10 @@ const OrderDetail = ({
                           ]
                         );
                       }}
-                      className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                     >
-                      <Text className="text-[13.5px]">Chuẩn bị</Text>
+                      <Text className="text-[15px] font-semibold">
+                        Chuẩn bị
+                      </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => {
@@ -723,9 +725,9 @@ const OrderDetail = ({
                           ]
                         );
                       }}
-                      className="bg-white border-[#d6d3d1] bg-[#d6d3d1] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      className="flex-1 bg-white border-[#e2e8f0] bg-[#e2e8f0] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
                     >
-                      <Text className="text-[13.2px]">Hủy</Text>
+                      <Text className="text-[15px] font-medium">Hủy</Text>
                     </TouchableOpacity>
                   </View>
                 )}
