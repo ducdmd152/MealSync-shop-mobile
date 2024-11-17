@@ -420,6 +420,7 @@ const CompleteDeliveryConfirmModal = ({
             /> */}
             <OrderDetail
               order={order}
+              showActionButtons={false}
               setOrder={setOrder}
               // containerStyleClasses="flex-1"
               orderId={globalCompleteDeliveryConfirm.id}
@@ -440,27 +441,36 @@ const CompleteDeliveryConfirmModal = ({
               <Text className="text-[14px] text-gray-700 font-semibold">
                 {order.customer?.fullName}
               </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  Alert.alert("Số điện thoại", "", [
-                    {
-                      text: "Gọi " + order.customer?.phoneNumber,
-                      onPress: () =>
-                        Linking.openURL(`tel:${order.customer?.phoneNumber}`),
-                    },
-                    {
-                      text: "Sao chép",
-                      onPress: () =>
-                        Clipboard.setString(order.customer?.phoneNumber || ""),
-                    },
-                    { text: "Hủy", style: "cancel" },
-                  ]);
-                }}
-              >
-                <Text className="text-[14px] text-gray-700 font-semibold text-[#0e7490]">
-                  {order.customer?.phoneNumber}
+              {order.status >= OrderStatus.Preparing &&
+              order.status <= OrderStatus.Completed ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert("Số điện thoại", "", [
+                      {
+                        text: "Gọi " + order.customer?.phoneNumber,
+                        onPress: () =>
+                          Linking.openURL(`tel:${order.customer?.phoneNumber}`),
+                      },
+                      {
+                        text: "Sao chép",
+                        onPress: () =>
+                          Clipboard.setString(
+                            order.customer?.phoneNumber || ""
+                          ),
+                      },
+                      { text: "Hủy", style: "cancel" },
+                    ]);
+                  }}
+                >
+                  <Text className="text-[14px] text-gray-700 font-semibold text-[#0e7490]">
+                    {order.customer?.phoneNumber}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <Text className="text-[14px] text-gray-700 font-semibold">
+                  {utilService.maskPhoneNumber(order.customer.phoneNumber)}
                 </Text>
-              </TouchableOpacity>
+              )}
               <Text className="text-[14px] text-gray-700 font-semibold italic">
                 {order?.buildingName}
               </Text>

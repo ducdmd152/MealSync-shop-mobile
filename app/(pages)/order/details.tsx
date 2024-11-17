@@ -11,6 +11,8 @@ const OrderDetails = () => {
     <PageLayoutWrapper>
       <View className="flex-1 mt-2 p-4">
         <OrderDetail
+          order={globalOrderDetailPageState.order}
+          setOrder={globalOrderDetailPageState.setOrder}
           orderId={globalOrderDetailPageState.order.id}
           onNotFound={() => {
             Alert.alert(

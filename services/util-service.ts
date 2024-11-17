@@ -30,6 +30,18 @@ const tens = [
   "chín mươi",
 ];
 const scales = ["", "nghìn", "triệu", "tỷ"];
+function maskPhoneNumber(phoneNumber: string): string {
+  if (phoneNumber.length <= 6) {
+    return phoneNumber;
+  }
+
+  const start = phoneNumber.slice(0, 3);
+  const end = phoneNumber.slice(-3);
+  const masked = "*".repeat(phoneNumber.length - 6);
+
+  return `${start}${masked}${end}`;
+}
+
 const getInFrameTime = (
   startTime: number,
   endTime: number,
@@ -56,6 +68,7 @@ const getInFrameTime = (
   return 0;
 };
 const utilService = {
+  maskPhoneNumber,
   getInFrameTime,
   formatTime: (time: number): string => {
     const hours = Math.floor(time / 100)

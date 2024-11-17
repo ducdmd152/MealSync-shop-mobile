@@ -30,6 +30,7 @@ import { useToast } from "react-native-toast-notifications";
 import Order from "@/app/(tabs)/order";
 import utilService from "@/services/util-service";
 import Toast from "react-native-toast-message";
+import dayjs from "dayjs";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -48,10 +49,7 @@ function maskPhoneNumber(phoneNumber: string): string {
 
   return `${start}${masked}${end}`;
 }
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString.replace(/\//g, "-"));
-  return date.toLocaleDateString("en-GB");
-};
+
 const formatPrice = (value: number) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "decimal",
@@ -167,7 +165,7 @@ const OrderDetail = ({
                   {order.customer.fullName}
                 </Text>
                 {order.status >= OrderStatus.Preparing &&
-                order.status <= OrderStatus.Delivering ? (
+                order.status <= OrderStatus.Completed ? (
                   <TouchableOpacity
                     onPress={() => {
                       Alert.alert("Số điện thoại", "", [
@@ -195,7 +193,7 @@ const OrderDetail = ({
                   </TouchableOpacity>
                 ) : (
                   <Text className="text-[14px] text-gray-700 font-semibold">
-                    {maskPhoneNumber(order.customer.phoneNumber)}
+                    {utilService.maskPhoneNumber(order.customer.phoneNumber)}
                   </Text>
                 )}
 
@@ -209,7 +207,7 @@ const OrderDetail = ({
                   Khung nhận hàng:
                 </Text>
                 <Text className="text-[14px] text-gray-700 font-semibold">
-                  {formatDate(order.intendedReceiveDate) +
+                  {utilService.formatDateDdMmYyyy(order.intendedReceiveDate) +
                     " | " +
                     formatTime(order.startTime) +
                     " - " +
