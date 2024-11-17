@@ -339,6 +339,9 @@ const OrderDetail = ({
             <View className="mt-2 bg-white p-2">
               <Text>Khu vực trạng thái báo cáo</Text>
             </View>
+            <View className="mt-2 bg-white p-2">
+              <Text>Khu vực rating & feedback</Text>
+            </View>
           </ScrollView>
           {showActionButtons && (
             <View className="items-center justify-center bg-white pt-2">

@@ -8,7 +8,7 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import Modal from "react-native-modal";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -44,6 +44,7 @@ const ReviewReplyModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const globalReviewReplyState = useGlobalReviewReplyState();
   const [isImageHandling, setImageHandling] = useState(false);
+  const [imageHandleError, setImageHandleError] = useState<any>(false);
   const [request, setRequest] = useState<ReviewReplyRequest>({
     orderId: globalReviewReplyState.id,
     comment: "",
@@ -58,13 +59,17 @@ const ReviewReplyModal = ({
       });
     }, [globalReviewReplyState])
   );
-  const onSubmit = async () => {
-    if (request.comment.length == 0) {
-      Alert.alert("Oops", "Vui lòng điền câu trả lời!");
-      return;
+  useEffect(() => {
+    if (!isImageHandling && isSubmitting) {
+      if (imageHandleError) {
+        setImageHandleError(false);
+        setIsSubmitting(false);
+        return;
+      }
+      subimitReply();
     }
-    setIsSubmitting(true);
-    await utilService.waitForCondition(() => !isImageHandling);
+  }, [isImageHandling]);
+  const subimitReply = async () => {
     try {
       const response = await apiClient.post(`shop-onwer/review`, {
         ...request,
@@ -89,6 +94,20 @@ const ReviewReplyModal = ({
     } finally {
       setIsSubmitting(false);
     }
+  };
+  const onSubmit = async () => {
+    if (request.comment.length == 0) {
+      Alert.alert("Oops", "Vui lòng điền câu trả lời!");
+      return;
+    }
+    setIsSubmitting(true);
+    if (isImageHandling) return;
+    if (imageHandleError) {
+      setImageHandleError(false);
+      setIsSubmitting(false);
+      return;
+    }
+    subimitReply();
   };
   return (
     <Modal
@@ -130,6 +149,8 @@ const ReviewReplyModal = ({
                 />
               </View>
               <PreviewMultiImagesUpload
+                imageHandleError={imageHandleError}
+                setImageHandleError={setImageHandleError}
                 isImageHandling={isImageHandling}
                 setIsImageHandling={setImageHandling}
                 maxNumberOfPics={3}

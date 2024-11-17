@@ -34,6 +34,8 @@ interface PreviewImageUploadProps extends ViewProps {
   imageWidth?: number;
   maxNumberOfPics?: number;
   isHideAddWhenMax?: boolean;
+  imageHandleError: any;
+  setImageHandleError: any;
 }
 const PreviewMultiImagesUpload = ({
   uris,
@@ -48,6 +50,8 @@ const PreviewMultiImagesUpload = ({
   imageWidth = 100,
   maxNumberOfPics = 5,
   isHideAddWhenMax = true,
+  imageHandleError,
+  setImageHandleError,
   ...props
 }: PreviewImageUploadProps) => {
   const globalImageViewState = useGlobalImageViewingState();
@@ -121,6 +125,7 @@ const PreviewMultiImagesUpload = ({
       // console.log(error?.response?.data);
       Alert.alert("Oops!", "Xử lí hình ảnh lỗi, vui lòng thử lại!");
       setUris(beforeAnyUpdate);
+      setImageHandleError(true);
     } finally {
       setIsImageHandling(false);
     }

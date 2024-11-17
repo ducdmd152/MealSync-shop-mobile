@@ -56,6 +56,7 @@ interface FetchReviewModel {
   };
   reviews: FetchResponseValue<ReviewModel>;
 }
+const percentOf = (value: number) => Math.round(value * 10) / 10;
 const Review = () => {
   // (async () => {
   //   console.log(await sessionService.getAuthToken());
@@ -90,7 +91,18 @@ const Review = () => {
       reviewFetch.refetch();
     }, [])
   );
-  // console.log(reviewFetch.data?.value.reviewOverview.totalReview);
+  if (reviewFetch.data?.value)
+    console.log(
+      "percentOf: ",
+      percentOf(
+        reviewFetch.data?.value.reviewOverview.totalFourStar /
+          reviewFetch.data?.value.reviewOverview.totalReview
+      ),
+      percentOf(
+        reviewFetch.data?.value.reviewOverview.totalFiveStar /
+          reviewFetch.data?.value.reviewOverview.totalReview
+      )
+    );
   return (
     <PageLayoutWrapper
       refreshControl={
@@ -128,8 +140,10 @@ const Review = () => {
                 <ProgressBar
                   progress={
                     reviewFetch.data?.value.reviewOverview.totalReview
-                      ? reviewFetch.data?.value.reviewOverview.totalFiveStar /
-                        reviewFetch.data?.value.reviewOverview.totalReview
+                      ? percentOf(
+                          reviewFetch.data?.value.reviewOverview.totalFiveStar /
+                            reviewFetch.data?.value.reviewOverview.totalReview
+                        )
                       : 0
                   }
                   color={"#fde047"}
@@ -146,8 +160,10 @@ const Review = () => {
                 <ProgressBar
                   progress={
                     reviewFetch.data?.value.reviewOverview.totalReview
-                      ? reviewFetch.data?.value.reviewOverview.totalFourStar /
-                        reviewFetch.data?.value.reviewOverview.totalReview
+                      ? percentOf(
+                          reviewFetch.data?.value.reviewOverview.totalFourStar /
+                            reviewFetch.data?.value.reviewOverview.totalReview
+                        )
                       : 0
                   }
                   color={"#fde047"}
@@ -164,8 +180,11 @@ const Review = () => {
                 <ProgressBar
                   progress={
                     reviewFetch.data?.value.reviewOverview.totalReview
-                      ? reviewFetch.data?.value.reviewOverview.totalThreeStar /
-                        reviewFetch.data?.value.reviewOverview.totalReview
+                      ? percentOf(
+                          reviewFetch.data?.value.reviewOverview
+                            .totalThreeStar /
+                            reviewFetch.data?.value.reviewOverview.totalReview
+                        )
                       : 0
                   }
                   color={"#fde047"}
@@ -182,8 +201,10 @@ const Review = () => {
                 <ProgressBar
                   progress={
                     reviewFetch.data?.value.reviewOverview.totalReview
-                      ? reviewFetch.data?.value.reviewOverview.totalTwoStar /
-                        reviewFetch.data?.value.reviewOverview.totalReview
+                      ? percentOf(
+                          reviewFetch.data?.value.reviewOverview.totalTwoStar /
+                            reviewFetch.data?.value.reviewOverview.totalReview
+                        )
                       : 0
                   }
                   color={"#fde047"}
@@ -200,8 +221,10 @@ const Review = () => {
                 <ProgressBar
                   progress={
                     reviewFetch.data?.value.reviewOverview.totalReview
-                      ? reviewFetch.data?.value.reviewOverview.totalOneStar /
-                        reviewFetch.data?.value.reviewOverview.totalReview
+                      ? percentOf(
+                          reviewFetch.data?.value.reviewOverview.totalOneStar /
+                            reviewFetch.data?.value.reviewOverview.totalReview
+                        )
                       : 0
                   }
                   color={"#fde047"}

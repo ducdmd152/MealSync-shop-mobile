@@ -1100,7 +1100,7 @@ const Order = () => {
           </View>
         )}
       </BottomSheet> */}
-      <OrderDetailBottomSheet />
+      {/* <OrderDetailBottomSheet /> */}
       {/* <Toast position="bottom" /> */}
     </View>
   );
