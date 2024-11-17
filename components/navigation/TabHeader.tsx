@@ -48,7 +48,15 @@ const TabHeader = () => {
           onPress={() => router.push("/chatting")}
           className="flex-row justify-center items-center"
         >
-          <Ionicons name="chatbubbles-outline" size={32} color="#DF4830" />
+          <Ionicons
+            name={
+              globalHeaderPage.isChattingFocusing
+                ? "chatbubbles"
+                : "chatbubbles-outline"
+            }
+            size={32}
+            color="#DF4830"
+          />
         </TouchableOpacity>
       </View>
     </View>

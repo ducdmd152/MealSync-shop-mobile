@@ -8,10 +8,22 @@ import useCounterState from "@/hooks/states/useCounterState";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
+import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
+import { useFocusEffect } from "expo-router";
 
 let times = 0;
 
 const Chatting = () => {
+  const globalHeaderPage = useGlobalHeaderPage();
+  useFocusEffect(
+    React.useCallback(() => {
+      globalHeaderPage.setIsChattingFocusing(true);
+      return () => {
+        globalHeaderPage.setIsChattingFocusing(false);
+      };
+    }, [])
+  );
+
   console.log("rendering...." + ++times);
 
   const counter = useCounterState((state) => state.counter);
