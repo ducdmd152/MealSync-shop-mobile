@@ -1,4 +1,12 @@
-import { View, Text, Dimensions, ScrollView, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Dimensions,
+  ScrollView,
+  Alert,
+  Linking,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import apiClient from "@/services/api-services/api-client";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
@@ -13,6 +21,7 @@ import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import orderAPIService from "@/services/api-services/order-api-service";
 import { RefreshControl } from "react-native-gesture-handler";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
+import * as Clipboard from "expo-clipboard";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -46,11 +55,13 @@ interface Props {
   orderId: number;
   onNotFound?: () => void;
   containerStyleClasses?: string;
+  hasHeaderInfo?: boolean;
 }
 const OrderDetail = ({
   orderId,
   onNotFound = () => {},
   containerStyleClasses = "",
+  hasHeaderInfo = false,
 }: Props) => {
   const globalOrderDetailState = useGlobalOrderDetailState();
   const [order, setOrder] = useState<OrderDetailModel>({} as OrderDetailModel);
@@ -77,47 +88,49 @@ const OrderDetail = ({
 
   return (
     <View
-      className={`items-center justify-center w-full bg-[#f4f4f5] pt-2 ${containerStyleClasses}`}
+      className={`items-center justify-center w-full bg-[#f4f4f5] ${containerStyleClasses}`}
     >
       {isLoading ? (
         <ActivityIndicator color="#FCF450" />
       ) : (
         <View className="w-full h-full">
-          <View className="px-2 gap-y-3 pb-1">
-            <View className="flex-row items-center justify-between">
-              <Text className="text-[12.5px] text-gray-800 font-semibold mt-1">
-                Đơn hàng MS-{order.id}
-              </Text>
-              <View className="flex-row gap-x-1 items-center">
-                <Text className="ml-2  font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[10px] rounded">
-                  {formatTime(order.startTime) +
-                    " - " +
-                    formatTime(order.endTime)}
+          {hasHeaderInfo && (
+            <View className="pt-4 px-2 gap-y-3 pb-1 mb-2">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-[12.5px] text-gray-800 font-semibold mt-1">
+                  Đơn hàng MS-{order.id}
                 </Text>
-                <Text
-                  className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded ${
-                    getOrderStatusDescription(order.status)?.bgColor
-                  }`}
-                  style={{
-                    backgroundColor: getOrderStatusDescription(order.status)
-                      ?.bgColor,
-                  }}
-                >
-                  {getOrderStatusDescription(order.status)?.description}
+                <View className="flex-row gap-x-1 items-center">
+                  <Text className="ml-2 text-[11px]  font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 rounded">
+                    {formatTime(order.startTime) +
+                      " - " +
+                      formatTime(order.endTime)}
+                  </Text>
+                  <Text
+                    className={`text-[11px] font-medium me-2 px-2.5 py-[2px] rounded ${
+                      getOrderStatusDescription(order.status)?.bgColor
+                    }`}
+                    style={{
+                      backgroundColor: getOrderStatusDescription(order.status)
+                        ?.bgColor,
+                    }}
+                  >
+                    {getOrderStatusDescription(order.status)?.description}
+                  </Text>
+                </View>
+              </View>
+              <View>
+                <Text className="text-[10px] text-gray-500 italic text-right">
+                  Được đặt vào{" "}
+                  {new Date(order.orderDate).toLocaleTimeString("vi-VN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  {new Date(order.orderDate).toLocaleDateString()}
                 </Text>
               </View>
             </View>
-            <View>
-              <Text className="text-[10px] text-gray-500 italic text-right">
-                Được đặt vào{" "}
-                {new Date(order.orderDate).toLocaleTimeString("vi-VN", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}{" "}
-                {new Date(order.orderDate).toLocaleDateString()}
-              </Text>
-            </View>
-          </View>
+          )}
           <ScrollView
             className="flex-1"
             refreshControl={
@@ -130,7 +143,7 @@ const OrderDetail = ({
               />
             }
           >
-            <View className="mt-2 bg-white p-2">
+            <View className="bg-white p-2">
               <Text className="text-[15px] text-gray-600 font-semibold">
                 Thông tin nhận hàng
               </Text>
@@ -139,9 +152,39 @@ const OrderDetail = ({
                 <Text className="text-[14px] text-gray-700 font-semibold">
                   {order.customer.fullName}
                 </Text>
-                <Text className="text-[14px] text-gray-700 font-semibold">
-                  {maskPhoneNumber(order.customer.phoneNumber)}
-                </Text>
+                {order.status >= OrderStatus.Preparing &&
+                order.status <= OrderStatus.Delivering ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      Alert.alert("Số điện thoại", "", [
+                        {
+                          text: "Gọi " + order.customer?.phoneNumber,
+                          onPress: () =>
+                            Linking.openURL(
+                              `tel:${order.customer?.phoneNumber}`
+                            ),
+                        },
+                        {
+                          text: "Sao chép",
+                          onPress: () =>
+                            Clipboard.setString(
+                              order.customer?.phoneNumber || ""
+                            ),
+                        },
+                        { text: "Hủy", style: "cancel" },
+                      ]);
+                    }}
+                  >
+                    <Text className="text-[14px] text-gray-700 font-semibold text-[#0e7490]">
+                      {order.customer?.phoneNumber}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <Text className="text-[14px] text-gray-700 font-semibold">
+                    {maskPhoneNumber(order.customer.phoneNumber)}
+                  </Text>
+                )}
+
                 <Text className="text-[14px] text-gray-700 font-semibold italic">
                   {order.buildingName}
                 </Text>

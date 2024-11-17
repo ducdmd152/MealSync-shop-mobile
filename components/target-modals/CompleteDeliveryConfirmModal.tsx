@@ -440,7 +440,7 @@ const CompleteDeliveryConfirmModal = ({
                     {
                       text: "Sao chép",
                       onPress: () =>
-                        Clipboard.setString(order.customer?.phoneNumber),
+                        Clipboard.setString(order.customer?.phoneNumber || ""),
                     },
                     { text: "Hủy", style: "cancel" },
                   ]);

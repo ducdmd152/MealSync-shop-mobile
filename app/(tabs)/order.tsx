@@ -375,8 +375,12 @@ const Order = () => {
                 onPress={() => {
                   // setOrderDetailId(order.id);
                   globalOrderDetailState.setId(order.id);
+                  globalOrderDetailState.setModel(order);
                   globalOrderDetailState.setIsActionsShowing(true);
                   globalOrderDetailState.setIsDetailBottomSheetVisible(true);
+                  globalOrderDetailState.setOnAfterCompleted(() => {
+                    orderFetchRefetch();
+                  });
                   setOrder(order);
                 }}
                 className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"

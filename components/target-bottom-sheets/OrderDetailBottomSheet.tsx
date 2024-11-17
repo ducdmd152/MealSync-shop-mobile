@@ -1,5 +1,5 @@
 import { View, Text, Dimensions, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 import { BottomSheet } from "@rneui/base";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -10,6 +10,10 @@ const OrderDetailBottomSheet = () => {
   const globalOrderDetailState = useGlobalOrderDetailState();
   const [detailBottomSheetDisplay, setDetailBottomSheetDisplay] =
     useState(true);
+  useEffect(() => {
+    // if (!globalOrderDetailState.isDetailBottomSheetVisible)
+    //   globalOrderDetailState.onAfterCompleted();
+  }, [globalOrderDetailState.isDetailBottomSheetVisible]);
   return (
     <BottomSheet
       modalProps={{}}
@@ -31,6 +35,7 @@ const OrderDetailBottomSheet = () => {
           </TouchableOpacity>
           <View className="flex-1 mt-2">
             <OrderDetail
+              hasHeaderInfo={true}
               orderId={globalOrderDetailState.id}
               onNotFound={() => {
                 setDetailBottomSheetDisplay(false);
