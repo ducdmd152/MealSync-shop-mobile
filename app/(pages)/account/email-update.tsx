@@ -54,7 +54,7 @@ const EmailUpdate = () => {
     setIsSubmitting(true);
     apiClient
       .put(
-        "shop-owner/update/email/send-verify",
+        "shop-owner-staff/update/email/send-verify",
         isVerifyOldEmail
           ? {
               isVerifyOldEmail,
@@ -81,7 +81,7 @@ const EmailUpdate = () => {
   const checkVerifyCurrentEmail = (code: number = data.currentEmailCode) => {
     setIsSubmitting(true);
     apiClient
-      .put("shop-owner/email/verify", {
+      .put("shop-owner-staff/email/verify", {
         code: code,
       })
       .then(() => {
@@ -110,7 +110,7 @@ const EmailUpdate = () => {
   }) => {
     setIsSubmitting(true);
     apiClient
-      .put("shop-owner/email/update", {
+      .put("shop-owner-staff/email/update", {
         newEmail: data.newEmail.trim().toLowerCase(),
         codeVerifyOldEmail: data.currentEmailCode,
         CodeVerifyNewEmail: data.newEmailCode,

@@ -152,7 +152,7 @@ const PasswordUpdate = () => {
                   }
                   setIsSubmitting(true);
                   apiClient
-                    .put("shop-owner/password/update", {
+                    .put("shop-owner-staff/password/update", {
                       oldPassword: data.currentPassword,
                       newPassword: data.password,
                     })

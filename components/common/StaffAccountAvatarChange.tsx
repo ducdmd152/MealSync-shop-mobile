@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 
 interface AvatarChangeProps {}
 
-const AvatarChange: React.FC<AvatarChangeProps> = () => {
+const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
   const shopProfile = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO,
     async (): Promise<FetchValueResponse<ShopProfileGetModel>> =>
@@ -46,8 +46,10 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
     []
   );
   const [user, setUser] = useState({
-    avatarUrl: shopProfile.data?.value.logoUrl || CONSTANTS.url.avatar,
-    fullname: shopProfile.data?.value.name || "--------------",
+    avatarUrl:
+      shopProfile.data?.value.shopOwnerAvatar ||
+      CONSTANTS.url.userAvatarDefault,
+    fullname: shopProfile.data?.value.shopOwnerName || "--------------",
   });
   const [isChangeMode, setIsChangeMode] = useState(true);
   const [avatar, setAvatar] = useState(CONSTANTS.url.avatar);
@@ -59,8 +61,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
     }
   }, [user]);
   useEffect(() => {
-    // console.log("Fetching....", shopProfile.isFetched, isChangeMode);
-    if (shopProfile.isFetched)
+    if (shopProfile.isFetched && !isChangeMode)
       setUser({
         avatarUrl: shopProfile.data?.value.logoUrl || CONSTANTS.url.avatar,
         fullname: shopProfile.data?.value.name || "------",
@@ -136,7 +137,9 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
         return;
       }
       setAvatar(imageURI);
-      const fileName = `shop-avatar.${getExtensionFromMimeType(blob.type)}`;
+      const fileName = `shop-owner-avatar.${getExtensionFromMimeType(
+        blob.type
+      )}`;
       const formData = new FormData();
       formData.append("file", {
         uri: imageURI,
@@ -144,18 +147,16 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
         type: blob.type,
       } as any);
       // Upload the image
-      const res = await apiClient.put("storage/file/upload", formData, {
-        headers: {
-          Authorization: `Bearer ${await sessionService.getAuthToken()}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      // const res = await apiClient.put("storage/file/upload", formData, {
+      //   headers: {
+      //     Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
 
-      const data = res.data as { value: { url: string } };
+      // const data = res.data as { value: { avatarUrl: string } };
       await apiClient
-        .put(endpoints.SHOP_LOGO_UPDATE, {
-          logoUrl: data.value.url,
-        })
+        .put(endpoints.ACCOUNT_AVATAR_UPDATE, formData)
         .then((res) => {
           // console.log(
           //   "data.value.url: ",
@@ -166,7 +167,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
       Toast.show({
         type: "success",
         text1: "Hoàn tất",
-        text2: "Cập nhật ảnh đại diện cửa hàng thành công!",
+        text2: "Cập nhật ảnh đại diện thành công!",
       });
     } catch (error: any) {
       setAvatar(user.avatarUrl);
@@ -269,4 +270,4 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
   );
 };
 
-export default AvatarChange;
+export default AccountAvatarChange;
