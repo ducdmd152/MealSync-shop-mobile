@@ -11,8 +11,8 @@ const OrderDetailBottomSheet = () => {
   const [detailBottomSheetDisplay, setDetailBottomSheetDisplay] =
     useState(true);
   useEffect(() => {
-    // if (!globalOrderDetailState.isDetailBottomSheetVisible)
-    //   globalOrderDetailState.onAfterCompleted();
+    if (!globalOrderDetailState.isDetailBottomSheetVisible)
+      globalOrderDetailState.onAfterCompleted();
   }, [globalOrderDetailState.isDetailBottomSheetVisible]);
   return (
     <BottomSheet
