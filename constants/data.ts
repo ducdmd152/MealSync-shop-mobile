@@ -41,6 +41,8 @@ const CONSTANTS = {
       "https://www.shutterstock.com/image-vector/pink-blue-gradient-background-abstract-260nw-2204016497.jpg",
     transaction_circle:
       "https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Money-transaction-icon-Graphics-10421047-1-1-580x386.jpg",
+    nofi_icon:
+      "https://img.freepik.com/free-vector/blue-notification-bell-with-one-notification_78370-6899.jpg",
   },
 };
 
