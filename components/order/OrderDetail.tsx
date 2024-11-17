@@ -309,7 +309,7 @@ const OrderDetail = ({
                   order={order}
                   containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
                   textNameStyleClasses={`text-[13.5px]`}
-                  avatarStyleClasses={`h-[17px] w-[17px] mr-1`}
+                  avatarStyleClasses={`h-[17px] w-[17px] mr-[2px]`}
                   assignNode={
                     // order.shopDeliveryStaff != null &&
                     // globalCompleteDeliveryConfirm.isShowActionale &&
