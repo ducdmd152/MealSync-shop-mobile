@@ -22,6 +22,11 @@ import orderAPIService from "@/services/api-services/order-api-service";
 import { RefreshControl } from "react-native-gesture-handler";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 import * as Clipboard from "expo-clipboard";
+import OrderDeliveryInfo from "../common/OrderDeliveryInfo";
+import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
+import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
+import CustomModal from "../common/CustomModal";
+import { useToast } from "react-native-toast-notifications";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -63,7 +68,9 @@ const OrderDetail = ({
   containerStyleClasses = "",
   hasHeaderInfo = false,
 }: Props) => {
+  const toast = useToast();
   const globalOrderDetailState = useGlobalOrderDetailState();
+  const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
   const [order, setOrder] = useState<OrderDetailModel>({} as OrderDetailModel);
   const [isLoading, setIsLoading] = useState(true);
   const [isReloading, setIsReloading] = useState(false);
@@ -293,9 +300,35 @@ const OrderDetail = ({
               </View>
             </View>
 
-            <View className="mt-2 bg-white p-2">
-              <Text>Khu vực trạng thái giao hàng</Text>
-            </View>
+            {order.shopDeliveryStaff && (
+              <View className="mt-2 bg-white p-2">
+                <OrderDeliveryInfo
+                  order={order}
+                  containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
+                  assignNode={
+                    // order.shopDeliveryStaff != null &&
+                    // globalCompleteDeliveryConfirm.isShowActionale &&
+                    // order.status <= OrderStatus.Delivering &&
+                    // authRole == 2 &&
+                    // inFrameTime == 0 ? (
+                    //   <TouchableOpacity
+                    //     onPress={() => {
+                    //       if (!actionInTimeValidation(true)) return;
+                    //       setIsOpenOrderAssign(true);
+                    //     }}
+                    //   >
+                    //     <Text className="p-[0.5] my-[-1] text-[11px] font-medium text-[#0891b2]">
+                    //       Thay đổi
+                    //     </Text>
+                    //   </TouchableOpacity>
+                    // ) : (
+                    <View></View>
+                    // )
+                  }
+                />
+              </View>
+            )}
+
             <View className="mt-2 bg-white p-2">
               <Text>Khu vực trạng thái báo cáo</Text>
             </View>
@@ -601,6 +634,35 @@ const OrderDetail = ({
           )}
         </View>
       )}
+      <CustomModal
+        title={``}
+        hasHeader={false}
+        isOpen={isOpenOrderAssign}
+        setIsOpen={(value) => setIsOpenOrderAssign(value)}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[98%]"
+        onBackdropPress={() => {
+          setIsOpenOrderAssign(false);
+        }}
+      >
+        <OrderDeliveryAssign
+          onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
+            toast.show(
+              `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+                shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
+              }!`,
+              {
+                type: "success",
+                duration: 3000,
+              }
+            );
+            setIsOpenOrderAssign(false);
+            getOrderDetail();
+          }}
+          order={order}
+          isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
+        />
+      </CustomModal>
     </View>
   );
 };
