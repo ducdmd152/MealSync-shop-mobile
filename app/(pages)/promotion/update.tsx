@@ -203,7 +203,7 @@ const PromotionUpdate = () => {
             <View className="mb-2">
               <Text className="font-bold">Tiêu đề *</Text>
               <TextInput
-                className="border border-gray-300 mt-1 p-2 rounded"
+                className="border border-gray-300 text-[16px] mt-1 p-2 rounded text-[16px]"
                 placeholder="Nhập tiêu đề chương trình khuyến mãi"
                 value={promotion.title}
                 onChangeText={(text) => handleChange("title", text)}
@@ -217,7 +217,7 @@ const PromotionUpdate = () => {
             <View className="mb-2">
               <Text className="font-bold">Mô tả</Text>
               <TextInput
-                className="border border-gray-300 mt-1 p-2 rounded h-16"
+                className="border border-gray-300 text-[16px] mt-1 p-2 rounded h-16"
                 placeholder="Nhập mô tả chương trình khuyến mãi"
                 value={promotion.description}
                 onChangeText={(text) => handleChange("description", text)}
@@ -488,7 +488,7 @@ const PromotionUpdate = () => {
             <View className="mb-2">
               <Text className="font-bold mb-1">Loại áp dụng *</Text>
               <TextInput
-                className="border border-gray-300 mt-1 p-2 rounded opacity-70"
+                className="border border-gray-300 text-[16px] mt-1 p-2 rounded opacity-70"
                 placeholder="Nhập tỷ lệ giảm giá"
                 value={
                   promotionApplyTypes.find(
@@ -506,7 +506,7 @@ const PromotionUpdate = () => {
                 <Text className="font-bold">Tỷ lệ giảm giá (%) *</Text>
                 <View className="relative">
                   <TextInput
-                    className="border border-gray-300 mt-1 p-2 rounded"
+                    className="border border-gray-300 text-[16px] mt-1 p-2 rounded"
                     placeholder="Nhập tỷ lệ giảm giá"
                     value={utilService.formatPrice(promotion.amountRate)}
                     onChangeText={(text) => handleChange("amountRate", text)}
@@ -529,7 +529,7 @@ const PromotionUpdate = () => {
                 <Text className="font-bold">Giá trị giảm giá *</Text>
                 <View className="relative">
                   <TextInput
-                    className="border border-gray-300 mt-1 p-2 rounded"
+                    className="border border-gray-300 text-[16px] mt-1 p-2 rounded"
                     placeholder="Nhập giá trị giảm giá"
                     value={utilService.formatPrice(promotion.amountValue)}
                     onChangeText={(text) => handleChange("amountValue", text)}
@@ -553,7 +553,7 @@ const PromotionUpdate = () => {
               <Text className="font-bold">Giá trị đơn hàng tối thiểu *</Text>
               <View className="relative">
                 <TextInput
-                  className="border border-gray-300 mt-1 p-2 rounded"
+                  className="border border-gray-300 text-[16px] mt-1 p-2 rounded"
                   placeholder="Nhập giá trị đơn hàng tối thiểu"
                   value={utilService.formatPrice(promotion.minOrdervalue)}
                   onChangeText={(text) => handleChange("minOrdervalue", text)}
@@ -579,7 +579,7 @@ const PromotionUpdate = () => {
                 </Text>
                 <View className="relative">
                   <TextInput
-                    className={`border border-gray-300 mt-1 p-2 rounded ${
+                    className={`border border-gray-300 mt-1 p-2 rounded text-[16px] ${
                       promotion.applyType == PromotionApplyType.AmountApply
                         ? "opacity-50"
                         : ""
@@ -614,7 +614,7 @@ const PromotionUpdate = () => {
             <View className="mb-2">
               <Text className="font-bold">Giới hạn lượt sử dụng *</Text>
               <TextInput
-                className="border border-gray-300 mt-1 p-2 rounded"
+                className="border border-gray-300 text-[16px] mt-1 p-2 rounded"
                 placeholder="Nhập số lần sử dụng tối đa"
                 value={promotion.usageLimit.toString()}
                 onChangeText={(text) => handleChange("usageLimit", text)}

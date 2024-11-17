@@ -119,7 +119,6 @@ const PromotionCreate = () => {
   };
   const handleSubmit = () => {
     isAnyRequestSubmit.current = true;
-    console.log("Promotion details:", promotion, validate(promotion), errors);
     const submitPromotion =
       promotion.applyType == PromotionApplyType.AmountApply
         ? { ...promotion, amountRate: 0, maximumApplyValue: 0 }
@@ -171,7 +170,7 @@ const PromotionCreate = () => {
             <View className="mb-2">
               <Text className="font-bold">Tiêu đề *</Text>
               <TextInput
-                className="border border-gray-300 mt-1 p-2 rounded"
+                className="border border-gray-300 text-[16px] mt-1 p-2 rounded"
                 placeholder="Nhập tiêu đề chương trình khuyến mãi"
                 value={promotion.title}
                 onChangeText={(text) => handleChange("title", text)}
@@ -185,7 +184,7 @@ const PromotionCreate = () => {
             <View className="mb-2">
               <Text className="font-bold">Mô tả</Text>
               <TextInput
-                className="border border-gray-300 mt-1 p-2 rounded h-16"
+                className="border border-gray-300 text-[16px] mt-1 p-2 rounded h-16"
                 placeholder="Nhập mô tả chương trình khuyến mãi"
                 value={promotion.description}
                 onChangeText={(text) => handleChange("description", text)}
@@ -478,7 +477,7 @@ const PromotionCreate = () => {
                 <Text className="font-bold">Tỷ lệ giảm giá (%) *</Text>
                 <View className="relative">
                   <TextInput
-                    className="border border-gray-300 mt-1 p-2 rounded"
+                    className="border border-gray-300 text-[16px] mt-1 p-2 rounded"
                     placeholder="Nhập tỷ lệ giảm giá"
                     value={utilService.formatPrice(promotion.amountRate)}
                     onChangeText={(text) => handleChange("amountRate", text)}
@@ -501,7 +500,7 @@ const PromotionCreate = () => {
                 <Text className="font-bold">Giá trị giảm giá *</Text>
                 <View className="relative">
                   <TextInput
-                    className="border border-gray-300 mt-1 p-2 rounded"
+                    className="border border-gray-300 text-[16px] mt-1 p-2 rounded"
                     placeholder="Nhập giá trị giảm giá"
                     value={utilService.formatPrice(promotion.amountValue)}
                     onChangeText={(text) => handleChange("amountValue", text)}
@@ -525,7 +524,7 @@ const PromotionCreate = () => {
               <Text className="font-bold">Giá trị đơn hàng tối thiểu *</Text>
               <View className="relative">
                 <TextInput
-                  className="border border-gray-300 mt-1 p-2 rounded"
+                  className="border border-gray-300 text-[16px] mt-1 p-2 rounded"
                   placeholder="Nhập giá trị đơn hàng tối thiểu"
                   value={utilService.formatPrice(promotion.minOrdervalue)}
                   onChangeText={(text) => handleChange("minOrdervalue", text)}
@@ -551,7 +550,7 @@ const PromotionCreate = () => {
                 </Text>
                 <View className="relative">
                   <TextInput
-                    className={`border border-gray-300 mt-1 p-2 rounded ${
+                    className={`border border-gray-300 text-[16px] mt-1 p-2 rounded ${
                       promotion.applyType == PromotionApplyType.AmountApply
                         ? "opacity-50"
                         : ""
@@ -586,7 +585,7 @@ const PromotionCreate = () => {
             <View className="mb-2">
               <Text className="font-bold">Giới hạn lượt sử dụng *</Text>
               <TextInput
-                className="border border-gray-300 mt-1 p-2 rounded"
+                className="border border-gray-300 text-[16px] mt-1 p-2 rounded"
                 placeholder="Nhập số lần sử dụng tối đa"
                 value={promotion.usageLimit.toString()}
                 onChangeText={(text) => handleChange("usageLimit", text)}
