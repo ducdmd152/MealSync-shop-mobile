@@ -76,7 +76,7 @@ const OrderDeliveryInfo = ({
               Giao hàng thành công
             </Text>
             <Text
-              className={`text-[10px] me-2 py-1 text-right italic text-gray-500 `}
+              className={`text-[11px] me-2 py-1 text-right italic text-gray-500 `}
             >
               {dayjs(info?.receiveAt).local().format("HH:mm DD/MM/YYYY")}
             </Text>
