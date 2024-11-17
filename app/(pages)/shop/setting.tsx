@@ -26,6 +26,7 @@ import { useToast } from "react-native-toast-notifications";
 import AutoConfirmTimeRangeSelect, {
   autoConfirmTimeFormat,
 } from "@/components/common/AutoConfirmTimeRangeSelect";
+import utilService from "@/services/util-service";
 function formatTimeRanges(timeRanges: string[]): string {
   const length = timeRanges.length;
 
@@ -522,6 +523,7 @@ const Setting = () => {
             //   </View>
             // }
             handlePress={() => {
+              console.log("operatingSlot: ", operatingSlot);
               onOpeartingSlotSubmit(operatingSlot, () => {
                 operatingSlot.id == 0
                   ? Alert.alert(
@@ -533,7 +535,9 @@ const Setting = () => {
                   : Alert.alert(
                       "Hoàn tất",
                       `Đã cập nhật khoảng hoạt động ${operatingSlot.title.trim()} : ${
-                        operatingSlot.timeSlot
+                        utilService.formatTime(operatingSlot.startTime) +
+                        " - " +
+                        utilService.formatTime(operatingSlot.endTime)
                       }`
                     );
               });
