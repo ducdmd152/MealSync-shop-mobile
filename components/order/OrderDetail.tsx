@@ -308,6 +308,8 @@ const OrderDetail = ({
                 <OrderDeliveryInfo
                   order={order}
                   containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
+                  textNameStyleClasses={`text-[13.5px]`}
+                  avatarStyleClasses={`h-[17px] w-[17px] mr-1`}
                   assignNode={
                     // order.shopDeliveryStaff != null &&
                     // globalCompleteDeliveryConfirm.isShowActionale &&
@@ -759,9 +761,10 @@ const OrderDetail = ({
                         setIsOpenOrderAssign(true);
                       }}
                       // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                      className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      className="flex-1 bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
                     >
-                      <Text className="text-[13.5px]">
+                      <Text className="text-[15px] font-semibold">
                         {order.shopDeliveryStaff
                           ? "Thay đổi người giao"
                           : "Chọn người giao hàng"}

@@ -21,11 +21,15 @@ import utilService from "@/services/util-service";
 const OrderDeliveryInfo = ({
   order,
   containerStyleClasses = "",
+  textNameStyleClasses = "",
+  avatarStyleClasses = "",
   assignNode,
 }: {
   order: OrderFetchModel;
   containerStyleClasses?: string;
   assignNode: ReactNode;
+  textNameStyleClasses?: string;
+  avatarStyleClasses?: string;
 }) => {
   const globalAuthState = useGlobalAuthState();
 
@@ -203,9 +207,9 @@ const OrderDeliveryInfo = ({
             <Image
               source={{ uri: order.shopDeliveryStaff.avatarUrl }}
               resizeMode="cover"
-              className="h-[14px] w-[14px] rounded-md opacity-85"
+              className={`h-[14px] w-[14px] rounded-md opacity-85 ${avatarStyleClasses}`}
             />
-            <Text className="text-[11px] flex-1">
+            <Text className={`text-[11px] flex-1 ${textNameStyleClasses}`}>
               {utilService.shortenName(order.shopDeliveryStaff.fullName)}
               {(order.shopDeliveryStaff.id == 0 ||
                 globalAuthState.roleId != 2) &&
