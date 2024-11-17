@@ -19,6 +19,7 @@ import sessionService from "@/services/session-service";
 import CustomModal from "./CustomModal";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useFocusEffect } from "expo-router";
 const styles = StyleSheet.create({
   shadow: {
     shadowOffset: { width: 5, height: 8 },
@@ -70,7 +71,11 @@ const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
   useEffect(() => {
     shopProfile.refetch();
   }, [isChangeMode]);
-
+  useFocusEffect(
+    React.useCallback(() => {
+      shopProfile.refetch();
+    }, [])
+  );
   const pickImage = async (isPickByCam: boolean = false) => {
     if (Platform.OS !== "web") {
       const { status: libraryStatus } =

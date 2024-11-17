@@ -515,6 +515,7 @@ const StaffDetailsModal = ({
       apiClient
         .post("shop-owner/delivery-staff/create", {
           ...model,
+          avatarUrl: CONSTANTS.url.avatarDefault,
           shopDeliveryStaffStatus: model.shopDeliveryStaffStatus,
           password: "123456",
         })

@@ -63,7 +63,7 @@ const FormField: React.FC<FormFieldProps> = ({
           <TextInput
             style={{}}
             className={
-              "flex-1 self-center h-full text-gray font-semibold text-base border-0 border-gray-800 pb-[10px]" +
+              "flex-1 text-gray font-semibold text-base border-0 border-gray-800 mb-2" +
               otherTextInputStyleClasses
             }
             multiline={multiline}

@@ -19,6 +19,8 @@ import sessionService from "@/services/session-service";
 import CustomModal from "./CustomModal";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { ShopDeliveryStaffModel } from "@/types/models/StaffInfoModel";
+import { useFocusEffect } from "expo-router";
 const styles = StyleSheet.create({
   shadow: {
     shadowOffset: { width: 5, height: 8 },
@@ -36,20 +38,17 @@ const styles = StyleSheet.create({
 
 interface AvatarChangeProps {}
 
-const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
-  const shopProfile = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO,
-    async (): Promise<FetchValueResponse<ShopProfileGetModel>> =>
-      apiClient
-        .get(endpoints.SHOP_PROFILE_FULL_INFO)
-        .then((response) => response.data),
+const StaffAccountAvatarChange: React.FC<AvatarChangeProps> = () => {
+  const staffAccount = useFetchWithRQWithFetchFunc(
+    [endpoints.STAFF_INFO],
+    async (): Promise<FetchValueResponse<ShopDeliveryStaffModel>> =>
+      apiClient.get(endpoints.STAFF_INFO).then((response) => response.data),
     []
   );
   const [user, setUser] = useState({
     avatarUrl:
-      shopProfile.data?.value.shopOwnerAvatar ||
-      CONSTANTS.url.userAvatarDefault,
-    fullname: shopProfile.data?.value.shopOwnerName || "--------------",
+      staffAccount.data?.value.avatarUrl || CONSTANTS.url.avatarDefault,
+    fullname: staffAccount.data?.value.fullName || "--------------",
   });
   const [isChangeMode, setIsChangeMode] = useState(true);
   const [avatar, setAvatar] = useState(CONSTANTS.url.avatar);
@@ -61,15 +60,21 @@ const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
     }
   }, [user]);
   useEffect(() => {
-    if (shopProfile.isFetched && !isChangeMode)
+    if (staffAccount.isFetched && !isChangeMode)
       setUser({
-        avatarUrl: shopProfile.data?.value.logoUrl || CONSTANTS.url.avatar,
-        fullname: shopProfile.data?.value.name || "------",
+        avatarUrl:
+          staffAccount.data?.value.avatarUrl || CONSTANTS.url.avatarDefault,
+        fullname: staffAccount.data?.value.fullName || "--------------",
       });
-  }, [shopProfile.data?.value]);
+  }, [staffAccount.data?.value]);
   useEffect(() => {
-    shopProfile.refetch();
+    staffAccount.refetch();
   }, [isChangeMode]);
+  useFocusEffect(
+    React.useCallback(() => {
+      staffAccount.refetch();
+    }, [])
+  );
 
   const pickImage = async (isPickByCam: boolean = false) => {
     if (Platform.OS !== "web") {
@@ -179,7 +184,7 @@ const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
           "Yêu cầu bị từ chối, vui lòng thử lại sau!"
       );
     } finally {
-      shopProfile.refetch();
+      staffAccount.refetch();
     }
   };
 
@@ -270,4 +275,4 @@ const AccountAvatarChange: React.FC<AvatarChangeProps> = () => {
   );
 };
 
-export default AccountAvatarChange;
+export default StaffAccountAvatarChange;

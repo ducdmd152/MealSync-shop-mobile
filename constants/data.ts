@@ -17,6 +17,8 @@ const CONSTANTS = {
     MAX_FILE_SIZE_BYTE: MAX_FILE_SIZE_MB * 1024 * 1024,
   },
   url: {
+    avatarDefault:
+      "https://thanhtu-blog.s3.ap-southeast-1.amazonaws.com/image/eb7ce841-6579-458a-a46a-1dfc8491ed81-1727165769091.png",
     avatar:
       "https://png.pngtree.com/element_our/20200610/ourmid/pngtree-character-default-avatar-image_2237203.jpg",
     shopLogoDefault: "https://cdn-icons-png.flaticon.com/512/3419/3419665.png",

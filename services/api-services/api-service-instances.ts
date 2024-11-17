@@ -30,6 +30,8 @@ export const endpoints = {
   STORAGE_FILE_DELETE: "storage/file/delete",
   SHOP_LOGO_UPDATE: "shop-owner/logo/update",
   ACCOUNT_AVATAR_UPDATE: "shop-owner-staff/avatar/update",
+  STAFF_INFO: "shop-staff/info",
+  STAFF_INFO_UPDATE: "shop-staff/info/update",
 };
 
 export const testApiService = createHttpService<TestModel>(
