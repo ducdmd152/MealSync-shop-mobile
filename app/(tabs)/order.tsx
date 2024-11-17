@@ -104,10 +104,7 @@ const Order = () => {
   const [cacheOrderList, setCacheOrderList] = useState<OrderFetchModel[]>([]);
   const [isFilterBottomSheetVisible, setIsFilterBottomSheetVisible] =
     useState(false);
-  const [isDetailBottomSheetVisible, setIsDetailBottomSheetVisible] =
-    useState(false);
-  const [detailBottomSheetDisplay, setDetailBottomSheetDisplay] =
-    useState(true);
+
   const [orderDetailId, setOrderDetailId] = useState(0);
   const globalOrderDetailState = useGlobalOrderDetailState();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -373,7 +370,6 @@ const Order = () => {
                   globalOrderDetailState.setIsActionsShowing(true);
                   globalOrderDetailState.setIsDetailBottomSheetVisible(true);
                   setOrder(order);
-                  setIsDetailBottomSheetVisible(true);
                 }}
                 className="p-4 pt-3 bg-white border-2 border-gray-300 rounded-lg"
               >
@@ -396,7 +392,7 @@ const Order = () => {
                         formatTime(order.endTime)}
                     </Text>
                     <Text
-                      className={`text-[12px] font-medium me-2 px-2.5 py-1 rounded ${
+                      className={`text-[11px] font-medium me-2 px-2.5 py-[3px] rounded ${
                         getOrderStatusDescription(order.status)?.bgColor
                       }`}
                       style={{
