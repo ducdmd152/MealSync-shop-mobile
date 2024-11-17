@@ -423,7 +423,7 @@ const Order = () => {
                         uri: order.orderDetails[0].imageUrl,
                       }}
                       resizeMode="cover"
-                      className="h-[36px] w-[40px] rounded-md opacity-85"
+                      className="h-[28px] w-[36px] rounded-md opacity-85"
                     />
                     <View className="">
                       <Text className="text-md italic text-gray-500">
