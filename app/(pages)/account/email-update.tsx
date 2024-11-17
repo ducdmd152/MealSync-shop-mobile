@@ -30,23 +30,16 @@ const EmailUpdate = () => {
     currentEmailCode: 0,
     newEmailCode: 0,
   });
-
-  const shopProfile = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO,
-    async (): Promise<FetchValueResponse<ShopProfileGetModel>> =>
-      apiClient
-        .get(endpoints.SHOP_PROFILE_FULL_INFO)
-        .then((response) => response.data),
-    []
-  );
   const [email, setEmail] = useState("--------------");
+
   useFocusEffect(
     React.useCallback(() => {
-      shopProfile.refetch();
-      if (shopProfile.isFetched && shopProfile.data?.value.email) {
-        setData({ ...data, currentEmail: shopProfile.data?.value.email });
+      (async () => {
+        const token = (await sessionService.getAuthToken()) || "";
+        const mail = (await utilService.getEmailFromToken(token)) || "";
+        setData({ ...data, currentEmail: mail });
         requestSendCode(true);
-      }
+      })();
     }, [])
   );
 
