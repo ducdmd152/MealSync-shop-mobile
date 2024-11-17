@@ -74,6 +74,7 @@ const onDelivery = (
     ]
   );
 };
+
 const orderUIService = {
   onDelivery,
   onMultiDelivery,

@@ -364,7 +364,7 @@ const Order = () => {
             />
           )}
           <View className="gap-y-2 pb-[192px]">
-            {!cacheOrderList.length && (
+            {!isOrderFetchingLoading && !cacheOrderList.length && (
               <Text className="text-gray-600 text-center pt-8">
                 Không có đơn hàng tương ứng.
               </Text>
@@ -920,6 +920,7 @@ const Order = () => {
                             }
                             setOrderDetailId(order.id);
                             globalOrderDetailState.setId(order.id);
+                            globalOrderDetailState.setIsActionsShowing(true);
                             setOrder(order);
                             setIsOpenOrderAssign(true);
                           }}
