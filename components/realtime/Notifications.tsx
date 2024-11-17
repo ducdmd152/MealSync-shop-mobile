@@ -2,8 +2,19 @@ import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import React from "react";
 import CONSTANTS from "@/constants/data";
 import dayjs from "dayjs";
+import { useFocusEffect } from "expo-router";
+import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
 
 const Notifications = () => {
+  const globalHeaderPage = useGlobalHeaderPage();
+  useFocusEffect(
+    React.useCallback(() => {
+      globalHeaderPage.setIsNotiPageFocusing(true);
+      return () => {
+        globalHeaderPage.setIsNotiPageFocusing(false);
+      };
+    }, [])
+  );
   return (
     <ScrollView style={{ flexGrow: 1 }}>
       {Array.from({ length: 5 }, (_, index) => (

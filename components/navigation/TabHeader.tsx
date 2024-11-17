@@ -3,8 +3,10 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { images } from "@/constants";
 import { router } from "expo-router";
+import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
 
 const TabHeader = () => {
+  const globalHeaderPage = useGlobalHeaderPage();
   return (
     <View className="w-full h-[64px] px-4 bg-white flex-row justify-between border-b-[0.7px] border-gray-300 overflow-hidden">
       <View className="flex-row justify-center items-center">
@@ -32,7 +34,15 @@ const TabHeader = () => {
           onPress={() => router.push("/notification")}
           className="flex-row justify-center items-center"
         >
-          <Ionicons name="notifications-outline" size={32} color="#DF4830" />
+          <Ionicons
+            name={
+              globalHeaderPage.isNotiPageFocusing
+                ? "notifications"
+                : "notifications-outline"
+            }
+            size={32}
+            color="#DF4830"
+          />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => router.push("/chatting")}
