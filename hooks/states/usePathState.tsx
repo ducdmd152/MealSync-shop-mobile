@@ -8,12 +8,8 @@ interface PathState {
   setMenuSessionIndex: (index: number) => void;
   categoryId: number;
   setCategoryId: (categoryId: number) => void;
-  notFoundInfo: { message: string; link: Href<string>; linkDesc: string };
-  setNotFoundInfo: (
-    message: string,
-    link: Href<string>,
-    linkDesc: string
-  ) => void;
+  notFoundInfo: { message: string; link: Href; linkDesc: string };
+  setNotFoundInfo: (message: string, link: Href, linkDesc: string) => void;
 }
 
 const usePathState = create<PathState>((set) => ({

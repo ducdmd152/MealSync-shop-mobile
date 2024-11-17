@@ -72,7 +72,7 @@ const StaffAccountAvatarChange: React.FC<AvatarChangeProps> = () => {
   }, [isChangeMode]);
   useFocusEffect(
     React.useCallback(() => {
-      staffAccount.refetch();
+      if (staffAccount.isFetched) staffAccount.refetch();
     }, [])
   );
 

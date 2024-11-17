@@ -1,5 +1,5 @@
-import { Href, Link, Stack } from "expo-router";
-import { StyleSheet } from "react-native";
+import { Href, Link, router, Stack } from "expo-router";
+import { StyleSheet, Touchable, TouchableOpacity } from "react-native";
 
 import { ThemedText } from "@/components/already-components/ThemedText";
 import { ThemedView } from "@/components/already-components/ThemedView";
@@ -12,9 +12,9 @@ export default function NotFoundScreen() {
       <Stack.Screen options={{ title: "Oops!" }} />
       <ThemedView style={styles.container}>
         <ThemedText type="title">{notFoundInfo.message}</ThemedText>
-        <Link href={notFoundInfo.link} style={styles.link}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.link}>
           <ThemedText type="link">{notFoundInfo.linkDesc}</ThemedText>
-        </Link>
+        </TouchableOpacity>
       </ThemedView>
     </>
   );
