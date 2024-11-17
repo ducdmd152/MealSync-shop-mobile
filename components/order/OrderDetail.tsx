@@ -427,13 +427,13 @@ const OrderDetail = ({
                               style: "cancel",
                             },
                             {
-                              text: "Đồng ý",
+                              text: "Xác nhận",
                               onPress: async () => {
                                 orderAPIService.reject(
                                   order.id,
                                   () => {
                                     const toast = Toast.show({
-                                      type: "warning",
+                                      type: "info",
                                       text1: `MS-${order.id}`,
                                       text2: `Đã từ chối đơn hàng MS-${order.id}!`,
                                     });
@@ -833,7 +833,7 @@ const OrderDetail = ({
           isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
         />
       </CustomModal>
-      <Toast topOffset={-10} />
+      <Toast topOffset={-20} />
     </View>
   );
 };

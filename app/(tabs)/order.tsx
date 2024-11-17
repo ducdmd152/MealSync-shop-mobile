@@ -561,7 +561,7 @@ const Order = () => {
                                   style: "cancel",
                                 },
                                 {
-                                  text: "Đồng ý",
+                                  text: "Xác nhận",
                                   onPress: async () => {
                                     orderAPIService.reject(
                                       order.id,
