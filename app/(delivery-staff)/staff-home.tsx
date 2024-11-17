@@ -1,38 +1,25 @@
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  Modal,
-  StyleSheet,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import TimeRangeSelect from "@/components/common/TimeRangeSelect";
 import CustomButton from "@/components/custom/CustomButton";
-import { Ionicons } from "@expo/vector-icons";
-import { Searchbar, TouchableRipple } from "react-native-paper";
-import Collapsible from "react-native-collapsible";
-import { Tab } from "react-native-elements";
-import MenuMainItems from "@/components/menu/MenuMainItems";
-import MenuGroupOptions from "@/components/menu/MenuGroupOptions";
-import useCounterState from "@/hooks/states/useCounterState";
-import usePathState from "@/hooks/states/usePathState";
-import PagingRequestQuery from "@/types/queries/PagingRequestQuery";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import MyDeliveryPackageList from "@/components/delivery-package/MyDeliveryPackageList";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
-import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
+import usePathState from "@/hooks/states/usePathState";
+import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+import PagingRequestQuery from "@/types/queries/PagingRequestQuery";
+import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
+import { Ionicons } from "@expo/vector-icons";
 import { BottomSheet } from "@rneui/themed";
-import { BlurView } from "expo-blur";
-import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
-import useTimeRangeState from "@/hooks/states/useTimeRangeState";
-import TimeRangeSelect from "@/components/common/TimeRangeSelect";
-import MyDeliveryPackageList from "@/components/delivery-package/MyDeliveryPackageList";
+import { BlurView } from "expo-blur";
 import { useFocusEffect } from "expo-router";
-import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
+import React, { useEffect, useState } from "react";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { TouchableRipple } from "react-native-paper";
+import DateTimePicker from "react-native-ui-datepicker";
 interface DeliveryPackageFetchQuery extends PagingRequestQuery {
   status: number[];
   id: string;

@@ -137,6 +137,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
   );
 
   const globalStateMapping = () => {
+    console.log("frames.length: ", frames.length);
     if (frames.length == 0) return;
     const foundStartIndex = frames.findIndex(
       (item) => item.startTime === startTime
@@ -157,11 +158,13 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       )
     );
   }, [operatingSlots?.value]);
+  useEffect(() => {
+    if (isRefreshing) globalStateMapping();
+  }, [isRefreshing]);
   useFocusEffect(
     React.useCallback(() => {
+      console.log("Focus Effect: ");
       setIsRefreshing(true);
-
-      globalStateMapping();
       setTimeout(() => {
         setIsRefreshing(false);
       }, 0);
