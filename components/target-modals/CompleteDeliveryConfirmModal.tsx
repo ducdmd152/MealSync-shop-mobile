@@ -393,7 +393,7 @@ const CompleteDeliveryConfirmModal = ({
       {order?.id &&
         (isOrderDetailViewMode ? (
           <ScrollView
-            style={{ maxHeight }}
+            style={{ maxHeight, marginTop: 1 }}
             refreshControl={
               <RefreshControl
                 tintColor={"#FCF450"}
