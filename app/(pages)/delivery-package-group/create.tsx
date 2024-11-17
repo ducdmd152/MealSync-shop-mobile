@@ -247,7 +247,7 @@ const DeliveryPackageGroupCreate = () => {
                 <Image
                   source={{ uri: person.staffInfor.avatarUrl }}
                   resizeMode="cover"
-                  className="h-[18px] w-[18px] rounded-md opacity-85"
+                  className="h-[18px] w-[18px] rounded-full opacity-85"
                 />
                 <Text>
                   {utilService.shortenName(person.staffInfor.fullName)}
