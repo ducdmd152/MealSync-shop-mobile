@@ -32,6 +32,7 @@ import sessionService from "@/services/session-service";
 import { router, useFocusEffect } from "expo-router";
 import CONSTANTS from "@/constants/data";
 import usePromotionModelState from "@/hooks/states/usePromotionModelState";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 const STATUSES = [
   { label: "Tất cả", value: 0 },
@@ -55,7 +56,7 @@ const Promotion = () => {
     useState(false);
   const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
 
-  const promotions = useFetchWithRQWithFetchFunc(
+  const promotionsFetch = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.PROMOTION_LIST.concat(["promotion-page"]),
     async (): Promise<FetchResponse<PromotionModel>> =>
       apiClient
@@ -75,6 +76,43 @@ const Promotion = () => {
         .then((response) => response.data),
     [searchValue, status, fromDate, toDate]
   );
+
+  const promotionsInfiniteFetch = useInfiniteQuery<
+    FetchResponse<PromotionModel>
+  >({
+    queryKey: REACT_QUERY_CACHE_KEYS.PROMOTION_LIST.concat([
+      "promotion-infinite-loading",
+    ]),
+    queryFn: async ({ pageParam }): Promise<FetchResponse<PromotionModel>> => {
+      const response = await apiClient.get<FetchResponse<PromotionModel>>(
+        endpoints.PROMOTION_LIST,
+        {
+          headers: {
+            Authorization: `Bearer ${await sessionService.getAuthToken()}`,
+          },
+          params: {
+            status: status === 0 ? undefined : status,
+            searchValue,
+            startDate: fromDate.toISOString(),
+            endDate: toDate.add(1, "day").toISOString(),
+            pageIndex: pageParam,
+            pageSize: 20, // Hoặc giá trị phù hợp với API của bạn.
+          },
+        }
+      );
+      return response.data;
+    },
+    initialPageParam: 1,
+    getPreviousPageParam: (firstPage) =>
+      firstPage.value.hasPrevious
+        ? firstPage.value.pageIndex - 1
+        : firstPage.value.pageIndex,
+    getNextPageParam: (lastPage) =>
+      lastPage.value.hasNext
+        ? lastPage.value.pageIndex + 1
+        : lastPage.value.pageIndex,
+  });
+
   const toggleFromDatePicker = () => {
     setFromDatePickerVisibility(!isFromDatePickerVisible);
   };
@@ -84,7 +122,7 @@ const Promotion = () => {
   // console.log(promotions.error, promotions.data?.value.items);
   useFocusEffect(
     React.useCallback(() => {
-      promotions.refetch();
+      promotionsFetch.refetch();
     }, [])
   );
   return (
@@ -228,88 +266,91 @@ const Promotion = () => {
               </BlurView>
             </Modal>
           </View>
-          {promotions.isFetching && (
+          {promotionsFetch.isFetching && (
             <ActivityIndicator animating={true} color="#FCF450" />
           )}
-          {!promotions.isFetching && !promotions.data?.value.items?.length && (
-            <Text className="text-gray-600 text-center mt-[-12px]">
-              Không tìm thấy khuyến mãi tương ứng
-            </Text>
-          )}
+          {!promotionsFetch.isFetching &&
+            !promotionsFetch.data?.value.items?.length && (
+              <Text className="text-gray-600 text-center mt-[-12px]">
+                Không tìm thấy khuyến mãi tương ứng
+              </Text>
+            )}
           <ScrollView style={{ width: "100%", flexGrow: 1 }}>
             <View className="gap-y-2 pb-[72px]">
-              {(promotions.data?.value.items || []).map((promotion, index) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    globalPromotionState.setPromotion(promotion);
-                    router.push("/promotion/details");
-                  }}
-                  key={promotion.id}
-                  className="p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow"
-                >
-                  <View className="flex-row items-start justify-between gap-2">
-                    <View className="flex-row flex-1 justify-start items-start gap-x-2">
-                      <View className="self-stretch">
-                        <Image
-                          source={{
-                            uri:
-                              promotion.bannerUrl ||
-                              CONSTANTS.url.noImageAvailable,
-                          }}
-                          resizeMode="cover"
-                          className="h-[50px] w-[62px] rounded-md opacity-85"
-                        />
+              {(promotionsFetch.data?.value.items || []).map(
+                (promotion, index) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      globalPromotionState.setPromotion(promotion);
+                      router.push("/promotion/details");
+                    }}
+                    key={promotion.id}
+                    className="p-4 pt-3 bg-white drop-shadow-md rounded-lg shadow"
+                  >
+                    <View className="flex-row items-start justify-between gap-2">
+                      <View className="flex-row flex-1 justify-start items-start gap-x-2">
+                        <View className="self-stretch">
+                          <Image
+                            source={{
+                              uri:
+                                promotion.bannerUrl ||
+                                CONSTANTS.url.noImageAvailable,
+                            }}
+                            resizeMode="cover"
+                            className="h-[50px] w-[62px] rounded-md opacity-85"
+                          />
+                        </View>
+                        <View className="flex-1">
+                          <Text
+                            className="text-[12.5px] font-semibold mt-[-2px]"
+                            numberOfLines={2}
+                            ellipsizeMode="tail"
+                          >
+                            {promotion.title}
+                          </Text>
+                          <Text className="text-[12px] italic text-gray-500 ">
+                            {dayjs(promotion.startDate).format("DD/MM/YYYY")} -{" "}
+                            {dayjs(promotion.endDate).format("DD/MM/YYYY")}
+                          </Text>
+                        </View>
                       </View>
-                      <View className="flex-1">
-                        <Text
-                          className="text-[12.5px] font-semibold mt-[-2px]"
-                          numberOfLines={2}
-                          ellipsizeMode="tail"
-                        >
-                          {promotion.title}
-                        </Text>
-                        <Text className="text-[12px] italic text-gray-500 ">
-                          {dayjs(promotion.startDate).format("DD/MM/YYYY")} -{" "}
-                          {dayjs(promotion.endDate).format("DD/MM/YYYY")}
-                        </Text>
-                      </View>
-                    </View>
-                    <Text
-                      className="bg-blue-100 text-gray-800 text-[12px] font-medium me-2 px-2.5 py-0.5 rounded"
-                      style={{
-                        backgroundColor:
-                          promotion.status == 1 ? "#86efac" : "#e5e5e5",
-                      }}
-                    >
-                      {promotionStatuses.find(
-                        (item) => item.key === promotion.status
-                      )?.label || "------"}
-                    </Text>
-                  </View>
-                  <View className="flex-row justify-end gap-2 pt-2">
-                    <TouchableOpacity
-                      onPress={() => {
-                        globalPromotionState.setPromotion(promotion);
-                        router.push("/promotion/update");
-                      }}
-                      className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                    >
-                      <Text className="text-[13.5px] text-white">
-                        Chỉnh sửa
+                      <Text
+                        className="bg-blue-100 text-gray-800 text-[12px] font-medium me-2 px-2.5 py-0.5 rounded"
+                        style={{
+                          backgroundColor:
+                            promotion.status == 1 ? "#86efac" : "#e5e5e5",
+                        }}
+                      >
+                        {promotionStatuses.find(
+                          (item) => item.key === promotion.status
+                        )?.label || "------"}
                       </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        globalPromotionState.setPromotion(promotion);
-                        router.push("/promotion/details");
-                      }}
-                      className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                    >
-                      <Text className="text-[13.5px]">Chi tiết</Text>
-                    </TouchableOpacity>
-                  </View>
-                </TouchableOpacity>
-              ))}
+                    </View>
+                    <View className="flex-row justify-end gap-2 pt-2">
+                      <TouchableOpacity
+                        onPress={() => {
+                          globalPromotionState.setPromotion(promotion);
+                          router.push("/promotion/update");
+                        }}
+                        className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      >
+                        <Text className="text-[13.5px] text-white">
+                          Chỉnh sửa
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          globalPromotionState.setPromotion(promotion);
+                          router.push("/promotion/details");
+                        }}
+                        className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                      >
+                        <Text className="text-[13.5px]">Chi tiết</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableOpacity>
+                )
+              )}
             </View>
           </ScrollView>
         </View>
