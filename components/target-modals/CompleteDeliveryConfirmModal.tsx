@@ -42,6 +42,7 @@ import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 import EvidencePreviewMultiImagesUpload from "../images/EvidencePreviewMultiImagesUpload";
 import DeliveryOrderDetail from "../order/DeliveryOrderDetail";
 import Order from "@/app/(tabs)/order";
+import OrderDetail from "../order/OrderDetail";
 interface Props {
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -403,7 +404,7 @@ const CompleteDeliveryConfirmModal = ({
               />
             }
           >
-            <DeliveryOrderDetail
+            {/* <DeliveryOrderDetail
               // containerStyleClasses="flex-1"
               orderId={globalCompleteDeliveryConfirm.id}
               order={order}
@@ -415,6 +416,16 @@ const CompleteDeliveryConfirmModal = ({
                 );
                 globalOrderDetailPageState.onBeforeBack();
                 router.back();
+              }}
+            /> */}
+            <OrderDetail
+              order={order}
+              setOrder={setOrder}
+              // containerStyleClasses="flex-1"
+              orderId={globalCompleteDeliveryConfirm.id}
+              onNotFound={() => {
+                // globalOrderDetailPageState.onBeforeBack();
+                // router.back();
               }}
             />
           </ScrollView>

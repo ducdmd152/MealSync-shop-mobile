@@ -918,9 +918,9 @@ const Order = () => {
                               );
                               return false;
                             }
-                            setOrderDetailId(order.id);
-                            globalOrderDetailState.setId(order.id);
-                            globalOrderDetailState.setIsActionsShowing(true);
+                            // setOrderDetailId(order.id);
+                            // globalOrderDetailState.setId(order.id);
+                            // globalOrderDetailState.setIsActionsShowing(true);
                             setOrder(order);
                             setIsOpenOrderAssign(true);
                           }}

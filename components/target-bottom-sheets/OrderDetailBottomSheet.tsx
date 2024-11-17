@@ -35,8 +35,11 @@ const OrderDetailBottomSheet = () => {
           </TouchableOpacity>
           <View className="flex-1 mt-2">
             <OrderDetail
+              order={globalOrderDetailState.model}
+              setOrder={globalOrderDetailState.setModel}
               hasHeaderInfo={true}
               orderId={globalOrderDetailState.id}
+              showActionButtons={globalOrderDetailState.isActionsShowing}
               onNotFound={() => {
                 setDetailBottomSheetDisplay(false);
                 Alert.alert(

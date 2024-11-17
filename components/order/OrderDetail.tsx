@@ -64,17 +64,23 @@ interface Props {
   onNotFound?: () => void;
   containerStyleClasses?: string;
   hasHeaderInfo?: boolean;
+  showActionButtons?: boolean;
+  order: OrderDetailModel;
+  setOrder: (order: OrderDetailModel) => void;
 }
 const OrderDetail = ({
   orderId,
   onNotFound = () => {},
   containerStyleClasses = "",
   hasHeaderInfo = false,
+  showActionButtons = true,
+  order,
+  setOrder,
 }: Props) => {
   const toast = useToast();
-  const globalOrderDetailState = useGlobalOrderDetailState();
+  // const globalOrderDetailState = useGlobalOrderDetailState();
   const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
-  const [order, setOrder] = useState<OrderDetailModel>({} as OrderDetailModel);
+  // const [order, setOrder] = useState<OrderDetailModel>({} as OrderDetailModel);
   const [isLoading, setIsLoading] = useState(true);
   const [isReloading, setIsReloading] = useState(false);
   const getOrderDetail = async (isRefetching = false) => {
@@ -100,9 +106,7 @@ const OrderDetail = ({
     <View
       className={`items-center justify-center w-full bg-[#f4f4f5] ${containerStyleClasses}`}
     >
-      {isLoading ? (
-        <ActivityIndicator color="#FCF450" />
-      ) : (
+      {order?.id != undefined && (
         <View className="w-full h-full">
           {hasHeaderInfo && (
             <View className="pt-4 px-2 gap-y-3 pb-1 mb-2">
@@ -338,7 +342,7 @@ const OrderDetail = ({
               <Text>Khu vực trạng thái báo cáo</Text>
             </View>
           </ScrollView>
-          {globalOrderDetailState.isActionsShowing && (
+          {showActionButtons && (
             <View className="items-center justify-center bg-white pt-2">
               {order.status == OrderStatus.Pending &&
                 utilService.getInFrameTime(
@@ -755,8 +759,8 @@ const OrderDetail = ({
                           );
                           return false;
                         }
-                        globalOrderDetailState.setId(order.id);
-                        globalOrderDetailState.setIsActionsShowing(true);
+                        // globalOrderDetailState.setId(order.id);
+                        // globalOrderDetailState.setIsActionsShowing(true);
                         setOrder(order);
                         setIsOpenOrderAssign(true);
                       }}
