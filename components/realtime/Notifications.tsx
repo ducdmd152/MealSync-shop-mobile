@@ -19,6 +19,7 @@ const Notifications = () => {
     <ScrollView style={{ flexGrow: 1 }}>
       {Array.from({ length: 5 }, (_, index) => (
         <TouchableOpacity
+          key={index}
           onPress={() => {}}
           className={`p-3 pt-3 bg-white border-b-[0.5px] border-gray-200 ${
             index % 2 > 1 && "bg-[#fffbeb]"

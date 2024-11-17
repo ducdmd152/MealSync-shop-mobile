@@ -105,6 +105,7 @@ const PageLayout = () => {
           name="account/password-update"
           options={{ headerTitle: "Thay đổi mật khẩu" }}
         />
+        <Stack.Screen name="chats/chatbox" options={{ headerShown: false }} />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
     </>

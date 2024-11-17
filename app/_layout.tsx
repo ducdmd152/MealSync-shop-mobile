@@ -17,6 +17,7 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
   StyleSheet,
 } from "react-native";
 import { images } from "@/constants";
@@ -102,6 +103,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      {/* <SafeAreaView style={{ flex: 1 }}> */}
       <TanStackProvider>
         <ThemeProvider value={DefaultTheme}>
           <ToastProvider offset={142}>
@@ -146,6 +148,7 @@ export default function RootLayout() {
         </ThemeProvider>
       </TanStackProvider>
       <Toast />
+      {/* </SafeAreaView> */}
     </GestureHandlerRootView>
   );
 }
