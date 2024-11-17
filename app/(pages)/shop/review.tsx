@@ -91,18 +91,18 @@ const Review = () => {
       reviewFetch.refetch();
     }, [])
   );
-  if (reviewFetch.data?.value)
-    console.log(
-      "percentOf: ",
-      percentOf(
-        reviewFetch.data?.value.reviewOverview.totalFourStar /
-          reviewFetch.data?.value.reviewOverview.totalReview
-      ),
-      percentOf(
-        reviewFetch.data?.value.reviewOverview.totalFiveStar /
-          reviewFetch.data?.value.reviewOverview.totalReview
-      )
-    );
+  // if (reviewFetch.data?.value)
+  //   console.log(
+  //     "percentOf: ",
+  //     percentOf(
+  //       reviewFetch.data?.value.reviewOverview.totalFourStar /
+  //         reviewFetch.data?.value.reviewOverview.totalReview
+  //     ),
+  //     percentOf(
+  //       reviewFetch.data?.value.reviewOverview.totalFiveStar /
+  //         reviewFetch.data?.value.reviewOverview.totalReview
+  //     )
+  //   );
   return (
     <PageLayoutWrapper
       refreshControl={
