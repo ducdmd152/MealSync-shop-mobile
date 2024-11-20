@@ -14,6 +14,7 @@ import { ToastProvider } from "react-native-toast-notifications";
 
 import { useColorScheme } from "@/hooks/themes/useColorScheme";
 import {
+  Alert,
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
@@ -35,6 +36,8 @@ import Toast from "react-native-toast-message";
 import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 import utilService from "@/services/util-service";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { io, Socket } from "socket.io-client";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -91,6 +94,73 @@ export default function RootLayout() {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    async () => {
+      globalAuthState.setToken((await sessionService.getAuthToken()) || "");
+      globalAuthState.setRoleId(await sessionService.getAuthRole());
+    };
+  }, []);
+  const [socket, setSocket] = useState<Socket | null>(null); // Use Socket type from socket.io-client
+  const initializeSocket = async () => {
+    const token = await globalAuthState.token; // Retrieve token from AsyncStorage
+    if (!token) return;
+    try {
+      if (!token) {
+        Alert.alert("Error", "No token found. Please log in again.");
+        return;
+      }
+
+      // Connect to the server with JWT authentication
+      const newSocket = io("wss://socketio.mealsync.org:443", {
+        auth: {
+          token: token,
+        },
+        transports: ["websocket", "polling"],
+      });
+
+      // Listen for notifications from the server
+      newSocket.on("notification", (message: any) => {
+        try {
+          // set noti listener
+          console.log(
+            message,
+            " message websockettttttttttttttttttttttttttttttttttttt"
+          );
+          // showToastable({
+          //   renderContent: () => (
+          //     <NotifyFisebaseForegroundItem {...message} />
+          //   ),
+          // });
+        } catch (err) {
+          console.error("Failed to show toastable:", err);
+        }
+      });
+
+      // Handle connection errors
+      newSocket.on("connect_error", (error: Error) => {
+        console.error("Connection Error:", error);
+        Alert.alert("Connection Error", error.message);
+      });
+
+      // Save socket instance for cleanup
+      setSocket(newSocket);
+    } catch (error) {
+      console.log("Error retrieving token:", error);
+      Alert.alert("Error", "Failed to retrieve token. Please log in again.");
+    }
+  };
+  useEffect(() => {
+    // Function to initialize socket connection with token from AsyncStorage
+
+    initializeSocket();
+
+    // Cleanup function to disconnect the socket on unmount
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, [globalAuthState.token]); // Empty dependency array to run only once on mount
   if (!loaded) {
     return (
       <Image

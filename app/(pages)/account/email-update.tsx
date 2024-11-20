@@ -18,8 +18,10 @@ import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import { ShopProfileGetModel } from "@/types/models/ShopProfileModel";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 
 const EmailUpdate = () => {
+  const globalAuthState = useGlobalAuthState();
   const navigation = useNavigation();
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -120,6 +122,9 @@ const EmailUpdate = () => {
           };
         };
         await sessionService.setAuthToken(
+          data.value.tokenAndInfor.tokenResponse.accessToken
+        );
+        globalAuthState.setToken(
           data.value.tokenAndInfor.tokenResponse.accessToken
         );
         console.log(
