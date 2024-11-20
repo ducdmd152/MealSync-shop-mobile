@@ -11,6 +11,7 @@ import sessionService from "@/services/session-service";
 import { CommonActions } from "@react-navigation/native";
 import utilService from "@/services/util-service";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
+import AuthDTO from "@/types/dtos/AuthDTO";
 
 interface FormValues {
   email: string;
@@ -53,14 +54,17 @@ const SignIn = () => {
           response.data?.value?.accountResponse?.roleName == "ShopOwner"
             ? 2
             : 3;
+        const authDTO = response.data?.value?.accountResponse
+          ? (response.data?.value?.accountResponse as AuthDTO)
+          : null;
         sessionService.setAuthToken(
           response.data?.value?.tokenResponse?.accessToken || ""
         );
         sessionService.setAuthRole(roleId);
-
+        if (authDTO) sessionService.setAuthDTO(authDTO);
         globalAuthState.setToken(token);
         globalAuthState.setRoleId(roleId);
-        console.log("roleId: ", token, roleId);
+        // console.log("roleId: ", token, roleId);
         if (roleId == 2) {
           router.replace("/home");
         } else router.replace("/staff-home");
