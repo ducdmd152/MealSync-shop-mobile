@@ -20,6 +20,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Image,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   Text,
@@ -27,7 +28,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { RefreshControl } from "react-native-gesture-handler";
 import OTPTextView from "react-native-otp-textinput";
 import { Searchbar } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";

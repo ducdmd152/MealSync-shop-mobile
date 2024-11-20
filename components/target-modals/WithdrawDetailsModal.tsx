@@ -1,36 +1,30 @@
-import {
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Alert,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
-import Modal from "react-native-modal";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Ionicons } from "@expo/vector-icons";
-import CONSTANTS from "@/constants/data";
-import { router, useFocusEffect } from "expo-router";
-import ImageUpload from "../common/ImageUpload";
-import CustomButton from "../custom/CustomButton";
-import apiClient from "@/services/api-services/api-client";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import utilService from "@/services/util-service";
+import { BalanceModel } from "@/types/models/BalanceModel";
 import {
   WithdrawalModel,
   WithdrawalStatus,
   withdrawalStatuses,
 } from "@/types/models/WithdrawalModel";
 import ValueResponse from "@/types/responses/ValueReponse";
-import { useToast } from "react-native-toast-notifications";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
-import utilService from "@/services/util-service";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import { endpoints } from "@/services/api-services/api-service-instances";
-import { BalanceModel } from "@/types/models/BalanceModel";
+import { useFocusEffect } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Dimensions,
+  Keyboard,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import Modal from "react-native-modal";
+import { useToast } from "react-native-toast-notifications";
+import CustomButton from "../custom/CustomButton";
 interface Props {
   containerStyleClasses?: string;
 

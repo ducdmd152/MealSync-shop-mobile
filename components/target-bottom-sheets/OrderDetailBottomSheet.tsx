@@ -1,8 +1,7 @@
-import { View, Text, Dimensions, Alert } from "react-native";
+import { View, Text, Dimensions, Alert, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 import { BottomSheet } from "@rneui/base";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import OrderDetail from "../order/OrderDetail";
 const detailBottomHeight = Dimensions.get("window").height - 92;
@@ -27,9 +26,9 @@ const OrderDetailBottomSheet = () => {
         >
           <TouchableOpacity
             className="items-center"
-            onPress={() =>
-              globalOrderDetailState.setIsDetailBottomSheetVisible(false)
-            }
+            onPress={() => {
+              globalOrderDetailState.setIsDetailBottomSheetVisible(false);
+            }}
           >
             <Ionicons name="chevron-down-outline" size={24} color="gray" />
           </TouchableOpacity>

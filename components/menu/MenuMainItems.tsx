@@ -1,39 +1,36 @@
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  Platform,
-} from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import useModelState from "@/hooks/states/useModelState";
+import usePathState from "@/hooks/states/usePathState";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import utilService from "@/services/util-service";
+import FoodDetailModel from "@/types/models/FoodDetailModel";
+import FoodModel from "@/types/models/FoodModel";
+import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
+import APICommonResponse from "@/types/responses/APICommonResponse";
+import ValueResponse from "@/types/responses/ValueReponse";
 import { Ionicons } from "@expo/vector-icons";
-import { ActivityIndicator, Searchbar, Switch } from "react-native-paper";
+import { BottomSheet } from "@rneui/themed";
+import { router, useFocusEffect } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Image,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  RefreshControl,
+} from "react-native";
 import Collapsible from "react-native-collapsible";
-import { Tab } from "react-native-elements";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { BottomSheet } from "@rneui/themed";
-import { router, useFocusEffect } from "expo-router";
-import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
-import FetchResponse from "@/types/responses/FetchResponse";
-import { endpoints } from "@/services/api-services/api-service-instances";
-import apiClient from "@/services/api-services/api-client";
-import FoodModel from "@/types/models/FoodModel";
-import APICommonResponse from "@/types/responses/APICommonResponse";
-import { RefreshControl } from "react-native-gesture-handler";
-import { showMessage, hideMessage } from "react-native-flash-message";
+import { Switch } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
-import ValueResponse from "@/types/responses/ValueReponse";
-import FoodDetailModel from "@/types/models/FoodDetailModel";
-import useModelState from "@/hooks/states/useModelState";
-import usePathState from "@/hooks/states/usePathState";
-import utilService from "@/services/util-service";
 
 const initialCategories = [
   { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },

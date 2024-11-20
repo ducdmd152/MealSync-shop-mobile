@@ -1,28 +1,11 @@
-import { Colors } from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
-
-import {
-  Alert,
-  Image,
-  ImageStyle,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  ViewProps,
-  ViewStyle,
-} from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Avatar, IconButton } from "react-native-paper";
-import CustomModal from "../common/CustomModal";
-import { useState } from "react";
 import CONSTANTS from "@/constants/data";
-import * as ImagePicker from "expo-image-picker";
+import imageService from "@/services/image-service";
+import { useState } from "react";
+import { Alert, View, ViewProps } from "react-native";
+import CustomButton, { CustomButtonProps } from "../custom/CustomButton";
 import PreviewImageUpload, {
   PreviewImageUploadProps,
 } from "./PreviewImageUpload";
-import CustomButton, { CustomButtonProps } from "../custom/CustomButton";
-import imageService from "@/services/image-service";
 interface ImageUploadProps extends ViewProps {
   orignalURI: string;
   isImageUploading: boolean;

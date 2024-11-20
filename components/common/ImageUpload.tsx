@@ -1,20 +1,17 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import { Colors } from "@/constants/Colors";
+import CONSTANTS from "@/constants/data";
+import * as ImagePicker from "expo-image-picker";
+import React, { ReactNode, useState } from "react";
 import {
   Image,
   Platform,
-  StyleProp,
   StyleSheet,
   Text,
-  Touchable,
+  TouchableOpacity,
   View,
 } from "react-native";
-import { Avatar, Button, IconButton } from "react-native-paper";
-import * as ImagePicker from "expo-image-picker";
-import { Colors } from "@/constants/Colors";
-import CONSTANTS from "@/constants/data";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { IconButton } from "react-native-paper";
 import CustomButton from "../custom/CustomButton";
-import apiClient from "@/services/api-services/api-client";
 
 const styles = StyleSheet.create({
   shadow: {

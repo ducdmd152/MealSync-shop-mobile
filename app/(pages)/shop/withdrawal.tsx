@@ -1,24 +1,11 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  Image,
-  StyleSheet,
-  Alert,
-} from "react-native";
-import React, { useCallback, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
-import { router, useFocusEffect } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
-import { RefreshControl, ScrollView } from "react-native-gesture-handler";
-import { ActivityIndicator, TouchableRipple } from "react-native-paper";
-import dayjs from "dayjs";
-import { BlurView } from "expo-blur";
-import DateTimePicker from "react-native-ui-datepicker";
+import CONSTANTS from "@/constants/data";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
+import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import sessionService from "@/services/session-service";
+import utilService from "@/services/util-service";
 import {
   WITHDRAW_STATUSES_FILTER,
   WithdrawalModel,
@@ -26,11 +13,24 @@ import {
   withdrawalStatuses,
 } from "@/types/models/WithdrawalModel";
 import FetchResponse from "@/types/responses/FetchResponse";
-import apiClient from "@/services/api-services/api-client";
-import { endpoints } from "@/services/api-services/api-service-instances";
-import sessionService from "@/services/session-service";
-import CONSTANTS from "@/constants/data";
-import utilService from "@/services/util-service";
+import { Ionicons } from "@expo/vector-icons";
+import dayjs from "dayjs";
+import { BlurView } from "expo-blur";
+import { router, useFocusEffect } from "expo-router";
+import React, { useState } from "react";
+import {
+  Alert,
+  Image,
+  Modal,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { TouchableRipple } from "react-native-paper";
+import DateTimePicker from "react-native-ui-datepicker";
 
 const Withdrawal = () => {
   const globalWithdrawalState = useGlobalWithdrawalState();

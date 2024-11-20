@@ -1,26 +1,21 @@
+import useGlobalReviewReplyState from "@/hooks/states/useGlobalReviewReplyState";
+import apiClient from "@/services/api-services/api-client";
+import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  Image,
+  Alert,
   Dimensions,
+  Keyboard,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
-  Keyboard,
-  Alert,
+  View,
+  TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import Modal from "react-native-modal";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Ionicons } from "@expo/vector-icons";
-import CONSTANTS from "@/constants/data";
-import useGlobalReviewReplyState from "@/hooks/states/useGlobalReviewReplyState";
-import { useFocusEffect } from "expo-router";
-import ImageUpload from "../common/ImageUpload";
 import CustomButton from "../custom/CustomButton";
-import apiClient from "@/services/api-services/api-client";
 import PreviewMultiImagesUpload from "../images/PreviewMultiImagesUpload";
-import utilService from "@/services/util-service";
 import ImageViewingModal from "./ImageViewingModal";
 interface Props {
   containerStyleClasses?: string;

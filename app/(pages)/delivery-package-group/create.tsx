@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Alert,
+  ScrollView,
+} from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import ScrollPicker, {
@@ -20,7 +27,7 @@ import OrderFetchModel, {
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
 import { UseQueryResult } from "@tanstack/react-query";
-import { ScrollView } from "react-native-gesture-handler";
+
 import { FrameStaffInfoModel } from "@/types/models/StaffInfoModel";
 import sessionService from "@/services/session-service";
 import CustomButton from "@/components/custom/CustomButton";

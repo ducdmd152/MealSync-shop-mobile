@@ -1,11 +1,17 @@
-import { View, Text, Image, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Alert,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import { CRUD } from "@/constants/operations";
 import { router, useFocusEffect } from "expo-router";
 import FormField from "@/components/custom/FormFieldCustom";
 import CustomButton from "@/components/custom/CustomButton";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import usePathState from "@/hooks/states/usePathState";
 import useModelState from "@/hooks/states/useModelState";
 import apiClient from "@/services/api-services/api-client";

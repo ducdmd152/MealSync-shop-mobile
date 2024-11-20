@@ -1,28 +1,27 @@
-import { View, Text, Touchable, Alert } from "react-native";
-import React, { useEffect, useState } from "react";
-import CustomButton from "../custom/CustomButton";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
+import orderAPIService from "@/services/api-services/order-api-service";
+import sessionService from "@/services/session-service";
+import utilService from "@/services/util-service";
+import OrderDetailModel from "@/types/models/OrderDetailModel";
+import OrderFetchModel from "@/types/models/OrderFetchModel";
 import {
   FrameStaffInfoModel,
   ShopDeliveryStaff,
   StaffInfoModel,
 } from "@/types/models/StaffInfoModel";
 import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
-import sessionService from "@/services/session-service";
-import OrderDetailModel from "@/types/models/OrderDetailModel";
-import utilService from "@/services/util-service";
-import OrderFetchModel from "@/types/models/OrderFetchModel";
-import { ActivityIndicator } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import orderAPIService from "@/services/api-services/order-api-service";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
-import { useToast } from "react-native-toast-notifications";
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
-import Toast from "react-native-toast-message";
+import React, { useState } from "react";
+import { Alert, Text, View, TouchableOpacity } from "react-native";
+
+import { ActivityIndicator } from "react-native-paper";
+import { useToast } from "react-native-toast-notifications";
+import CustomButton from "../custom/CustomButton";
 
 interface Props {
   onComplete: (shopDeliveryStaff: ShopDeliveryStaff) => void;

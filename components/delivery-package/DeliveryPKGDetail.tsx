@@ -15,17 +15,19 @@ import OrderFetchModel, {
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import { Ionicons } from "@expo/vector-icons";
 import dayjs from "dayjs";
-import { router, useFocusEffect } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
   Image,
+  RefreshControl,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { RefreshControl, ScrollView } from "react-native-gesture-handler";
+
 import Toast from "react-native-toast-message";
 import { useToast } from "react-native-toast-notifications";
 import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfirmModal";

@@ -14,7 +14,7 @@ import ValueResponse from "@/types/responses/ValueReponse";
 import { Ionicons } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import * as Clipboard from "expo-clipboard";
-import { router, useFocusEffect } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
@@ -24,14 +24,12 @@ import {
   Text,
   TextInput,
   View,
-} from "react-native";
-import { SelectList } from "react-native-dropdown-select-list";
-import {
   RefreshControl,
   ScrollView,
   TouchableOpacity,
   TouchableWithoutFeedback,
-} from "react-native-gesture-handler";
+} from "react-native";
+import { SelectList } from "react-native-dropdown-select-list";
 import Modal from "react-native-modal";
 import Toast from "react-native-toast-message";
 import AreaQRScanner from "../common/AreaQRScanner";
@@ -40,8 +38,6 @@ import OrderDeliveryInfo from "../common/OrderDeliveryInfo";
 import CustomButton from "../custom/CustomButton";
 import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 import EvidencePreviewMultiImagesUpload from "../images/EvidencePreviewMultiImagesUpload";
-import DeliveryOrderDetail from "../order/DeliveryOrderDetail";
-import Order from "@/app/(tabs)/order";
 import OrderDetail from "../order/OrderDetail";
 interface Props {
   containerStyleClasses?: string;

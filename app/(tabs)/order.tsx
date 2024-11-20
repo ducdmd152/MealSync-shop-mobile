@@ -1,67 +1,56 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  Modal,
-  StyleSheet,
-  Alert,
-  Dimensions,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import TimeRangeSelect from "@/components/common/TimeRangeSelect";
 import CustomButton from "@/components/custom/CustomButton";
-import ScrollPicker from "react-native-wheel-scrollview-picker";
-import {
-  ActivityIndicator,
-  Portal,
-  Searchbar,
-  TouchableRipple,
-  Modal as ModalPaper,
-} from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
-import PagingRequestQuery from "@/types/queries/PagingRequestQuery";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import OrderDeliveryAssign from "@/components/delivery-package/OrderDeliveryAssign";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import FetchResponse, {
-  FetchOnlyListResponse,
-} from "@/types/responses/FetchResponse";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
+import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
+import useTimeRangeState from "@/hooks/states/useTimeRangeState";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import orderAPIService from "@/services/api-services/order-api-service";
+import sessionService from "@/services/session-service";
+import utilService from "@/services/util-service";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import OrderFetchModel, {
   filterStatuses,
   getOrderStatusDescription,
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
-import apiClient from "@/services/api-services/api-client";
-import { endpoints } from "@/services/api-services/api-service-instances";
-import sessionService from "@/services/session-service";
-import { RefreshControl } from "react-native-gesture-handler";
-import { BottomSheet } from "@rneui/themed";
-import { BlurView } from "expo-blur";
-import DateTimePicker from "react-native-ui-datepicker";
-import dayjs from "dayjs";
-import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
-import { useFocusEffect } from "expo-router";
-import TimeRangeSelect, {
-  TimeRange,
-} from "@/components/common/TimeRangeSelect";
-import useTimeRangeState from "@/hooks/states/useTimeRangeState";
-import OrderDetail from "@/components/order/OrderDetail";
-import orderAPIService from "@/services/api-services/order-api-service";
-import { warning } from "framer-motion";
-import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
-import OrderDeliveryAssign from "@/components/delivery-package/OrderDeliveryAssign";
-import OrderDetailModel from "@/types/models/OrderDetailModel";
-import {
-  ShopDeliveryStaff,
-  StaffInfoModel,
-} from "@/types/models/StaffInfoModel";
-import utilService from "@/services/util-service";
-import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
-import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
-import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 import { Dormitories } from "@/types/models/ShopProfileModel";
-import Toast from "react-native-toast-message";
+import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
+import PagingRequestQuery from "@/types/queries/PagingRequestQuery";
+import FetchResponse, {
+  FetchOnlyListResponse,
+} from "@/types/responses/FetchResponse";
+import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import { Ionicons } from "@expo/vector-icons";
+import { BottomSheet } from "@rneui/themed";
+import dayjs from "dayjs";
+import { BlurView } from "expo-blur";
+import { useFocusEffect } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Dimensions,
+  Image,
+  Modal,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import {
+  ActivityIndicator,
+  Modal as ModalPaper,
+  Portal,
+  Searchbar,
+  TouchableRipple,
+} from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
+import DateTimePicker from "react-native-ui-datepicker";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()

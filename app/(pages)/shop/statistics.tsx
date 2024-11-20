@@ -1,29 +1,26 @@
+import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
+import CONSTANTS from "@/constants/data";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import utilService from "@/services/util-service";
+import { FoodStatus } from "@/types/models/FoodModel";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
+import { Ionicons } from "@expo/vector-icons";
+import dayjs from "dayjs";
+import { BlurView } from "expo-blur";
+import { useFocusEffect } from "expo-router";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
   Image,
   Modal,
   StyleSheet,
+  Text,
+  View,
+  RefreshControl,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
-import CustomButton from "@/components/custom/CustomButton";
-import { Ionicons } from "@expo/vector-icons";
-import { router, useFocusEffect } from "expo-router";
 import { TouchableRipple } from "react-native-paper";
-import { BlurView } from "expo-blur";
-import dayjs from "dayjs";
 import DateTimePicker from "react-native-ui-datepicker";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import { endpoints } from "@/services/api-services/api-service-instances";
-import apiClient from "@/services/api-services/api-client";
-import { FetchValueResponse } from "@/types/responses/FetchResponse";
-import sessionService from "@/services/session-service";
-import utilService from "@/services/util-service";
-import CONSTANTS from "@/constants/data";
-import { FoodStatus } from "@/types/models/FoodModel";
-import { RefreshControl } from "react-native-gesture-handler";
 interface FoodStatistics {
   id: number;
   name: string;

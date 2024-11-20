@@ -1,6 +1,5 @@
-import { View, Text, Touchable } from "react-native";
+import { View, Text, Touchable, TouchableOpacity } from "react-native";
 import React, { ReactNode } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import sessionService from "@/services/session-service";
 import { router, useFocusEffect, useNavigation } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";

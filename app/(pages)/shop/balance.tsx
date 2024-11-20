@@ -6,11 +6,12 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  RefreshControl,
+  TextInput,
 } from "react-native";
 import React from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import utilService from "@/services/util-service";
-import { RefreshControl, TextInput } from "react-native-gesture-handler";
 import CONSTANTS from "@/constants/data";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import apiClient from "@/services/api-services/api-client";

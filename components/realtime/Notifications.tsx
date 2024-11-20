@@ -1,9 +1,12 @@
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CONSTANTS from "@/constants/data";
 import dayjs from "dayjs";
 import { useFocusEffect } from "expo-router";
 import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
+import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import io, { Socket } from "socket.io-client"; // Import the types for socket.io
 
 const Notifications = () => {
   const globalHeaderPage = useGlobalHeaderPage();
@@ -15,6 +18,66 @@ const Notifications = () => {
       };
     }, [])
   );
+  const [socket, setSocket] = useState<Socket | null>(null); // Use Socket type from socket.io-client
+  const initializeSocket = async () => {
+    try {
+      const token = await AsyncStorage.getItem("@token"); // Retrieve token from AsyncStorage
+
+      if (!token) {
+        Alert.alert("Error", "No token found. Please log in again.");
+        return;
+      }
+
+      // Connect to the server with JWT authentication
+      const newSocket = io("wss://socketio.mealsync.org:443", {
+        auth: {
+          token: token,
+        },
+        transports: ["websocket", "polling"],
+      });
+
+      // Listen for notifications from the server
+      newSocket.on("notification", (message: any) => {
+        try {
+          console.log(
+            message,
+            " message websockettttttttttttttttttttttttttttttttttttt"
+          );
+          // showToastable({
+          //   renderContent: () => (
+          //     <NotifyFisebaseForegroundItem {...message} />
+          //   ),
+          // });
+        } catch (err) {
+          console.error("Failed to show toastable:", err);
+        }
+      });
+
+      // Handle connection errors
+      newSocket.on("connect_error", (error: Error) => {
+        console.error("Connection Error:", error);
+        Alert.alert("Connection Error", error.message);
+      });
+
+      // Save socket instance for cleanup
+      setSocket(newSocket);
+    } catch (error) {
+      console.log("Error retrieving token:", error);
+      Alert.alert("Error", "Failed to retrieve token. Please log in again.");
+    }
+  };
+  useEffect(() => {
+    // Function to initialize socket connection with token from AsyncStorage
+
+    initializeSocket();
+
+    // Cleanup function to disconnect the socket on unmount
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, []); // Empty dependency array to run only once on mount
   return (
     <ScrollView style={{ flexGrow: 1 }}>
       {Array.from({ length: 5 }, (_, index) => (
