@@ -97,7 +97,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
         />
       </View>
 
-      <View className="w-full gap-2 p-4 pt-1 flex-1">
+      <View className="w-full gap-y-2 p-4 px-3 pt-1 flex-1">
         <View className="w-full">
           {/* <Searchbar
             style={{
@@ -119,7 +119,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
         )}
 
         <ScrollView
-          className="flex-1"
+          className="flex-1 w-full"
           refreshControl={
             <RefreshControl
               tintColor={"#FCF450"}
@@ -157,7 +157,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                   "$" +
                   index
                 }
-                className="p-3 drop-shadow-md rounded-lg shadow border-[0.5px] border-gray-200"
+                className="p-3 drop-shadow-md w-full rounded-lg shadow border-[0.5px] border-gray-200"
               >
                 <View className="flex-row items-center justify-between gap-2">
                   <View className="flex-row">

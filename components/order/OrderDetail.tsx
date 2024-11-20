@@ -780,7 +780,7 @@ const OrderDetail = ({
                     <Text className="text-[13.5px]">Chi tiết</Text>
                   </TouchableOpacity> */}
 
-              {order.status == OrderStatus.Delivering && (
+              {/* {order.status == OrderStatus.Delivering && (
                 <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white mr-[-8px]">
                   <CustomButton
                     title="Giao thành công"
@@ -798,7 +798,7 @@ const OrderDetail = ({
                     textStyleClasses="text-[13.5px] text-gray-900 ml-1 text-white text-gray-700"
                   />
                 </View>
-              )}
+              )} */}
             </View>
           )}
         </View>
