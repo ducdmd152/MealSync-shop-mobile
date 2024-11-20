@@ -1,18 +1,14 @@
-import { View, Text, Dimensions, ScrollView, Alert } from "react-native";
-import React, { useEffect, useState } from "react";
 import apiClient from "@/services/api-services/api-client";
 import OrderFetchModel from "@/types/models/OrderFetchModel";
 import ValueResponse from "@/types/responses/ValueReponse";
-import { ActivityIndicator } from "react-native-paper";
+import React, { useEffect, useState } from "react";
 import {
-  getOrderStatusDescription,
-  OrderStatus,
-} from "@/types/models/OrderFetchModel";
-import CustomButton from "../custom/CustomButton";
-import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
-import orderAPIService from "@/services/api-services/order-api-service";
-import { RefreshControl } from "react-native-gesture-handler";
-import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
+  Dimensions,
+  ScrollView,
+  Text,
+  View,
+  RefreshControl,
+} from "react-native";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()

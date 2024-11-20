@@ -368,7 +368,7 @@ const PromotionDetails = () => {
               textStyleClasses="text-white"
               handlePress={() => {
                 getDetails();
-                router.replace("/promotion/update");
+                router.push("/promotion/update");
               }}
             />
             <CustomButton

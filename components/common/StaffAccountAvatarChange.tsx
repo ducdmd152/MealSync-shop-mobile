@@ -1,24 +1,25 @@
 import { Colors } from "@/constants/Colors";
 import CONSTANTS from "@/constants/data";
-import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import apiClient, { BASE_URL } from "@/services/api-services/api-client";
+import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
-import { ShopProfileGetModel } from "@/types/models/ShopProfileModel";
+import { getExtensionFromMimeType } from "@/services/image-service";
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
+import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
-import { Alert, Platform, StyleSheet, Text, View } from "react-native";
-import { Avatar, Button, IconButton } from "react-native-paper";
-import CustomButton from "../custom/CustomButton";
-import { unSelectLocation } from "@/hooks/states/useMapLocationState";
+import {
+  Alert,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Avatar, IconButton } from "react-native-paper";
 import Toast from "react-native-toast-message";
-import * as FileSystem from "expo-file-system";
-import { getExtensionFromMimeType } from "@/services/image-service";
-import sessionService from "@/services/session-service";
 import CustomModal from "./CustomModal";
-import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 import { ShopDeliveryStaffModel } from "@/types/models/StaffInfoModel";
 import { useFocusEffect } from "expo-router";
 const styles = StyleSheet.create({

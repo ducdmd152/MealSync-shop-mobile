@@ -175,7 +175,7 @@ const PromotionUpdate = () => {
             globalPromotionState.setPromotion({
               ...result.value.promotionInfo,
             });
-            router.replace("/promotion/details");
+            router.back();
             isAnyRequestSubmit.current = false;
           }
         })

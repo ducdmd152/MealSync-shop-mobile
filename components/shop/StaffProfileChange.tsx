@@ -1,31 +1,19 @@
-import { View, Text, TouchableOpacity, Alert, Image } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
-import FormFieldCustom from "../custom/FormFieldCustom";
-import CustomCheckbox from "../custom/CustomCheckbox";
-import { Ionicons } from "@expo/vector-icons";
-import CustomButton from "../custom/CustomButton";
+import CONSTANTS from "@/constants/data";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import { FetchValueResponse } from "@/types/responses/FetchResponse";
-import {
-  Dormitories,
-  ShopProfileGetModel,
-} from "@/types/models/ShopProfileModel";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
-import { Banner, Button } from "react-native-paper";
-import { unSelectLocation } from "@/hooks/states/useMapLocationState";
-import { router, useFocusEffect } from "expo-router";
-import { useToast } from "react-native-toast-notifications";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
-import SampleCustomCheckbox from "../custom/SampleCustomCheckbox";
-import CONSTANTS from "@/constants/data";
-import Toast from "react-native-toast-message";
-import PreviewImageUpload from "../images/PreviewImageUpload";
-import imageService from "@/services/image-service";
-import { ShopDeliveryStaffModel } from "@/types/models/StaffInfoModel";
 import utilService from "@/services/util-service";
+import { ShopDeliveryStaffModel } from "@/types/models/StaffInfoModel";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import ValueResponse from "@/types/responses/ValueReponse";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useFocusEffect } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
+import { useToast } from "react-native-toast-notifications";
+import CustomButton from "../custom/CustomButton";
+import FormFieldCustom from "../custom/FormFieldCustom";
 
 export const emptyShopDeliveryStaff: ShopDeliveryStaffModel = {
   id: 0,

@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
-import { Alert, Text, TextInput, View } from "react-native";
+import { Alert, Text, TextInput, View, TouchableOpacity } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 import CustomButton from "../custom/CustomButton";
 import EvidencePreviewMultiImagesUpload from "../images/EvidencePreviewMultiImagesUpload";
 import {

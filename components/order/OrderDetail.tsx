@@ -1,36 +1,32 @@
-import {
-  View,
-  Text,
-  Dimensions,
-  ScrollView,
-  Alert,
-  Linking,
-  TouchableOpacity,
-} from "react-native";
-import React, { useEffect, useState } from "react";
 import apiClient from "@/services/api-services/api-client";
+import orderAPIService from "@/services/api-services/order-api-service";
+import utilService from "@/services/util-service";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
-import ValueResponse from "@/types/responses/ValueReponse";
-import { ActivityIndicator } from "react-native-paper";
 import {
   getOrderStatusDescription,
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
-import CustomButton from "../custom/CustomButton";
-import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
-import orderAPIService from "@/services/api-services/order-api-service";
-import { RefreshControl } from "react-native-gesture-handler";
-import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
-import * as Clipboard from "expo-clipboard";
-import OrderDeliveryInfo from "../common/OrderDeliveryInfo";
-import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
-import CustomModal from "../common/CustomModal";
-import { useToast } from "react-native-toast-notifications";
-import Order from "@/app/(tabs)/order";
-import utilService from "@/services/util-service";
+import ValueResponse from "@/types/responses/ValueReponse";
+import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import * as Clipboard from "expo-clipboard";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Dimensions,
+  Linking,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  RefreshControl,
+} from "react-native";
 import Toast from "react-native-toast-message";
-import dayjs from "dayjs";
+import { useToast } from "react-native-toast-notifications";
+import CustomModal from "../common/CustomModal";
+import OrderDeliveryInfo from "../common/OrderDeliveryInfo";
+import CustomButton from "../custom/CustomButton";
+import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -784,7 +780,7 @@ const OrderDetail = ({
                     <Text className="text-[13.5px]">Chi tiết</Text>
                   </TouchableOpacity> */}
 
-              {order.status == OrderStatus.Delivering && (
+              {/* {order.status == OrderStatus.Delivering && (
                 <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white mr-[-8px]">
                   <CustomButton
                     title="Giao thành công"
@@ -802,7 +798,7 @@ const OrderDetail = ({
                     textStyleClasses="text-[13.5px] text-gray-900 ml-1 text-white text-gray-700"
                   />
                 </View>
-              )}
+              )} */}
             </View>
           )}
         </View>

@@ -1,10 +1,8 @@
-import { View, Text, Image, Dimensions } from "react-native";
-import React from "react";
-import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
-import Modal from "react-native-modal";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Ionicons } from "@expo/vector-icons";
 import CONSTANTS from "@/constants/data";
+import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
+import React from "react";
+import { Dimensions, Image, Text, View } from "react-native";
+import Modal from "react-native-modal";
 interface Props {
   containerStyleClasses?: string;
   imageStyleClasses?: string;

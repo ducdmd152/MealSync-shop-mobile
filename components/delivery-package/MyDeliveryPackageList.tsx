@@ -1,31 +1,30 @@
-import { View, Text, Image, Dimensions, Alert } from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import useTimeRangeState from "@/hooks/states/useTimeRangeState";
-import { FrameDateTime } from "@/types/models/TimeModel";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
 import {
-  DeliveryPackageModel,
   DeliveryPackageStatus,
   OwnDeliveryPackageModel,
 } from "@/types/models/DeliveryPackageModel";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import { endpoints } from "@/services/api-services/api-service-instances";
-import apiClient from "@/services/api-services/api-client";
+import { FrameDateTime } from "@/types/models/TimeModel";
 import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
 import dayjs from "dayjs";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Alert,
+  Dimensions,
   RefreshControl,
   ScrollView,
+  Text,
   TouchableOpacity,
-} from "react-native-gesture-handler";
-import sessionService from "@/services/session-service";
-import utilService from "@/services/util-service";
-import { getOrderStatusDescription } from "@/types/models/OrderFetchModel";
-import { useFocusEffect } from "expo-router";
+  View,
+} from "react-native";
+
 import useGlobalMyPKGDetailsState from "@/hooks/states/useGlobalPKGDetailsState";
-import { BottomSheet } from "@rneui/themed";
-import DeliveryFrameDetail from "./DeliveryFrameDetail";
+import utilService from "@/services/util-service";
 import { Ionicons } from "@expo/vector-icons";
+import { BottomSheet } from "@rneui/themed";
+import { useFocusEffect } from "expo-router";
 import DeliveryPKGDetail from "./DeliveryPKGDetail";
 const detailBottomHeight = Dimensions.get("window").height - 100;
 interface Query extends FrameDateTime {
@@ -97,6 +96,7 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
               sts.value == statuses ? "bg-secondary" : "bg-gray-100"
             }`}
             onPress={() => {
+              console.log("touched...");
               setStatuses(sts.value);
             }}
           >

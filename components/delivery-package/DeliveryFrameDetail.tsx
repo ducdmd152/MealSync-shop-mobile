@@ -1,44 +1,34 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-  Alert,
-} from "react-native";
-import React, { useEffect, useRef, useState } from "react";
-import { FrameDateTime } from "@/types/models/TimeModel";
-import OrderDetailModel from "@/types/models/OrderDetailModel";
+import useGPKGState from "@/hooks/states/useGPKGState";
+import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
 import apiClient from "@/services/api-services/api-client";
-import {
-  DeliveryPackageGroupDetailsModel,
-  DeliveryPackageGroupModel,
-} from "@/types/models/DeliveryPackageModel";
-import { FetchValueResponse } from "@/types/responses/FetchResponse";
-import utilService from "@/services/util-service";
 import sessionService from "@/services/session-service";
-import { RefreshControl, ScrollView } from "react-native-gesture-handler";
-import CustomButton from "../custom/CustomButton";
+import utilService from "@/services/util-service";
+import { DeliveryPackageGroupDetailsModel } from "@/types/models/DeliveryPackageModel";
 import OrderFetchModel, {
   getOrderStatusDescription,
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
-import { Ionicons } from "@expo/vector-icons";
-import { boolean } from "yup";
-import {
-  ActivityIndicator,
-  Portal,
-  Modal as ModalPaper,
-} from "react-native-paper";
-import OrderDeliveryAssign from "./OrderDeliveryAssign";
 import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
+import { FrameDateTime } from "@/types/models/TimeModel";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
+import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
-import useGPKGState from "@/hooks/states/useGPKGState";
-import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
-import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
-import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfirmModal";
-import CustomModal from "../common/CustomModal";
+import React, { useState } from "react";
+import {
+  Alert,
+  Dimensions,
+  Image,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Toast from "react-native-toast-message";
+import CustomModal from "../common/CustomModal";
+import CustomButton from "../custom/CustomButton";
+import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfirmModal";
+import OrderDeliveryAssign from "./OrderDeliveryAssign";
 interface Props {
   query: FrameDateTime;
   selectedDetail: DeliveryPackageGroupDetailsModel;

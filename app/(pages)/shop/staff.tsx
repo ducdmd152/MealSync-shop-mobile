@@ -1,42 +1,32 @@
-import {
-  View,
-  Text,
-  ImageBackground,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  Alert,
-} from "react-native";
-import React, { useState } from "react";
-import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
-import utilService from "@/services/util-service";
-import { RefreshControl, TextInput } from "react-native-gesture-handler";
-import CONSTANTS from "@/constants/data";
-import { endpoints } from "@/services/api-services/api-service-instances";
-import apiClient from "@/services/api-services/api-client";
+import CustomButton from "@/components/custom/CustomButton";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import {
-  BalanceModel,
-  sampleWalletTransactionList,
-  WalletTransaction,
-} from "@/types/models/BalanceModel";
-import ValueResponse from "@/types/responses/ValueReponse";
-import { useFocusEffect } from "expo-router";
-import FetchResponse from "@/types/responses/FetchResponse";
+import useGlobalStaffState, {
+  StaffModalAction,
+} from "@/hooks/states/useGlobalStaffState";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
 import sessionService from "@/services/session-service";
-import dayjs from "dayjs";
 import {
   ShopDeliveryStaffModel,
   ShopDeliveryStaffStatus,
 } from "@/types/models/StaffInfoModel";
+import FetchResponse from "@/types/responses/FetchResponse";
+import { Ionicons } from "@expo/vector-icons";
+import dayjs from "dayjs";
+import { useFocusEffect } from "expo-router";
+import React from "react";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  RefreshControl,
+} from "react-native";
 import { Searchbar, Switch } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
-import CustomButton from "@/components/custom/CustomButton";
-import { Ionicons } from "@expo/vector-icons";
-import useGlobalStaffState, {
-  StaffModalAction,
-} from "@/hooks/states/useGlobalStaffState";
 
 const StaffManagement = () => {
   const globalStaffState = useGlobalStaffState();

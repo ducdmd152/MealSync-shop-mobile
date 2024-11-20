@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  RefreshControl,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "@/components/custom/CustomButton";
@@ -25,7 +26,6 @@ import { endpoints } from "@/services/api-services/api-service-instances";
 import apiClient from "@/services/api-services/api-client";
 import FoodModel from "@/types/models/FoodModel";
 import APICommonResponse from "@/types/responses/APICommonResponse";
-import { RefreshControl } from "react-native-gesture-handler";
 import { showMessage, hideMessage } from "react-native-flash-message";
 import { useToast } from "react-native-toast-notifications";
 import ValueResponse from "@/types/responses/ValueReponse";

@@ -1,26 +1,31 @@
-import { View, Text, Touchable, TouchableOpacity, Image } from "react-native";
-import React, { useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
-import { Ionicons } from "@expo/vector-icons";
-import { Avatar, ProgressBar } from "react-native-paper";
-import CONSTANTS from "@/constants/data";
-import { Rating } from "react-native-elements";
 import CustomButton from "@/components/custom/CustomButton";
-import sessionService from "@/services/session-service";
-import { endpoints } from "@/services/api-services/api-service-instances";
+import CONSTANTS from "@/constants/data";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import FetchResponse, {
-  FetchOnlyListResponse,
+import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
+import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
+import useGlobalReviewReplyState from "@/hooks/states/useGlobalReviewReplyState";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import sessionService from "@/services/session-service";
+import {
   FetchResponseValue,
   FetchValueResponse,
 } from "@/types/responses/FetchResponse";
-import apiClient from "@/services/api-services/api-client";
+import { Ionicons } from "@expo/vector-icons";
 import dayjs from "dayjs";
-import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
-import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import { useFocusEffect } from "expo-router";
-import useGlobalReviewReplyState from "@/hooks/states/useGlobalReviewReplyState";
-import { RefreshControl } from "react-native-gesture-handler";
+import React, { useState } from "react";
+import {
+  Image,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Rating } from "react-native-elements";
+import { Avatar, ProgressBar } from "react-native-paper";
+
 const isOver24Hours = (createdDate: string) => {
   const now = dayjs();
   const reviewDate = dayjs(createdDate);

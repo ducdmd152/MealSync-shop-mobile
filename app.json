@@ -22,7 +22,12 @@
       },
       "runtimeVersion": {
         "policy": "sdkVersion"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.anonymous.MealSyncshopmobile"
     },
     "web": {
       "bundler": "metro",

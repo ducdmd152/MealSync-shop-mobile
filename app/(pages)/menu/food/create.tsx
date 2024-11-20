@@ -37,7 +37,6 @@ import CustomModal from "@/components/common/CustomModal";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { RefreshControl } from "react-native-gesture-handler";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")

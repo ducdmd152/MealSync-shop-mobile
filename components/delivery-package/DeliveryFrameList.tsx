@@ -1,26 +1,32 @@
-import { View, Text, TouchableOpacity, Dimensions, Alert } from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import CustomButton from "../custom/CustomButton";
-import { RefreshControl, ScrollView } from "react-native-gesture-handler";
-import utilService from "@/services/util-service";
-import { Ionicons } from "@expo/vector-icons";
-import { router, useFocusEffect } from "expo-router";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import useTimeRangeState from "@/hooks/states/useTimeRangeState";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import sessionService from "@/services/session-service";
+import utilService from "@/services/util-service";
 import {
   DeliveryPackageGroupDetailsModel,
   DeliveryPackageGroupModel,
 } from "@/types/models/DeliveryPackageModel";
-import apiClient from "@/services/api-services/api-client";
-import { endpoints } from "@/services/api-services/api-service-instances";
-import sessionService from "@/services/session-service";
-import useTimeRangeState from "@/hooks/states/useTimeRangeState";
-import { ActivityIndicator } from "react-native-paper";
 import { FrameDateTime } from "@/types/models/TimeModel";
+import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
+import { Ionicons } from "@expo/vector-icons";
 import { BottomSheet } from "@rneui/themed";
-import DeliveryFrameDetail from "./DeliveryFrameDetail";
 import dayjs from "dayjs";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Alert,
+  Dimensions,
+  Text,
+  TouchableOpacity,
+  View,
+  RefreshControl,
+  ScrollView,
+} from "react-native";
+import CustomButton from "../custom/CustomButton";
+import DeliveryFrameDetail from "./DeliveryFrameDetail";
 
 const detailBottomHeight = Dimensions.get("window").height - 100;
 
@@ -91,7 +97,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
         />
       </View>
 
-      <View className="w-full gap-2 p-4 pt-1 flex-1">
+      <View className="w-full gap-y-2 p-4 px-3 pt-1 flex-1">
         <View className="w-full">
           {/* <Searchbar
             style={{
@@ -113,7 +119,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
         )}
 
         <ScrollView
-          className="flex-1"
+          className="flex-1 w-full"
           refreshControl={
             <RefreshControl
               tintColor={"#FCF450"}
@@ -151,7 +157,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                   "$" +
                   index
                 }
-                className="p-3 drop-shadow-md rounded-lg shadow border-[0.5px] border-gray-200"
+                className="p-3 drop-shadow-md w-full rounded-lg border-[0.5px] border-gray-200 bg-[#f0fdfa]"
               >
                 <View className="flex-row items-center justify-between gap-2">
                   <View className="flex-row">

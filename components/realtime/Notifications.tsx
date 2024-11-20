@@ -1,9 +1,12 @@
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CONSTANTS from "@/constants/data";
 import dayjs from "dayjs";
 import { useFocusEffect } from "expo-router";
 import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
+import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import io, { Socket } from "socket.io-client"; // Import the types for socket.io
 
 const Notifications = () => {
   const globalHeaderPage = useGlobalHeaderPage();
@@ -15,6 +18,7 @@ const Notifications = () => {
       };
     }, [])
   );
+
   return (
     <ScrollView style={{ flexGrow: 1 }}>
       {Array.from({ length: 5 }, (_, index) => (
