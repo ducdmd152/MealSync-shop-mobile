@@ -59,7 +59,8 @@ const TabHeader = () => {
             color="#DF4830"
           />
           {!globalHeaderPage.isNotiPageFocusing &&
-            numberOfUnreaded.data?.value.totalUnerad && (
+            numberOfUnreaded.data &&
+            numberOfUnreaded.data?.value.totalUnerad > 0 && (
               <View className="items-center justify-center bg-secondary h-[24px] w-[24px] rounded-full absolute top-[-8] right-[-8]">
                 <Text className="text-[9px] font-medium">
                   {numberOfUnreaded.data.value.totalUnerad < 10
@@ -82,15 +83,17 @@ const TabHeader = () => {
             size={32}
             color="#DF4830"
           />
-          {!globalHeaderPage.isChattingFocusing && numberOfUnreaded.data && (
-            <View className="items-center justify-center bg-secondary h-[24px] w-[24px] rounded-full absolute top-[-8] right-[-8]">
-              <Text className="text-[9px] font-medium">
-                {numberOfUnreaded.data.value.totalUnerad < 10
-                  ? numberOfUnreaded.data.value.totalUnerad.toString()
-                  : "9+"}
-              </Text>
-            </View>
-          )}
+          {!globalHeaderPage.isChattingFocusing &&
+            numberOfUnreaded.data &&
+            numberOfUnreaded.data?.value.totalUnerad > 0 && (
+              <View className="items-center justify-center bg-secondary h-[24px] w-[24px] rounded-full absolute top-[-8] right-[-8]">
+                <Text className="text-[9px] font-medium">
+                  {numberOfUnreaded.data.value.totalUnerad < 10
+                    ? numberOfUnreaded.data.value.totalUnerad.toString()
+                    : "9+"}
+                </Text>
+              </View>
+            )}
         </TouchableOpacity>
       </View>
     </View>

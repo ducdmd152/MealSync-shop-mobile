@@ -66,9 +66,8 @@ const Notifications = () => {
         <TouchableOpacity
           key={item.id}
           onPress={() => {}}
-          className={`p-3 px-4 bg-white border-b-[0.5px] border-gray-200 ${
-            item.isRead && "bg-[#fffbeb]"
-          }`}
+          className={`p-3 px-4 bg-white border-b-[0.5px] border-gray-200 `}
+          style={{ backgroundColor: item.isRead ? "#fffbeb" : "#fff" }}
         >
           <View className="flex-row flex-1 justify-start items-start">
             <View className="self-start border-[1px] border-gray-200 mr-2 ml-[-2px] rounded-full p-[1px] overflow-hidden mb-1">
