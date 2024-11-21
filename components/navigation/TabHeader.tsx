@@ -4,9 +4,24 @@ import { Ionicons } from "@expo/vector-icons";
 import { images } from "@/constants";
 import { router } from "expo-router";
 import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
+import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import FetchResponse, {
+  FetchValueResponse,
+} from "@/types/responses/FetchResponse";
+import apiClient from "@/services/api-services/api-client";
 
 const TabHeader = () => {
   const globalHeaderPage = useGlobalHeaderPage();
+  const globalNotiState = useGlobalNotiState();
+  const numberOfUnreaded = useFetchWithRQWithFetchFunc(
+    ["shop-owner-staff/notification/total-unread"],
+    async (): Promise<FetchValueResponse<{ totalUnerad: number }>> =>
+      apiClient
+        .get("shop-owner-staff/notification/total-unread")
+        .then((response) => response.data),
+    [globalNotiState.toggleChangingFlag]
+  );
   return (
     <View className="w-full h-[64px] px-4 bg-white flex-row justify-between border-b-[0.7px] border-gray-300 overflow-hidden">
       <View className="flex-row justify-center items-center">
@@ -32,7 +47,7 @@ const TabHeader = () => {
       <View className="flex-row justify-center items-center gap-2">
         <TouchableOpacity
           onPress={() => router.push("/notification")}
-          className="flex-row justify-center items-center"
+          className="flex-row justify-center items-center relative"
         >
           <Ionicons
             name={
@@ -43,10 +58,19 @@ const TabHeader = () => {
             size={32}
             color="#DF4830"
           />
+          {!globalHeaderPage.isNotiPageFocusing && numberOfUnreaded.data && (
+            <View className="items-center justify-center bg-secondary h-[24px] w-[24px] rounded-full absolute top-[-8] right-[-8]">
+              <Text className="text-[9px] font-medium">
+                {numberOfUnreaded.data.value.totalUnerad < 10
+                  ? numberOfUnreaded.data.value.totalUnerad.toString()
+                  : "9+"}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => router.push("/chatting")}
-          className="flex-row justify-center items-center"
+          className="flex-row justify-center items-center relative"
         >
           <Ionicons
             name={
@@ -57,6 +81,15 @@ const TabHeader = () => {
             size={32}
             color="#DF4830"
           />
+          {!globalHeaderPage.isChattingFocusing && numberOfUnreaded.data && (
+            <View className="items-center justify-center bg-secondary h-[24px] w-[24px] rounded-full absolute top-[-8] right-[-8]">
+              <Text className="text-[9px] font-medium">
+                {numberOfUnreaded.data.value.totalUnerad < 10
+                  ? numberOfUnreaded.data.value.totalUnerad.toString()
+                  : "9+"}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
     </View>

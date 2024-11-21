@@ -38,6 +38,7 @@ import utilService from "@/services/util-service";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { io, Socket } from "socket.io-client";
+import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -48,6 +49,7 @@ export default function RootLayout() {
   const [isCheckedAuth, setIsCheckedAuth] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState(true);
   const globalAuthState = useGlobalAuthState();
+  const globalNotiState = useGlobalNotiState();
 
   // const [fontsLoaded, error] = useFonts({
   //   "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -122,9 +124,9 @@ export default function RootLayout() {
       newSocket.on("notification", (message: any) => {
         try {
           // set noti listener
-          console.log(
-            message,
-            " message websockettttttttttttttttttttttttttttttttttttt"
+          console.info("SOCKET NOTI: ", message);
+          globalNotiState.setToggleChangingFlag(
+            !globalNotiState.toggleChangingFlag
           );
           // showToastable({
           //   renderContent: () => (
