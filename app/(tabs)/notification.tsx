@@ -4,7 +4,7 @@ import Notifications from "@/components/realtime/Notifications";
 
 const NotificationPage = () => {
   return (
-    <View className="flex-1 h-full p-4 bg-white">
+    <View className="flex-1 h-full bg-white">
       <Notifications />
     </View>
   );

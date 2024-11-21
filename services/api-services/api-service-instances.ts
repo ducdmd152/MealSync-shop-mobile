@@ -32,6 +32,7 @@ export const endpoints = {
   ACCOUNT_AVATAR_UPDATE: "shop-owner-staff/avatar/update",
   STAFF_INFO: "shop-staff/info",
   STAFF_INFO_UPDATE: "shop-staff/info/update",
+  NOTIFICATION_LIST: "shop-owner-staff/notification",
 };
 
 export const testApiService = createHttpService<TestModel>(

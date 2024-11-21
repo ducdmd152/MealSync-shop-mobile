@@ -6,10 +6,51 @@ import { useFocusEffect } from "expo-router";
 import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import io, { Socket } from "socket.io-client"; // Import the types for socket.io
+import io, { Fetch, Socket } from "socket.io-client"; // Import the types for socket.io
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import apiClient from "@/services/api-services/api-client";
+import FetchResponse from "@/types/responses/FetchResponse";
+import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
+interface NotiModel {
+  id: number;
+  accountId: number;
+  referenceId: number;
+  imageUrl: string;
+  title: string;
+  content: string;
+  data: string; // Chuỗi JSON, có thể cần parse thành đối tượng nếu cần dùng chi tiết
+  entityType: number;
+  isRead: boolean;
+}
 
 const Notifications = () => {
   const globalHeaderPage = useGlobalHeaderPage();
+  const globalNotiState = useGlobalNotiState();
+  const notiFetcher = useFetchWithRQWithFetchFunc(
+    [endpoints.NOTIFICATION_LIST],
+    async (): Promise<FetchResponse<NotiModel>> =>
+      apiClient
+        .get(endpoints.NOTIFICATION_LIST, {
+          params: {
+            pageIndex: 1,
+            pageSize: 100_000_000,
+          },
+        })
+        .then((response) => response.data),
+    []
+  );
+  useEffect(() => {
+    if (globalHeaderPage.isNotiPageFocusing) notiFetcher.refetch();
+    // console.log(
+    //   "globalHeaderPage.isChattingFocusing: ",
+    //   globalHeaderPage.isNotiPageFocusing
+    // );
+  }, [globalHeaderPage.isNotiPageFocusing]);
+  useEffect(() => {
+    if (globalHeaderPage.isNotiPageFocusing) notiFetcher.refetch();
+  }, [globalNotiState.toggleChangingFlag]);
+
   useFocusEffect(
     React.useCallback(() => {
       globalHeaderPage.setIsNotiPageFocusing(true);
@@ -21,12 +62,12 @@ const Notifications = () => {
 
   return (
     <ScrollView style={{ flexGrow: 1 }}>
-      {Array.from({ length: 5 }, (_, index) => (
+      {notiFetcher.data?.value.items.map((item) => (
         <TouchableOpacity
-          key={index}
+          key={item.id}
           onPress={() => {}}
-          className={`p-3 pt-3 bg-white border-b-[0.5px] border-gray-200 ${
-            index % 2 > 1 && "bg-[#fffbeb]"
+          className={`p-3 px-4 bg-white border-b-[0.5px] border-gray-200 ${
+            item.isRead && "bg-[#fffbeb]"
           }`}
         >
           <View className="flex-row flex-1 justify-start items-start">
@@ -45,14 +86,15 @@ const Notifications = () => {
                 numberOfLines={2}
                 ellipsizeMode="tail"
               >
-                {`It is a long established fact that`}
+                {item.title +
+                  (item.entityType == 1 ? ` MS-${item.referenceId}` : "")}
               </Text>
               <Text
                 className="text-[12px] italic mt-[2px] mb-[2px]"
                 numberOfLines={2}
                 ellipsizeMode="tail"
               >
-                {`It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.`}
+                {item.content}
               </Text>
               <View className="flex-row justify-between">
                 <View>

@@ -141,7 +141,7 @@ export default function RootLayout() {
       // Handle connection errors
       newSocket.on("connect_error", (error: Error) => {
         console.error("Connection Error:", error);
-        Alert.alert("Connection Error", error.message);
+        // Alert.alert("Connection Error", error.message);
       });
 
       // Save socket instance for cleanup
@@ -162,7 +162,7 @@ export default function RootLayout() {
         socket.disconnect();
       }
     };
-  }, [globalAuthState.token]); // Empty dependency array to run only once on mount
+  }, [globalAuthState.token]); // Empty dependency array to run once on mount and when globalAuthState.token update
   if (!loaded) {
     return (
       <Image
