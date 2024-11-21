@@ -84,6 +84,7 @@ const OrderDetail = ({
         `shop-owner/order/${orderId}`
       );
       setOrder({ ...response.data.value });
+      // console.log("{ ...response.data.value }: ", { ...response.data.value })
     } catch (error: any) {
       // console.log("ERROR: ", error);
       onNotFound();
@@ -98,7 +99,7 @@ const OrderDetail = ({
 
   return (
     <View
-      className={`items-center justify-center w-full bg-[#f4f4f5] ${containerStyleClasses}`}
+      className={`flex-1 items-center justify-center w-full bg-[#f4f4f5] ${containerStyleClasses}`}
     >
       {order?.id != undefined && (
         <View className="w-full h-full">

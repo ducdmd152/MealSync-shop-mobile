@@ -1,8 +1,15 @@
-import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import CONSTANTS from "@/constants/data";
 import dayjs from "dayjs";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -12,6 +19,8 @@ import { endpoints } from "@/services/api-services/api-service-instances";
 import apiClient from "@/services/api-services/api-client";
 import FetchResponse from "@/types/responses/FetchResponse";
 import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
+import useOrderDetailPageState from "@/hooks/states/useOrderDetailPageState";
+import OrderDetailModel from "@/types/models/OrderDetailModel";
 interface NotiModel {
   id: number;
   accountId: number;
@@ -24,10 +33,13 @@ interface NotiModel {
   isRead: boolean;
   createdDate: string;
 }
-
+enum EntityTypes {
+  Order = 1,
+}
 const Notifications = () => {
   const globalHeaderPage = useGlobalHeaderPage();
   const globalNotiState = useGlobalNotiState();
+  const globalOrderDetailPageState = useOrderDetailPageState();
   const notiFetcher = useFetchWithRQWithFetchFunc(
     [endpoints.NOTIFICATION_LIST],
     async (): Promise<FetchResponse<NotiModel>> =>
@@ -62,11 +74,26 @@ const Notifications = () => {
   );
 
   return (
-    <ScrollView style={{ flexGrow: 1 }}>
+    <ScrollView
+      style={{ flexGrow: 1 }}
+      refreshControl={
+        <RefreshControl
+          tintColor={"#FCF450"}
+          onRefresh={() => {}}
+          refreshing={notiFetcher.isFetching}
+        />
+      }
+    >
       {notiFetcher.data?.value.items.map((item) => (
         <TouchableOpacity
           key={item.id}
-          onPress={() => {}}
+          onPress={() => {
+            if (item.entityType == EntityTypes.Order) {
+              globalOrderDetailPageState.setOrder({} as OrderDetailModel);
+              globalOrderDetailPageState.setId(item.referenceId);
+              router.push("/order/details");
+            }
+          }}
           className={`p-3 px-4 bg-white border-b-[0.5px] border-gray-200 `}
           style={{ backgroundColor: item.isRead ? "#fff" : "#fffbeb" }}
         >
@@ -87,7 +114,9 @@ const Notifications = () => {
                 ellipsizeMode="tail"
               >
                 {item.title +
-                  (item.entityType == 1 ? ` MS-${item.referenceId}` : "")}
+                  (item.entityType == EntityTypes.Order
+                    ? ` MS-${item.referenceId}`
+                    : "")}
               </Text>
               <Text
                 className="text-[12px] italic mt-[2px] mb-[2px]"

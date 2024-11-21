@@ -4,6 +4,7 @@ import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import OrderDetail from "@/components/order/OrderDetail";
 import useOrderDetailPageState from "@/hooks/states/useOrderDetailPageState";
 import { router } from "expo-router";
+import OrderDetailModel from "@/types/models/OrderDetailModel";
 
 const OrderDetails = () => {
   const globalOrderDetailPageState = useOrderDetailPageState();
@@ -13,10 +14,10 @@ const OrderDetails = () => {
         <OrderDetail
           order={globalOrderDetailPageState.order}
           setOrder={globalOrderDetailPageState.setOrder}
-          orderId={globalOrderDetailPageState.order.id}
+          orderId={globalOrderDetailPageState.id}
           onNotFound={() => {
             Alert.alert(
-              `Đơn hàng MS-${globalOrderDetailPageState.order.id} không tồn tại`,
+              `Đơn hàng MS-${globalOrderDetailPageState.id} không tồn tại`,
               "Vui lòng thử lại!"
             );
             globalOrderDetailPageState.onBeforeBack();
