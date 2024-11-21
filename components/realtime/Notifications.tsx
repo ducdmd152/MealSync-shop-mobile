@@ -22,6 +22,7 @@ interface NotiModel {
   data: string; // Chuỗi JSON, có thể cần parse thành đối tượng nếu cần dùng chi tiết
   entityType: number;
   isRead: boolean;
+  createdDate: string;
 }
 
 const Notifications = () => {
@@ -98,7 +99,7 @@ const Notifications = () => {
               <View className="flex-row justify-between">
                 <View>
                   <Text className="text-[11px] italic text-gray-500 ">
-                    {dayjs("2000-10-31T01:30:00.000-05:00")
+                    {dayjs(item.createdDate)
                       .local()
                       .format("HH:mm - DD/MM/YYYY")}{" "}
                   </Text>
