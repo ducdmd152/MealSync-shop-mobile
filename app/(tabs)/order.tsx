@@ -106,9 +106,9 @@ const Order = () => {
   const globalOrderStatusesFilterState = useOrderStatusFilterState();
   const [isCancelModal, setIsCancelModal] = useState(false);
   const [isCancelOrReject, setIsCancelOrReject] = useState(false);
-  const [request, setRequest] = useState<(reason: string) => void>(
-    (reason: string) => {}
-  );
+  const [request, setRequest] = useState<
+    (reason: string, setIsSubmitting: (value: boolean) => void) => void
+  >((reason: string) => {});
   const {
     data: operatingSlots,
     isLoading: isOperatingSlotsLoading,
@@ -238,7 +238,7 @@ const Order = () => {
         item.id != order.id
           ? item
           : {
-              ...order,
+              ...item,
             }
       )
     );
@@ -255,11 +255,15 @@ const Order = () => {
       return false;
     }
 
-    const cancelRequest = (reason: string) => {
+    const cancelRequest = (
+      reason: string,
+      setIsSubmitting: (value: boolean) => void
+    ) => {
       if (reason.trim().length == 0) {
         Alert.alert("Oops", "Vui lòng điền lí do!");
         return;
       }
+      setIsSubmitting(true);
       orderAPIService.cancel(
         orderId,
         reason,
@@ -288,8 +292,10 @@ const Order = () => {
             )
           );
           setIsCancelModal(false);
+          setIsSubmitting(false);
         },
         (warningInfo: WarningMessageValue) => {
+          setIsSubmitting(false);
           Alert.alert(
             "Xác nhận",
             warningInfo?.message ||
@@ -302,6 +308,7 @@ const Order = () => {
               {
                 text: "Xác nhận hủy",
                 onPress: async () => {
+                  setIsSubmitting(true);
                   orderAPIService.cancel(
                     orderId,
                     reason,
@@ -324,12 +331,13 @@ const Order = () => {
                           item.id != orderId
                             ? item
                             : {
-                                ...order,
+                                ...item,
                                 status: OrderStatus.Cancelled,
                               }
                         )
                       );
                       setIsCancelModal(false);
+                      setIsSubmitting(false);
                     },
                     (warningInfo: WarningMessageValue) => {},
                     (error: any) => {
@@ -338,6 +346,7 @@ const Order = () => {
                         error?.response?.data?.error?.message ||
                           "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                       );
+                      setIsSubmitting(false);
                     },
                     true
                   );
@@ -352,6 +361,7 @@ const Order = () => {
             error?.response?.data?.error?.message ||
               "Yêu cầu bị từ chối, vui lòng thử lại sau!"
           );
+          setIsSubmitting(false);
         },
         false
       );
@@ -390,11 +400,15 @@ const Order = () => {
       return false;
     }
 
-    const rejectRequest = (reason: string) => {
+    const rejectRequest = (
+      reason: string,
+      setIsSubmitting: (value: boolean) => void
+    ) => {
       if (reason.trim().length == 0) {
         Alert.alert("Oops", "Vui lòng điền lí do!");
         return;
       }
+      setIsSubmitting(true);
       orderAPIService.reject(
         orderId,
         reason,
@@ -419,6 +433,7 @@ const Order = () => {
             )
           );
           setIsCancelModal(false);
+          setIsSubmitting(false);
         },
         (warningInfo: WarningMessageValue) => {},
         (error: any) => {
@@ -427,6 +442,7 @@ const Order = () => {
             error?.response?.data?.error?.message ||
               "Yêu cầu bị từ chối, vui lòng thử lại sau!"
           );
+          setIsSubmitting(false);
         }
       );
     };
@@ -714,7 +730,7 @@ const Order = () => {
                                             item.id != order.id
                                               ? item
                                               : {
-                                                  ...order,
+                                                  ...item,
                                                   status: OrderStatus.Confirmed,
                                                 }
                                           )
@@ -803,7 +819,7 @@ const Order = () => {
                                             item.id != order.id
                                               ? item
                                               : {
-                                                  ...order,
+                                                  ...item,
                                                   status: OrderStatus.Preparing,
                                                 }
                                           )
@@ -842,7 +858,7 @@ const Order = () => {
                                                           item.id != order.id
                                                             ? item
                                                             : {
-                                                                ...order,
+                                                                ...item,
                                                                 status:
                                                                   OrderStatus.Preparing,
                                                               }

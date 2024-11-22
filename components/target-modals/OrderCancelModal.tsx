@@ -16,7 +16,7 @@ interface Props {
   containerStyleClasses?: string;
   imageStyleClasses?: string;
   titleStyleClasses?: string;
-  request: (reason: string) => void;
+  request: (reason: string, setIsSubmitting: (value: boolean) => void) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   isCancelOrReject?: boolean;
@@ -37,7 +37,10 @@ const OrderCancelModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reason, setReason] = useState("");
   useEffect(() => {
-    if (isOpen) setReason("");
+    if (isOpen) {
+      setReason("");
+      setIsSubmitting(false);
+    }
   }, [isOpen]);
   return (
     <Modal isVisible={isOpen} onBackdropPress={() => setIsOpen(false)}>
@@ -81,11 +84,7 @@ const OrderCancelModal = ({
                 title={isCancelOrReject ? `Xác nhận hủy` : `Xác nhận từ chối`}
                 isLoading={isSubmitting}
                 handlePress={() => {
-                  setIsSubmitting(true);
-                  request(reason);
-                  setTimeout(() => {
-                    setIsSubmitting(false);
-                  }, 500);
+                  request(reason, setIsSubmitting);
                 }}
                 containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-semibold z-10"
                 // iconLeft={
@@ -95,7 +94,7 @@ const OrderCancelModal = ({
               />
               <CustomButton
                 title="Thoát"
-                isLoading={isSubmitting}
+                isDisabled={isSubmitting}
                 handlePress={() => setIsOpen(false)}
                 containerStyleClasses="mt-2 w-full h-[36px] px-4 bg-transparent border-2 bg-white border-secondary-100 z-10"
                 // iconLeft={
