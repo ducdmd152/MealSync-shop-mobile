@@ -1,21 +1,15 @@
-import useGlobalReviewReplyState from "@/hooks/states/useGlobalReviewReplyState";
-import apiClient from "@/services/api-services/api-client";
-import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
-  Alert,
   Dimensions,
   Keyboard,
   Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
-  TouchableOpacity,
 } from "react-native";
 import Modal from "react-native-modal";
 import CustomButton from "../custom/CustomButton";
-import PreviewMultiImagesUpload from "../images/PreviewMultiImagesUpload";
 import ImageViewingModal from "./ImageViewingModal";
 interface Props {
   orderId: number;
@@ -25,6 +19,7 @@ interface Props {
   request: (reason: string) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  isCancelOrReject?: boolean;
 }
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -34,6 +29,7 @@ const OrderCancelModal = ({
   setIsOpen,
   orderId,
   request,
+  isCancelOrReject = true,
   containerStyleClasses = "",
   titleStyleClasses = "",
   imageStyleClasses = "",
@@ -57,7 +53,9 @@ const OrderCancelModal = ({
           >
             <View className="flex-row items-center justify-between">
               <Text className={`${titleStyleClasses}`}>
-                Hủy đơn hàng MS-{orderId}
+                {isCancelOrReject
+                  ? `Hủy đơn hàng MS-${orderId}`
+                  : `Từ chối đơn hàng MS-${orderId}`}
               </Text>
               {/* <TouchableOpacity
                 onPress={() => {
@@ -69,7 +67,9 @@ const OrderCancelModal = ({
             </View>
             <View className="gap-y-2 mt-1">
               <View>
-                <Text className="font-bold">Lí do hủy</Text>
+                <Text className="font-bold">
+                  {isCancelOrReject ? `Lí do hủy` : `Lí do từ chối`}
+                </Text>
                 <TextInput
                   className="border border-gray-300 mt-1 rounded p-2 h-16 bg-white"
                   placeholder="Nhập câu trả lời..."
@@ -80,9 +80,15 @@ const OrderCancelModal = ({
                 />
               </View>
               <CustomButton
-                title="Xác nhận hủy đơn"
+                title={isCancelOrReject ? `Xác nhận hủy` : `Xác nhận từ chối`}
                 isLoading={isSubmitting}
-                handlePress={() => request(reason)}
+                handlePress={() => {
+                  setIsSubmitting(true);
+                  request(reason);
+                  setTimeout(() => {
+                    setIsSubmitting(false);
+                  }, 1500);
+                }}
                 containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-semibold z-10"
                 // iconLeft={
                 //   <Ionicons name="add-circle-outline" size={21} color="white" />

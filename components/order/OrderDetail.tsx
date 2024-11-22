@@ -27,6 +27,7 @@ import CustomModal from "../common/CustomModal";
 import OrderDeliveryInfo from "../common/OrderDeliveryInfo";
 import CustomButton from "../custom/CustomButton";
 import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
+import OrderCancelModal from "../target-modals/OrderCancelModal";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -77,6 +78,10 @@ const OrderDetail = ({
   // const [order, setOrder] = useState<OrderDetailModel>({} as OrderDetailModel);
   const [isLoading, setIsLoading] = useState(true);
   const [isReloading, setIsReloading] = useState(false);
+  const [isCancelModal, setIsCancelModal] = useState(false);
+  const [request, setRequest] = useState<(reason: string) => void>(
+    (reason: string) => {}
+  );
   const getOrderDetail = async (isRefetching = false) => {
     if (isRefetching) setIsReloading(true);
     try {
@@ -96,7 +101,113 @@ const OrderDetail = ({
   useEffect(() => {
     getOrderDetail();
   }, []);
+  const handleCancel = (orderId: number) => {
+    const inTime = utilService.getInFrameTime(
+      order.startTime,
+      order.endTime,
+      order.intendedReceiveDate
+    );
+    if (inTime > 0) {
+      getOrderDetail();
+      Alert.alert("Oops!", "Đã quá thời gian để thực hiện thao tác này!");
+      return false;
+    }
 
+    const cancelRequest = (reason: string) => {
+      if (reason.trim().length == 0) {
+        Alert.alert("Oops", "Vui lòng điền lí do!");
+        return;
+      }
+      orderAPIService.cancel(
+        orderId,
+        reason,
+        () => {
+          const toast = Toast.show({
+            type: "info",
+            text1: `MS-${order.id}`,
+            text2: `Đã hủy đơn hàng MS-${order.id}!`,
+          });
+          setOrder({
+            ...order,
+            status: OrderStatus.Cancelled,
+          });
+          getOrderDetail();
+          setIsCancelModal(false);
+        },
+        (warningInfo: WarningMessageValue) => {
+          Alert.alert(
+            "Xác nhận",
+            warningInfo?.message ||
+              `Đơn hàng MS-${orderId} đã gần đến giờ đi giao (<=1h), bạn sẽ bị đánh cảnh cáo nếu tiếp tục hủy?`,
+            [
+              {
+                text: "Không",
+                // style: "cancel",
+              },
+              {
+                text: "Xác nhận hủy",
+                onPress: async () => {
+                  orderAPIService.cancel(
+                    orderId,
+                    reason,
+                    () => {
+                      const toast = Toast.show({
+                        type: "info",
+                        text1: `MS-${order.id}`,
+                        text2: `Đã hủy đơn hàng MS-${order.id}!`,
+                      });
+                      setOrder({
+                        ...order,
+                        status: OrderStatus.Cancelled,
+                      });
+                      getOrderDetail();
+                      setIsCancelModal(false);
+                    },
+                    (warningInfo: WarningMessageValue) => {},
+                    (error: any) => {
+                      Alert.alert(
+                        "Oops!",
+                        error?.response?.data?.error?.message ||
+                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                      );
+                    },
+                    true
+                  );
+                },
+              },
+            ]
+          );
+        },
+        (error: any) => {
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        },
+        false
+      );
+    };
+    setRequest(() => cancelRequest);
+    setIsCancelModal(true);
+
+    // Alert.alert(
+    //   "Xác nhận",
+    //   `Bạn chắc chắn hủy đơn hàng MS-${orderId} không?`,
+    //   [
+    //     {
+    //       text: "Không",
+    //       // style: "cancel",
+    //     },
+    //     {
+    //       text: "Xác nhận hủy",
+    //       onPress: async () => {
+
+    //       },
+    //     },
+    //   ]
+    // );
+  };
   return (
     <View
       className={`flex-1 items-center justify-center w-full bg-[#f4f4f5] ${containerStyleClasses}`}
@@ -609,126 +720,7 @@ const OrderDetail = ({
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      onPress={() => {
-                        const inTime = utilService.getInFrameTime(
-                          order.startTime,
-                          order.endTime,
-                          order.intendedReceiveDate
-                        );
-                        if (inTime > 0) {
-                          getOrderDetail();
-                          Alert.alert(
-                            "Oops!",
-                            "Đã quá thời gian để thực hiện thao tác này!"
-                          );
-                          return false;
-                        }
-                        Alert.alert(
-                          "Xác nhận",
-                          `Bạn chắc chắn hủy đơn hàng MS-${order.id} không?`,
-                          [
-                            {
-                              text: "Không",
-                              // style: "cancel",
-                            },
-                            {
-                              text: "Xác nhận hủy",
-                              onPress: async () => {
-                                orderAPIService.cancel(
-                                  order.id,
-                                  () => {
-                                    Alert.alert(
-                                      "Hoàn tất",
-                                      `Đã hủy đơn hàng MS-${order.id}!`
-                                    );
-                                    const toast = Toast.show({
-                                      type: "info",
-                                      text1: `MS-${order.id}`,
-                                      text2: `Đã hủy đơn hàng MS-${order.id}!`,
-                                    });
-                                    // toast.show(
-                                    //   `Đã hủy đơn hàng MS-${order.id}!`,
-                                    //   {
-                                    //     type: "info",
-                                    //     duration: 1500,
-                                    //   }
-                                    // );
-                                    setOrder({
-                                      ...order,
-                                      status: OrderStatus.Cancelled,
-                                    });
-                                    getOrderDetail();
-                                  },
-                                  (warningInfo: WarningMessageValue) => {
-                                    Alert.alert(
-                                      "Xác nhận",
-                                      warningInfo?.message ||
-                                        `Đơn hàng MS-${order.id} đã gần đến giờ đi giao (<=1h), bạn sẽ bị đánh cảnh cáo nếu tiếp tục hủy?`,
-                                      [
-                                        {
-                                          text: "Không",
-                                          // style: "cancel",
-                                        },
-                                        {
-                                          text: "Xác nhận hủy",
-                                          onPress: async () => {
-                                            orderAPIService.cancel(
-                                              order.id,
-                                              () => {
-                                                const toast = Toast.show({
-                                                  type: "info",
-                                                  text1: `MS-${order.id}`,
-                                                  text2: `Đã hủy đơn hàng MS-${order.id}!`,
-                                                });
-                                                // toast.show(
-                                                //   `Đã hủy đơn hàng MS-${order.id}!`,
-                                                //   {
-                                                //     type: "info",
-                                                //     duration: 1500,
-                                                //   }
-                                                // );
-                                                // Alert.alert(
-                                                //   "Hoàn tất",
-                                                //   `Đã hủy đơn hàng MS-${order.id}!`
-                                                // );
-                                                setOrder({
-                                                  ...order,
-                                                  status: OrderStatus.Cancelled,
-                                                });
-                                                getOrderDetail();
-                                              },
-                                              (
-                                                warningInfo: WarningMessageValue
-                                              ) => {},
-                                              (error: any) => {
-                                                Alert.alert(
-                                                  "Oops!",
-                                                  error?.response?.data?.error
-                                                    ?.message ||
-                                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                                );
-                                              },
-                                              true
-                                            );
-                                          },
-                                        },
-                                      ]
-                                    );
-                                  },
-                                  (error: any) => {
-                                    Alert.alert(
-                                      "Oops!",
-                                      error?.response?.data?.error?.message ||
-                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                    );
-                                  },
-                                  false
-                                );
-                              },
-                            },
-                          ]
-                        );
-                      }}
+                      onPress={() => handleCancel(order.id)}
                       className="flex-1 bg-white border-[#e2e8f0] bg-[#e2e8f0] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
                     >
                       <Text className="text-[15px] font-medium">Hủy</Text>
@@ -843,6 +835,12 @@ const OrderDetail = ({
           isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
         />
       </CustomModal>
+      <OrderCancelModal
+        orderId={order.id}
+        request={request}
+        isOpen={isCancelModal}
+        setIsOpen={setIsCancelModal}
+      />
       <Toast topOffset={-20} />
     </View>
   );

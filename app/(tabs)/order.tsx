@@ -105,6 +105,7 @@ const Order = () => {
   const [isQueryChanging, setIsQueryChanging] = useState(true);
   const globalOrderStatusesFilterState = useOrderStatusFilterState();
   const [isCancelModal, setIsCancelModal] = useState(false);
+  const [isCancelOrReject, setIsCancelOrReject] = useState(false);
   const [request, setRequest] = useState<(reason: string) => void>(
     (reason: string) => {}
   );
@@ -261,6 +262,7 @@ const Order = () => {
       }
       orderAPIService.cancel(
         orderId,
+        reason,
         () => {
           // Alert.alert(
           //   "Hoàn tất",
@@ -302,6 +304,7 @@ const Order = () => {
                 onPress: async () => {
                   orderAPIService.cancel(
                     orderId,
+                    reason,
                     () => {
                       // const toast = Toast.show({
                       //   type: "info",
@@ -326,6 +329,7 @@ const Order = () => {
                               }
                         )
                       );
+                      setIsCancelModal(false);
                     },
                     (warningInfo: WarningMessageValue) => {},
                     (error: any) => {
@@ -352,6 +356,7 @@ const Order = () => {
         false
       );
     };
+    setIsCancelOrReject(true);
     setRequest(() => cancelRequest);
     setOrderDetailId(orderId);
     setIsCancelModal(true);
@@ -1103,6 +1108,7 @@ const Order = () => {
         request={request}
         isOpen={isCancelModal}
         setIsOpen={setIsCancelModal}
+        isCancelOrReject
       />
       {/* <OrderDetailBottomSheet /> */}
       {/* <Toast position="bottom" /> */}

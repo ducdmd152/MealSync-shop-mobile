@@ -105,6 +105,7 @@ const orderAPIService = {
   },
   cancel: async (
     orderId: number,
+    reason: string,
     onSuccess: () => void,
     onWarning: (warningInfo: WarningMessageValue) => void,
     onFailure: (error: any) => void,
@@ -118,7 +119,7 @@ const orderAPIService = {
       const response = await apiClient.put(
         `shop-owner/order/${orderId}/cancel`,
         {
-          reason: "no-comment",
+          reason: reason || "no-comment",
           isConfirm: isConfirmWarning,
         }
       );
