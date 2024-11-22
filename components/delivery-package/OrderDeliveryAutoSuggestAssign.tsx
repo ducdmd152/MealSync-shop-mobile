@@ -36,6 +36,7 @@ interface Props {
   intendedReceiveDate: string;
   endTime: number;
   beforeGetSuggestion: () => void;
+  isCreateMode?: boolean;
   // staffIds: number[];
   // setStaffIds: (ids: number[]) => void;
 }
@@ -48,13 +49,14 @@ const OrderDeliveryAutoSuggestAssign = ({
   startTime,
   endTime,
   intendedReceiveDate,
+  isCreateMode = true,
 }: Props) => {
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [personIds, setPersonIds] = useState<number[]>([]);
 
   const personsFetcher = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.FRAME_STAFF_INFO_LIST.concat(["gpkg-update-page"]),
+    REACT_QUERY_CACHE_KEYS.FRAME_STAFF_INFO_LIST.concat(["gpkg-page"]),
     async (): Promise<FetchOnlyListResponse<FrameStaffInfoModel>> =>
       apiClient
         .get(endpoints.FRAME_STAFF_INFO_LIST, {
@@ -80,7 +82,10 @@ const OrderDeliveryAutoSuggestAssign = ({
 
   const onAutoAssign = async () => {
     if (personIds.length === 0) {
-      Alert.alert("Vui lòng lựa chọn", "Bạn cần chọn người đảm nhận giao đơn");
+      Alert.alert(
+        "Vui lòng lựa chọn",
+        "Bạn cần chọn ít nhất một người đảm nhận giao đơn"
+      );
       return;
     }
     beforeGetSuggestion();
@@ -89,9 +94,9 @@ const OrderDeliveryAutoSuggestAssign = ({
       const response = await apiClient.get<
         FetchValueResponse<DeliveryPackageGroupDetailsModel>
       >(
-        `shop-owner/delivery-package/suggest-create?${personIds
-          .map((id) => `shipperIds=${id}`)
-          .join("&")}`,
+        `shop-owner/delivery-package/suggest-${
+          isCreateMode ? "create" : "update"
+        }?${personIds.map((id) => `shipperIds=${id}`).join("&")}`,
         {
           params: {
             startTime,

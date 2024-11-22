@@ -39,6 +39,8 @@ import { DeliveryPackageGroupDetailsModel } from "@/types/models/DeliveryPackage
 import { ActivityIndicator, TouchableRipple } from "react-native-paper";
 import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
+import OrderDeliveryAutoSuggestAssign from "@/components/delivery-package/OrderDeliveryAutoSuggestAssign";
+import CustomModal from "@/components/common/CustomModal";
 interface GPKGCreateRequest {
   isConfirm: boolean;
   deliveryPackages: {
@@ -59,6 +61,7 @@ const DeliveryPackageGroupUpdate = () => {
 
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [isOpenSuggestAssign, setIsOpenSuggestAssign] = useState(false);
   const [gPKGDetails, setGPKGDetails] =
     useState<DeliveryPackageGroupDetailsModel>(
       {} as DeliveryPackageGroupDetailsModel
@@ -110,7 +113,7 @@ const DeliveryPackageGroupUpdate = () => {
     }
   };
   const deliveryPersonFetchResult = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.FRAME_STAFF_INFO_LIST.concat(["gpkg-update-page"]),
+    REACT_QUERY_CACHE_KEYS.FRAME_STAFF_INFO_LIST.concat(["gpkg-page"]),
     async (): Promise<FetchOnlyListResponse<FrameStaffInfoModel>> =>
       apiClient
         .get(endpoints.FRAME_STAFF_INFO_LIST, {
@@ -551,9 +554,11 @@ const DeliveryPackageGroupUpdate = () => {
             </TouchableRipple>
           </View>
           <TouchableOpacity
-            onPress={() => {}}
-            className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94] opacity-50`}
-            disabled={true}
+            onPress={() => {
+              setIsOpenSuggestAssign(true);
+            }}
+            className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94]`}
+            // disabled={true}
           >
             <Text className="text-[10px] text-white text-center">
               Chia tự động
@@ -565,7 +570,7 @@ const DeliveryPackageGroupUpdate = () => {
         {currentPersonArea}
         {unAssignOrdersArea}
         <CustomButton
-          title="Hoàn tất"
+          title="Cập nhật"
           isLoading={isSubmitting}
           handlePress={() => {
             onSubmit();
@@ -574,6 +579,50 @@ const DeliveryPackageGroupUpdate = () => {
           textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
         />
       </View>
+      <CustomModal
+        title={``}
+        hasHeader={false}
+        isOpen={isOpenSuggestAssign}
+        setIsOpen={(value) => setIsOpenSuggestAssign(value)}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[98%]"
+        onBackdropPress={() => {
+          setIsOpenSuggestAssign(false);
+        }}
+      >
+        <OrderDeliveryAutoSuggestAssign
+          isCreateMode={false}
+          beforeGetSuggestion={() => {}}
+          onSuccess={(suggesstion) => {
+            toast.show(`Đã thực hiện đề xuất phân công.`, {
+              type: "info",
+              duration: 1500,
+            });
+            setGPKGDetails(suggesstion);
+            setGPKGCreateRequest({
+              isConfirm: false,
+              deliveryPackages:
+                suggesstion.deliveryPackageGroups?.map((group) => {
+                  return {
+                    shopDeliveryStaffId: group.shopDeliveryStaff?.id,
+                    orderIds: group.orders.map((order) => order.id),
+                  };
+                }) || [],
+            });
+            deliveryPersonFetchResult.refetch();
+            setIsOpenSuggestAssign(false);
+          }}
+          onError={(error) => {
+            Alert.alert(
+              "Oops!",
+              error?.response?.data?.error?.message ||
+                "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            );
+            getGPKGDetails();
+          }}
+          {...query}
+        />
+      </CustomModal>
     </PageLayoutWrapper>
   );
 };

@@ -77,7 +77,7 @@ const DeliveryPackageGroupCreate = () => {
   const [isAnyUnCreatedFrame, setIsAnyUnCreatedFrame] = useState(true);
 
   const deliveryPersonFetchResult = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.FRAME_STAFF_INFO_LIST.concat(["gpkg-create-page"]),
+    REACT_QUERY_CACHE_KEYS.FRAME_STAFF_INFO_LIST.concat(["gpkg-page"]),
     async (): Promise<FetchOnlyListResponse<FrameStaffInfoModel>> =>
       apiClient
         .get(endpoints.FRAME_STAFF_INFO_LIST, {
