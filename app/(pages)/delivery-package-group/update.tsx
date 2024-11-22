@@ -288,7 +288,7 @@ const DeliveryPackageGroupUpdate = () => {
         ]);
       }
     } catch (error: any) {
-      console.log("error?.data: ", JSON.stringify(requestData, null, 2));
+      // console.log("error?.data: ", JSON.stringify(requestData, null, 2));
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||

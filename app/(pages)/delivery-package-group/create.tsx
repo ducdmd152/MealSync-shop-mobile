@@ -64,6 +64,7 @@ const DeliveryPackageGroupCreate = () => {
   } as GPKGQuery);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpenSuggestAssign, setIsOpenSuggestAssign] = useState(false);
+  const [personsList, setPersonsList] = useState<FrameStaffInfoModel[]>([]);
 
   const [orderFetchResult, setOrderFetchResult] =
     useState<UseQueryResult<FetchResponse<OrderFetchModel>, Error>>();
@@ -164,6 +165,15 @@ const DeliveryPackageGroupCreate = () => {
     });
   }
 
+  useEffect(() => {
+    if (deliveryPersonFetchResult.data?.value)
+      setPersonsList(
+        sortPersonsList(
+          deliveryPersonFetchResult.data?.value || [],
+          getAssignedOrdersOf
+        )
+      );
+  }, [deliveryPersonFetchResult.data?.value]);
   const getCurrentPerson = () => {
     return deliveryPersonFetchResult.data?.value.find(
       (person) => person.staffInfor.id == currentDeliveryPersonId
@@ -233,6 +243,27 @@ const DeliveryPackageGroupCreate = () => {
         })),
     });
   };
+  const sortPersonsList = (
+    personsList: FrameStaffInfoModel[],
+    getAssignedOrdersOf: (personId: number) => { length: number }
+  ): FrameStaffInfoModel[] => {
+    return personsList.sort((a, b) => {
+      // 1. person.staffInfor.id == 0 sẽ đứng đầu
+      if (a.staffInfor.id === 0) return -1;
+      if (b.staffInfor.id === 0) return 1;
+
+      // 2. Sắp xếp theo số lượng getAssignedOrdersOf hoặc giữ thứ tự ban đầu
+      const ordersA = getAssignedOrdersOf(a.staffInfor.id).length;
+      const ordersB = getAssignedOrdersOf(b.staffInfor.id).length;
+
+      if (ordersA !== ordersB) {
+        return ordersB - ordersA; // Sắp xếp giảm dần theo số lượng đơn hàng
+      }
+
+      // Giữ nguyên thứ tự ban đầu nếu số lượng đơn hàng bằng nhau
+      return 0;
+    });
+  };
 
   const deliveryPersonSelectArea = (
     <View>
@@ -248,7 +279,7 @@ const DeliveryPackageGroupCreate = () => {
       <View className="mt-2">
         <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
           <View className="w-full flex-row gap-2 items-center justify-between pb-2">
-            {deliveryPersonFetchResult.data?.value.map((person, index) => (
+            {personsList.map((person, index) => (
               <TouchableOpacity
                 key={person.staffInfor.id}
                 className={`flex-row items-center gap-x-1 bg-gray-100 rounded-xl px-2 py-2 pr-3 ${
@@ -511,6 +542,30 @@ const DeliveryPackageGroupCreate = () => {
                   };
                 }) || [],
             });
+            setPersonsList(
+              sortPersonsList(personsList, (personId) => {
+                const allOrders = orderFetchResult?.data?.value.items || [];
+                const requestData = {
+                  isConfirm: false,
+                  deliveryPackages:
+                    suggesstion.deliveryPackageGroups?.map((group) => {
+                      return {
+                        shopDeliveryStaffId: group.shopDeliveryStaff?.id,
+                        orderIds: group.orders.map((order) => order.id),
+                      };
+                    }) || [],
+                };
+                const assignedOrderIds = new Set(
+                  requestData.deliveryPackages
+                    .filter((pkg) => pkg.shopDeliveryStaffId === personId)
+                    .flatMap((pkg) => pkg.orderIds)
+                );
+
+                return allOrders.filter((order) =>
+                  assignedOrderIds.has(order.id)
+                );
+              })
+            );
             deliveryPersonFetchResult.refetch();
             setIsOpenSuggestAssign(false);
           }}
