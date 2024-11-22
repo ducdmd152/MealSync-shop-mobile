@@ -824,7 +824,12 @@ const CompleteDeliveryConfirmModal = ({
         }}
       >
         <OrderDeliveryAssign
-          onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
+          onComplete={(shopDeliveryStaff) => {
+            setIsOpenOrderAssign(false);
+            onRefresh();
+            if (shopDeliveryStaff === null) {
+              return;
+            }
             Toast.show({
               type: "info",
               text1: "Hoàn tất",
@@ -833,8 +838,6 @@ const CompleteDeliveryConfirmModal = ({
               }!`,
               // time: 15000
             });
-            setIsOpenOrderAssign(false);
-            onRefresh();
           }}
           order={order}
           isNeedForReconfimation={order.shopDeliveryStaff ? false : true}

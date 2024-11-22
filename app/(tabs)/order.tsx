@@ -266,10 +266,14 @@ const Order = () => {
           <OrderDeliveryAssign
             onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
               setIsOpenOrderAssign(false);
+
               setCacheOrderInList({
                 ...order,
                 shopDeliveryStaff: shopDeliveryStaff,
               });
+              if (shopDeliveryStaff === null) {
+                return;
+              }
               simpleToast.show(
                 `Đơn hàng MS-${order.id} sẽ được giao bởi ${
                   shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName

@@ -6,7 +6,7 @@ import orderAPIService from "@/services/api-services/order-api-service";
 import sessionService from "@/services/session-service";
 import utilService from "@/services/util-service";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
-import OrderFetchModel from "@/types/models/OrderFetchModel";
+import OrderFetchModel, { OrderStatus } from "@/types/models/OrderFetchModel";
 import {
   FrameStaffInfoModel,
   ShopDeliveryStaff,
@@ -24,7 +24,7 @@ import { useToast } from "react-native-toast-notifications";
 import CustomButton from "../custom/CustomButton";
 
 interface Props {
-  onComplete: (shopDeliveryStaff: ShopDeliveryStaff) => void;
+  onComplete: (shopDeliveryStaff: ShopDeliveryStaff | null) => void;
   order: OrderFetchModel | OrderDetailModel;
   isNeedForReconfimation?: boolean;
 }
@@ -193,6 +193,73 @@ const OrderDeliveryAssign = ({
       ]
     );
   };
+  const onUnAssignRequest = async (
+    isConfirmWarning: boolean,
+    onSuccess = () => {},
+    onError = (error: any) => {}
+  ) => {
+    try {
+      setIsSubmitting(true);
+      const response = await apiClient.put(
+        `shop-owner/order/${order.id}/un-assign`,
+        {
+          isConfirm: isConfirmWarning,
+        }
+      );
+      const { value, isSuccess, isWarning, error } = response.data;
+
+      if (isSuccess) {
+        onSuccess();
+      } else if (isWarning) {
+        const warningInfo = value as WarningMessageValue;
+        Alert.alert("Xác nhận", warningInfo.message, [
+          {
+            text: "Đồng ý",
+            onPress: async () => {
+              onUnAssignRequest(true, onSuccess, onError);
+            },
+          },
+          {
+            text: "Hủy",
+          },
+        ]);
+      }
+    } catch (error: any) {
+      onError(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const onUnAssign = () => {
+    Alert.alert("Xác nhận", `Bỏ phân công giao hàng cho đơn MS-${order.id}?`, [
+      {
+        text: "Xác nhận",
+        onPress: async () => {
+          onUnAssignRequest(
+            false,
+            () => {
+              onComplete(null);
+              toast.show(`Đã gỡ phân công giao hàng đơn MS-${order.id} `, {
+                type: "info",
+                duration: 1500,
+              });
+            },
+            (error) => {
+              Alert.alert(
+                "Oops!",
+                error?.response?.data?.error?.message ||
+                  "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              );
+            }
+          );
+        },
+      },
+      {
+        text: "Không",
+        // style: "cancel",
+      },
+    ]);
+  };
   return (
     <View>
       <Text className="font-semibold">Giao đơn hàng MS-{order.id}</Text>
@@ -284,6 +351,18 @@ const OrderDeliveryAssign = ({
         containerStyleClasses="mt-5 h-[36px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold z-10"
         textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
       />
+      {order.shopDeliveryStaff != null &&
+        order.status == OrderStatus.Preparing && (
+          <CustomButton
+            title="Bỏ phân công"
+            handlePress={() => {
+              onUnAssign();
+            }}
+            isLoading={isSubmitting}
+            containerStyleClasses="mt-2 h-[36px] px-4 bg-transparent border-[1px] border-secondary-100 bg-white font-medium z-10"
+            textStyleClasses="text-[16px] text-gray-900 ml-1 text-secondary"
+          />
+        )}
       {/* <Toast position="bottom" /> */}
     </View>
   );

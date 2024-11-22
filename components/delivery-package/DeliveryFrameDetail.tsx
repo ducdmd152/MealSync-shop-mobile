@@ -475,7 +475,12 @@ const DeliveryFrameDetail = ({
         }}
       >
         <OrderDeliveryAssign
-          onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
+          onComplete={(shopDeliveryStaff) => {
+            setIsOpenOrderAssign(false);
+            getGPKGDetails();
+            if (shopDeliveryStaff === null) {
+              return;
+            }
             Toast.show({
               type: "info",
               text1: "Hoàn tất",
@@ -484,8 +489,6 @@ const DeliveryFrameDetail = ({
               }!`,
               // time: 15000
             });
-            setIsOpenOrderAssign(false);
-            getGPKGDetails();
           }}
           order={order}
           isNeedForReconfimation={order.shopDeliveryStaff ? false : true}

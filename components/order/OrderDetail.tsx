@@ -816,7 +816,12 @@ const OrderDetail = ({
         }}
       >
         <OrderDeliveryAssign
-          onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
+          onComplete={(shopDeliveryStaff) => {
+            setIsOpenOrderAssign(false);
+            getOrderDetail();
+            if (shopDeliveryStaff === null) {
+              return;
+            }
             Toast.show({
               type: "info",
               text1: `MS-${order.id}`,
@@ -833,8 +838,6 @@ const OrderDetail = ({
             //     duration: 3000,
             //   }
             // );
-            setIsOpenOrderAssign(false);
-            getOrderDetail();
           }}
           order={order}
           isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
