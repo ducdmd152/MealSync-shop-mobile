@@ -153,7 +153,33 @@ const DeliveryPackageGroupUpdate = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [currentDeliveryPersonId, setCurrentDeliveryPersonId] = useState(0);
+  const [personsList, setPersonsList] = useState<FrameStaffInfoModel[]>([]);
+  const sortPersonsList = (
+    personsList: FrameStaffInfoModel[]
+  ): FrameStaffInfoModel[] => {
+    return personsList.sort((a, b) => {
+      // 1. person.staffInfor.id == 0 sẽ đứng đầu
+      if (a.staffInfor.id === 0) return -1;
+      if (b.staffInfor.id === 0) return 1;
 
+      // 2. Sắp xếp theo số lượng getAssignedOrdersOf hoặc giữ thứ tự ban đầu
+      const ordersA = getAssignedOrdersOf(a.staffInfor.id).length;
+      const ordersB = getAssignedOrdersOf(b.staffInfor.id).length;
+
+      if (ordersA !== ordersB) {
+        return ordersB - ordersA; // Sắp xếp giảm dần theo số lượng đơn hàng
+      }
+
+      // Giữ nguyên thứ tự ban đầu nếu số lượng đơn hàng bằng nhau
+      return 0;
+    });
+  };
+  useEffect(() => {
+    if (deliveryPersonFetchResult.data?.value)
+      setPersonsList(
+        sortPersonsList(deliveryPersonFetchResult.data?.value || [])
+      );
+  }, [deliveryPersonFetchResult.data?.value, gPKGDetails]);
   function getUnassignedOrders(): OrderFetchModel[] {
     const allOrders = orders;
     const requestData = gpkgCreateRequest;
@@ -262,6 +288,7 @@ const DeliveryPackageGroupUpdate = () => {
         ]);
       }
     } catch (error: any) {
+      console.log("error?.data: ", JSON.stringify(requestData, null, 2));
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
@@ -285,11 +312,13 @@ const DeliveryPackageGroupUpdate = () => {
     }
     onRequest({
       isConfirm: false,
-      deliveryPackages: gpkgCreateRequest.deliveryPackages.map((pkg) => ({
-        ...pkg,
-        shopDeliveryStaffId:
-          pkg.shopDeliveryStaffId === 0 ? undefined : pkg.shopDeliveryStaffId,
-      })),
+      deliveryPackages: gpkgCreateRequest.deliveryPackages
+        .filter((pkg) => pkg.orderIds.length > 0)
+        .map((pkg) => ({
+          ...pkg,
+          shopDeliveryStaffId:
+            pkg.shopDeliveryStaffId === 0 ? undefined : pkg.shopDeliveryStaffId,
+        })),
     });
   };
 
@@ -307,7 +336,7 @@ const DeliveryPackageGroupUpdate = () => {
       <View className="mt-2">
         <ScrollView style={{ width: "100%", flexShrink: 0 }} horizontal={true}>
           <View className="w-full flex-row gap-2 items-center justify-between pb-2">
-            {deliveryPersonFetchResult.data?.value.map((person, index) => (
+            {personsList.map((person, index) => (
               <TouchableOpacity
                 key={person.staffInfor.id}
                 className={`flex-row items-center gap-x-1 bg-gray-100 rounded-xl px-2 pr-3 py-2 ${

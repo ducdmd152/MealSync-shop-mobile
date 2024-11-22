@@ -224,11 +224,13 @@ const DeliveryPackageGroupCreate = () => {
     }
     onRequest({
       isConfirm: false,
-      deliveryPackages: gpkgCreateRequest.deliveryPackages.map((pkg) => ({
-        ...pkg,
-        shopDeliveryStaffId:
-          pkg.shopDeliveryStaffId === 0 ? undefined : pkg.shopDeliveryStaffId,
-      })),
+      deliveryPackages: gpkgCreateRequest.deliveryPackages
+        .filter((pkg) => pkg.orderIds.length > 0)
+        .map((pkg) => ({
+          ...pkg,
+          shopDeliveryStaffId:
+            pkg.shopDeliveryStaffId === 0 ? undefined : pkg.shopDeliveryStaffId,
+        })),
     });
   };
 
