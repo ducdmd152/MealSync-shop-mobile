@@ -282,7 +282,7 @@ const Order = () => {
               item.id != orderId
                 ? item
                 : {
-                    ...order,
+                    ...item,
                     status: OrderStatus.Cancelled,
                   }
             )
@@ -356,10 +356,10 @@ const Order = () => {
         false
       );
     };
+    setIsCancelModal(true);
     setIsCancelOrReject(true);
     setRequest(() => cancelRequest);
     setOrderDetailId(orderId);
-    setIsCancelModal(true);
 
     // Alert.alert(
     //   "Xác nhận",
@@ -377,6 +377,62 @@ const Order = () => {
     //     },
     //   ]
     // );
+  };
+  const handleReject = (orderId: number) => {
+    const inTime = utilService.getInFrameTime(
+      order.startTime,
+      order.endTime,
+      order.intendedReceiveDate
+    );
+    if (inTime > 0) {
+      orderFetchRefetch();
+      Alert.alert("Oops!", "Đã quá thời gian để thực hiện thao tác này!");
+      return false;
+    }
+
+    const rejectRequest = (reason: string) => {
+      if (reason.trim().length == 0) {
+        Alert.alert("Oops", "Vui lòng điền lí do!");
+        return;
+      }
+      orderAPIService.reject(
+        orderId,
+        () => {
+          // const toast = Toast.show({
+          //   type: "info",
+          //   text1: `MS-${orderId}`,
+          //   text2: `Đã từ chối đơn hàng MS-${orderId}!`,
+          // });
+          simpleToast.show(`Đã từ chối đơn hàng MS-${orderId}!`, {
+            type: "info",
+            duration: 1500,
+          });
+          setCacheOrderList(
+            cacheOrderList.map((item) =>
+              item.id != orderId
+                ? item
+                : {
+                    ...item,
+                    status: OrderStatus.Rejected,
+                  }
+            )
+          );
+          setIsCancelModal(false);
+        },
+        (warningInfo: WarningMessageValue) => {},
+        (error: any) => {
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        }
+      );
+    };
+    setIsCancelModal(true);
+    setIsCancelOrReject(false);
+    setRequest(() => rejectRequest);
+    setOrderDetailId(orderId);
   };
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
@@ -686,63 +742,7 @@ const Order = () => {
                           <Text className="text-[13.5px]">Nhận đơn</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                          onPress={() => {
-                            Alert.alert(
-                              "Xác nhận",
-                              `Bạn chắc chắn từ chối đơn hàng MS-${order.id} không?`,
-                              [
-                                {
-                                  text: "Hủy",
-                                  style: "cancel",
-                                },
-                                {
-                                  text: "Xác nhận",
-                                  onPress: async () => {
-                                    orderAPIService.reject(
-                                      order.id,
-                                      () => {
-                                        // const toast = Toast.show({
-                                        //   type: "info",
-                                        //   text1: "Hoàn tất",
-                                        //   text2: `Đã từ chối đơn hàng MS-${order.id}!`,
-                                        // });
-                                        simpleToast.show(
-                                          `Đã từ chối đơn hàng MS-${order.id}!`,
-                                          {
-                                            type: "info",
-                                            duration: 1500,
-                                          }
-                                        );
-                                        // Alert.alert(
-                                        //   "Hoàn tất",
-                                        //   `Đã từ chối đơn hàng MS-${order.id}!`
-                                        // );
-                                        setCacheOrderList(
-                                          cacheOrderList.map((item) =>
-                                            item.id != order.id
-                                              ? item
-                                              : {
-                                                  ...order,
-                                                  status: OrderStatus.Rejected,
-                                                }
-                                          )
-                                        );
-                                      },
-                                      (warningInfo: WarningMessageValue) => {},
-                                      (error: any) => {
-                                        Alert.alert(
-                                          "Oops!",
-                                          error?.response?.data?.error
-                                            ?.message ||
-                                            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                        );
-                                      }
-                                    );
-                                  },
-                                },
-                              ]
-                            );
-                          }}
+                          onPress={() => handleReject(order.id)}
                           className="bg-white border-[#fda4af] bg-[#fda4af] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                         >
                           <Text className="text-[13.2px]">Từ chối</Text>
@@ -1108,7 +1108,7 @@ const Order = () => {
         request={request}
         isOpen={isCancelModal}
         setIsOpen={setIsCancelModal}
-        isCancelOrReject
+        isCancelOrReject={isCancelOrReject}
       />
       {/* <OrderDetailBottomSheet /> */}
       {/* <Toast position="bottom" /> */}

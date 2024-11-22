@@ -1,5 +1,5 @@
 import { useFocusEffect } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   Keyboard,
@@ -36,11 +36,9 @@ const OrderCancelModal = ({
 }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reason, setReason] = useState("");
-  useFocusEffect(
-    React.useCallback(() => {
-      setReason("");
-    }, [])
-  );
+  useEffect(() => {
+    if (isOpen) setReason("");
+  }, [isOpen]);
   return (
     <Modal isVisible={isOpen} onBackdropPress={() => setIsOpen(false)}>
       <View

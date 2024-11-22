@@ -79,6 +79,8 @@ const OrderDetail = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isReloading, setIsReloading] = useState(false);
   const [isCancelModal, setIsCancelModal] = useState(false);
+  const [isCancelOrReject, setIsCancelOrReject] = useState(false);
+
   const [request, setRequest] = useState<(reason: string) => void>(
     (reason: string) => {}
   );
@@ -124,8 +126,8 @@ const OrderDetail = ({
         () => {
           const toast = Toast.show({
             type: "info",
-            text1: `MS-${order.id}`,
-            text2: `Đã hủy đơn hàng MS-${order.id}!`,
+            text1: `MS-${orderId}`,
+            text2: `Đã hủy đơn hàng MS-${orderId}!`,
           });
           setOrder({
             ...order,
@@ -153,8 +155,8 @@ const OrderDetail = ({
                     () => {
                       const toast = Toast.show({
                         type: "info",
-                        text1: `MS-${order.id}`,
-                        text2: `Đã hủy đơn hàng MS-${order.id}!`,
+                        text1: `MS-${orderId}`,
+                        text2: `Đã hủy đơn hàng MS-${orderId}!`,
                       });
                       setOrder({
                         ...order,
@@ -190,6 +192,7 @@ const OrderDetail = ({
     };
     setRequest(() => cancelRequest);
     setIsCancelModal(true);
+    setIsCancelOrReject(true);
 
     // Alert.alert(
     //   "Xác nhận",
@@ -207,6 +210,59 @@ const OrderDetail = ({
     //     },
     //   ]
     // );
+  };
+  const handleReject = (orderId: number) => {
+    const inTime = utilService.getInFrameTime(
+      order.startTime,
+      order.endTime,
+      order.intendedReceiveDate
+    );
+    if (inTime > 0) {
+      getOrderDetail();
+      Alert.alert("Oops!", "Đã quá thời gian để thực hiện thao tác này!");
+      return false;
+    }
+
+    const rejectRequest = (reason: string) => {
+      if (reason.trim().length == 0) {
+        Alert.alert("Oops", "Vui lòng điền lí do!");
+        return;
+      }
+      orderAPIService.reject(
+        orderId,
+        () => {
+          const toast = Toast.show({
+            type: "info",
+            text1: `MS-${orderId}`,
+            text2: `Đã từ chối đơn hàng MS-${orderId}!`,
+          });
+          // toast.show(
+          //   `Đã từ chối đơn hàng MS-${orderId}!`,
+          //   {
+          //     type: "info",
+          //     duration: 1500,
+          //   }
+          // );
+          setOrder({
+            ...order,
+            status: OrderStatus.Rejected,
+          });
+          getOrderDetail();
+          setIsCancelModal(false);
+        },
+        (warningInfo: WarningMessageValue) => {},
+        (error: any) => {
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        }
+      );
+    };
+    setRequest(() => rejectRequest);
+    setIsCancelModal(true);
+    setIsCancelOrReject(false);
   };
   return (
     <View
@@ -532,57 +588,7 @@ const OrderDetail = ({
                     </TouchableOpacity>
                     <TouchableOpacity
                       className="flex-1 bg-white border-[#fda4af] bg-[#fda4af] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
-                      onPress={() => {
-                        Alert.alert(
-                          "Xác nhận",
-                          `Bạn chắc chắn từ chối đơn hàng MS-${order.id} không?`,
-                          [
-                            {
-                              text: "Hủy",
-                              style: "cancel",
-                            },
-                            {
-                              text: "Xác nhận",
-                              onPress: async () => {
-                                orderAPIService.reject(
-                                  order.id,
-                                  () => {
-                                    const toast = Toast.show({
-                                      type: "info",
-                                      text1: `MS-${order.id}`,
-                                      text2: `Đã từ chối đơn hàng MS-${order.id}!`,
-                                    });
-                                    // toast.show(
-                                    //   `Đã từ chối đơn hàng MS-${order.id}!`,
-                                    //   {
-                                    //     type: "info",
-                                    //     duration: 1500,
-                                    //   }
-                                    // );
-                                    // Alert.alert(
-                                    //   "Hoàn tất",
-                                    //   `Đã từ chối đơn hàng MS-${order.id}!`
-                                    // );
-                                    setOrder({
-                                      ...order,
-                                      status: OrderStatus.Rejected,
-                                    });
-                                    getOrderDetail();
-                                  },
-                                  (warningInfo: WarningMessageValue) => {},
-                                  (error: any) => {
-                                    Alert.alert(
-                                      "Oops!",
-                                      error?.response?.data?.error?.message ||
-                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                    );
-                                  }
-                                );
-                              },
-                            },
-                          ]
-                        );
-                      }}
+                      onPress={() => handleReject(order.id)}
                     >
                       <Text className="text-[16px] font-semibold">Từ chối</Text>
                     </TouchableOpacity>
@@ -836,6 +842,7 @@ const OrderDetail = ({
         />
       </CustomModal>
       <OrderCancelModal
+        isCancelOrReject
         orderId={order.id}
         request={request}
         isOpen={isCancelModal}
