@@ -8,8 +8,9 @@ import {
   Image,
   RefreshControl,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import utilService from "@/services/util-service";
 import CONSTANTS from "@/constants/data";
@@ -26,7 +27,8 @@ import { useFocusEffect } from "expo-router";
 import FetchResponse from "@/types/responses/FetchResponse";
 import sessionService from "@/services/session-service";
 import dayjs from "dayjs";
-
+import { FlatList } from "react-native-gesture-handler";
+const INFINITE_LOAD_SIZE = 15;
 const Balance = () => {
   const balanceFetch = useFetchWithRQWithFetchFunc(
     [endpoints.BALANCE].concat(["withdrawal-create-page"]),
@@ -34,7 +36,9 @@ const Balance = () => {
       apiClient.get(endpoints.BALANCE).then((response) => response.data),
     []
   );
-  const transactionsFetch = useFetchWithRQWithFetchFunc(
+  const [infiniteSize, setInfitieSize] = useState(INFINITE_LOAD_SIZE);
+  const [isRendering, setIsRendering] = useState(false);
+  const transactionsFetcher = useFetchWithRQWithFetchFunc(
     [endpoints.WITHDRAWAL_LIST].concat(["balance-page"]),
     async (): Promise<FetchResponse<WalletTransaction>> =>
       apiClient
@@ -46,18 +50,109 @@ const Balance = () => {
             // startDate: fromDate.toISOString(),
             // endDate: toDate.add(1, "day").toISOString(),
             pageIndex: 1,
-            pageSize: 100_000_000,
+            pageSize: infiniteSize,
           },
         })
         .then((response) => response.data),
-    []
+    [infiniteSize]
   );
+  useEffect(() => {
+    if (transactionsFetcher.isFetched) {
+      setIsRendering(true);
+      setTimeout(() => {
+        setIsRendering(false);
+      }, 1500);
+    }
+  }, [transactionsFetcher.isFetched]);
   useFocusEffect(
     React.useCallback(() => {
       balanceFetch.refetch();
-      transactionsFetch.refetch();
+      setInfitieSize(INFINITE_LOAD_SIZE);
+      // transactionsFetcher.refetch();
     }, [])
   );
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: WalletTransaction;
+    index: number;
+  }) => {
+    const transaction = item;
+    return (
+      <TouchableOpacity
+        onPress={() => {}}
+        key={transaction.description + (Math.random() % 100_000_000)}
+        className={`p-4 pt-3 bg-white ${index % 2 == 1 && "bg-[#fffbeb]"}`}
+      >
+        <View className="flex-row flex-1 justify-start items-start">
+          <View className="self-center border-[1px] border-gray-200 mr-2 ml-[-2px] rounded-full p-[1px] overflow-hidden mb-1">
+            <Image
+              source={{
+                uri: CONSTANTS.url.transaction_circle,
+              }}
+              resizeMode="cover"
+              className="h-[40px] w-[40px] opacity-85"
+            />
+          </View>
+          <View className="flex-1">
+            <Text
+              className="text-[12.5px] font-semibold mt-[-2px]"
+              numberOfLines={2}
+              ellipsizeMode="tail"
+            >
+              {transaction.description}
+            </Text>
+            <View className="flex-row justify-between">
+              <View>
+                <Text className="text-[11px] italic text-gray-500 ">
+                  {dayjs(transaction.createdDate)
+                    .local()
+                    .format("HH:mm - DD/MM/YYYY")}{" "}
+                </Text>
+                <Text className="text-[11px] italic text-gray-500 ">
+                  Số dư sau giao dịch:{" "}
+                  {utilService.formatPrice(transaction.totalAmountAfter)}
+                  {"₫"}
+                </Text>
+              </View>
+              <Text
+                className={`text-[11px] italic text-gray-500 ${
+                  transaction.amount > 0 ? "text-green-600" : "text-red-700"
+                } font-semibold`}
+              >
+                {transaction.amount > 0 ? "+" : "-"}
+                {utilService.formatPrice(Math.abs(transaction.amount))}
+                {"₫"}
+              </Text>
+            </View>
+          </View>
+        </View>
+        {/* <View className="flex-row justify-end gap-2 pt-2">
+          <TouchableOpacity
+            onPress={() => {
+              globalWithdrawalState.setWithdrawal(draw);
+              // router.push("/promotion/update");
+            }}
+            className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+          >
+            <Text className="text-[13.2px] text-white">
+              Chỉnh sửa
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              globalWithdrawalState.setWithdrawal(draw);
+              router.push("/promotion/details");
+            }}
+            className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+          >
+            <Text className="text-[13.2px]">Chi tiết</Text>
+          </TouchableOpacity>
+        </View> */}
+      </TouchableOpacity>
+    );
+  };
   return (
     <PageLayoutWrapper isScroll={false}>
       <View className="p-2 w-full">
@@ -197,114 +292,65 @@ const Balance = () => {
           </ImageBackground>
         </View>
       </View>
-      <ScrollView
-        style={{ width: "100%", flexGrow: 1 }}
+
+      <FlatList
+        style={{ flexGrow: 1, backgroundColor: "white", width: "100%" }}
+        ListHeaderComponent={
+          <View>
+            {!transactionsFetcher.isFetching &&
+            !transactionsFetcher.data?.value.items?.length ? (
+              <Text className="text-gray-600 text-center mt-6">
+                {transactionsFetcher.data?.value.items?.length == 0
+                  ? "Chưa có bất kì giao dịch nào"
+                  : "Mất kết nối, vui lòng thử lại"}
+              </Text>
+            ) : (
+              <Text className="text-gray-600 text-center mt-3">
+                Lịch sử giao dịch
+              </Text>
+            )}
+          </View>
+        }
         refreshControl={
           <RefreshControl
             tintColor={"#FCF450"}
             onRefresh={() => {
               balanceFetch.refetch();
-              transactionsFetch.refetch();
+              transactionsFetcher.refetch();
             }}
-            refreshing={balanceFetch.isFetching || transactionsFetch.isFetching}
+            refreshing={
+              balanceFetch.isFetching || transactionsFetcher.isFetching
+            }
           />
         }
-      >
-        {!transactionsFetch.isFetching &&
-        !transactionsFetch.data?.value.items?.length ? (
-          <Text className="text-gray-600 text-center mt-6">
-            {transactionsFetch.data?.value.items?.length == 0
-              ? "Chưa có bất kì giao dịch nào"
-              : "Mất kết nối, vui lòng thử lại"}
-          </Text>
-        ) : (
-          <Text className="text-gray-600 text-center mt-3">
-            Lịch sử giao dịch
-          </Text>
-        )}
-        <View className=" p-2 mt-2 pb-[72px]">
-          {(transactionsFetch.data?.value.items.length
-            ? transactionsFetch.data?.value.items
+        data={
+          transactionsFetcher.data?.value.items.length
+            ? transactionsFetcher.data?.value.items
             : sampleWalletTransactionList
-          ).map((transaction, index) => (
-            <TouchableOpacity
-              onPress={() => {}}
-              key={transaction.description + (Math.random() % 100_000_000)}
-              className={`p-4 pt-3 bg-white ${
-                index % 2 == 1 && "bg-[#fffbeb]"
-              }`}
-            >
-              <View className="flex-row flex-1 justify-start items-start">
-                <View className="self-center border-[1px] border-gray-200 mr-2 ml-[-2px] rounded-full p-[1px] overflow-hidden mb-1">
-                  <Image
-                    source={{
-                      uri: CONSTANTS.url.transaction_circle,
-                    }}
-                    resizeMode="cover"
-                    className="h-[40px] w-[40px] opacity-85"
-                  />
-                </View>
-                <View className="flex-1">
-                  <Text
-                    className="text-[12.5px] font-semibold mt-[-2px]"
-                    numberOfLines={2}
-                    ellipsizeMode="tail"
-                  >
-                    {transaction.description}
-                  </Text>
-                  <View className="flex-row justify-between">
-                    <View>
-                      <Text className="text-[11px] italic text-gray-500 ">
-                        {dayjs(transaction.createdDate)
-                          .local()
-                          .format("HH:mm - DD/MM/YYYY")}{" "}
-                      </Text>
-                      <Text className="text-[11px] italic text-gray-500 ">
-                        Số dư sau giao dịch:{" "}
-                        {utilService.formatPrice(transaction.totalAmountAfter)}
-                        {"₫"}
-                      </Text>
-                    </View>
-                    <Text
-                      className={`text-[11px] italic text-gray-500 ${
-                        transaction.amount > 0
-                          ? "text-green-600"
-                          : "text-red-700"
-                      } font-semibold`}
-                    >
-                      {transaction.amount > 0 ? "+" : "-"}
-                      {utilService.formatPrice(Math.abs(transaction.amount))}
-                      {"₫"}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              {/* <View className="flex-row justify-end gap-2 pt-2">
-                    <TouchableOpacity
-                      onPress={() => {
-                        globalWithdrawalState.setWithdrawal(draw);
-                        // router.push("/promotion/update");
-                      }}
-                      className="bg-[#227B94] border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                    >
-                      <Text className="text-[13.2px] text-white">
-                        Chỉnh sửa
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        globalWithdrawalState.setWithdrawal(draw);
-                        router.push("/promotion/details");
-                      }}
-                      className="bg-white border-[#227B94] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                    >
-                      <Text className="text-[13.2px]">Chi tiết</Text>
-                    </TouchableOpacity>
-                  </View> */}
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+        }
+        renderItem={renderItem}
+        keyExtractor={(item, index) => (Math.random() % 1_000_000).toString()}
+        onEndReached={() => {
+          if (
+            transactionsFetcher.isFetching ||
+            isRendering ||
+            (transactionsFetcher.data &&
+              !transactionsFetcher.data.value.hasNext)
+          )
+            return;
+          setInfitieSize(infiniteSize + INFINITE_LOAD_SIZE);
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          <View className="p-3">
+            <ActivityIndicator
+              animating={transactionsFetcher.isFetching || isRendering}
+              color="#FCF450"
+              size={40}
+            />
+          </View>
+        }
+      />
     </PageLayoutWrapper>
   );
 };
