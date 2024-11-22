@@ -61,8 +61,10 @@ const Notifications = () => {
   );
   const markAsReadAll = async () => {
     try {
-      // const response = await apiClient.put("shop-owner/notification/readall");
+      const response = await apiClient.put("notification/mark-all-read");
+      console.info("Call API notification/mark-all-read: OKKKKKK!");
     } catch (error: any) {
+      console.error("Call API notification/mark-all-read: ", error.response);
     } finally {
     }
   };
