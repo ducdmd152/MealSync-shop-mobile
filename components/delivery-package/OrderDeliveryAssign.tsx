@@ -42,6 +42,7 @@ const OrderDeliveryAssign = ({
         } as StaffInfoModel)
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUnAssignSubmitting, setIsUnAssignSubmitting] = useState(false);
 
   const {
     data: staffInfoListData,
@@ -199,7 +200,7 @@ const OrderDeliveryAssign = ({
     onError = (error: any) => {}
   ) => {
     try {
-      setIsSubmitting(true);
+      setIsUnAssignSubmitting(true);
       const response = await apiClient.put(
         `shop-owner/order/${order.id}/un-assign`,
         {
@@ -227,7 +228,7 @@ const OrderDeliveryAssign = ({
     } catch (error: any) {
       onError(error);
     } finally {
-      setIsSubmitting(false);
+      setIsUnAssignSubmitting(false);
     }
   };
   const onUnAssign = () => {
@@ -358,7 +359,7 @@ const OrderDeliveryAssign = ({
             handlePress={() => {
               onUnAssign();
             }}
-            isLoading={isSubmitting}
+            isLoading={isUnAssignSubmitting}
             containerStyleClasses="mt-2 h-[36px] px-4 bg-transparent border-[1px] border-secondary-100 bg-white font-medium z-10"
             textStyleClasses="text-[16px] text-gray-900 ml-1 text-secondary"
           />
