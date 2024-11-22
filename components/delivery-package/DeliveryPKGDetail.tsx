@@ -279,11 +279,11 @@ const DeliveryPKGDetail = ({
                               }
                             </Text>
                             {order.status == OrderStatus.Preparing &&
-                              !utilService.isCurrentTimeGreaterThanEndTime({
-                                startTime: pkgDetails.startTime,
-                                endTime: pkgDetails.endTime,
-                                intendedReceiveDate: pkgDetails.deliveryDate,
-                              }) && (
+                              utilService.getInFrameTime(
+                                order.startTime,
+                                order.endTime,
+                                order.intendedReceiveDate
+                              ) == 0 && (
                                 <TouchableOpacity
                                   onPress={() => {
                                     orderUIService.onDelivery(
@@ -333,11 +333,11 @@ const DeliveryPKGDetail = ({
                               )}
 
                             {order.status == OrderStatus.Delivering &&
-                              !utilService.isCurrentTimeGreaterThanEndTime({
-                                startTime: pkgDetails.startTime,
-                                endTime: pkgDetails.endTime,
-                                intendedReceiveDate: pkgDetails.deliveryDate,
-                              }) && (
+                              utilService.getInFrameTime(
+                                order.startTime,
+                                order.endTime,
+                                order.intendedReceiveDate
+                              ) == 0 && (
                                 <TouchableOpacity
                                   onPress={async () => {
                                     globalCompleteDeliveryConfirm.setIsShowActionale(
