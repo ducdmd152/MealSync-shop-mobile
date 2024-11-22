@@ -12,7 +12,10 @@ import {
   ShopDeliveryStaff,
   StaffInfoModel,
 } from "@/types/models/StaffInfoModel";
-import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
+import {
+  FetchOnlyListResponse,
+  FetchValueResponse,
+} from "@/types/responses/FetchResponse";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
@@ -74,13 +77,35 @@ const OrderDeliveryAutoSuggestAssign = ({
       personsFetcher.refetch();
     }, [])
   );
-  const onAutoAssign = () => {
+
+  const onAutoAssign = async () => {
     if (personIds.length === 0) {
       Alert.alert("Vui lòng lựa chọn", "Bạn cần chọn người đảm nhận giao đơn");
       return;
     }
     beforeGetSuggestion();
-    console.log("personIds: ", personIds);
+    setIsSubmitting(true);
+    try {
+      const response = await apiClient.get<
+        FetchValueResponse<DeliveryPackageGroupDetailsModel>
+      >(
+        `shop-owner/delivery-package/suggest-create?${personIds
+          .map((id) => `shipperIds=${id}`)
+          .join("&")}`,
+        {
+          params: {
+            startTime,
+            endTime,
+            intendedReceiveDate,
+          },
+        }
+      );
+      onSuccess(response.data.value);
+    } catch (error: any) {
+      onError(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <View>
@@ -90,7 +115,7 @@ const OrderDeliveryAutoSuggestAssign = ({
         {utilService.formatTime(endTime)} |{" "}
         {utilService.formatDateDdMmYyyy(intendedReceiveDate)}
       </Text>
-      {personsFetcher.isFetching ? (
+      {!personsFetcher.data ? (
         <ActivityIndicator animating={true} color="#FCF450" />
       ) : personsFetcher.isError || personsFetcher.data?.value.length == 0 ? (
         <Text>Không tìm thấy thông tin</Text>
