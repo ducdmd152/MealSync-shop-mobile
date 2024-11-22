@@ -38,13 +38,14 @@ interface NotiModel {
 enum EntityTypes {
   Order = 1,
 }
-const INFINITE_LOAD_SIZE = 10;
+const INFINITE_LOAD_SIZE = 5;
 const Notifications = () => {
   const globalHeaderPage = useGlobalHeaderPage();
   const globalNotiState = useGlobalNotiState();
   const globalOrderDetailPageState = useOrderDetailPageState();
   const [infiniteSize, setInfitieSize] = useState(INFINITE_LOAD_SIZE);
   const [isRendering, setIsRendering] = useState(false);
+  const [notifications, setNotifications] = useState<NotiModel[]>([]);
   const notiFetcher = useFetchWithRQWithFetchFunc(
     [endpoints.NOTIFICATION_LIST],
     async (): Promise<FetchResponse<NotiModel>> =>
@@ -58,8 +59,18 @@ const Notifications = () => {
         .then((response) => response.data),
     [infiniteSize]
   );
+  const markAsReadAll = async () => {
+    try {
+      // const response = await apiClient.put("shop-owner/notification/readall");
+    } catch (error: any) {
+    } finally {
+    }
+  };
   useEffect(() => {
-    if (globalHeaderPage.isNotiPageFocusing) setInfitieSize(INFINITE_LOAD_SIZE);
+    if (globalHeaderPage.isNotiPageFocusing) {
+      setNotifications([]);
+      setInfitieSize(INFINITE_LOAD_SIZE);
+    } else markAsReadAll();
     // console.log(
     //   "globalHeaderPage.isChattingFocusing: ",
     //   globalHeaderPage.isNotiPageFocusing
@@ -77,6 +88,15 @@ const Notifications = () => {
       }, 1500);
     }
   }, [notiFetcher.isFetched]);
+  useEffect(() => {
+    if (notiFetcher.data?.value.items)
+      setNotifications(
+        notiFetcher.data.value.items.map((item) => {
+          const already = notifications.find((noti) => noti.id == item.id);
+          return already || item;
+        })
+      );
+  }, [notiFetcher.data?.value.items]);
   useFocusEffect(
     React.useCallback(() => {
       globalHeaderPage.setIsNotiPageFocusing(true);
@@ -85,7 +105,7 @@ const Notifications = () => {
       };
     }, [])
   );
-  const renderItem = ({ item }: { item: NotiModel }) => (
+  const renderItem = ({ item, index }: { item: NotiModel; index: number }) => (
     <TouchableOpacity
       key={item.id}
       onPress={() => {
@@ -96,7 +116,10 @@ const Notifications = () => {
         }
       }}
       className={`p-3 px-4 bg-white border-b-[0.5px] border-gray-200 `}
-      style={{ backgroundColor: item.isRead ? "#fff" : "#fffbeb" }}
+      style={{
+        backgroundColor: item.isRead ? "#fff" : "#fffbeb",
+        ...(index == 0 ? { paddingTop: 20 } : {}),
+      }}
     >
       <View className="flex-row flex-1 justify-start items-start">
         <View className="self-start border-[1px] border-gray-200 mr-2 ml-[-2px] rounded-full p-[1px] overflow-hidden mb-1">
@@ -152,10 +175,15 @@ const Notifications = () => {
     </TouchableOpacity>
   );
 
+  console.log(
+    "notifications.length: ",
+    notifications.length,
+    notiFetcher.data?.value.items.length
+  );
   return (
     <FlatList
       style={{ flexGrow: 1, backgroundColor: "white" }}
-      data={notiFetcher.data?.value.items || []}
+      data={notifications}
       renderItem={renderItem}
       keyExtractor={(item, index) => item.id.toString()}
       onEndReached={() => {
