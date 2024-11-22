@@ -264,7 +264,7 @@ const Order = () => {
           }}
         >
           <OrderDeliveryAssign
-            onComplete={(shopDeliveryStaff: ShopDeliveryStaff) => {
+            onComplete={(shopDeliveryStaff) => {
               setIsOpenOrderAssign(false);
 
               setCacheOrderInList({
