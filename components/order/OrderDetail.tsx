@@ -20,6 +20,7 @@ import {
   TouchableOpacity,
   View,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { useToast } from "react-native-toast-notifications";
@@ -285,7 +286,11 @@ const OrderDetail = ({
   return (
     <View
       className={`flex-1 items-center justify-center w-full bg-[#f4f4f5] ${containerStyleClasses}`}
+      style={{ backgroundColor: order?.id ? "#f4f4f5" : "#fff" }}
     >
+      {order?.id == undefined && (
+        <ActivityIndicator animating={true} color="#FCF450" />
+      )}
       {order?.id != undefined && (
         <View className="w-full h-full">
           {hasHeaderInfo && (

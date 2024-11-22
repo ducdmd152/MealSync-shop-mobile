@@ -28,7 +28,7 @@ interface NotiModel {
   imageUrl: string;
   title: string;
   content: string;
-  data: string; // Chuỗi JSON, có thể cần parse thành đối tượng nếu cần dùng chi tiết
+  // data: string; // Chuỗi JSON, có thể cần parse thành đối tượng nếu cần dùng chi tiết
   entityType: number;
   isRead: boolean;
   createdDate: string;
