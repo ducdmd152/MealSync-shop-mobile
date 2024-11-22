@@ -20,7 +20,7 @@ const TabHeader = () => {
       apiClient
         .get("shop-owner-staff/notification/total-unread")
         .then((response) => response.data),
-    [globalNotiState.toggleChangingFlag]
+    [globalNotiState.toggleChangingFlag, globalHeaderPage.isNotiPageFocusing]
   );
   return (
     <View className="w-full h-[64px] px-4 bg-white flex-row justify-between border-b-[0.7px] border-gray-300 overflow-hidden">
