@@ -521,30 +521,32 @@ const CompleteDeliveryConfirmModal = ({
                   utilService.formatTime(order.endTime)}
               </Text>
             </View>
-            <OrderDeliveryInfo
-              order={order}
-              containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
-              assignNode={
-                order.shopDeliveryStaff != null &&
-                globalCompleteDeliveryConfirm.isShowActionale &&
-                order.status <= OrderStatus.Delivering &&
-                authRole == 2 &&
-                inFrameTime == 0 ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      if (!actionInTimeValidation(true)) return;
-                      setIsOpenOrderAssign(true);
-                    }}
-                  >
-                    <Text className="p-[0.5] my-[-1] text-[11px] font-medium text-[#0891b2]">
-                      Thay đổi
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  <View></View>
-                )
-              }
-            />
+            {order.shopDeliveryStaff != null && (
+              <OrderDeliveryInfo
+                order={order}
+                containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
+                assignNode={
+                  order.shopDeliveryStaff != null &&
+                  globalCompleteDeliveryConfirm.isShowActionale &&
+                  order.status <= OrderStatus.Delivering &&
+                  authRole == 2 &&
+                  inFrameTime == 0 ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (!actionInTimeValidation(true)) return;
+                        setIsOpenOrderAssign(true);
+                      }}
+                    >
+                      <Text className="p-[0.5] my-[-1] text-[11px] font-medium text-[#0891b2]">
+                        Thay đổi
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <View></View>
+                  )
+                }
+              />
+            )}
           </View>
         ))}
 
