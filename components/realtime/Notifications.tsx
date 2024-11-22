@@ -38,7 +38,7 @@ interface NotiModel {
 enum EntityTypes {
   Order = 1,
 }
-const INFINITE_LOAD_SIZE = 5;
+const INFINITE_LOAD_SIZE = 10;
 const Notifications = () => {
   const globalHeaderPage = useGlobalHeaderPage();
   const globalNotiState = useGlobalNotiState();
@@ -69,10 +69,8 @@ const Notifications = () => {
     }
   };
   useEffect(() => {
-    if (globalHeaderPage.isNotiPageFocusing) {
-      setNotifications([]);
-      setInfitieSize(INFINITE_LOAD_SIZE);
-    } else markAsReadAll();
+    if (globalHeaderPage.isNotiPageFocusing) setInfitieSize(INFINITE_LOAD_SIZE);
+    else markAsReadAll();
     // console.log(
     //   "globalHeaderPage.isChattingFocusing: ",
     //   globalHeaderPage.isNotiPageFocusing
@@ -177,14 +175,10 @@ const Notifications = () => {
     </TouchableOpacity>
   );
 
-  console.log(
-    "notifications.length: ",
-    notifications.length,
-    notiFetcher.data?.value.items.length
-  );
   return (
     <FlatList
       style={{ flexGrow: 1, backgroundColor: "white" }}
+      // data={notiFetcher.data?.value.items || []}
       data={notifications}
       renderItem={renderItem}
       keyExtractor={(item, index) => item.id.toString()}
