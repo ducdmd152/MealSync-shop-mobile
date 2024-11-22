@@ -36,6 +36,9 @@ import { useToast } from "react-native-toast-notifications";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
+import CustomModal from "@/components/common/CustomModal";
+import OrderDeliveryAutoAssign from "@/components/delivery-package/OrderDeliveryAutoSuggestAssign";
+import { DeliveryPackageGroupDetailsModel } from "@/types/models/DeliveryPackageModel";
 interface GPKGCreateRequest {
   isConfirm: boolean;
   deliveryPackages: {
@@ -60,6 +63,8 @@ const DeliveryPackageGroupCreate = () => {
       .replace(/-/g, "/"),
   } as GPKGQuery);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOpenSuggestAssign, setIsOpenSuggestAssign] = useState(false);
+
   const [orderFetchResult, setOrderFetchResult] =
     useState<UseQueryResult<FetchResponse<OrderFetchModel>, Error>>();
   const [gpkgCreateRequest, setGPKGCreateRequest] = useState<GPKGCreateRequest>(
@@ -268,7 +273,7 @@ const DeliveryPackageGroupCreate = () => {
     </View>
   );
   const currentPersonArea = (
-    <View className="border-2 border-gray-300 flex-1 min-h-[40%] p-2">
+    <View className="border-2 border-gray-300 p-2 flex-1">
       <ScrollView>
         <View className="gap-y-[4px]">
           {getAssignedOrdersOf(currentDeliveryPersonId).map((order) => (
@@ -351,12 +356,12 @@ const DeliveryPackageGroupCreate = () => {
     </View>
   );
   const unAssignOrdersArea = (
-    <View className="border-2 border-gray-300 mt-2 p-2 mb-[-14px]">
+    <View className="border-2 border-gray-300 mt-2 p-2 mb-[-14px] flex-1">
       <Text className="italic text-gray-700 text-center mb-1 text-[10px]">
         Danh sách đơn hàng đang trống ({getUnassignedOrders().length} đơn hàng)
       </Text>
-      <ScrollView>
-        <View className="gap-y-[4px]">
+      <ScrollView style={{ flexGrow: 1 }}>
+        <View className="gap-y-[4px] flex-1">
           {getUnassignedOrders().map((order) => (
             <TouchableOpacity
               key={order.id}
@@ -445,6 +450,7 @@ const DeliveryPackageGroupCreate = () => {
   return (
     <PageLayoutWrapper isScroll={false}>
       <GPKGDateTimeFrameSelect
+        onSuggest={() => setIsOpenSuggestAssign(true)}
         query={query}
         setQuery={setQuery}
         isAnyUnCreatedFrame={isAnyUnCreatedFrame}
@@ -467,10 +473,54 @@ const DeliveryPackageGroupCreate = () => {
           />
         </View>
       )}
+
       <CompleteDeliveryConfirmModal
         onParentOpen={() => {}}
         onParentClose={() => {}}
       />
+      <CustomModal
+        title={``}
+        hasHeader={false}
+        isOpen={isOpenSuggestAssign}
+        setIsOpen={(value) => setIsOpenSuggestAssign(value)}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[98%]"
+        onBackdropPress={() => {
+          setIsOpenSuggestAssign(false);
+        }}
+      >
+        <OrderDeliveryAutoAssign
+          beforeGetSuggestion={() => {
+            orderFetchResult?.refetch();
+          }}
+          onSuccess={(suggesstion) => {
+            toast.show(`Đã thực hiện đề xuất phân công.`, {
+              type: "info",
+              duration: 1500,
+            });
+            setGPKGCreateRequest({
+              isConfirm: false,
+              deliveryPackages:
+                suggesstion.deliveryPackageGroups?.map((group) => {
+                  return {
+                    shopDeliveryStaffId: group.shopDeliveryStaff?.id,
+                    orderIds: group.orders.map((order) => order.id),
+                  };
+                }) || [],
+            });
+            deliveryPersonFetchResult.refetch();
+            setIsOpenSuggestAssign(false);
+          }}
+          onError={(error) => {
+            Alert.alert(
+              "Oops!",
+              error?.response?.data?.error?.message ||
+                "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            );
+          }}
+          {...query}
+        />
+      </CustomModal>
     </PageLayoutWrapper>
   );
 };

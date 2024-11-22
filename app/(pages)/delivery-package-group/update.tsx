@@ -110,7 +110,7 @@ const DeliveryPackageGroupUpdate = () => {
     }
   };
   const deliveryPersonFetchResult = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.FRAME_STAFF_INFO_LIST.concat(["gpkg-create-page"]),
+    REACT_QUERY_CACHE_KEYS.FRAME_STAFF_INFO_LIST.concat(["gpkg-update-page"]),
     async (): Promise<FetchOnlyListResponse<FrameStaffInfoModel>> =>
       apiClient
         .get(endpoints.FRAME_STAFF_INFO_LIST, {
@@ -332,7 +332,7 @@ const DeliveryPackageGroupUpdate = () => {
     </View>
   );
   const currentPersonArea = (
-    <View className="border-2 border-gray-300 flex-1 min-h-[40%] p-2">
+    <View className="border-2 border-gray-300 p-2 flex-1">
       <ScrollView>
         <View className="gap-y-[4px]">
           {getAssignedOrdersOf(currentDeliveryPersonId).map((order) => (
@@ -417,12 +417,12 @@ const DeliveryPackageGroupUpdate = () => {
     </View>
   );
   const unAssignOrdersArea = (
-    <View className="border-2 border-gray-300 mt-2 p-2 mb-[-14px]">
+    <View className="border-2 border-gray-300 mt-2 p-2 mb-[-14px] flex-1 ">
       <Text className="italic text-gray-700 text-center mb-1 text-[10px]">
         Danh sách đơn hàng đang trống ({getUnassignedOrders().length} đơn hàng)
       </Text>
-      <ScrollView>
-        <View className="gap-y-[4px]">
+      <ScrollView style={{ flexGrow: 1 }}>
+        <View className="gap-y-[4px] flex-1">
           {getUnassignedOrders().map((order) => (
             <TouchableOpacity
               key={order.id}

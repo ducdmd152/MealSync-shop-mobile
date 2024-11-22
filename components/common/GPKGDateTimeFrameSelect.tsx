@@ -71,6 +71,7 @@ interface Props {
   setOrderFetchResult: (
     result: UseQueryResult<FetchResponse<OrderFetchModel>, Error>
   ) => void;
+  onSuggest: () => void;
 }
 const GPKGDateTimeFrameSelect = ({
   query,
@@ -78,6 +79,7 @@ const GPKGDateTimeFrameSelect = ({
   isAnyUnCreatedFrame,
   setIsAnyUnCreatedFrame,
   setOrderFetchResult,
+  onSuggest,
 }: Props) => {
   // (async () => {
   //   console.log(await sessionService.getAuthToken());
@@ -250,9 +252,7 @@ const GPKGDateTimeFrameSelect = ({
                     minDate={
                       new Date(new Date().setDate(new Date().getDate() - 1))
                     }
-                    maxDate={
-                      new Date(new Date().setDate(new Date().getDate() + 1))
-                    }
+                    maxDate={new Date(new Date().setDate(new Date().getDate()))}
                     mode="single"
                     locale="vi-VN"
                     date={dayjs(query.intendedReceiveDate).toDate()}
@@ -334,7 +334,9 @@ const GPKGDateTimeFrameSelect = ({
             </Modal>
           </View>
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => {
+              onSuggest();
+            }}
             className={` flex-row items-center rounded-md items-center justify-center px-[6px] py-[2.2px] bg-[#227B94] ${
               !isAnyUnCreatedFrame ? "opacity-50" : ""
             }`}

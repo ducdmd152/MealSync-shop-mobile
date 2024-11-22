@@ -178,7 +178,7 @@ export default function RootLayout() {
       {/* <SafeAreaView style={{ flex: 1 }}> */}
       <TanStackProvider>
         <ThemeProvider value={DefaultTheme}>
-          <ToastProvider offset={142}>
+          <ToastProvider offset={120}>
             <PaperProvider>
               {/* <KeyboardAvoidingView
         style={styles.container}
