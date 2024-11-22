@@ -155,9 +155,9 @@ const Notifications = () => {
   return (
     <FlatList
       style={{ flexGrow: 1, backgroundColor: "white" }}
-      data={notiFetcher.data?.value.items || []} // Danh sách dữ liệu
-      renderItem={renderItem} // Hàm render phần tử
-      keyExtractor={(item, index) => item.id.toString()} // Khóa duy nhất
+      data={notiFetcher.data?.value.items || []}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => item.id.toString()}
       onEndReached={() => {
         if (
           notiFetcher.isFetching ||
@@ -166,8 +166,8 @@ const Notifications = () => {
         )
           return;
         setInfitieSize(infiniteSize + INFINITE_LOAD_SIZE);
-      }} // Gọi khi cuộn đến cuối
-      onEndReachedThreshold={0.5} // Ngưỡng trước khi gọi tải thêm (0.5 = 50% cuối)
+      }}
+      onEndReachedThreshold={0.5}
       ListFooterComponent={
         <View className="p-3">
           <ActivityIndicator
@@ -176,7 +176,7 @@ const Notifications = () => {
             size={40}
           />
         </View>
-      } // Phần footer loading
+      }
     />
   );
   return (
