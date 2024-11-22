@@ -159,7 +159,12 @@ const Notifications = () => {
       renderItem={renderItem} // Hàm render phần tử
       keyExtractor={(item, index) => item.id.toString()} // Khóa duy nhất
       onEndReached={() => {
-        if (notiFetcher.isFetching || isRendering) return;
+        if (
+          notiFetcher.isFetching ||
+          isRendering ||
+          (notiFetcher.data && !notiFetcher.data.value.hasNext)
+        )
+          return;
         setInfitieSize(infiniteSize + INFINITE_LOAD_SIZE);
       }} // Gọi khi cuộn đến cuối
       onEndReachedThreshold={0.5} // Ngưỡng trước khi gọi tải thêm (0.5 = 50% cuối)
