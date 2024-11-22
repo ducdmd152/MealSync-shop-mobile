@@ -397,6 +397,7 @@ const Order = () => {
       }
       orderAPIService.reject(
         orderId,
+        reason,
         () => {
           // const toast = Toast.show({
           //   type: "info",

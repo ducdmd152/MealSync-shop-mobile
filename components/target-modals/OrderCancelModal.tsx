@@ -85,7 +85,7 @@ const OrderCancelModal = ({
                   request(reason);
                   setTimeout(() => {
                     setIsSubmitting(false);
-                  }, 1500);
+                  }, 500);
                 }}
                 containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-semibold z-10"
                 // iconLeft={

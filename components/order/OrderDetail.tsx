@@ -230,6 +230,7 @@ const OrderDetail = ({
       }
       orderAPIService.reject(
         orderId,
+        reason,
         () => {
           const toast = Toast.show({
             type: "info",
@@ -842,7 +843,7 @@ const OrderDetail = ({
         />
       </CustomModal>
       <OrderCancelModal
-        isCancelOrReject
+        isCancelOrReject={isCancelOrReject}
         orderId={order.id}
         request={request}
         isOpen={isCancelModal}
