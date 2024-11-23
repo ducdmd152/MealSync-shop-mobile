@@ -2,16 +2,12 @@ import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetc
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import apiClient from "@/services/api-services/api-client";
-import utilService from "@/services/util-service";
-import { OrderDeliveryInfoModel } from "@/types/models/DeliveryInfoModel";
 import OrderFetchModel from "@/types/models/OrderFetchModel";
-import {
-  FetchOnlyListResponse,
-  FetchValueResponse,
-} from "@/types/responses/FetchResponse";
+import { ReportGetModel } from "@/types/models/ReportModel";
+import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
 import dayjs from "dayjs";
 import { useFocusEffect } from "expo-router";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -20,11 +16,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import ImageViewingModal from "../target-modals/ImageViewingModal";
-import CustomModal from "./CustomModal";
-import FailDeliveryUpdate from "./FailDeliveryUpdate";
-import { ReportGetModel } from "@/types/models/ReportModel";
-import { Avatar } from "react-native-paper";
 import ReportReplyModal from "../target-modals/ReportReplyModal";
 
 const OrderReportInfo = ({
@@ -221,7 +212,6 @@ const OrderReportInfo = ({
     <View className="mt-2 bg-white p-2">
       <View className={`rounded-md ${containerStyleClasses}`}>
         {getOrderReportInfo()}
-        <ImageViewingModal />
         {isEditable && reportsFetcher.data?.value?.at(0) && (
           <ReportReplyModal
             orderId={order.id}
