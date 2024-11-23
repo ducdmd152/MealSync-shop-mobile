@@ -25,6 +25,7 @@ import CustomModal from "./CustomModal";
 import FailDeliveryUpdate from "./FailDeliveryUpdate";
 import { ReportGetModel } from "@/types/models/ReportModel";
 import { Avatar } from "react-native-paper";
+import ReportReplyModal from "../target-modals/ReportReplyModal";
 
 const OrderReportInfo = ({
   order,
@@ -87,6 +88,9 @@ const OrderReportInfo = ({
       </Text> */}
           <Text className={`text-[12px] font-medium me-2  py-0.5 rounded  `}>
             Báo cáo từ {report?.customerInfo.fullName}
+          </Text>
+          <Text className="text-gray-600 text-[12px] mr-1">
+            {dayjs(report?.createdDate).local().format("HH:mm DD/MM/YYYY")}
           </Text>
         </View>
         <View className="p-1 bg-[#fff7ed] rounded-md mt-1">
@@ -157,24 +161,15 @@ const OrderReportInfo = ({
         </View>
         {reply && (
           <View className="py-2 pl-4 mr-[-14px]  rounded-md">
-            <View className="flex-row gap-x-4 items-center">
-              {/* <View className="w-[36px] justify-center items-center border-[1px] border-green-200 rounded-full">
-              <Avatar.Image
-                size={34}
-                source={{
-                  uri:
-                    review.reviews[1].avatar || CONSTANTS.url.userAvatarDefault,
-                }}
-              />
-            </View> */}
-              <View>
-                <Text className="text-gray-800">Phản hồi từ cửa hàng</Text>
-                <Text className="text-gray-600 mt-1 text-[12px]">
-                  {dayjs(reply.createdDate).local().format("HH:mm DD/MM/YYYY")}
-                </Text>
-              </View>
+            <View className="flex-row gap-x-4 items-center justify-between">
+              <Text className="text-gray-800 font-semibold">
+                Phản hồi từ cửa hàng
+              </Text>
+              <Text className="text-gray-600 text-[12px] mr-6">
+                {dayjs(reply.createdDate).local().format("HH:mm DD/MM/YYYY")}
+              </Text>
             </View>
-            <Text className="mt-2 italic text-gray-800">{reply.content}</Text>
+            <Text className="my-1 italic text-gray-800">{reply.content}</Text>
             {reply.imageUrls.length > 0 && (
               <View className="flex-row gap-x-2 mt-1">
                 {reply.imageUrls
@@ -227,20 +222,14 @@ const OrderReportInfo = ({
       <View className={`rounded-md ${containerStyleClasses}`}>
         {getOrderReportInfo()}
         <ImageViewingModal />
-        {isEditable && (
-          <CustomModal
-            title={``}
-            hasHeader={false}
+        {isEditable && reportsFetcher.data?.value?.at(0) && (
+          <ReportReplyModal
+            orderId={order.id}
+            reportId={reportsFetcher.data?.value?.at(0)?.id || 0}
             isOpen={isReplyReport}
             setIsOpen={(value) => setIsReplyReport(value)}
-            titleStyleClasses="text-center flex-1"
-            containerStyleClasses="w-[98%]"
-            onBackdropPress={() => {
-              setIsReplyReport(false);
-            }}
-          >
-            <View></View>
-          </CustomModal>
+            onAfterCompleted={() => reportsFetcher.refetch()}
+          />
         )}
       </View>
     </View>
