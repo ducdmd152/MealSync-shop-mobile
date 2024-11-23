@@ -64,8 +64,8 @@ const OrderReportInfo = ({
     return new Date() < endFrameDate.toDate();
   };
   useEffect(() => {
-    if (isLoading && !reportsFetcher.isFetching) reportsFetcher.refetch();
-  }, [isLoading]);
+    if (!reportsFetcher.isFetching) reportsFetcher.refetch();
+  }, [order]);
   useFocusEffect(
     React.useCallback(() => {
       reportsFetcher.refetch();

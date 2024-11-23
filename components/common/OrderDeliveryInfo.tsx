@@ -8,7 +8,7 @@ import OrderFetchModel from "@/types/models/OrderFetchModel";
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import dayjs from "dayjs";
 import { useFocusEffect } from "expo-router";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import ImageViewingModal from "../target-modals/ImageViewingModal";
 import CustomModal from "./CustomModal";
@@ -41,6 +41,9 @@ const OrderDeliveryInfo = ({
         .then((response) => response.data),
     []
   );
+  useEffect(() => {
+    if (!fetch.isFetching) fetch.refetch();
+  }, [order]);
   useFocusEffect(
     React.useCallback(() => {
       fetch.refetch();

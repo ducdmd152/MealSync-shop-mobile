@@ -1,3 +1,8 @@
+export enum ReportStatus {
+  Pending = 1,
+  Approved = 2,
+  Rejected = 3,
+}
 export interface ReportGetModel {
   id: number;
   orderId: number;
