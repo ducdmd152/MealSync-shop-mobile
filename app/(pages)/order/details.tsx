@@ -12,6 +12,7 @@ const OrderDetails = () => {
     <PageLayoutWrapper>
       <View className="flex-1 mt-2 p-4">
         <OrderDetail
+          hasHeaderInfo={true}
           order={globalOrderDetailPageState.order}
           setOrder={globalOrderDetailPageState.setOrder}
           orderId={globalOrderDetailPageState.id}

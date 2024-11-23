@@ -28,7 +28,7 @@ import { Avatar } from "react-native-paper";
 
 const OrderReportInfo = ({
   order,
-  containerStyleClasses = "py-2 bg-blue-100 p-2 mx-[-8px] ",
+  containerStyleClasses = "py-2 bg-[#ffedd5] p-2 mx-[-8px] ",
   textNameStyleClasses = `text-[13.5px]`,
   avatarStyleClasses = `h-[17px] w-[17px] mr-[2px]`,
   isLoading,
@@ -85,10 +85,8 @@ const OrderReportInfo = ({
           {/* <Text className="text-[14px] font-semibold text-gray-700">
         Trạng thái giao hàng
       </Text> */}
-          <Text
-            className={`text-[9px] font-medium me-2 px-2.5 py-0.5 rounded bg-red-400 `}
-          >
-            Báo cáo từ ${report?.customerInfo.fullName}
+          <Text className={`text-[12px] font-medium me-2  py-0.5 rounded  `}>
+            Báo cáo từ {report?.customerInfo.fullName}
           </Text>
         </View>
         <View className="p-1 bg-[#fff7ed] rounded-md mt-1">
@@ -141,7 +139,7 @@ const OrderReportInfo = ({
                   >
                     <Image
                       source={{ uri: evidence.imageUrl }}
-                      className="w-[40px] h-[40px] rounded-md"
+                      className="w-[52px] h-[52px] rounded-md"
                       resizeMode="cover"
                     />
                   </TouchableOpacity>
@@ -158,7 +156,7 @@ const OrderReportInfo = ({
         </Text> */}
         </View>
         {reply && (
-          <View className="py-2 pl-4 mr-[-14px] bg-[#fefce8] rounded-md">
+          <View className="py-2 pl-4 mr-[-14px]  rounded-md">
             <View className="flex-row gap-x-4 items-center">
               {/* <View className="w-[36px] justify-center items-center border-[1px] border-green-200 rounded-full">
               <Avatar.Image
