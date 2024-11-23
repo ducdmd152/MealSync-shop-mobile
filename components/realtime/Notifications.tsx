@@ -101,6 +101,9 @@ const Notifications = () => {
     React.useCallback(() => {
       globalHeaderPage.setIsNotiPageFocusing(true);
       return () => {
+        setNotifications(
+          notifications.map((item) => ({ ...item, isRead: true }))
+        );
         globalHeaderPage.setIsNotiPageFocusing(false);
       };
     }, [])
