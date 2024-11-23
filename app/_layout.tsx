@@ -1,44 +1,31 @@
 import {
-  DarkTheme,
   DefaultTheme,
   NavigationContainer,
   ThemeProvider,
 } from "@react-navigation/native";
-import { useFonts } from "expo-font";
 import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
-import FlashMessage from "react-native-flash-message";
 import { ToastProvider } from "react-native-toast-notifications";
 
-import { useColorScheme } from "@/hooks/themes/useColorScheme";
-import {
-  Alert,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-} from "react-native";
-import { images } from "@/constants";
-import { Image } from "react-native";
-import { PaperProvider } from "react-native-paper";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import TanStackProvider from "@/config/providers/TanStackProvider";
-import sessionService from "@/services/session-service";
 import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
+import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 import ImageViewingModal from "@/components/target-modals/ImageViewingModal";
 import ReviewReplyModal from "@/components/target-modals/ReviewReplyModal";
-import WithdrawDetailsModal from "@/components/target-modals/WithdrawDetailsModal";
 import StaffDetailsModal from "@/components/target-modals/StaffDetailsModal";
-import Toast from "react-native-toast-message";
-import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
-import utilService from "@/services/util-service";
+import WithdrawDetailsModal from "@/components/target-modals/WithdrawDetailsModal";
+import TanStackProvider from "@/config/providers/TanStackProvider";
+import { images } from "@/constants";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { io, Socket } from "socket.io-client";
 import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
+import { useColorScheme } from "@/hooks/themes/useColorScheme";
+import sessionService from "@/services/session-service";
+import { Alert, Image, StyleSheet } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { PaperProvider } from "react-native-paper";
+import Toast from "react-native-toast-message";
+import { io, Socket } from "socket.io-client";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

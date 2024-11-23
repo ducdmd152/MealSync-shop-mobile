@@ -1,22 +1,18 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
-import React, { ReactNode, useEffect, useState } from "react";
-import OrderFetchModel, {
-  getOrderStatusDescription,
-  OrderStatus,
-} from "@/types/models/OrderFetchModel";
-import { Image } from "react-native";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import apiClient from "@/services/api-services/api-client";
-import { FetchValueResponse } from "@/types/responses/FetchResponse";
-import { OrderDeliveryInfoModel } from "@/types/models/DeliveryInfoModel";
-import dayjs from "dayjs";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
-import ImageViewingModal from "../target-modals/ImageViewingModal";
+import apiClient from "@/services/api-services/api-client";
+import utilService from "@/services/util-service";
+import { OrderDeliveryInfoModel } from "@/types/models/DeliveryInfoModel";
+import OrderFetchModel from "@/types/models/OrderFetchModel";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
+import dayjs from "dayjs";
 import { useFocusEffect } from "expo-router";
+import React, { ReactNode, useState } from "react";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import ImageViewingModal from "../target-modals/ImageViewingModal";
 import CustomModal from "./CustomModal";
 import FailDeliveryUpdate from "./FailDeliveryUpdate";
-import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
-import utilService from "@/services/util-service";
 
 const OrderDeliveryInfo = ({
   order,

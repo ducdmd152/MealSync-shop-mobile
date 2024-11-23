@@ -29,6 +29,7 @@ import OrderDeliveryInfo from "../common/OrderDeliveryInfo";
 import CustomButton from "../custom/CustomButton";
 import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 import OrderCancelModal from "../target-modals/OrderCancelModal";
+import OrderReportInfo from "../common/OrderReportInfo";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -523,9 +524,9 @@ const OrderDetail = ({
               </View>
             )}
 
-            <View className="mt-2 bg-white p-2">
-              <Text>Khu vực trạng thái báo cáo</Text>
-            </View>
+            {order.status >= OrderStatus.Delivered && (
+              <OrderReportInfo order={order} isLoading={isLoading} />
+            )}
             <View className="mt-2 bg-white p-2">
               <Text>Khu vực rating & feedback</Text>
             </View>
