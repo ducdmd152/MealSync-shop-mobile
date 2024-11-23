@@ -89,6 +89,7 @@ const OrderDetail = ({
 
   const getOrderDetail = async (isRefetching = false) => {
     if (isRefetching) setIsReloading(true);
+    setIsLoading(true);
     try {
       const response = await apiClient.get<ValueResponse<OrderDetailModel>>(
         `shop-owner/order/${orderId}`
@@ -338,7 +339,7 @@ const OrderDetail = ({
                 tintColor={"#FCF450"}
                 refreshing={isReloading}
                 onRefresh={() => {
-                  getOrderDetail();
+                  getOrderDetail(true);
                 }}
               />
             }

@@ -46,10 +46,10 @@ const OrderReportInfo = ({
   const [isReplyReport, setIsReplyReport] = useState(false);
 
   const reportsFetcher = useFetchWithRQWithFetchFunc(
-    [`shop-owner/order/report/${order.id}`],
+    [`shop-owner/order/${order.id}/report`],
     async (): Promise<FetchOnlyListResponse<ReportGetModel>> =>
       apiClient
-        .get(`shop-owner/order/report/${order.id}`)
+        .get(`shop-owner/order/${order.id}/report`)
         .then((response) => response.data),
     []
   );
@@ -64,8 +64,8 @@ const OrderReportInfo = ({
     return new Date() < endFrameDate.toDate();
   };
   useEffect(() => {
-    if (!reportsFetcher.isFetching) reportsFetcher.refetch();
-  }, [order]);
+    if (isLoading && !reportsFetcher.isFetching) reportsFetcher.refetch();
+  }, [isLoading]);
   useFocusEffect(
     React.useCallback(() => {
       reportsFetcher.refetch();

@@ -104,7 +104,7 @@ export const orderStatusDescMapping = [
   },
   {
     value: OrderStatus.IssueReported,
-    description: "Đang báo cáo",
+    description: "Đơn báo cáo",
     bgColor: "#fdba74",
   },
   {
