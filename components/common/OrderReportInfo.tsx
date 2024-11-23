@@ -3,7 +3,7 @@ import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import apiClient from "@/services/api-services/api-client";
 import OrderFetchModel from "@/types/models/OrderFetchModel";
-import { ReportGetModel } from "@/types/models/ReportModel";
+import { ReportGetModel, ReportStatus } from "@/types/models/ReportModel";
 import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
 import dayjs from "dayjs";
 import { useFocusEffect } from "expo-router";
@@ -17,7 +17,23 @@ import {
   View,
 } from "react-native";
 import ReportReplyModal from "../target-modals/ReportReplyModal";
-
+const STATUSES = [
+  {
+    value: ReportStatus.Pending,
+    description: "Đang xử lí",
+    bgColor: "#fde68a",
+  },
+  {
+    value: ReportStatus.Approved,
+    description: "Báo cáo được chấp nhận",
+    bgColor: "#c7d2fe",
+  },
+  {
+    value: ReportStatus.Rejected,
+    description: "Báo cáo bị từ chối",
+    bgColor: "#e7e5e4",
+  },
+];
 const OrderReportInfo = ({
   order,
   containerStyleClasses = "py-2 bg-[#ffedd5] p-2 mx-[-8px] ",
@@ -73,15 +89,28 @@ const OrderReportInfo = ({
 
     return (
       <View>
-        <View className="flex-row items-center justify-between ">
+        <View className="flex-row items-start justify-between ">
           {/* <Text className="text-[14px] font-semibold text-gray-700">
         Trạng thái giao hàng
       </Text> */}
-          <Text className={`text-[12px] font-medium me-2  py-0.5 rounded  `}>
-            Báo cáo từ {report?.customerInfo.fullName}
-          </Text>
-          <Text className="text-gray-600 text-[12px] mr-1">
-            {dayjs(report?.createdDate).local().format("HH:mm DD/MM/YYYY")}
+          <View>
+            <Text className={`text-[12px] font-medium me-2  py-0.5 rounded  `}>
+              Báo cáo từ {report?.customerInfo.fullName}
+            </Text>
+            <Text className="text-gray-600 text-[11px] italic mr-1">
+              {dayjs(report?.createdDate).local().format("HH:mm DD/MM/YYYY")}
+            </Text>
+          </View>
+
+          <Text
+            className={`text-[11px] font-medium me-2 px-2.5 py-[2px] rounded`}
+            style={{
+              backgroundColor: STATUSES.find(
+                (item) => item.value == report?.status
+              )?.bgColor,
+            }}
+          >
+            {STATUSES.find((item) => item.value == report?.status)?.description}
           </Text>
         </View>
         <View className="p-1 bg-[#fff7ed] rounded-md mt-1">
