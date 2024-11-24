@@ -485,8 +485,8 @@ const Setting = () => {
             handleChangeText={(e) => {
               setOperatingSlot({ ...operatingSlot, title: e });
             }}
-            otherInputStyleClasses={`border-gray-300 h-12 mt-[-4px] pb-1 `}
-            otherTextInputStyleClasses="text-[14px]"
+            otherInputStyleClasses={`border-gray-300 h-12 mt-[-4px]`}
+            otherTextInputStyleClasses="text-[18px]"
             otherStyleClasses="mt-1"
           />
           <View className="mt-2">
