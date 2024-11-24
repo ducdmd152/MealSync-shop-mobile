@@ -4,7 +4,7 @@ import CONSTANTS from "@/constants/data";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
 import imageService from "@/services/image-service";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -108,10 +108,15 @@ const PreviewMultiImagesUpload = ({
       Alert.alert("Oops", `Vui lòng thử lại.`);
     }
   };
+  useEffect(() => {
+    setIsImageHandling(
+      uris.filter((uri) => imageService.isLocalImage(uri)).length > 0
+    );
+  }, [uris]);
   // console.log("uris: ", uris);
   const addToList = async (uri: string) => {
     if (uris.includes(uri)) return;
-    setIsImageHandling(true);
+    // setIsImageHandling(true);
     const beforeAnyUpdate = [...uris];
     setUris(uris.concat([uri]));
     try {
@@ -125,7 +130,7 @@ const PreviewMultiImagesUpload = ({
       setUris(beforeAnyUpdate);
       setImageHandleError(true);
     } finally {
-      setIsImageHandling(false);
+      // setIsImageHandling(false);
     }
   };
 

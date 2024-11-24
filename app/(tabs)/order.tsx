@@ -179,6 +179,10 @@ const Order = () => {
 
   useEffect(() => {
     setCacheOrderList(orderFetchData?.value.items || []);
+    console.log(
+      "ordersFetcher.data?.value.items.length: ",
+      ordersFetcher.data?.value.items.length
+    );
   }, [orderFetchData?.value.items]);
   useEffect(() => {
     if (
