@@ -60,6 +60,7 @@ interface Props {
   orderId: number;
   onNotFound?: () => void;
   containerStyleClasses?: string;
+  innerContainerStyleClasses?: string;
   hasHeaderInfo?: boolean;
   showActionButtons?: boolean;
   order: OrderDetailModel;
@@ -69,6 +70,8 @@ const OrderDetail = ({
   orderId,
   onNotFound = () => {},
   containerStyleClasses = "",
+  innerContainerStyleClasses = "",
+
   hasHeaderInfo = false,
   showActionButtons = true,
   order,
@@ -296,7 +299,7 @@ const OrderDetail = ({
       {order?.id != undefined && (
         <View className="w-full h-full">
           {hasHeaderInfo && (
-            <View className="pt-4 px-2 gap-y-3 pb-1 mb-2">
+            <View className="pt-4 px-2 gap-y-1 pb-1 mb-2">
               <View className="flex-row items-center justify-between">
                 <Text className="text-[12.5px] text-gray-800 font-semibold mt-1">
                   Đơn hàng MS-{order.id}
@@ -333,7 +336,7 @@ const OrderDetail = ({
             </View>
           )}
           <ScrollView
-            className="flex-1"
+            className={`flex-1 ${innerContainerStyleClasses}`}
             refreshControl={
               <RefreshControl
                 tintColor={"#FCF450"}

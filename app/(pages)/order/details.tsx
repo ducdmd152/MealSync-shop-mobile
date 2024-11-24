@@ -9,9 +9,10 @@ import OrderDetailModel from "@/types/models/OrderDetailModel";
 const OrderDetails = () => {
   const globalOrderDetailPageState = useOrderDetailPageState();
   return (
-    <PageLayoutWrapper>
-      <View className="flex-1 mt-2 p-4">
+    <PageLayoutWrapper isScroll={false}>
+      <View className="flex-1">
         <OrderDetail
+          innerContainerStyleClasses="p-2 bg-white scale-100"
           hasHeaderInfo={true}
           order={globalOrderDetailPageState.order}
           setOrder={globalOrderDetailPageState.setOrder}
