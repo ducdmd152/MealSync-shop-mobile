@@ -48,7 +48,7 @@ interface Props {
 }
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
-const maxHeight = screenHeight - 280;
+const maxHeight = screenHeight - 260;
 interface QRCodeResultModel {
   OrderId: number;
   CustomerId: number;

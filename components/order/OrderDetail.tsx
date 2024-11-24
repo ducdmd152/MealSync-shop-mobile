@@ -525,7 +525,9 @@ const OrderDetail = ({
               </View>
             )}
 
-            {order.status >= OrderStatus.Delivered && (
+            {(order.status == OrderStatus.IssueReported ||
+              order.status == OrderStatus.UnderReview ||
+              order.status == OrderStatus.Resolved) && (
               <OrderReportInfo order={order} isLoading={isLoading} />
             )}
             <View className="mt-2 bg-white p-2">
