@@ -786,6 +786,7 @@ const StaffDetailsModal = ({
   );
   return (
     <Modal
+      backdropOpacity={0.25}
       isVisible={globalStaffState.isDetailsModalVisible}
       onBackdropPress={() => globalStaffState.setIsDetailsModalVisible(false)}
     >

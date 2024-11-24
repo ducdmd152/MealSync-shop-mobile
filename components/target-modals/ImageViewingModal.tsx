@@ -19,6 +19,7 @@ const ImageViewingModal = ({
   return (
     <Modal
       isVisible={globalImageViewState.isModalVisible}
+      backdropOpacity={0.25}
       onBackdropPress={() => globalImageViewState.setIsModalVisible(false)}
     >
       <View style={{ zIndex: 100 }} className="justify-center items-center ">

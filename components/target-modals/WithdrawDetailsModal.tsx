@@ -130,6 +130,7 @@ const WithdrawDetailsModal = ({
   );
   return (
     <Modal
+      backdropOpacity={0.25}
       isVisible={globalWithdrawalState.isDetailsModalVisible}
       onBackdropPress={() =>
         globalWithdrawalState.setIsDetailsModalVisible(false)

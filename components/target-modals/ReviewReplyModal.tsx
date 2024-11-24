@@ -106,6 +106,7 @@ const ReviewReplyModal = ({
   };
   return (
     <Modal
+      backdropOpacity={0.25}
       isVisible={globalReviewReplyState.isModalVisible}
       onBackdropPress={() => globalReviewReplyState.setIsModalVisible(false)}
     >

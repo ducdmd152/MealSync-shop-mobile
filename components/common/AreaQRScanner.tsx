@@ -121,7 +121,11 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
           }
         }}
       />
-      <Modal isVisible={isSubmitting} onBackdropPress={() => {}}>
+      <Modal
+        isVisible={isSubmitting}
+        onBackdropPress={() => {}}
+        backdropOpacity={0.2}
+      >
         <View
           // style={{ flex: 1, zIndex: 100 }}
           className="justify-center items-center"

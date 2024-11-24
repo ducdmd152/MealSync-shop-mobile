@@ -161,7 +161,7 @@ const FailDeliveryUpdate = ({
         onPress={() => cancel()}
         className="flex-row justify-center p-2 border-[1px] border-gray-200 rounded-lg"
       >
-        <Ionicons name="arrow-back-outline" size={14} color="#475569" />
+        {/* <Ionicons name="arrow-back-outline" size={14} color="#475569" /> */}
         <Text className="text-[12px] text-center text-gray-600 font-semibold align-center">
           {"Hủy"}
         </Text>

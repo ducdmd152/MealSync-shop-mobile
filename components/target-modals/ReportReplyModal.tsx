@@ -113,7 +113,11 @@ const ReportReplyModal = ({
     subimitReply();
   };
   return (
-    <Modal isVisible={isOpen} onBackdropPress={() => setIsOpen(false)}>
+    <Modal
+      isVisible={isOpen}
+      onBackdropPress={() => setIsOpen(false)}
+      backdropOpacity={0.25}
+    >
       <View
         style={{ flex: 1, zIndex: 100 }}
         className="justify-center items-center"
