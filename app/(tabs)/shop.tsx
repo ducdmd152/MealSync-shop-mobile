@@ -317,7 +317,7 @@ const Shop = () => {
                     {
                       text: "Hủy",
                     },
-                  ]
+                  ].reverse()
                 );
               }
             }}

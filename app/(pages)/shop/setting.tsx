@@ -588,7 +588,7 @@ const Setting = () => {
                     ? "Đã tắt hoạt động"
                     : "Tạm ngưng nhận đơn hôm nay"}
                 </Text>
-                <View className="scale-50 h-5 items-center justify-center">
+                <View className="scale-75 h-5 items-center justify-center">
                   <Switch
                     color="#e95137"
                     value={slot.isActive && !slot.isReceivingOrderPaused}
@@ -707,11 +707,11 @@ const Setting = () => {
                             {
                               text: "Hủy",
                             },
-                          ]
+                          ].reverse()
                         );
                       }
                     }}
-                    disabled={shopProfile.isRefetching || isSubmitting}
+                    disabled={isSubmitting}
                   />
                 </View>
                 <TouchableOpacity
@@ -732,7 +732,7 @@ const Setting = () => {
                 </TouchableOpacity>
               </View>
               <View className="border-gray-200 rounded flex-row items-center justify-center">
-                <Text className="text-[16px] italic text-gray-800 text-center flex-1 font-semibold mt-2">
+                <Text className="text-[16px] italic text-gray-800 text-center flex-1 font-semibold mt-1 mb-1">
                   {slot.title} :{" "}
                   <Text className="font-semibold">{slot.timeSlot}</Text>
                 </Text>
@@ -870,14 +870,12 @@ const Setting = () => {
                         {
                           text: "Hủy",
                         },
-                      ]
+                      ].reverse()
                     );
                   }
                 }}
                 disabled={
-                  shopProfile.isRefetching ||
-                  (cache.status != 2 && cache.status != 3) ||
-                  isSubmitting
+                  (cache.status != 2 && cache.status != 3) || isSubmitting
                 }
               />
             </View>
@@ -919,7 +917,7 @@ const Setting = () => {
           <View className="text-gray-700">
             <TouchableOpacity
               onPress={() => {}}
-              className="flex-row p-1 justify-between items-center mt-1"
+              className="flex-row p-1 justify-between items-center"
             >
               <View className="flex-row gap-x-2">
                 {/* <Ionicons size={20} name="chevron-forward-outline" /> */}
@@ -967,7 +965,6 @@ const Setting = () => {
                     );
                   }}
                   disabled={
-                    shopProfile.isRefetching ||
                     cache.status == 3 ||
                     cache.isReceivingOrderPaused == true ||
                     isSubmitting
@@ -1060,7 +1057,7 @@ const Setting = () => {
           </Text>
           <View className="text-gray-700">
             <TouchableOpacity
-              className="flex-row p-1 justify-between items-center mt-1"
+              className="flex-row p-1 justify-between items-center"
               disabled={true}
             >
               <View className="flex-row gap-x-2 flex-1">
@@ -1128,7 +1125,6 @@ const Setting = () => {
                     );
                   }}
                   disabled={
-                    shopProfile.isRefetching ||
                     cache.status == 3 ||
                     cache.isReceivingOrderPaused == true ||
                     isSubmitting
@@ -1139,7 +1135,7 @@ const Setting = () => {
 
             {cache.isAutoOrderConfirmation && (
               <TouchableOpacity
-                className="flex-row p-1 justify-between items-center mt-1"
+                className="flex-row p-1 justify-between items-center"
                 onPress={() => {
                   setAutoConfirmSettingMode(2);
                   setAutoConfirmMinMax({
