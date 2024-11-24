@@ -362,7 +362,7 @@ const OrderDetail = ({
                     onPress={() => {
                       Alert.alert(
                         "Số điện thoại",
-                        "",
+                        undefined,
                         [
                           {
                             text: "Gọi " + order.customer?.phoneNumber,
