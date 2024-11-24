@@ -604,31 +604,32 @@ const CompleteDeliveryConfirmModal = ({
             }}
           />
         </View>
-        <TouchableWithoutFeedback
-          onPress={() => Keyboard.dismiss()}
-          className="gap-y-2"
-        >
-          <View>
-            <Text className="font-medium">Mô tả lí do</Text>
-            <TextInput
-              className="border border-gray-300 mt-1 rounded p-2 h-16 bg-white"
-              placeholder="Nhập lí do..."
-              value={request.reason}
-              onChangeText={(text) => setRequest({ ...request, reason: text })}
-              multiline
-              placeholderTextColor="#888"
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <View className="gap-y-2 mt-2">
+            <View>
+              <Text className="font-medium">Mô tả lí do</Text>
+              <TextInput
+                className="border border-gray-300 mt-1 rounded p-2 h-16 bg-white"
+                placeholder="Nhập lí do..."
+                value={request.reason}
+                onChangeText={(text) =>
+                  setRequest({ ...request, reason: text })
+                }
+                multiline
+                placeholderTextColor="#888"
+              />
+            </View>
+            <EvidencePreviewMultiImagesUpload
+              imageHandleError={imageHandleError}
+              setImageHandleError={setImageHandleError}
+              isImageHandling={isImageHandling}
+              setIsImageHandling={setImageHandling}
+              maxNumberOfPics={3}
+              uris={request.evidences}
+              setUris={(uris) => setRequest({ ...request, evidences: uris })}
+              imageWidth={80}
             />
           </View>
-          <EvidencePreviewMultiImagesUpload
-            imageHandleError={imageHandleError}
-            setImageHandleError={setImageHandleError}
-            isImageHandling={isImageHandling}
-            setIsImageHandling={setImageHandling}
-            maxNumberOfPics={3}
-            uris={request.evidences}
-            setUris={(uris) => setRequest({ ...request, evidences: uris })}
-            imageWidth={80}
-          />
         </TouchableWithoutFeedback>
       </View>
       <CustomButton
