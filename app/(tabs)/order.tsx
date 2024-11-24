@@ -1,3 +1,4 @@
+import CustomModal from "@/components/common/CustomModal";
 import TimeRangeSelect from "@/components/common/TimeRangeSelect";
 import CustomButton from "@/components/custom/CustomButton";
 import OrderDeliveryAssign from "@/components/delivery-package/OrderDeliveryAssign";
@@ -258,7 +259,7 @@ const Order = () => {
         item.id != order.id
           ? item
           : {
-              ...item,
+              ...order,
             }
       )
     );
@@ -933,42 +934,43 @@ const Order = () => {
         iconLeft={<Ionicons name="filter-outline" size={21} color="white" />}
         textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
       />
-      <Portal>
-        <ModalPaper
-          visible={isOpenOrderAssign}
-          onDismiss={() => setIsOpenOrderAssign(false)}
-          contentContainerStyle={{
-            backgroundColor: "white",
-            padding: 20,
-            margin: 20,
-          }}
-        >
-          <OrderDeliveryAssign
-            onComplete={(shopDeliveryStaff) => {
-              setIsOpenOrderAssign(false);
+      <CustomModal
+        title={`MS-${order.id} Chi tiết đặt hàng`}
+        hasHeader={false}
+        isOpen={isOpenOrderAssign}
+        setIsOpen={(value) => setIsOpenOrderAssign(value)}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[98%]"
+        onBackdropPress={() => {
+          setIsOpenOrderAssign(false);
+        }}
+      >
+        <OrderDeliveryAssign
+          onComplete={(shopDeliveryStaff) => {
+            setIsOpenOrderAssign(false);
 
-              setCacheOrderInList({
-                ...order,
-                shopDeliveryStaff: shopDeliveryStaff,
-              });
-              if (shopDeliveryStaff === null) {
-                return;
+            setCacheOrderInList({
+              ...order,
+              shopDeliveryStaff: shopDeliveryStaff,
+            });
+            ordersFetcher.refetch();
+            if (shopDeliveryStaff === null) {
+              return;
+            }
+            simpleToast.show(
+              `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+                shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
+              }!`,
+              {
+                type: "success",
+                duration: 3000,
               }
-              simpleToast.show(
-                `Đơn hàng MS-${order.id} sẽ được giao bởi ${
-                  shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
-                }!`,
-                {
-                  type: "success",
-                  duration: 3000,
-                }
-              );
-            }}
-            order={order}
-            isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
-          />
-        </ModalPaper>
-      </Portal>
+            );
+          }}
+          order={order}
+          isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
+        />
+      </CustomModal>
 
       <View className="w-full gap-2">
         <View className="w-full">

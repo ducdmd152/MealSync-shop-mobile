@@ -844,7 +844,7 @@ const CompleteDeliveryConfirmModal = ({
           isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
         />
       </CustomModal>
-      <Toast position="bottom" />
+      <Toast position="bottom" bottomOffset={-20} />
     </Modal>
   );
 };
