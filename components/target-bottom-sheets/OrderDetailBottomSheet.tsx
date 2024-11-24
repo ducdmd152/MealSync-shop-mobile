@@ -27,6 +27,7 @@ const OrderDetailBottomSheet = () => {
           <TouchableOpacity
             className="items-center"
             onPress={() => {
+              console.log("presssingg...");
               globalOrderDetailState.setIsDetailBottomSheetVisible(false);
             }}
           >

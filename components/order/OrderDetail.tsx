@@ -357,23 +357,27 @@ const OrderDetail = ({
                 order.status <= OrderStatus.Completed ? (
                   <TouchableOpacity
                     onPress={() => {
-                      Alert.alert("Số điện thoại", "", [
-                        {
-                          text: "Gọi " + order.customer?.phoneNumber,
-                          onPress: () =>
-                            Linking.openURL(
-                              `tel:${order.customer?.phoneNumber}`
-                            ),
-                        },
-                        {
-                          text: "Sao chép",
-                          onPress: () =>
-                            Clipboard.setString(
-                              order.customer?.phoneNumber || ""
-                            ),
-                        },
-                        { text: "Hủy", style: "cancel" },
-                      ]);
+                      Alert.alert(
+                        "Số điện thoại",
+                        "",
+                        [
+                          {
+                            text: "Gọi " + order.customer?.phoneNumber,
+                            onPress: () =>
+                              Linking.openURL(
+                                `tel:${order.customer?.phoneNumber}`
+                              ),
+                          },
+                          {
+                            text: "Sao chép",
+                            onPress: () =>
+                              Clipboard.setString(
+                                order.customer?.phoneNumber || ""
+                              ),
+                          },
+                          { text: "Hủy" },
+                        ].reverse()
+                      );
                     }}
                   >
                     <Text className="text-[14px] text-gray-700 font-semibold text-[#0e7490]">

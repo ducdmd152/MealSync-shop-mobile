@@ -48,16 +48,16 @@ module.exports = {
           100: "#CDCDE0",
         },
       },
-      spacing: {
-        1: "4px", // mt-1, p-1
-        2: "8px", // mt-2, p-2
-        4: "16px", // mt-4, p-4
-      },
-      fontSize: {
-        sm: "14px", // text-sm
-        md: "16px", // text-md
-        lg: "16px", // text-lg
-      },
+      // spacing: {
+      //   1: "4px", // mt-1, p-1
+      //   2: "8px", // mt-2, p-2
+      //   4: "16px", // mt-4, p-4
+      // },
+      // fontSize: {
+      //   sm: "14px", // text-sm
+      //   md: "16px", // text-md
+      //   lg: "16px", // text-lg
+      // },
       fontFamily: {
         pthin: ["Poppins-Thin", "sans-serif"],
         pextralight: ["Poppins-ExtraLight", "sans-serif"],

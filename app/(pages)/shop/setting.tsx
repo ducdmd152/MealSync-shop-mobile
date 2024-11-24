@@ -901,7 +901,7 @@ const Setting = () => {
                   <ActivityIndicator animating={true} color="#FCF450" />
                 )} */}
 
-                <Text className={`font-semibold text-md text-gray-600`}>
+                <Text className={`font-semibold text-[15px] text-gray-600`}>
                   {formatTimeRanges(
                     (cache.operatingSlots || []).map((slot) => slot.timeSlot)
                   )}
