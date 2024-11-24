@@ -157,7 +157,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                   "$" +
                   index
                 }
-                className="p-3 drop-shadow-md w-full rounded-lg border-[0.5px] border-gray-200 bg-[#f0fdfa]"
+                className="p-3 drop-shadow-md w-full rounded-lg border-[0.5px] border-gray-200 bg-[#f9fafb]"
               >
                 <View className="flex-row items-center justify-between gap-2">
                   <View className="flex-row">
