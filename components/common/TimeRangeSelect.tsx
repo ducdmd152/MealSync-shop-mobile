@@ -1,17 +1,16 @@
-import { View, Text } from "react-native";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
-import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
+import { Text, View } from "react-native";
 import ScrollPicker, {
   ScrollPickerHandle,
 } from "react-native-wheel-scrollview-picker";
-import CustomButton from "../custom/CustomButton";
-import { useFocusEffect } from "@react-navigation/native";
-import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)

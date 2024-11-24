@@ -157,7 +157,7 @@ const StaffDeliveryPackage = () => {
                 className="border-2 border-gray-300 p-2 rounded-md"
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-black mx-2 text-lg">
+                  <Text className="text-black mx-2 text-[18px]">
                     {formatDate(query.intendedReceiveDate)}
                   </Text>
                   <Ionicons name="create-outline" size={21} color="gray-600" />
@@ -208,7 +208,7 @@ const StaffDeliveryPackage = () => {
                 className="border-2 border-gray-300 p-2 rounded-md"
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-black mx-2 text-lg">
+                  <Text className="text-black mx-2 text-[18px]">
                     {formatTime(query.startTime) +
                       " - " +
                       formatTime(query.endTime)}
