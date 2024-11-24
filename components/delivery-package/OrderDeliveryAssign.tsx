@@ -289,7 +289,10 @@ const OrderDeliveryAssign = ({
                 <Ionicons name="checkmark-circle" size={19} color="green" />
               </View>
             ) : (
-              <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2 rounded-full" />
+              <View
+                className="w-[18px] h-[18px] border-[2px] border-gray-200 mr-2"
+                style={{ borderRadius: 100 }}
+              />
             )}
             <Text className="font-semibold">
               Bạn{" "}
@@ -328,7 +331,10 @@ const OrderDeliveryAssign = ({
                       />
                     </View>
                   ) : (
-                    <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2 rounded-full" />
+                    <View
+                      className="w-[18px] h-[18px] border-2 border-gray-200 mr-2"
+                      style={{ borderRadius: 100 }}
+                    />
                   )}
 
                   <Text className="font-semibold">
