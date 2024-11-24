@@ -210,9 +210,8 @@ const AutoConfirmTimeRangeSelect = ({
               renderItem={(item, index) => {
                 return (
                   <Text
-                    className={`text-lg text-gray-600 ${
-                      index == selectedEndIndex &&
-                      "font-semibold text-gray-800 "
+                    className={`text-[18px] text-gray-600 ${
+                      index == selectedEndIndex && "font-bold text-gray-800 "
                     }`}
                   >
                     {formatTime(item)}
@@ -238,9 +237,8 @@ const AutoConfirmTimeRangeSelect = ({
               renderItem={(item, index) => {
                 return (
                   <Text
-                    className={`text-lg text-gray-600 ${
-                      index == selectedStartIndex &&
-                      "font-semibold text-gray-800 "
+                    className={`text-[18px] text-gray-600 ${
+                      index == selectedStartIndex && "font-bold text-gray-800 "
                     }`}
                   >
                     {formatTime(item)}

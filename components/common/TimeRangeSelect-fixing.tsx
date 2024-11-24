@@ -197,7 +197,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
               renderItem={(item, index) => {
                 return (
                   <Text
-                    className={`text-lg text-gray-600 ${
+                    className={`text-[18px] text-gray-600 ${
                       item == startTime && "font-semibold text-gray-800 "
                     }`}
                   >
@@ -223,7 +223,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
               renderItem={(item, index) => {
                 return (
                   <Text
-                    className={`text-lg text-gray-600 ${
+                    className={`text-[18px] text-gray-600 ${
                       item == endTime && "font-semibold text-gray-800 "
                     }`}
                   >
