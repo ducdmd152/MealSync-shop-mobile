@@ -1,14 +1,3 @@
-import {
-  DefaultTheme,
-  NavigationContainer,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { router, Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
-import "react-native-reanimated";
-import { ToastProvider } from "react-native-toast-notifications";
-import messaging from "@react-native-firebase/messaging";
 import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
 import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 import ImageViewingModal from "@/components/target-modals/ImageViewingModal";
@@ -19,16 +8,25 @@ import TanStackProvider from "@/config/providers/TanStackProvider";
 import { images } from "@/constants";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
+import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
 import { useColorScheme } from "@/hooks/themes/useColorScheme";
 import sessionService from "@/services/session-service";
+import messaging from "@react-native-firebase/messaging";
+import {
+  DefaultTheme,
+  NavigationContainer,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { router, Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect, useState } from "react";
 import { Alert, Image, PermissionsAndroid, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
+import "react-native-reanimated";
 import Toast from "react-native-toast-message";
-import { io, Socket } from "socket.io-client";
-import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
-import apiClient from "@/services/api-services/api-client";
-
+import { ToastProvider } from "react-native-toast-notifications";
+import { io } from "socket.io-client";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 const requestUserPermissions = async () => {

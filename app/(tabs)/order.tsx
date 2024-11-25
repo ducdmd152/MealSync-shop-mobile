@@ -5,6 +5,7 @@ import OrderDeliveryAssign from "@/components/delivery-package/OrderDeliveryAssi
 import OrderCancelModal from "@/components/target-modals/OrderCancelModal";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
 import useTimeRangeState from "@/hooks/states/useTimeRangeState";
@@ -91,6 +92,7 @@ const Order = () => {
   //   console.log(await sessionService.getAuthToken());
   // })();
   const simpleToast = useToast();
+  const globalNotiState = useGlobalNotiState();
   const globalTimeRangeState = useTimeRangeState();
   const [order, setOrder] = useState<OrderFetchModel>({} as OrderFetchModel);
   const [cacheOrderList, setCacheOrderList] = useState<OrderFetchModel[]>([]);
@@ -230,6 +232,11 @@ const Order = () => {
   //   globalOrderStatusesFilterState.setStatuses([...query.status]);
   //   console.log(query.status);
   // }, [query.status]);
+  useEffect(() => {
+    if (isFocusing) {
+      ordersFetcher.refetch();
+    }
+  }, [globalNotiState.toggleChangingFlag]);
   useEffect(() => {
     if (isFocusing) {
       setQuery({

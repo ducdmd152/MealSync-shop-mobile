@@ -104,8 +104,8 @@ const Chats = () => {
         <TouchableOpacity
           key={channel.id}
           onPress={() => {
-            console.log("HEllo");
-            router.push(`/chats/${channel.id}`);
+            // console.log("HEllo");
+            // router.push(`/chats/${channel.id}`);
           }}
           className={`p-3 px-4 bg-white border-b-[1px] border-gray-200 flex-row rounded-lg`}
           style={{
