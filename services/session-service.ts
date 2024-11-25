@@ -9,6 +9,7 @@ const handleRegistrationDevice = async (token: string) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${await sessionService.getAuthToken()}`,
       },
       body: JSON.stringify({ deviceToken: token }),
     });

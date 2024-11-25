@@ -36,25 +36,33 @@ const Chats = () => {
   const globalAuthState = useGlobalAuthState();
   const authId = globalAuthState.authDTO?.id || 0;
 
-  const transactionsFetcher = useFetchWithRQWithFetchFunc(
+  const orderChannelInfosFetcher = useFetchWithRQWithFetchFunc(
     ["order/chat-info"],
     async (): Promise<FetchOnlyListResponse<OrderChannelInfo>> =>
       apiClient
         .get(
-          `order/chat-info${orderChannelList
+          `order/chat-info?${orderChannelList
             .map((channel) => `ids=${channel.id}`)
             .join("&")}`
         )
         .then((response) => response.data),
     [orderChannelList]
   );
+  // useEffect(() => {
+  //   console.log(
+  //     "orderChannelInfosFetcher.isFetching: ",
+  //     orderChannelInfosFetcher.isFetching
+  //   );
+  // }, [orderChannelInfosFetcher.isFetching]);
 
   const getChannelInfo = (orderId: number) => {
     if (
-      transactionsFetcher.data?.value &&
-      transactionsFetcher.data?.value.find((info) => info.id == orderId)
+      orderChannelInfosFetcher.data?.value &&
+      orderChannelInfosFetcher.data?.value.find((info) => info.id == orderId)
     ) {
-      return transactionsFetcher.data?.value.find((info) => info.id == orderId);
+      return orderChannelInfosFetcher.data?.value.find(
+        (info) => info.id == orderId
+      );
     }
     return {
       id: orderId,
@@ -66,6 +74,7 @@ const Chats = () => {
   useEffect(() => {
     if (socket) {
       socket.on("getListChannel", (channels: SocketChannelInfo[]) => {
+        console.log("Changing....: ", orderChannelList);
         setOrderChannelList(
           [...channels].sort((a: SocketChannelInfo, b: SocketChannelInfo) => {
             return (
@@ -79,9 +88,9 @@ const Chats = () => {
   useFocusEffect(
     React.useCallback(() => {
       if (socket) {
+        orderChannelInfosFetcher.refetch();
         socket.emit("regisListChannel", true);
       }
-
       // dispatch(globalSlice.actions.setCurrentScreen("chatList"));
       // return () => {
       //   dispatch(globalSlice.actions.setCurrentScreen(""));
@@ -95,7 +104,7 @@ const Chats = () => {
         <TouchableOpacity
           key={channel.id}
           onPress={() => {}}
-          className={`p-3 px-4 bg-white border-b-[0.5px] border-gray-200 flex-row`}
+          className={`p-3 px-4 bg-white border-b-[1px] border-gray-200 flex-row rounded-lg`}
           style={{
             backgroundColor: !channel.map_user_is_read[authId]
               ? "#fffbeb"
@@ -119,14 +128,14 @@ const Chats = () => {
             <View className="w-72 flex-row items-center justify-between text-[11px]">
               <View className="flex-1">
                 <Text
-                  className="text-ellipsis overflow-hidden whitespace-nowrap"
+                  className="text-ellipsis overflow-hidden whitespace-nowrap italic"
                   numberOfLines={1}
                 >
                   {getChannelInfo(channel.id)?.customer?.fullName}:{" "}
                   {channel.last_message}
                 </Text>
               </View>
-              <Text className="italic text-[9px]">
+              <Text className="italic text-[10px]">
                 {formatRecentDate(dayjs(channel.updated_at).toISOString())}
               </Text>
             </View>
