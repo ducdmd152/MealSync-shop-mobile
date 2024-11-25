@@ -139,7 +139,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
   );
 
   const globalStateMapping = () => {
-    console.log("frames.length: ", frames.length);
+    // console.log("frames.length: ", frames.length);
     if (frames.length == 0) return;
     const foundStartIndex = frames.findIndex(
       (item) => item.startTime === startTime
@@ -169,7 +169,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       setIsRefreshing(true);
       setTimeout(() => {
         setIsRefreshing(false);
-      }, 0);
+      }, 100);
     }, [operatingSlots])
   );
 
