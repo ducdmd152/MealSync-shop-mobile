@@ -9,8 +9,11 @@ import { images } from "@/constants";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
 import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
+import useOrderDetailPageState from "@/hooks/states/useOrderDetailPageState";
 import { useColorScheme } from "@/hooks/themes/useColorScheme";
 import sessionService from "@/services/session-service";
+import { NotiEntityTypes, NotiModel } from "@/types/models/ChatModel";
+import OrderDetailModel from "@/types/models/OrderDetailModel";
 import messaging from "@react-native-firebase/messaging";
 import {
   DefaultTheme,
@@ -51,6 +54,7 @@ export default function RootLayout() {
   const globalSocketState = useGlobalSocketState();
   const globalNotiState = useGlobalNotiState();
   const [isReady, setIsReady] = useState(false);
+  const globalOrderDetailPageState = useOrderDetailPageState();
 
   // const [fontsLoaded, error] = useFonts({
   //   "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -158,18 +162,27 @@ export default function RootLayout() {
       globalSocketState.setSocket(newSocket);
 
       // Listen for notifications from the server
-      newSocket.on("notification", (message: any) => {
+      newSocket.on("notification", (noti: any) => {
         try {
-          // set noti listener
-          console.info("SOCKET NOTI: ", message);
           globalNotiState.setToggleChangingFlag(
             !globalNotiState.toggleChangingFlag
           );
-          // showToastable({
-          //   renderContent: () => (
-          //     <NotifyFisebaseForegroundItem {...message} />
-          //   ),
-          // });
+          Toast.show({
+            type: "info",
+            text1: `${noti.Title}${
+              noti.EntityType == NotiEntityTypes.Order
+                ? ` MS-${noti.ReferenceId}`
+                : ""
+            }`,
+            text2: noti.Content,
+            onPress() {
+              if (noti.EntityType == NotiEntityTypes.Order) {
+                globalOrderDetailPageState.setOrder({} as OrderDetailModel);
+                globalOrderDetailPageState.setId(noti.ReferenceId);
+                router.push("/order/details");
+              }
+            },
+          });
         } catch (err) {
           console.error("Failed to show toastable:", err);
         }

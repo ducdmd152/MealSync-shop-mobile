@@ -42,3 +42,19 @@ export interface SocketChannelInfo {
   created_at: string;
   updated_at: string;
 }
+
+export interface NotiModel {
+  id: number;
+  accountId: number;
+  referenceId: number;
+  imageUrl: string;
+  title: string;
+  content: string;
+  // data: string; // Chuỗi JSON, có thể cần parse thành đối tượng nếu cần dùng chi tiết
+  entityType: number;
+  isRead: boolean;
+  createdDate: string;
+}
+export enum NotiEntityTypes {
+  Order = 1,
+}

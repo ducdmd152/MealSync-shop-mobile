@@ -542,7 +542,9 @@ const OrderDetail = ({
             </View>
           </ScrollView>
           {showActionButtons && (
-            <View className="items-center justify-center bg-white pt-2">
+            <View
+              className={`items-center justify-center bg-white pt-2 ${innerContainerStyleClasses}`}
+            >
               {order.status == OrderStatus.Pending &&
                 utilService.getInFrameTime(
                   order.startTime,

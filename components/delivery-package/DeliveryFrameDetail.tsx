@@ -508,7 +508,6 @@ const DeliveryFrameDetail = ({
         
       </ModalPaper> */}
       {/* </Portal> */}
-      <Toast position="bottom" />
     </View>
   );
 };
