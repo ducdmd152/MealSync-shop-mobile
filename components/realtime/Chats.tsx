@@ -9,7 +9,7 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-paper";
 import apiClient from "../../services/api-services/api-client";
 import { FetchOnlyListResponse } from "../../types/responses/FetchResponse";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 const formatRecentDate = (createdDate: string): string => {
   const date = dayjs(createdDate);
   const now = dayjs();
@@ -103,7 +103,10 @@ const Chats = () => {
       {orderChannelList.map((channel) => (
         <TouchableOpacity
           key={channel.id}
-          onPress={() => {}}
+          onPress={() => {
+            console.log("HEllo");
+            router.push(`/chats/${channel.id}`);
+          }}
           className={`p-3 px-4 bg-white border-b-[1px] border-gray-200 flex-row rounded-lg`}
           style={{
             backgroundColor: !channel.map_user_is_read[authId]
