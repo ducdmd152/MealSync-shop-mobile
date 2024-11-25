@@ -26,6 +26,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import { io, Socket } from "socket.io-client";
+import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -36,6 +37,7 @@ export default function RootLayout() {
   const [isCheckedAuth, setIsCheckedAuth] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState(true);
   const globalAuthState = useGlobalAuthState();
+  const globalSocketState = useGlobalSocketState();
   const globalNotiState = useGlobalNotiState();
 
   // const [fontsLoaded, error] = useFonts({
@@ -89,7 +91,7 @@ export default function RootLayout() {
       globalAuthState.setRoleId(await sessionService.getAuthRole());
     };
   }, []);
-  const [socket, setSocket] = useState<Socket | null>(null); // Use Socket type from socket.io-client
+  const { socket, setSocket } = globalSocketState; // Use Socket type from socket.io-client
   const initializeSocket = async () => {
     const token = await globalAuthState.token; // Retrieve token from AsyncStorage
     if (!token) return;
@@ -100,12 +102,14 @@ export default function RootLayout() {
       }
 
       // Connect to the server with JWT authentication
-      const newSocket = io("wss://socketio.mealsync.org:443", {
+      const newSocket = io("http://socketio.mealsync.org/", {
         auth: {
           token: token,
         },
         transports: ["websocket", "polling"],
       });
+
+      globalSocketState.setSocket(newSocket);
 
       // Listen for notifications from the server
       newSocket.on("notification", (message: any) => {
@@ -134,6 +138,7 @@ export default function RootLayout() {
       // Save socket instance for cleanup
       setSocket(newSocket);
     } catch (error) {
+      globalSocketState.setSocket(null);
       console.log("Error retrieving token:", error);
       Alert.alert("Error", "Failed to retrieve token. Please log in again.");
     }

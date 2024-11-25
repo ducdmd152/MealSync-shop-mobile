@@ -8,6 +8,8 @@ import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetc
 import { endpoints } from "@/services/api-services/api-service-instances";
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import apiClient from "@/services/api-services/api-client";
+import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
+
 import {
   ShopDeliveryStaffModel,
   ShopDeliveryStaffStatus,
@@ -56,6 +58,7 @@ const LinkGroup: React.FC<LinkGroupProps> = ({
   );
 };
 const Account = () => {
+  const globalSocketState = useGlobalSocketState();
   const staffAccount = useFetchWithRQWithFetchFunc(
     [endpoints.STAFF_INFO],
     async (): Promise<FetchValueResponse<ShopDeliveryStaffModel>> =>
@@ -87,6 +90,10 @@ const Account = () => {
         icon: <Ionicons size={22} name="log-out-outline" />,
         handlePress: () => {
           sessionService.clear();
+          if (globalSocketState.socket != null) {
+            globalSocketState.socket.disconnect();
+            globalSocketState.setSocket(null);
+          }
           navigation.reset({
             index: 0,
             routes: [{ name: "index" }],

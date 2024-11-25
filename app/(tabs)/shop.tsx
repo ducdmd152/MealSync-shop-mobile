@@ -27,11 +27,13 @@ import { WITHDRAW_STATUSES_FILTER } from "@/types/models/WithdrawalModel";
 import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
 import useGlobalStaffState from "@/hooks/states/useGlobalStaffState";
 import { CommonActions } from "@react-navigation/native";
+import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
 
 const Shop = () => {
   const navigation = useNavigation();
   const globalWithdrawalState = useGlobalWithdrawalState();
   const globalStaffState = useGlobalStaffState();
+  const globalSocketState = useGlobalSocketState();
   const redirections = {
     shop: [
       {
@@ -105,6 +107,10 @@ const Shop = () => {
         icon: <Ionicons size={20} name="log-out-outline" />,
         handlePress: () => {
           sessionService.clear();
+          if (globalSocketState.socket != null) {
+            globalSocketState.socket.disconnect();
+            globalSocketState.setSocket(null);
+          }
           navigation.reset({
             index: 0,
             routes: [{ name: "index" }],
