@@ -233,9 +233,8 @@ const Order = () => {
   //   console.log(query.status);
   // }, [query.status]);
   useEffect(() => {
-    if (isFocusing) {
+    if (globalNotiState.toggleChangingFlag && isFocusing)
       ordersFetcher.refetch();
-    }
   }, [globalNotiState.toggleChangingFlag]);
   useEffect(() => {
     if (isFocusing) {

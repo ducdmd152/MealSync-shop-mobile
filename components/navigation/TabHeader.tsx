@@ -1,5 +1,5 @@
 import { View, Text, Image, Touchable, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { images } from "@/constants";
 import { router } from "expo-router";
@@ -20,8 +20,11 @@ const TabHeader = () => {
       apiClient
         .get("shop-owner-staff/notification/total-unread")
         .then((response) => response.data),
-    [globalNotiState.toggleChangingFlag, globalHeaderPage.isNotiPageFocusing]
+    [globalHeaderPage.isNotiPageFocusing]
   );
+  useEffect(() => {
+    if (globalNotiState.toggleChangingFlag) numberOfUnreaded.refetch();
+  }, [globalNotiState.toggleChangingFlag]);
   return (
     <View className="w-full h-[64px] px-4 bg-white flex-row justify-between border-b-[0.7px] border-gray-300 overflow-hidden">
       <View className="flex-row justify-center items-center">

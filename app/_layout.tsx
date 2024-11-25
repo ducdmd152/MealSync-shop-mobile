@@ -164,9 +164,8 @@ export default function RootLayout() {
       // Listen for notifications from the server
       newSocket.on("notification", (noti: any) => {
         try {
-          globalNotiState.setToggleChangingFlag(
-            !globalNotiState.toggleChangingFlag
-          );
+          globalNotiState.setToggleChangingFlag(false);
+          globalNotiState.setToggleChangingFlag(true);
           Toast.show({
             type: "info",
             text1: `${noti.Title}${

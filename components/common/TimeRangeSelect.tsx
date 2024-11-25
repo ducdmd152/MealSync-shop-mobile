@@ -134,7 +134,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       operatingSlots?.value.map((item: OperatingSlotModel) => ({
         startTime: item.startTime,
         endTime: item.endTime,
-      })) || []
+      })) || [{ startTime: 0, endTime: 2400 }]
     )
   );
 
@@ -156,7 +156,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
         operatingSlots?.value.map((item: OperatingSlotModel) => ({
           startTime: item.startTime,
           endTime: item.endTime,
-        })) || []
+        })) || [{ startTime: 0, endTime: 2400 }]
       )
     );
   }, [operatingSlots?.value]);
