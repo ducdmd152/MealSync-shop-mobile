@@ -30,6 +30,8 @@ import CustomButton from "../custom/CustomButton";
 import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 import OrderCancelModal from "../target-modals/OrderCancelModal";
 import OrderReportInfo from "../common/OrderReportInfo";
+import OrderReviewInfo from "../common/OrderReviewInfo";
+import dayjs from "dayjs";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -326,11 +328,7 @@ const OrderDetail = ({
               <View>
                 <Text className="text-[10px] text-gray-500 italic text-right">
                   Được đặt vào{" "}
-                  {new Date(order.orderDate).toLocaleTimeString("vi-VN", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}{" "}
-                  {new Date(order.orderDate).toLocaleDateString()}
+                  {dayjs(order.orderDate).local().format("HH:mm DD/MM/YYYY")}
                 </Text>
               </View>
             </View>
@@ -537,9 +535,9 @@ const OrderDetail = ({
               order.status == OrderStatus.Resolved) && (
               <OrderReportInfo order={order} isLoading={isLoading} />
             )}
-            <View className="mt-2 bg-white p-2">
-              <Text>Khu vực rating & feedback</Text>
-            </View>
+            {order.status >= OrderStatus.Delivered && (
+              <OrderReviewInfo order={order} isLoading={isLoading} />
+            )}
           </ScrollView>
           {showActionButtons && (
             <View
