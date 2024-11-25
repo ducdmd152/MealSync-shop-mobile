@@ -1,10 +1,10 @@
 import AuthDTO from "@/types/dtos/AuthDTO";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiClient from "./api-services/api-client";
-const handleRegistrationDevice = async (token: any) => {
+const handleRegistrationDevice = async (token: string) => {
   try {
     console.log("Registration device token", token);
-    const res = await apiClient.put("shop-owner-staff/account/device-token", {
+    const res = await apiClient.put("auth/device-token", {
       deviceToken: token,
     });
     console.log("Registration", res);
@@ -69,6 +69,8 @@ const sessionService = {
   },
 
   clear: async () => {
+    console.log("handleRegistrationDevice....");
+    await handleRegistrationDevice("string");
     await AsyncStorage.removeItem("auth-email");
     await AsyncStorage.removeItem("auth-token");
     await AsyncStorage.removeItem("auth-role");

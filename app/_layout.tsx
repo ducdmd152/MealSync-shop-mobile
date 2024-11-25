@@ -119,7 +119,8 @@ export default function RootLayout() {
       .getToken()
       .then((token) => {
         console.log(token, " device tokenn");
-        // if (globalAuthState.token) sessionService.handleRegistrationDevice(token);
+        if (globalAuthState.token)
+          sessionService.handleRegistrationDevice(token);
       })
       .catch((err) => {
         console.log(err, " cannot register device in message()");
