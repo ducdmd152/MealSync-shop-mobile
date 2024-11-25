@@ -264,7 +264,7 @@ const Order = () => {
       )
     );
 
-  const handleCancel = (orderId: number) => {
+  const handleCancel = (order: OrderFetchModel) => {
     const inTime = utilService.getInFrameTime(
       order.startTime,
       order.endTime,
@@ -286,7 +286,7 @@ const Order = () => {
       }
       setIsSubmitting(true);
       orderAPIService.cancel(
-        orderId,
+        order.id,
         reason,
         () => {
           // Alert.alert(
@@ -298,13 +298,13 @@ const Order = () => {
           //   text1: "Hoàn tất",
           //   text2: `Đã hủy đơn hàng MS-${orderId}!`,
           // });
-          simpleToast.show(`Đã hủy đơn hàng MS-${orderId}!`, {
+          simpleToast.show(`Đã hủy đơn hàng MS-${order.id}!`, {
             type: "info",
             duration: 1500,
           });
           setCacheOrderList(
             cacheOrderList.map((item) =>
-              item.id != orderId
+              item.id != order.id
                 ? item
                 : {
                     ...item,
@@ -320,7 +320,7 @@ const Order = () => {
           Alert.alert(
             "Xác nhận",
             warningInfo?.message ||
-              `Đơn hàng MS-${orderId} đã gần đến giờ đi giao (<=1h), bạn sẽ bị đánh cảnh cáo nếu tiếp tục hủy?`,
+              `Đơn hàng MS-${order.id} đã gần đến giờ đi giao (<=1h), bạn sẽ bị đánh cảnh cáo nếu tiếp tục hủy?`,
             [
               {
                 text: "Không",
@@ -331,7 +331,7 @@ const Order = () => {
                 onPress: async () => {
                   setIsSubmitting(true);
                   orderAPIService.cancel(
-                    orderId,
+                    order.id,
                     reason,
                     () => {
                       // const toast = Toast.show({
@@ -339,7 +339,7 @@ const Order = () => {
                       //   text1: "Hoàn tất",
                       //   text2: `Đã hủy đơn hàng MS-${orderId}!`,
                       // });
-                      simpleToast.show(`Đã hủy đơn hàng MS-${orderId}!`, {
+                      simpleToast.show(`Đã hủy đơn hàng MS-${order.id}!`, {
                         type: "info",
                         duration: 1500,
                       });
@@ -349,7 +349,7 @@ const Order = () => {
                       // );
                       setCacheOrderList(
                         cacheOrderList.map((item) =>
-                          item.id != orderId
+                          item.id != order.id
                             ? item
                             : {
                                 ...item,
@@ -390,7 +390,7 @@ const Order = () => {
     setIsCancelModal(true);
     setIsCancelOrReject(true);
     setRequest(() => cancelRequest);
-    setOrderDetailId(orderId);
+    setOrderDetailId(order.id);
 
     // Alert.alert(
     //   "Xác nhận",
@@ -409,7 +409,8 @@ const Order = () => {
     //   ]
     // );
   };
-  const handleReject = (orderId: number) => {
+  const handleReject = (order: OrderFetchModel) => {
+    // console.log("Check reject: ");
     const inTime = utilService.getInFrameTime(
       order.startTime,
       order.endTime,
@@ -431,7 +432,7 @@ const Order = () => {
       }
       setIsSubmitting(true);
       orderAPIService.reject(
-        orderId,
+        order.id,
         reason,
         () => {
           // const toast = Toast.show({
@@ -439,13 +440,13 @@ const Order = () => {
           //   text1: `MS-${orderId}`,
           //   text2: `Đã từ chối đơn hàng MS-${orderId}!`,
           // });
-          simpleToast.show(`Đã từ chối đơn hàng MS-${orderId}!`, {
+          simpleToast.show(`Đã từ chối đơn hàng MS-${order.id}!`, {
             type: "info",
             duration: 1500,
           });
           setCacheOrderList(
             cacheOrderList.map((item) =>
-              item.id != orderId
+              item.id != order.id
                 ? item
                 : {
                     ...item,
@@ -470,7 +471,7 @@ const Order = () => {
     setIsCancelModal(true);
     setIsCancelOrReject(false);
     setRequest(() => rejectRequest);
-    setOrderDetailId(orderId);
+    setOrderDetailId(order.id);
   };
 
   const renderItem = ({ item }: { item: OrderFetchModel }) => {
@@ -652,7 +653,7 @@ const Order = () => {
                   <Text className="text-[13.5px]">Nhận đơn</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => handleReject(order.id)}
+                  onPress={() => handleReject(order)}
                   className="bg-white border-[#fda4af] bg-[#fda4af] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                 >
                   <Text className="text-[13.2px]">Từ chối</Text>
@@ -796,7 +797,7 @@ const Order = () => {
                   <Text className="text-[13.5px]">Chuẩn bị</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => handleCancel(order.id)}
+                  onPress={() => handleCancel(order)}
                   className="bg-white border-[#d6d3d1] bg-[#d6d3d1] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                 >
                   <Text className="text-[13.2px]">Hủy</Text>

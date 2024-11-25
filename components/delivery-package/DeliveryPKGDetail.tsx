@@ -94,8 +94,7 @@ const DeliveryPKGDetail = ({
   );
 
   const filteredOrders = () => {
-    console.log("orders: ", orders);
-    if (status == 0) return pkgDetails.orders;
+    if (status == 0) return orders;
     if (status == DeliveryPackageStatus.Pending)
       return orders.filter((order) => order.status < OrderStatus.Delivering);
     if (status == DeliveryPackageStatus.OnGoing)
@@ -137,7 +136,7 @@ const DeliveryPKGDetail = ({
               setStatus(0);
             }}
           >
-            <Text className="text-center text-[11px]">
+            <Text className="text-center text-[12px]">
               Tất cả {"\n"}({pkgDetails.total} đơn)
             </Text>
           </TouchableOpacity>
@@ -151,7 +150,7 @@ const DeliveryPKGDetail = ({
               setStatus(DeliveryPackageStatus.Pending);
             }}
           >
-            <Text className="text-center text-[11px]">
+            <Text className="text-center text-[12px]">
               Chưa giao{"\n"}({pkgDetails.waiting} đơn)
             </Text>
           </TouchableOpacity>
@@ -165,7 +164,7 @@ const DeliveryPKGDetail = ({
               setStatus(DeliveryPackageStatus.OnGoing);
             }}
           >
-            <Text className="text-center text-[11px]">
+            <Text className="text-center text-[12px]">
               Đang giao{"\n"}({pkgDetails.delivering} đơn)
             </Text>
           </TouchableOpacity>
@@ -179,7 +178,7 @@ const DeliveryPKGDetail = ({
               setStatus(DeliveryPackageStatus.Completed);
             }}
           >
-            <Text className="text-center text-[11px]">
+            <Text className="text-center text-[12px]">
               Hoàn tất{"\n"}({pkgDetails.successful + pkgDetails.failed} đơn)
             </Text>
           </TouchableOpacity>
@@ -293,15 +292,17 @@ const DeliveryPKGDetail = ({
                                       },
                                       () => {
                                         setOrders(
-                                          orders
-                                            .filter(
-                                              (item) => item.id != order.id
-                                            )
-                                            .concat({
-                                              ...order,
-                                              status: OrderStatus.Delivering,
-                                            })
+                                          orders.map((item) =>
+                                            item.id != order.id
+                                              ? item
+                                              : {
+                                                  ...order,
+                                                  status:
+                                                    OrderStatus.Delivering,
+                                                }
+                                          )
                                         );
+                                        getPKGDetails();
                                         const toast = Toast.show({
                                           type: "info",
                                           text1: "Hoàn tất",

@@ -62,7 +62,6 @@ const getInFrameTime = (
       .toDate()
   );
   const current = new Date();
-  // console.log("current: ", current, startFrameDate, endFrameDate);
   if (current < startFrameDate.toDate()) return -1;
   if (current > endFrameDate.toDate()) return 1;
   return 0;

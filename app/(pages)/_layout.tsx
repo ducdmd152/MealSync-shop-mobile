@@ -102,6 +102,10 @@ const PageLayout = () => {
           options={{ headerTitle: "Cập nhật địa chỉ email" }}
         />
         <Stack.Screen
+          name="account/staff-profile"
+          options={{ headerTitle: "Hồ sơ của tôi" }}
+        />
+        <Stack.Screen
           name="account/password-update"
           options={{ headerTitle: "Thay đổi mật khẩu" }}
         />

@@ -152,7 +152,10 @@ const OrderDeliveryAutoSuggestAssign = ({
                   <Ionicons name="checkmark-circle" size={19} color="green" />
                 </View>
               ) : (
-                <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2 rounded-full" />
+                <View
+                  className="w-[18px] h-[18px] border-2 border-gray-200 mr-2"
+                  style={{ borderRadius: 100 }}
+                />
               )}
 
               <Text className="italic">Chọn tất cả</Text>
@@ -181,7 +184,7 @@ const OrderDeliveryAutoSuggestAssign = ({
                       />
                     </View>
                   ) : (
-                    <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2" />
+                    <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2 rounded-sm" />
                   )}
 
                   <Text className="font-semibold">

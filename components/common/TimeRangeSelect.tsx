@@ -87,7 +87,10 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
     refStart.current && refStart.current.scrollToTargetIndex(selectedIndex);
     setSelectdStartIndex(selectedIndex);
     setStartTime(frames[selectedIndex].startTime);
-    if (isAutoFixEndTime) handleEndTimeChange(selectedIndex, false);
+    if (isAutoFixEndTime) {
+      if (frames[selectedIndex].startTime >= frames[selectedEndIndex].endTime)
+        handleEndTimeChange(selectedIndex, false);
+    }
   };
   const handleEndTimeChange = (
     index: number,
