@@ -64,6 +64,8 @@ const SignIn = () => {
         if (authDTO) sessionService.setAuthDTO(authDTO);
         globalAuthState.setToken(token);
         globalAuthState.setRoleId(roleId);
+        globalAuthState.setAuthDTO(authDTO);
+
         // console.log("roleId: ", token, roleId);
         if (roleId == 2) {
           router.replace("/home");

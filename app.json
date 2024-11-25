@@ -18,6 +18,7 @@
     "android": {
       "package": "com.anonymous.MealSyncshopmobile",
       "googleServicesFile": "./google-services.json",
+      "newArchEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

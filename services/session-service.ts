@@ -1,19 +1,29 @@
 import AuthDTO from "@/types/dtos/AuthDTO";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import apiClient from "./api-services/api-client";
+import apiClient, { BASE_URL } from "./api-services/api-client";
 const handleRegistrationDevice = async (token: string) => {
   try {
     console.log("Registration device token", token);
-    const res = await apiClient.put("auth/device-token", {
-      deviceToken: token,
+
+    const response = await fetch(BASE_URL + "auth/device-token", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ deviceToken: token }),
     });
-    console.log("Registration", res);
-    const data = await res.data;
-    console.log(data, " successfully registered device");
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(data, "successfully registered device");
   } catch (err) {
-    console.log(err, " cannot register device");
+    console.error(err, "cannot register device");
   }
 };
+
 export interface AuthStorageDTO {
   email: string;
   token: string;
@@ -69,11 +79,11 @@ const sessionService = {
   },
 
   clear: async () => {
-    console.log("handleRegistrationDevice....");
     await handleRegistrationDevice("string");
     await AsyncStorage.removeItem("auth-email");
     await AsyncStorage.removeItem("auth-token");
     await AsyncStorage.removeItem("auth-role");
+    await AsyncStorage.removeItem("authDTO");
     await AsyncStorage.removeItem("auth-is-verified");
   },
 };

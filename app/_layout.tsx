@@ -47,10 +47,12 @@ export default function RootLayout() {
   const [loaded, setLoaded] = useState(false);
   const colorScheme = useColorScheme();
   const [isCheckedAuth, setIsCheckedAuth] = useState(false);
+  const [isQueryProviderReady, setQueryProviderReady] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState(true);
   const globalAuthState = useGlobalAuthState();
   const globalSocketState = useGlobalSocketState();
   const globalNotiState = useGlobalNotiState();
+  const [isReady, setIsReady] = useState(false);
 
   // const [fontsLoaded, error] = useFonts({
   //   "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -65,6 +67,7 @@ export default function RootLayout() {
   // });
 
   useEffect(() => {
+    // FIREBASE NOTIFICATION
     messaging()
       .getInitialNotification()
       .then((notification) => {
@@ -113,7 +116,7 @@ export default function RootLayout() {
     checkAuth();
   }, []);
   useEffect(() => {
-    if (!globalAuthState.token) return;
+    if (!isReady || !globalAuthState.token) return;
     requestUserPermissions();
     messaging()
       .getToken()
@@ -125,8 +128,11 @@ export default function RootLayout() {
       .catch((err) => {
         console.log(err, " cannot register device in message()");
       });
-  }, [globalAuthState.token]);
+  }, [isReady, globalAuthState.token]);
 
+  useEffect(() => {
+    setIsReady(true); // all provider ready
+  }, []);
   useEffect(() => {
     async () => {
       globalAuthState.setToken((await sessionService.getAuthToken()) || "");

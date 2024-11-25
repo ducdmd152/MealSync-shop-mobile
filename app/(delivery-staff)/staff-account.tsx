@@ -14,6 +14,7 @@ import {
   ShopDeliveryStaffModel,
   ShopDeliveryStaffStatus,
 } from "@/types/models/StaffInfoModel";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 interface LinkItem {
   text: string;
   icon: ReactNode;
@@ -59,6 +60,8 @@ const LinkGroup: React.FC<LinkGroupProps> = ({
 };
 const Account = () => {
   const globalSocketState = useGlobalSocketState();
+  const globalAuthState = useGlobalAuthState();
+
   const staffAccount = useFetchWithRQWithFetchFunc(
     [endpoints.STAFF_INFO],
     async (): Promise<FetchValueResponse<ShopDeliveryStaffModel>> =>
@@ -90,6 +93,7 @@ const Account = () => {
         icon: <Ionicons size={22} name="log-out-outline" />,
         handlePress: () => {
           sessionService.clear();
+          globalAuthState.clear();
           if (globalSocketState.socket != null) {
             globalSocketState.socket.disconnect();
             globalSocketState.setSocket(null);

@@ -28,12 +28,15 @@ import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
 import useGlobalStaffState from "@/hooks/states/useGlobalStaffState";
 import { CommonActions } from "@react-navigation/native";
 import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 
 const Shop = () => {
   const navigation = useNavigation();
   const globalWithdrawalState = useGlobalWithdrawalState();
   const globalStaffState = useGlobalStaffState();
   const globalSocketState = useGlobalSocketState();
+  const globalAuthState = useGlobalAuthState();
+
   const redirections = {
     shop: [
       {
@@ -107,6 +110,8 @@ const Shop = () => {
         icon: <Ionicons size={20} name="log-out-outline" />,
         handlePress: () => {
           sessionService.clear();
+          globalAuthState.clear();
+
           if (globalSocketState.socket != null) {
             globalSocketState.socket.disconnect();
             globalSocketState.setSocket(null);
