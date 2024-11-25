@@ -27,7 +27,6 @@ import {
 } from "react-native";
 import CustomButton from "../custom/CustomButton";
 import DeliveryFrameDetail from "./DeliveryFrameDetail";
-import Toast from "react-native-toast-message";
 
 const detailBottomHeight = Dimensions.get("window").height - 100;
 
@@ -210,7 +209,6 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
         modalProps={{}}
         isVisible={isDetailBottomSheetVisible}
       >
-        <Toast />
         {detailBottomSheetDisplay && (
           <View
             className={`p-4 bg-white rounded-t-lg min-h-[120px] bottom-0`}
