@@ -182,7 +182,7 @@ const OrderReportInfo = ({
         {reply && (
           <View className="py-2 pl-4 mr-[-14px]  rounded-md">
             <View className="flex-row gap-x-4 items-center justify-between">
-              <Text className="text-gray-800 font-semibold">
+              <Text className="text-gray-800 text-[12.9px] font-bold">
                 Phản hồi từ cửa hàng
               </Text>
               <Text className="text-gray-600 text-[12px] mr-6">

@@ -86,6 +86,7 @@ const ReportReplyModal = ({
           text2: `Đã trả lời báo cáo cho đơn MS-${orderId}.`,
         });
         setIsOpen(false);
+        onAfterCompleted();
       }
     } catch (error: any) {
       console.log("error: ", error?.response?.data?.error);
