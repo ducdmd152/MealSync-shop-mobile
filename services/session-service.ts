@@ -1,6 +1,19 @@
 import AuthDTO from "@/types/dtos/AuthDTO";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import apiClient from "./api-services/api-client";
+const handleRegistrationDevice = async (token: any) => {
+  try {
+    console.log("Registration device token", token);
+    const res = await apiClient.put("shop-owner-staff/account/device-token", {
+      deviceToken: token,
+    });
+    console.log("Registration", res);
+    const data = await res.data;
+    console.log(data, " successfully registered device");
+  } catch (err) {
+    console.log(err, " cannot register device");
+  }
+};
 export interface AuthStorageDTO {
   email: string;
   token: string;
@@ -9,6 +22,7 @@ export interface AuthStorageDTO {
 }
 
 const sessionService = {
+  handleRegistrationDevice,
   getAuthToken: async () => {
     const token = await AsyncStorage.getItem("auth-token");
     return token;

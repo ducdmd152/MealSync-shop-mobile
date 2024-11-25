@@ -8,7 +8,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { ToastProvider } from "react-native-toast-notifications";
-
+import messaging from "@react-native-firebase/messaging";
 import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
 import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 import ImageViewingModal from "@/components/target-modals/ImageViewingModal";
@@ -21,15 +21,27 @@ import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
 import { useColorScheme } from "@/hooks/themes/useColorScheme";
 import sessionService from "@/services/session-service";
-import { Alert, Image, StyleSheet } from "react-native";
+import { Alert, Image, PermissionsAndroid, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import { io, Socket } from "socket.io-client";
 import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
+import apiClient from "@/services/api-services/api-client";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+const requestUserPermissions = async () => {
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+  if (enabled) {
+    console.log("Authorization status:", authStatus);
+  }
+};
 
 export default function RootLayout() {
   const [loaded, setLoaded] = useState(false);
@@ -51,6 +63,22 @@ export default function RootLayout() {
   //   "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
   //   "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
   // });
+
+  useEffect(() => {
+    messaging()
+      .getInitialNotification()
+      .then((notification) => {
+        console.log(notification);
+      });
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(remoteMessage, "on open");
+    });
+    messaging().setBackgroundMessageHandler(async (msg) => {
+      console.log(msg, "in background");
+    });
+    const unsubscribe = messaging().onMessage(async (msg) => {});
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     setLoaded(fontsLoaded && isCheckedAuth); // list of loaded statuses
@@ -84,6 +112,19 @@ export default function RootLayout() {
 
     checkAuth();
   }, []);
+  useEffect(() => {
+    if (!globalAuthState.token) return;
+    requestUserPermissions();
+    messaging()
+      .getToken()
+      .then((token) => {
+        console.log(token, " device tokenn");
+        // if (globalAuthState.token) sessionService.handleRegistrationDevice(token);
+      })
+      .catch((err) => {
+        console.log(err, " cannot register device in message()");
+      });
+  }, [globalAuthState.token]);
 
   useEffect(() => {
     async () => {
