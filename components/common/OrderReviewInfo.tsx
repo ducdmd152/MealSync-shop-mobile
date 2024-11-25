@@ -58,10 +58,10 @@ const OrderReviewInfo = ({
   const globalReviewReplyState = useGlobalReviewReplyState();
 
   const reviewFetcher = useFetchWithRQWithFetchFunc(
-    [`shop-onwer/review/order/${151}`],
+    [`shop-onwer/review/order/${order.id}`],
     async (): Promise<FetchValueResponse<ReviewModel[]>> =>
       apiClient
-        .get(`shop-onwer/review/order/${151}`)
+        .get(`shop-onwer/review/order/${order.id}`)
         .then((response) => response.data),
     []
   );
