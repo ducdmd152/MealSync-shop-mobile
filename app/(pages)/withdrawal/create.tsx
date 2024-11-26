@@ -37,6 +37,7 @@ dayjs.extend(timezone);
 interface WithdrawalCreateModel {
   amount: number;
   bankCode: string;
+  bankAccountName: string;
   bankShortName: string;
   bankAccountNumber: string;
   verifyCode: number;
@@ -45,6 +46,7 @@ interface WithdrawalCreateModel {
 const initWithdrawSampleObject = {
   amount: 0,
   bankCode: "ICB",
+  bankAccountName: "",
   bankShortName: "VietinBank",
   bankAccountNumber: "",
   verifyCode: 0,
@@ -124,6 +126,8 @@ const WithdrawalCreate = () => {
       tempErrors.bankCode = "Vui lòng chọn ngân hàng";
     if (withdrawal.bankAccountNumber.length == 0)
       tempErrors.bankAccountNumber = "Vui nhập số tài khoản";
+    if (withdrawal.bankAccountName.length == 0)
+      tempErrors.bankAccountName = "Vui nhập tên chủ tài khoản";
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -411,6 +415,28 @@ const WithdrawalCreate = () => {
                 {errors.bankAccountNumber && (
                   <Text className="text-red-500 text-xs mt-1">
                     {errors.bankAccountNumber}
+                  </Text>
+                )}
+              </View>
+              <View className="mb-2">
+                <Text className="font-bold">Tên chủ tài khoản *</Text>
+                <TextInput
+                  className="border border-gray-300 mt-1 p-2 px-3 rounded text-[20px]"
+                  placeholder="Nhập số tài khoản..."
+                  keyboardType="numeric"
+                  onFocus={() => setIsUnderKeywodFocusing(true)}
+                  onBlur={() => setIsUnderKeywodFocusing(false)}
+                  value={withdrawalCreateModel.bankAccountName}
+                  placeholderTextColor="#888"
+                  // readOnly
+                  onChangeText={(text) => {
+                    // console.log("text: " + text);
+                    handleChange("bankAccountName", text);
+                  }}
+                />
+                {errors.bankAccountName && (
+                  <Text className="text-red-500 text-xs mt-1">
+                    {errors.bankAccountName}
                   </Text>
                 )}
               </View>

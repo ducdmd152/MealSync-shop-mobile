@@ -190,7 +190,9 @@ const WithdrawDetailsModal = ({
                 </View>
               </View>
               <View className="mb-2">
-                <Text className="font-bold text-[12.8px]">Ngân hàng</Text>
+                <Text className="font-bold text-[12.8px]">
+                  Ngân hàng thụ hưởng
+                </Text>
                 <TextInput
                   className="border border-gray-300 mt-1 p-2 rounded text-[15px]"
                   placeholder="Vui lòng chọn ngân hàng"
@@ -206,6 +208,19 @@ const WithdrawDetailsModal = ({
                   placeholder="Nhập số tài khoản..."
                   keyboardType="numeric"
                   value={globalWithdrawalState.withdrawal.bankAccountNumber}
+                  placeholderTextColor="#888"
+                  readOnly
+                />
+              </View>
+              <View className="mb-2">
+                <Text className="font-bold text-[12.8px]">
+                  Tên chủ tài khoản
+                </Text>
+                <TextInput
+                  className="border border-gray-300 mt-1 p-2 px-3 rounded text-[15px]"
+                  placeholder="Nhập số tài khoản..."
+                  keyboardType="numeric"
+                  value={globalWithdrawalState.withdrawal.bankAccountName}
                   placeholderTextColor="#888"
                   readOnly
                 />

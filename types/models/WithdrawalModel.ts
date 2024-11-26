@@ -11,6 +11,7 @@ export interface WithdrawalModel {
   amount: number;
   status: number;
   bankCode: string;
+  bankAccountName: string;
   bankShortName: string;
   bankAccountNumber: string;
   reason: string | null;
