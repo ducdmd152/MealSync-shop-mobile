@@ -535,7 +535,7 @@ const OrderDetail = ({
               order.status == OrderStatus.Resolved) && (
               <OrderReportInfo order={order} isLoading={isLoading} />
             )}
-            {order.status >= OrderStatus.Delivered && (
+            {order.status == OrderStatus.Completed && (
               <OrderReviewInfo order={order} isLoading={isLoading} />
             )}
           </ScrollView>

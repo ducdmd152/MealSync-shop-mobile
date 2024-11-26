@@ -72,13 +72,15 @@ const OrderReviewInfo = ({
   useFocusEffect(
     React.useCallback(() => {
       reviewFetcher.refetch();
-    }, [])
+    }, [order])
   );
 
   // console.log("fetch.data?.value: ", fetch.data?.value);
   const getOrderReviewInfo = () => {
-    if (!reviewFetcher.data?.value) return null;
+    if (!reviewFetcher.data?.value || reviewFetcher.data?.value.length < 1)
+      return null;
     const review = reviewFetcher.data.value[0];
+    if (!review) return null;
     console.log("review: ", JSON.stringify(review));
     // return null;
     return (
@@ -217,7 +219,7 @@ const OrderReviewInfo = ({
       </View>
     );
   }
-  if (reviewFetcher.isError) {
+  if (!order.id || reviewFetcher.isError) {
     // console.error(reportsFetcher.error);
     return null;
   }
