@@ -96,7 +96,6 @@ export default function RootLayout() {
   }, [loaded]);
 
   useEffect(() => {
-    setIsCheckedAuth(true);
     const checkAuth = async () => {
       const token = await sessionService.getAuthToken();
       if (!token) {
