@@ -151,7 +151,7 @@ export default function RootLayout() {
       }
 
       // Connect to the server with JWT authentication
-      const newSocket = io("http://socketio.mealsync.org/", {
+      const newSocket = io("https://socketio.mealsync.org/", {
         auth: {
           token: token,
         },
