@@ -1,42 +1,35 @@
-import { View, Text, Alert, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
-import Avatar from "react-native-paper/lib/typescript/components/Avatar/AvatarIcon";
-import AvatarChange from "@/components/common/AvatarChange";
-import ImageUpload from "@/components/common/ImageUpload";
-import CustomButton from "@/components/custom/CustomButton";
-import FormField from "@/components/custom/FormFieldCustom";
-import CustomDropdown from "@/components/custom/CustomDropdown";
+import CustomModal from "@/components/common/CustomModal";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
-import {
-  MultipleSelectList,
-  SelectList,
-} from "react-native-dropdown-select-list";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { Switch } from "react-native-paper";
-import sessionService from "@/services/session-service";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import CustomButton from "@/components/custom/CustomButton";
+import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
+import FormField from "@/components/custom/FormFieldCustom";
+import PreviewImageUpload from "@/components/images/PreviewImageUpload";
+import CONSTANTS from "@/constants/data";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
-import APICommonResponse from "@/types/responses/APICommonResponse";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
-import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
+import imageService from "@/services/image-service";
+import sessionService from "@/services/session-service";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import OptionGroupModel from "@/types/models/OptionGroupModel";
-import * as Yup from "yup";
+import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
+import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
+import APICommonResponse from "@/types/responses/APICommonResponse";
 import FetchResponse, {
   FetchOnlyListResponse,
 } from "@/types/responses/FetchResponse";
-import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useFocusEffect } from "expo-router";
 import { useFormik } from "formik";
-import imageService from "@/services/image-service";
-import CONSTANTS from "@/constants/data";
-import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
-import PreviewImageUpload from "@/components/images/PreviewImageUpload";
-import CustomModal from "@/components/common/CustomModal";
+import React, { useEffect, useState } from "react";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
+import { SelectList } from "react-native-dropdown-select-list";
+import { Switch } from "react-native-paper";
+import * as Yup from "yup";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -163,7 +156,14 @@ const FoodCreate = () => {
         .then((response) => response.data),
     []
   );
-
+  useFocusEffect(
+    React.useCallback(() => {
+      platformCategoriesRefetch();
+      shopCategoriesRefetch();
+      optionGroupsRefetch();
+      operatingSlotsRefetch();
+    }, [])
+  );
   const formik = useFormik({
     initialValues: {
       name: "",
