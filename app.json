@@ -27,7 +27,6 @@
         "policy": "sdkVersion"
       },
       "permissions": [
-        "android.permission.RECORD_AUDIO",
         "android.permission.RECORD_AUDIO"
       ]
     },
@@ -52,6 +51,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "7c81e665-3603-4258-95d9-4c54b53c0bc6"
+      }
     }
   }
 }

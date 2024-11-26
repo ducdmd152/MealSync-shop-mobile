@@ -17,7 +17,7 @@ import OrderDetailModel from "@/types/models/OrderDetailModel";
 import messaging from "@react-native-firebase/messaging";
 import {
   DefaultTheme,
-  NavigationContainer,
+  // NavigationContainer,
   ThemeProvider,
 } from "@react-navigation/native";
 import { router, Stack } from "expo-router";
@@ -234,7 +234,7 @@ export default function RootLayout() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       > */}
               {/* <MagicModalPortal /> */}
-              <NavigationContainer>
+              {/* <NavigationContainer> */}
                 <Stack>
                   <Stack.Screen name="index" options={{ headerShown: false }} />
                   <Stack.Screen
@@ -261,7 +261,7 @@ export default function RootLayout() {
                 <StaffDetailsModal />
                 <WithdrawDetailsModal titleStyleClasses="font-semibold" />
                 <CompleteDeliveryConfirmModal />
-              </NavigationContainer>
+              {/* </NavigationContainer> */}
               {/* <FlashMessage position="bottom" /> */}
               {/* </KeyboardAvoidingView> */}
             </PaperProvider>
