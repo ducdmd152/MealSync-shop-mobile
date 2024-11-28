@@ -278,7 +278,7 @@ const DeliveryPKGDetail = ({
                               }
                             </Text>
                             {order.status == OrderStatus.Preparing &&
-                              utilService.getInFrameTime(
+                              utilService.getInDeliveryTime(
                                 order.startTime,
                                 order.endTime,
                                 order.intendedReceiveDate

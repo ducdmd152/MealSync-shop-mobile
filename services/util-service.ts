@@ -66,9 +66,34 @@ const getInFrameTime = (
   if (current > endFrameDate.toDate()) return 1;
   return 0;
 };
+const getInDeliveryTime = (
+  startTime: number,
+  endTime: number,
+  intendedReceiveDate: string
+) => {
+  const startFrameDate = dayjs(
+    dayjs(intendedReceiveDate)
+      .local()
+      .set("hour", Math.floor(startTime / 100))
+      .set("minute", startTime % 100)
+      .toDate()
+  ).subtract(15, "minute");
+  const endFrameDate = dayjs(
+    dayjs(intendedReceiveDate)
+      .local()
+      .set("hour", Math.floor(endTime / 100))
+      .set("minute", endTime % 100)
+      .toDate()
+  );
+  const current = new Date();
+  if (current < startFrameDate.toDate()) return -1;
+  if (current > endFrameDate.toDate()) return 1;
+  return 0;
+};
 const utilService = {
   maskPhoneNumber,
   getInFrameTime,
+  getInDeliveryTime,
   formatTime: (time: number): string => {
     const hours = Math.floor(time / 100)
       .toString()

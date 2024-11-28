@@ -271,12 +271,16 @@ const CompleteDeliveryConfirmModal = ({
         title={`Đi giao`}
         isLoading={isSubmitting}
         handlePress={() => {
-          const inTime = utilService.getInFrameTime(
-            order.startTime,
-            order.endTime,
-            order.intendedReceiveDate
-          );
-          if (!actionInTimeValidation()) return;
+          if (
+            utilService.getInDeliveryTime(
+              order.startTime,
+              order.endTime,
+              order.intendedReceiveDate
+            ) != 0
+          ) {
+            getOrderDetail();
+            return;
+          }
 
           orderUIService.onDelivery(
             order,
@@ -359,7 +363,11 @@ const CompleteDeliveryConfirmModal = ({
       return (
         <View className=" w-full bg-white">
           {order.status == OrderStatus.Preparing &&
-            inFrameTime == 0 &&
+            utilService.getInDeliveryTime(
+              order.startTime,
+              order.endTime,
+              order.intendedReceiveDate
+            ) == 0 &&
             order.shopDeliveryStaff?.id == 0 &&
             toDeliveryButton}
           {order.status == OrderStatus.Preparing &&
@@ -375,7 +383,11 @@ const CompleteDeliveryConfirmModal = ({
     return (
       <View className=" w-full bg-white">
         {order.status == OrderStatus.Preparing &&
-          inFrameTime == 0 &&
+          utilService.getInDeliveryTime(
+            order.startTime,
+            order.endTime,
+            order.intendedReceiveDate
+          ) == 0 &&
           toDeliveryButton}
 
         {order.status == OrderStatus.Delivering && successButton}
