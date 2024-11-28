@@ -2,15 +2,24 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "allowJs": true, // Cho phép TypeScript xử lý các file .js và .jsx
+    "jsx": "react", // Sử dụng React JSX
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "ES6",
+    "resolveJsonModule": true, // Cho phép import file JSON
+    "skipLibCheck": true, // Bỏ qua kiểm tra kiểu trong các file .d.ts
+    "noEmit": true, // Không xuất file .js khi build
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "**/*.js", // Bao gồm cả file .js
+    "**/*.jsx", // Bao gồm cả file .jsx
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
   ]
