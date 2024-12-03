@@ -7,10 +7,10 @@ import useFetch from "./useFetch";
 
 const useFetchGeneric = <
   Model extends APIEntityModel,
-  Query extends PagingRequestQuery
+  Query extends PagingRequestQuery,
 >(
   apiService: APIService<Model>,
-  requestQuery: Query
+  requestQuery: Query,
 ) => {
   const { models, pageable, error, isLoading, setModels, setError } =
     useFetch<Model>(
@@ -18,7 +18,7 @@ const useFetchGeneric = <
       {
         params: { ...requestQuery },
       },
-      [requestQuery]
+      [requestQuery],
     );
 
   return {

@@ -37,7 +37,7 @@ const formatCreatedDate = (createdDate: string): string => {
   const now = dayjs();
   const daysDiff = dayjs(now.local().format("YYYY-MM-DD")).diff(
     dayjs(date.local().format("YYYY-MM-DD")).local(),
-    "day"
+    "day",
   );
   if (daysDiff < 1) {
     return date.local().format("HH:mm") + " hôm nay";
@@ -89,12 +89,12 @@ const Review = () => {
           },
         })
         .then((response) => response.data),
-    [query]
+    [query],
   );
   useFocusEffect(
     React.useCallback(() => {
       reviewFetch.refetch();
-    }, [])
+    }, []),
   );
   // if (reviewFetch.data?.value)
   //   console.log(
@@ -147,7 +147,7 @@ const Review = () => {
                     reviewFetch.data?.value.reviewOverview.totalReview
                       ? percentOf(
                           reviewFetch.data?.value.reviewOverview.totalFiveStar /
-                            reviewFetch.data?.value.reviewOverview.totalReview
+                            reviewFetch.data?.value.reviewOverview.totalReview,
                         )
                       : 0
                   }
@@ -167,7 +167,7 @@ const Review = () => {
                     reviewFetch.data?.value.reviewOverview.totalReview
                       ? percentOf(
                           reviewFetch.data?.value.reviewOverview.totalFourStar /
-                            reviewFetch.data?.value.reviewOverview.totalReview
+                            reviewFetch.data?.value.reviewOverview.totalReview,
                         )
                       : 0
                   }
@@ -188,7 +188,7 @@ const Review = () => {
                       ? percentOf(
                           reviewFetch.data?.value.reviewOverview
                             .totalThreeStar /
-                            reviewFetch.data?.value.reviewOverview.totalReview
+                            reviewFetch.data?.value.reviewOverview.totalReview,
                         )
                       : 0
                   }
@@ -208,7 +208,7 @@ const Review = () => {
                     reviewFetch.data?.value.reviewOverview.totalReview
                       ? percentOf(
                           reviewFetch.data?.value.reviewOverview.totalTwoStar /
-                            reviewFetch.data?.value.reviewOverview.totalReview
+                            reviewFetch.data?.value.reviewOverview.totalReview,
                         )
                       : 0
                   }
@@ -228,7 +228,7 @@ const Review = () => {
                     reviewFetch.data?.value.reviewOverview.totalReview
                       ? percentOf(
                           reviewFetch.data?.value.reviewOverview.totalOneStar /
-                            reviewFetch.data?.value.reviewOverview.totalReview
+                            reviewFetch.data?.value.reviewOverview.totalReview,
                         )
                       : 0
                   }
@@ -340,7 +340,7 @@ const Review = () => {
                       globalOrderDetailState.setId(review.orderId);
                       globalOrderDetailState.setIsActionsShowing(true);
                       globalOrderDetailState.setIsDetailBottomSheetVisible(
-                        true
+                        true,
                       );
                     }}
                     // iconRight={

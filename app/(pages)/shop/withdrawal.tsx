@@ -64,10 +64,10 @@ const Withdrawal = () => {
               pageIndex: 1,
               pageSize: 100_000_000,
             },
-          }
+          },
         )
         .then((response) => response.data),
-    [fromDate, toDate, globalWithdrawalState.statuses]
+    [fromDate, toDate, globalWithdrawalState.statuses],
   );
   const toggleFromDatePicker = () => {
     setFromDatePickerVisibility(!isFromDatePickerVisible);
@@ -80,7 +80,7 @@ const Withdrawal = () => {
     React.useCallback(() => {
       fetch.refetch();
       globalWithdrawalState.setOnAfterCancelCompleted(() => fetch.refetch());
-    }, [])
+    }, []),
   );
   return (
     <View className="w-full h-full bg-white text-black p-4 relative">
@@ -93,7 +93,7 @@ const Withdrawal = () => {
               const request = (fetch.data?.value.items || []).find(
                 (item) =>
                   item.status === WithdrawalStatus.Pending ||
-                  item.status === WithdrawalStatus.UnderReview
+                  item.status === WithdrawalStatus.UnderReview,
               );
 
               if (request) {
@@ -101,7 +101,7 @@ const Withdrawal = () => {
                   "Oops!",
                   request.status === WithdrawalStatus.Pending
                     ? "Bạn đang có 1 yêu cầu đang chờ, vui lòng hủy yêu cầu hoặc chờ đợi đến khi yêu cầu hoàn tất xử lí"
-                    : "Bạn đang có 1 yêu cầu đang xem xét, bạn có thể tạo mới yêu cầu khi yêu cầu hiện tại hoàn tất xử lí"
+                    : "Bạn đang có 1 yêu cầu đang xem xét, bạn có thể tạo mới yêu cầu khi yêu cầu hiện tại hoàn tất xử lí",
                 );
               } else {
                 router.push("/withdrawal/create");
@@ -111,7 +111,7 @@ const Withdrawal = () => {
               Alert.alert(
                 "Oops!",
                 error?.response?.data?.error?.message ||
-                  "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                  "Yêu cầu bị từ chối, vui lòng thử lại sau!",
               );
             });
         }}
@@ -295,12 +295,12 @@ const Withdrawal = () => {
                       style={{
                         backgroundColor:
                           withdrawalStatuses.find(
-                            (item) => item.key === draw.status
+                            (item) => item.key === draw.status,
                           )?.bgColor || "#e5e5e5",
                       }}
                     >
                       {withdrawalStatuses.find(
-                        (item) => item.key === draw.status
+                        (item) => item.key === draw.status,
                       )?.label || "------"}
                     </Text>
                   </View>

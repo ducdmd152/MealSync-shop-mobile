@@ -76,7 +76,7 @@ const FoodCreate = () => {
   const [selectedShopCategory, setSelectedShopCategory] = useState(-1);
   const [selectedPlatformCategory, setSelectedPlatformCategory] = useState(-1);
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
-    []
+    [],
   );
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
@@ -87,7 +87,7 @@ const FoodCreate = () => {
   >([]);
   const [isAvailable, setIsAvailable] = useState(true);
   const [imageURI, setImageURI] = useState(
-    "https://join.travelmanagers.com.au/wp-content/uploads/2017/09/default-placeholder-300x300.png"
+    "https://join.travelmanagers.com.au/wp-content/uploads/2017/09/default-placeholder-300x300.png",
   );
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const FoodCreate = () => {
   useEffect(() => {
     formik.setFieldValue(
       "platformCategoryId",
-      Number(selectedPlatformCategory)
+      Number(selectedPlatformCategory),
     );
     // console.log(formik.values);
   }, [selectedPlatformCategory]);
@@ -114,7 +114,7 @@ const FoodCreate = () => {
       apiClient
         .get(endpoints.SHOP_CATEGORY_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: platformCategories,
@@ -127,7 +127,7 @@ const FoodCreate = () => {
       apiClient
         .get(endpoints.PLATFORM_CATEGORY_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: optionGroups,
@@ -148,7 +148,7 @@ const FoodCreate = () => {
           },
         })
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: operatingSlots,
@@ -161,7 +161,7 @@ const FoodCreate = () => {
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
 
   const formik = useFormik({
@@ -192,17 +192,17 @@ const FoodCreate = () => {
             status: isAvailable ? 1 : 2,
             price: Number(values.price),
             foodOptionGroups: selectedOptionGroups.map((item) =>
-              Number(item)
+              Number(item),
             ) as number[],
             operatingSlots: selectedOperatingSlots.map((item) =>
-              Number(item)
+              Number(item),
             ) as number[],
           };
           console.log("CREATE FOOD DATA: ", foodData);
           // Send POST request to the API
           const response = await apiClient.post(
             "shop-owner/food/create",
-            foodData
+            foodData,
           );
           console.log("RESPONSE : ", response);
 
@@ -212,7 +212,7 @@ const FoodCreate = () => {
         } catch (error: any) {
           Alert.alert(
             "Xảy ra lỗi khi tạo món",
-            error?.response?.data?.error?.message || "Vui lòng thử lại!"
+            error?.response?.data?.error?.message || "Vui lòng thử lại!",
           );
         } finally {
           setIsSubmiting(false);
@@ -241,7 +241,7 @@ const FoodCreate = () => {
               },
             },
           ],
-          { cancelable: false }
+          { cancelable: false },
         );
         return;
       }
@@ -270,7 +270,7 @@ const FoodCreate = () => {
         return 1;
       }
       return 0;
-    }
+    },
   );
   console.log("Re-render: ", selectedOptionGroups);
   return (
@@ -414,7 +414,7 @@ const FoodCreate = () => {
                   (cat: PlatformCategoryModel) => ({
                     key: cat.id.toString(),
                     value: cat.name,
-                  })
+                  }),
                 ) || []
               }
               save="key"

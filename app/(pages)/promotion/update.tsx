@@ -37,7 +37,7 @@ const PromotionUpdate = () => {
     setIsFetching(true);
     try {
       const response = await apiClient.get<ValueResponse<PromotionModel>>(
-        `shop-owner/promotion/${promotion.id}/detail`
+        `shop-owner/promotion/${promotion.id}/detail`,
       );
       globalPromotionState.setPromotion({ ...response.data.value });
     } catch (error: any) {
@@ -48,7 +48,7 @@ const PromotionUpdate = () => {
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
         );
         router.replace("/shop/promotion");
       }
@@ -61,7 +61,7 @@ const PromotionUpdate = () => {
     React.useCallback(() => {
       setPromotion(globalPromotionState.promotion);
       getDetails();
-    }, [])
+    }, []),
   );
   const [isFromDatePickerVisible, setFromDatePickerVisibility] =
     useState(false);
@@ -183,7 +183,7 @@ const PromotionUpdate = () => {
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
           );
         });
     } else {
@@ -492,7 +492,7 @@ const PromotionUpdate = () => {
                 placeholder="Nhập tỷ lệ giảm giá"
                 value={
                   promotionApplyTypes.find(
-                    (item) => item.key == promotion.applyType
+                    (item) => item.key == promotion.applyType,
                   )?.label || ""
                 }
                 readOnly
@@ -588,7 +588,7 @@ const PromotionUpdate = () => {
                     value={utilService.formatPrice(
                       promotion.applyType == PromotionApplyType.AmountApply
                         ? promotion.amountValue
-                        : promotion.maximumApplyValue
+                        : promotion.maximumApplyValue,
                     )}
                     onChangeText={(text) =>
                       handleChange("maximumApplyValue", text)

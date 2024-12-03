@@ -87,7 +87,7 @@ const CompleteDeliveryConfirmModal = ({
     if (isRefetching) setIsReloading(true);
     try {
       const response = await apiClient.get<ValueResponse<OrderFetchModel>>(
-        `shop-owner-staff/order/${globalCompleteDeliveryConfirm.id}`
+        `shop-owner-staff/order/${globalCompleteDeliveryConfirm.id}`,
       );
       setOrder({ ...response.data.value });
     } catch (error: any) {
@@ -98,7 +98,7 @@ const CompleteDeliveryConfirmModal = ({
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
       // console.log(error?.response?.data?.error);
       // Alert.alert(
@@ -142,8 +142,8 @@ const CompleteDeliveryConfirmModal = ({
         utilService.getInFrameTime(
           order.startTime,
           order.endTime,
-          order.intendedReceiveDate
-        )
+          order.intendedReceiveDate,
+        ),
       );
     }
   }, [globalCompleteDeliveryConfirm.isModalVisible]);
@@ -153,7 +153,7 @@ const CompleteDeliveryConfirmModal = ({
     const inTime = utilService.getInFrameTime(
       order.startTime,
       order.endTime,
-      order.intendedReceiveDate
+      order.intendedReceiveDate,
     );
     if (inTime > 0) {
       getOrderDetail();
@@ -174,13 +174,13 @@ const CompleteDeliveryConfirmModal = ({
   const handleDeliverySuccess = async (
     data: string,
     onSuccess: () => void,
-    onError: (error: any) => void
+    onError: (error: any) => void,
   ) => {
     const qrCodeResult: QRCodeResultModel = JSON.parse(data);
     return await apiClient
       .put(
         `shop-owner-staff/order/${globalCompleteDeliveryConfirm.id}/delivered`,
-        qrCodeResult
+        qrCodeResult,
       )
       .then((response) => {
         // console.log(response.data);
@@ -220,7 +220,7 @@ const CompleteDeliveryConfirmModal = ({
     apiClient
       .put(
         `shop-owner-staff/order/${globalCompleteDeliveryConfirm.id}/delivery-fail`,
-        request
+        request,
       )
       .then((response) => {
         setOrder({ ...order, status: OrderStatus.FailDelivery });
@@ -239,7 +239,7 @@ const CompleteDeliveryConfirmModal = ({
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
         );
         return false;
       })
@@ -275,7 +275,7 @@ const CompleteDeliveryConfirmModal = ({
             utilService.getInDeliveryTime(
               order.startTime,
               order.endTime,
-              order.intendedReceiveDate
+              order.intendedReceiveDate,
             ) != 0
           ) {
             getOrderDetail();
@@ -306,12 +306,12 @@ const CompleteDeliveryConfirmModal = ({
               Alert.alert(
                 "Oops!",
                 error?.response?.data?.error?.message ||
-                  "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                  "Yêu cầu bị từ chối, vui lòng thử lại sau!",
               );
             },
             () => {
               setIsSubmitting(true);
-            }
+            },
           );
         }}
         containerStyleClasses="w-full mt-2 h-[42px] px-2 bg-transparent border-2 border-gray-200 bg-[#06b6d4] border-[#22d3ee] font-semibold z-10"
@@ -366,7 +366,7 @@ const CompleteDeliveryConfirmModal = ({
             utilService.getInDeliveryTime(
               order.startTime,
               order.endTime,
-              order.intendedReceiveDate
+              order.intendedReceiveDate,
             ) == 0 &&
             order.shopDeliveryStaff?.id == 0 &&
             toDeliveryButton}
@@ -386,7 +386,7 @@ const CompleteDeliveryConfirmModal = ({
           utilService.getInDeliveryTime(
             order.startTime,
             order.endTime,
-            order.intendedReceiveDate
+            order.intendedReceiveDate,
           ) == 0 &&
           toDeliveryButton}
 
@@ -463,7 +463,7 @@ const CompleteDeliveryConfirmModal = ({
                         text: "Sao chép",
                         onPress: () =>
                           Clipboard.setString(
-                            order.customer?.phoneNumber || ""
+                            order.customer?.phoneNumber || "",
                           ),
                       },
                       { text: "Hủy", style: "cancel" },
@@ -502,7 +502,7 @@ const CompleteDeliveryConfirmModal = ({
                   className={`flex-1 text-[17px] text-secondary font-medium me-2 px-2.5 py-1 rounded `}
                 >
                   {utilService.formatPrice(
-                    order.totalPrice - order.totalPromotion
+                    order.totalPrice - order.totalPromotion,
                   )}{" "}
                   ₫
                 </Text>

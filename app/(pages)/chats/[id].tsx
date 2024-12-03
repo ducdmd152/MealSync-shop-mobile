@@ -234,7 +234,7 @@ const ChatChannel = () => {
 
         const mediaUrl = await uploadMedia(
           asset.uri,
-          asset.type || (asset.uri.endsWith(".mp4") ? "video" : "image")
+          asset.type || (asset.uri.endsWith(".mp4") ? "video" : "image"),
         );
         if (mediaUrl) {
           setSelectedMedia({
@@ -347,7 +347,7 @@ const ChatChannel = () => {
     });
 
     setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
+      GiftedChat.append(previousMessages, newMessages),
     );
   };
   const onSend = async (newMessages: IMessage[] = []) => {
@@ -376,7 +376,7 @@ const ChatChannel = () => {
             image: messageToSend?.image || undefined,
             video: messageToSend?.video || undefined,
           },
-        ])
+        ]),
       );
     } catch (error) {
       Alert.alert("Error", "Failed to send message");

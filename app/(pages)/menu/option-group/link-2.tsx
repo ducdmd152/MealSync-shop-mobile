@@ -55,8 +55,8 @@ const OptionGroupLink = () => {
                 onPress: () => {
                   setCategories((prevCategories) =>
                     prevCategories.map((cat, idx) =>
-                      idx === i ? { ...cat, linked: !cat.linked } : cat
-                    )
+                      idx === i ? { ...cat, linked: !cat.linked } : cat,
+                    ),
                   );
                 },
               },
@@ -75,12 +75,12 @@ const OptionGroupLink = () => {
                 onPress: () => {
                   setCategories((prevCategories) =>
                     prevCategories.map((cat, idx) =>
-                      idx === i ? { ...cat, linked: !cat.linked } : cat
-                    )
+                      idx === i ? { ...cat, linked: !cat.linked } : cat,
+                    ),
                   );
                 },
               },
-            ]
+            ],
       );
     };
 
@@ -93,8 +93,8 @@ const OptionGroupLink = () => {
               categories.map((cat) =>
                 item.id === cat.id
                   ? { ...cat, isCollapsible: !cat.isCollapsible }
-                  : cat
-              )
+                  : cat,
+              ),
             )
           }
           onLongPress={drag}

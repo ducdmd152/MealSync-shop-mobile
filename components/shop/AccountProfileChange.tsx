@@ -22,13 +22,13 @@ const ShopProfileChange = () => {
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
         .then((response) => response.data),
-    []
+    [],
   );
   const [email, setEmail] = useState("--------------");
   useFocusEffect(
     React.useCallback(() => {
       setEmail(shopProfile.data?.value.email || "");
-    }, [shopProfile.data?.value])
+    }, [shopProfile.data?.value]),
   );
   return (
     <View className="w-full px-4 py-2 ">

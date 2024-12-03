@@ -20,7 +20,7 @@ const OrderDetails = () => {
           onNotFound={() => {
             Alert.alert(
               `Đơn hàng MS-${globalOrderDetailPageState.id} không tồn tại`,
-              "Vui lòng thử lại!"
+              "Vui lòng thử lại!",
             );
             globalOrderDetailPageState.onBeforeBack();
             router.back();

@@ -64,13 +64,13 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
               startTime: globalTimeRangeFilter.startTime,
               endTime: globalTimeRangeFilter.endTime,
               intendedReceiveDate: dayjs(globalTimeRangeFilter.date).format(
-                "YYYY/MM/DD"
+                "YYYY/MM/DD",
               ),
             },
-          }
+          },
         )
         .then((response) => response.data),
-    [statuses]
+    [statuses],
   );
   useFocusEffect(
     useCallback(() => {
@@ -79,7 +79,7 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
       return () => {
         isFocused.current = false;
       };
-    }, [])
+    }, []),
   );
   useEffect(() => {
     if (isFocused.current) {
@@ -129,7 +129,7 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
               onPress={() => {
                 globalMyGKGDetailsState.setModel(pkg);
                 globalMyGKGDetailsState.setOnAfterCompleted(() =>
-                  myPkgFetchResult.refetch()
+                  myPkgFetchResult.refetch(),
                 );
                 setIsDetailBottomSheetVisible(true);
               }}
@@ -209,7 +209,7 @@ const MyDeliveryPackageList = ({ beforeGo }: { beforeGo: () => void }) => {
                   setDetailBottomSheetDisplay(false);
                   Alert.alert(
                     `Gói vừa chọn không tồn tại.`,
-                    "Vui lòng thử lại!"
+                    "Vui lòng thử lại!",
                   );
                   myPkgFetchResult.refetch();
                   setTimeout(() => {

@@ -75,7 +75,7 @@ const sessionService = {
   setAuthDTO: async (authDTO: AuthDTO) => {
     await AsyncStorage.setItem(
       "authDTO",
-      authDTO ? JSON.stringify(authDTO) : ""
+      authDTO ? JSON.stringify(authDTO) : "",
     );
   },
 

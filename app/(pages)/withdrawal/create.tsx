@@ -73,13 +73,13 @@ const WithdrawalCreate = () => {
       apiClient
         .get(endpoints.EXTERNAL_BANK_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const balanceFetch = useFetchWithRQWithFetchFunc(
     [endpoints.BALANCE].concat(["withdrawal-create-page"]),
     async (): Promise<ValueResponse<BalanceModel>> =>
       apiClient.get(endpoints.BALANCE).then((response) => response.data),
-    []
+    [],
   );
   useEffect(() => {
     const text = bankSearchText.trim().toLocaleLowerCase();
@@ -88,8 +88,8 @@ const WithdrawalCreate = () => {
         bankListFetch?.data?.data.filter(
           (bank) =>
             bank.name.toLocaleLowerCase().includes(text) ||
-            bank.shortName.toLocaleLowerCase().includes(text)
-        ) || []
+            bank.shortName.toLocaleLowerCase().includes(text),
+        ) || [],
       );
   }, [bankListFetch.isFetching, bankSearchText]);
   // console.log(bankListFetch.data);
@@ -112,7 +112,7 @@ const WithdrawalCreate = () => {
       setWithdrawalCreateModel({ ...initWithdrawSampleObject });
       balanceFetch.refetch();
       bankListFetch.refetch();
-    }, [])
+    }, []),
   );
   const [errors, setErrors] = useState<any>({});
   const validate = (withdrawal: WithdrawalCreateModel) => {
@@ -158,7 +158,7 @@ const WithdrawalCreate = () => {
   };
   const handleSubmit = (
     withdrawal: WithdrawalCreateModel,
-    isVerified: boolean = false
+    isVerified: boolean = false,
   ) => {
     isAnyRequestSubmit.current = true;
     if (!validate(withdrawalCreateModel)) {
@@ -189,7 +189,7 @@ const WithdrawalCreate = () => {
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
           );
         })
         .finally(() => {
@@ -215,7 +215,7 @@ const WithdrawalCreate = () => {
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
           );
         });
     }
@@ -265,7 +265,7 @@ const WithdrawalCreate = () => {
                   value={`${
                     balanceFetch.data?.value.availableAmount
                       ? utilService.formatPrice(
-                          balanceFetch.data?.value.availableAmount
+                          balanceFetch.data?.value.availableAmount,
                         )
                       : "----------"
                   }₫`}
@@ -280,7 +280,7 @@ const WithdrawalCreate = () => {
                     className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[28px] pb-3"
                     placeholder="Nhập số tiền cần rút"
                     value={utilService.formatPrice(
-                      withdrawalCreateModel.amount
+                      withdrawalCreateModel.amount,
                     )}
                     onChangeText={(text) => {
                       // console.log("text: " + text);
@@ -303,8 +303,8 @@ const WithdrawalCreate = () => {
                     {withdrawalCreateModel.amount > 1000
                       ? utilService.capitalizeFirstChar(
                           utilService.numberToVietnameseText(
-                            withdrawalCreateModel.amount
-                          )
+                            withdrawalCreateModel.amount,
+                          ),
                         ) + " đồng"
                       : ""}
                   </Text>
@@ -477,7 +477,7 @@ const WithdrawalCreate = () => {
                   ...withdrawalCreateModel,
                   verifyCode: code,
                 },
-                true
+                true,
               );
             }}
           />
@@ -532,7 +532,7 @@ const WithdrawalVerification = ({
   useFocusEffect(
     React.useCallback(() => {
       resetTimeCounter();
-    }, [])
+    }, []),
   );
 
   return (

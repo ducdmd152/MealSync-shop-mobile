@@ -67,7 +67,7 @@ const DeliveryPKGDetail = ({
         FetchValueResponse<OwnDeliveryPackageModel>
       >(
         `shop-owner-staff/delivery-package/` +
-          globalPKGState.model.deliveryPackageId
+          globalPKGState.model.deliveryPackageId,
       );
       setPKGDetails({ ...response.data.value });
       setIsNotFound(false);
@@ -90,7 +90,7 @@ const DeliveryPKGDetail = ({
   useFocusEffect(
     useCallback(() => {
       getPKGDetails(false);
-    }, [])
+    }, []),
   );
 
   const filteredOrders = () => {
@@ -236,13 +236,13 @@ const DeliveryPKGDetail = ({
                         key={order.id}
                         onPress={() => {
                           globalCompleteDeliveryConfirm.setIsShowActionale(
-                            true
+                            true,
                           );
                           globalCompleteDeliveryConfirm.setId(order.id);
                           globalCompleteDeliveryConfirm.setOnAfterCompleted(
                             () => {
                               getPKGDetails();
-                            }
+                            },
                           );
                           globalCompleteDeliveryConfirm.setIsModalVisible(true);
                           globalCompleteDeliveryConfirm.setModel(order);
@@ -268,7 +268,7 @@ const DeliveryPKGDetail = ({
                               }`}
                               style={{
                                 backgroundColor: getOrderStatusDescription(
-                                  order.status
+                                  order.status,
                                 )?.bgColor,
                               }}
                             >
@@ -281,7 +281,7 @@ const DeliveryPKGDetail = ({
                               utilService.getInDeliveryTime(
                                 order.startTime,
                                 order.endTime,
-                                order.intendedReceiveDate
+                                order.intendedReceiveDate,
                               ) == 0 && (
                                 <TouchableOpacity
                                   onPress={() => {
@@ -299,8 +299,8 @@ const DeliveryPKGDetail = ({
                                                   ...order,
                                                   status:
                                                     OrderStatus.Delivering,
-                                                }
-                                          )
+                                                },
+                                          ),
                                         );
                                         getPKGDetails();
                                         const toast = Toast.show({
@@ -314,10 +314,10 @@ const DeliveryPKGDetail = ({
                                           "Oops!",
                                           error?.response?.data?.error
                                             ?.message ||
-                                            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                                         );
                                         getPKGDetails();
-                                      }
+                                      },
                                     );
                                   }}
                                   className={` flex-row items-center rounded-md items-center justify-center px-[8px] py-[2.2px] bg-[#227B94]`}
@@ -337,27 +337,27 @@ const DeliveryPKGDetail = ({
                               utilService.getInFrameTime(
                                 order.startTime,
                                 order.endTime,
-                                order.intendedReceiveDate
+                                order.intendedReceiveDate,
                               ) == 0 && (
                                 <TouchableOpacity
                                   onPress={async () => {
                                     globalCompleteDeliveryConfirm.setIsShowActionale(
-                                      true
+                                      true,
                                     );
 
                                     globalCompleteDeliveryConfirm.setId(
-                                      order.id
+                                      order.id,
                                     );
                                     globalCompleteDeliveryConfirm.setOnAfterCompleted(
                                       () => {
                                         getPKGDetails();
-                                      }
+                                      },
                                     );
                                     globalCompleteDeliveryConfirm.setIsModalVisible(
-                                      true
+                                      true,
                                     );
                                     globalCompleteDeliveryConfirm.setModel(
-                                      order
+                                      order,
                                     );
                                     globalCompleteDeliveryConfirm.setStep(0);
                                   }}
@@ -393,7 +393,7 @@ const DeliveryPKGDetail = ({
                               className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
                             >
                               {utilService.formatPrice(
-                                order.totalPrice - order.totalPromotion
+                                order.totalPrice - order.totalPromotion,
                               )}{" "}
                               ₫
                             </Text>

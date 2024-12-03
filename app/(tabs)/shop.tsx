@@ -136,7 +136,7 @@ const Shop = () => {
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
         .then((response) => response.data),
-    []
+    [],
   );
   const [cache, setCache] = useState<ShopProfileGetModel>({
     status: 2,
@@ -149,7 +149,7 @@ const Shop = () => {
   useFocusEffect(
     React.useCallback(() => {
       shopProfile.refetch();
-    }, [])
+    }, []),
   );
   useEffect(() => {
     if (!shopProfile.isFetching && shopProfile.isSuccess)
@@ -157,7 +157,7 @@ const Shop = () => {
   }, [shopProfile.data?.value]);
   const getShopStatusDescription = (
     status: number,
-    isReceivingOrderPaused: boolean
+    isReceivingOrderPaused: boolean,
   ) => {
     if (status === 0) return "";
     if (status == 1) return "Chưa được phê duyệt";
@@ -171,13 +171,13 @@ const Shop = () => {
       isReceivingOrderPaused: boolean;
       isConfirm: boolean;
     },
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     try {
       setIsSubmitting(true);
       const response = await apiClient.put(
         `shop-owner/shop-owner/active-inactive`,
-        request
+        request,
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -192,7 +192,7 @@ const Shop = () => {
             onPress: async () => {
               onChangeShopStatusRequest(
                 { ...request, isConfirm: true },
-                onSuccess
+                onSuccess,
               );
             },
           },
@@ -205,7 +205,7 @@ const Shop = () => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);
@@ -214,7 +214,7 @@ const Shop = () => {
   const onChangeShopStatusSubmit = async (
     status: number,
     isReceivingOrderPaused: boolean,
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     onChangeShopStatusRequest(
       {
@@ -222,7 +222,7 @@ const Shop = () => {
         isReceivingOrderPaused,
         isConfirm: false,
       },
-      onSuccess
+      onSuccess,
     );
   };
   return (
@@ -249,7 +249,7 @@ const Shop = () => {
             <Text className="text-[11px] italic text-gray text-primary font-medium text-[12px]">
               {getShopStatusDescription(
                 cache.status ? cache.status : 0,
-                cache.isReceivingOrderPaused || false
+                cache.isReceivingOrderPaused || false,
               )}
             </Text>
           </View>
@@ -283,7 +283,7 @@ const Shop = () => {
                             {
                               type: "success",
                               duration: 2000,
-                            }
+                            },
                           );
                         });
                       },
@@ -291,7 +291,7 @@ const Shop = () => {
                     {
                       text: "Hủy",
                     },
-                  ]
+                  ],
                 );
               } else {
                 Alert.alert(
@@ -320,7 +320,7 @@ const Shop = () => {
                             {
                               type: "info",
                               duration: 2000,
-                            }
+                            },
                           );
                         });
                       },
@@ -328,7 +328,7 @@ const Shop = () => {
                     {
                       text: "Hủy",
                     },
-                  ].reverse()
+                  ].reverse(),
                 );
               }
             }}

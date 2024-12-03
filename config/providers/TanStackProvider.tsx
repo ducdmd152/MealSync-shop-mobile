@@ -16,7 +16,7 @@ const TanStackProvider = ({ children }: { children: React.ReactNode }) => {
             refetchOnMount: false,
           },
         },
-      })
+      }),
   );
   return (
     <QueryClientProvider client={queryClient}>

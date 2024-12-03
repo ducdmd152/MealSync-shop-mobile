@@ -37,5 +37,5 @@ export const endpoints = {
 
 export const testApiService = createHttpService<TestModel>(
   apiClient,
-  endpoints.TEST
+  endpoints.TEST,
 );

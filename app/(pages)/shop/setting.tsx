@@ -90,7 +90,7 @@ const Setting = () => {
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
         .then((response) => response.data),
-    []
+    [],
   );
   const [cache, setCache] = useState<ShopProfileGetModel>({
     status: 2,
@@ -103,7 +103,7 @@ const Setting = () => {
   useFocusEffect(
     React.useCallback(() => {
       shopProfile.refetch();
-    }, [])
+    }, []),
   );
   useEffect(() => {
     if (!shopProfile.isFetching && shopProfile.isSuccess)
@@ -116,13 +116,13 @@ const Setting = () => {
       isReceivingOrderPaused: boolean;
       isConfirm: boolean;
     },
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     try {
       setIsSubmitting(true);
       const response = await apiClient.put(
         `shop-owner/shop-owner/active-inactive`,
-        request
+        request,
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -137,7 +137,7 @@ const Setting = () => {
             onPress: async () => {
               onChangeShopStatusRequest(
                 { ...request, isConfirm: true },
-                onSuccess
+                onSuccess,
               );
             },
           },
@@ -150,7 +150,7 @@ const Setting = () => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);
@@ -159,7 +159,7 @@ const Setting = () => {
   const onChangeShopStatusSubmit = async (
     status: number,
     isReceivingOrderPaused: boolean,
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     onChangeShopStatusRequest(
       {
@@ -167,7 +167,7 @@ const Setting = () => {
         isReceivingOrderPaused,
         isConfirm: false,
       },
-      onSuccess
+      onSuccess,
     );
   };
   const onChangeIsAcceptingOrderNextDayRequest = async (
@@ -175,13 +175,13 @@ const Setting = () => {
       isAcceptingOrderNextDay: boolean;
       isConfirm: boolean;
     },
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     try {
       setIsSubmitting(true);
       const response = await apiClient.put(
         `shop-owner/is-accept-order-next-day`,
-        request
+        request,
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -196,7 +196,7 @@ const Setting = () => {
             onPress: async () => {
               onChangeIsAcceptingOrderNextDayRequest(
                 { ...request, isConfirm: true },
-                onSuccess
+                onSuccess,
               );
             },
           },
@@ -209,7 +209,7 @@ const Setting = () => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);
@@ -217,14 +217,14 @@ const Setting = () => {
   };
   const onChangeIsAcceptingOrderNextDaySubmit = async (
     isAcceptingOrderNextDay: boolean,
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     onChangeIsAcceptingOrderNextDayRequest(
       {
         isAcceptingOrderNextDay,
         isConfirm: false,
       },
-      onSuccess
+      onSuccess,
     );
   };
   const onChangeIsAutoOrderConfirmationRequest = async (
@@ -235,7 +235,7 @@ const Setting = () => {
       isConfirm: boolean;
     },
     onSuccess: () => void,
-    statusOnly: boolean = false
+    statusOnly: boolean = false,
   ) => {
     request = {
       ...request,
@@ -260,7 +260,7 @@ const Setting = () => {
             onPress: async () => {
               onChangeIsAutoOrderConfirmationRequest(
                 { ...request, isConfirm: true },
-                onSuccess
+                onSuccess,
               );
             },
           },
@@ -273,7 +273,7 @@ const Setting = () => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);
@@ -284,7 +284,7 @@ const Setting = () => {
     maxOrderHoursInAdvance: number,
     minOrderHoursInAdvance: number,
     onSuccess: () => void,
-    isStatusOnly: boolean = false
+    isStatusOnly: boolean = false,
   ) => {
     onChangeIsAutoOrderConfirmationRequest(
       {
@@ -294,7 +294,7 @@ const Setting = () => {
         isConfirm: false,
       },
       onSuccess,
-      isStatusOnly
+      isStatusOnly,
     );
   };
   const onOperatingSlotRequest = async (
@@ -302,7 +302,7 @@ const Setting = () => {
       operatingSlot: OperatingSlotModel;
       isConfirm: boolean;
     },
-    onSuccess: () => void = () => {}
+    onSuccess: () => void = () => {},
   ) => {
     request.operatingSlot = {
       ...request.operatingSlot,
@@ -314,11 +314,11 @@ const Setting = () => {
         request.operatingSlot.id == 0
           ? await apiClient.post(
               `shop-owner/operating-slot`,
-              request.operatingSlot
+              request.operatingSlot,
             )
           : await apiClient.put(
               `shop-owner/operating-slot/${request.operatingSlot.id}`,
-              { ...request.operatingSlot, isConfirm: request.isConfirm }
+              { ...request.operatingSlot, isConfirm: request.isConfirm },
             );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -327,7 +327,7 @@ const Setting = () => {
         shopProfile.refetch();
         console.log(
           "shopProfile.data?.value.operatingSlots: ",
-          shopProfile.data?.value.operatingSlots
+          shopProfile.data?.value.operatingSlots,
         );
         onSuccess();
       } else if (isWarning) {
@@ -349,7 +349,7 @@ const Setting = () => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);
@@ -357,7 +357,7 @@ const Setting = () => {
   };
   const onOpeartingSlotSubmit = async (
     operatingSlot: OperatingSlotModel,
-    onSuccess: () => void = () => {}
+    onSuccess: () => void = () => {},
   ) => {
     if (operatingSlot.title.trim().length == 0) {
       Alert.alert("Oops!", "Vui lòng nhập mô tả!");
@@ -368,7 +368,7 @@ const Setting = () => {
         operatingSlot,
         isConfirm: false,
       },
-      onSuccess
+      onSuccess,
     );
   };
 
@@ -389,7 +389,7 @@ const Setting = () => {
             id: request.operatingSlot.id,
             isConfirm: request.isConfirm,
           },
-        }
+        },
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -398,7 +398,7 @@ const Setting = () => {
         shopProfile.refetch();
         Alert.alert(
           "Hoàn tất",
-          `Đã xóa khoảng hoạt động ${request.operatingSlot.title} : ${request.operatingSlot.timeSlot}`
+          `Đã xóa khoảng hoạt động ${request.operatingSlot.title} : ${request.operatingSlot.timeSlot}`,
         );
       } else if (isWarning) {
         if (request.isConfirm) return;
@@ -419,7 +419,7 @@ const Setting = () => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);
@@ -442,13 +442,13 @@ const Setting = () => {
         {
           text: "Hủy",
         },
-      ]
+      ],
     );
   };
 
   const getShopStatusDescription = (
     status: number,
-    isReceivingOrderPaused: boolean
+    isReceivingOrderPaused: boolean,
   ) => {
     if (status === 0) return "";
     if (status == 1) return "Chưa được phê duyệt";
@@ -532,7 +532,7 @@ const Setting = () => {
                         utilService.formatTime(operatingSlot.startTime) +
                         " - " +
                         utilService.formatTime(operatingSlot.endTime)
-                      }`
+                      }`,
                     )
                   : Alert.alert(
                       "Hoàn tất",
@@ -540,7 +540,7 @@ const Setting = () => {
                         utilService.formatTime(operatingSlot.startTime) +
                         " - " +
                         utilService.formatTime(operatingSlot.endTime)
-                      }`
+                      }`,
                     );
               });
             }}
@@ -577,16 +577,16 @@ const Setting = () => {
                     slot.isActive && !slot.isReceivingOrderPaused
                       ? "#99f6e4"
                       : !slot.isActive
-                      ? "#e5e7eb"
-                      : "#fef08a",
+                        ? "#e5e7eb"
+                        : "#fef08a",
                 }}
               >
                 <Text className={`text-[12px] font-medium flex-1`}>
                   {slot.isActive && !slot.isReceivingOrderPaused
                     ? "Đang hoạt động"
                     : !slot.isActive
-                    ? "Đã tắt hoạt động"
-                    : "Tạm ngưng nhận đơn hôm nay"}
+                      ? "Đã tắt hoạt động"
+                      : "Tạm ngưng nhận đơn hôm nay"}
                 </Text>
                 <View className="scale-75 h-5 items-center justify-center">
                   <Switch
@@ -638,16 +638,16 @@ const Setting = () => {
                                       {
                                         type: "success",
                                         duration: 2000,
-                                      }
+                                      },
                                     );
-                                  }
+                                  },
                                 );
                               },
                             },
                             {
                               text: "Hủy",
                             },
-                          ]
+                          ],
                         );
                       } else {
                         Alert.alert(
@@ -674,9 +674,9 @@ const Setting = () => {
                                       {
                                         type: "success",
                                         duration: 2000,
-                                      }
+                                      },
                                     );
-                                  }
+                                  },
                                 );
                               },
                             },
@@ -698,16 +698,16 @@ const Setting = () => {
                                       {
                                         type: "success",
                                         duration: 2000,
-                                      }
+                                      },
                                     );
-                                  }
+                                  },
                                 );
                               },
                             },
                             {
                               text: "Hủy",
                             },
-                          ].reverse()
+                          ].reverse(),
                         );
                       }
                     }}
@@ -786,7 +786,7 @@ const Setting = () => {
                 <Text className="text-[11px] italic text-gray text-primary font-medium ">
                   {getShopStatusDescription(
                     cache.status ? cache.status : 0,
-                    cache.isReceivingOrderPaused || false
+                    cache.isReceivingOrderPaused || false,
                   )}
                 </Text>
               </View>
@@ -822,7 +822,7 @@ const Setting = () => {
                                 {
                                   type: "success",
                                   duration: 2000,
-                                }
+                                },
                               );
                             });
                           },
@@ -830,7 +830,7 @@ const Setting = () => {
                         {
                           text: "Hủy",
                         },
-                      ]
+                      ],
                     );
                   } else {
                     Alert.alert(
@@ -847,7 +847,7 @@ const Setting = () => {
                                 {
                                   type: "info",
                                   duration: 2000,
-                                }
+                                },
                               );
                             });
                           },
@@ -862,7 +862,7 @@ const Setting = () => {
                                 {
                                   type: "info",
                                   duration: 2000,
-                                }
+                                },
                               );
                             });
                           },
@@ -870,7 +870,7 @@ const Setting = () => {
                         {
                           text: "Hủy",
                         },
-                      ].reverse()
+                      ].reverse(),
                     );
                   }
                 }}
@@ -903,7 +903,7 @@ const Setting = () => {
 
                 <Text className={`font-semibold text-[15px] text-gray-600`}>
                   {formatTimeRanges(
-                    (cache.operatingSlots || []).map((slot) => slot.timeSlot)
+                    (cache.operatingSlots || []).map((slot) => slot.timeSlot),
                   )}
                 </Text>
               </View>
@@ -953,7 +953,7 @@ const Setting = () => {
                                 {
                                   type: value ? "success" : "info",
                                   duration: 1500,
-                                }
+                                },
                               );
                             });
                           },
@@ -961,7 +961,7 @@ const Setting = () => {
                         {
                           text: "Hủy",
                         },
-                      ]
+                      ],
                     );
                   }}
                   disabled={
@@ -993,7 +993,7 @@ const Setting = () => {
                   header={<Text></Text>}
                   endTime={Math.round(autoConfirmMinMax.maxOrderHoursInAdvance)}
                   startTime={Math.round(
-                    autoConfirmMinMax.minOrderHoursInAdvance
+                    autoConfirmMinMax.minOrderHoursInAdvance,
                   )}
                   setEndTime={(time) => {
                     setAutoConfirmMinMax({
@@ -1043,9 +1043,9 @@ const Setting = () => {
                         {
                           type: "success",
                           duration: 2000,
-                        }
+                        },
                       );
-                    }
+                    },
                   );
                 }}
                 isLoading={isSubmitting}
@@ -1111,17 +1111,17 @@ const Setting = () => {
                                   {
                                     type: "info",
                                     duration: 1500,
-                                  }
+                                  },
                                 );
                               },
-                              true
+                              true,
                             );
                           },
                         },
                         {
                           text: "Hủy",
                         },
-                      ]
+                      ],
                     );
                   }}
                   disabled={

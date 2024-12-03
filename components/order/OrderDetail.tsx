@@ -97,7 +97,7 @@ const OrderDetail = ({
     setIsLoading(true);
     try {
       const response = await apiClient.get<ValueResponse<OrderDetailModel>>(
-        `shop-owner/order/${orderId}`
+        `shop-owner/order/${orderId}`,
       );
       setOrder({ ...response.data.value });
       // console.log("{ ...response.data.value }: ", { ...response.data.value })
@@ -116,7 +116,7 @@ const OrderDetail = ({
     const inTime = utilService.getInFrameTime(
       order.startTime,
       order.endTime,
-      order.intendedReceiveDate
+      order.intendedReceiveDate,
     );
     if (inTime > 0) {
       getOrderDetail();
@@ -126,7 +126,7 @@ const OrderDetail = ({
 
     const cancelRequest = (
       reason: string,
-      setIsSubmitting: (value: boolean) => void
+      setIsSubmitting: (value: boolean) => void,
     ) => {
       if (reason.trim().length == 0) {
         Alert.alert("Oops", "Vui lòng điền lí do!");
@@ -187,26 +187,26 @@ const OrderDetail = ({
                       Alert.alert(
                         "Oops!",
                         error?.response?.data?.error?.message ||
-                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                       );
                       setIsSubmitting(false);
                     },
-                    true
+                    true,
                   );
                 },
               },
-            ]
+            ],
           );
         },
         (error: any) => {
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
           );
           setIsSubmitting(false);
         },
-        false
+        false,
       );
     };
     setRequest(() => cancelRequest);
@@ -234,7 +234,7 @@ const OrderDetail = ({
     const inTime = utilService.getInFrameTime(
       order.startTime,
       order.endTime,
-      order.intendedReceiveDate
+      order.intendedReceiveDate,
     );
     if (inTime > 0) {
       getOrderDetail();
@@ -244,7 +244,7 @@ const OrderDetail = ({
 
     const rejectRequest = (
       reason: string,
-      setIsSubmitting: (value: boolean) => void
+      setIsSubmitting: (value: boolean) => void,
     ) => {
       if (reason.trim().length == 0) {
         Alert.alert("Oops", "Vui lòng điền lí do!");
@@ -280,10 +280,10 @@ const OrderDetail = ({
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
           );
           setIsSubmitting(false);
-        }
+        },
       );
     };
     setRequest(() => rejectRequest);
@@ -366,18 +366,18 @@ const OrderDetail = ({
                             text: "Gọi " + order.customer?.phoneNumber,
                             onPress: () =>
                               Linking.openURL(
-                                `tel:${order.customer?.phoneNumber}`
+                                `tel:${order.customer?.phoneNumber}`,
                               ),
                           },
                           {
                             text: "Sao chép",
                             onPress: () =>
                               Clipboard.setString(
-                                order.customer?.phoneNumber || ""
+                                order.customer?.phoneNumber || "",
                               ),
                           },
                           { text: "Hủy" },
-                        ].reverse()
+                        ].reverse(),
                       );
                     }}
                   >
@@ -547,7 +547,7 @@ const OrderDetail = ({
                 utilService.getInFrameTime(
                   order.startTime,
                   order.endTime,
-                  order.intendedReceiveDate
+                  order.intendedReceiveDate,
                 ) <= 0 && (
                   <View className="flex-row items-center gap-x-1">
                     <TouchableOpacity
@@ -556,13 +556,13 @@ const OrderDetail = ({
                         const inTime = utilService.getInFrameTime(
                           order.startTime,
                           order.endTime,
-                          order.intendedReceiveDate
+                          order.intendedReceiveDate,
                         );
                         if (inTime > 0) {
                           getOrderDetail();
                           Alert.alert(
                             "Oops!",
-                            "Đã quá thời gian để thực hiện thao tác này!"
+                            "Đã quá thời gian để thực hiện thao tác này!",
                           );
                           return false;
                         }
@@ -603,16 +603,16 @@ const OrderDetail = ({
                                     Alert.alert(
                                       "Oops!",
                                       error?.response?.data?.error?.message ||
-                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                                     );
-                                  }
+                                  },
                                 );
                               },
                             },
                             {
                               text: "Hủy",
                             },
-                          ]
+                          ],
                         );
                       }}
                     >
@@ -632,7 +632,7 @@ const OrderDetail = ({
                 utilService.getInFrameTime(
                   order.startTime,
                   order.endTime,
-                  order.intendedReceiveDate
+                  order.intendedReceiveDate,
                 ) <= 0 && (
                   <View className="flex-row items-center gap-x-1">
                     <TouchableOpacity
@@ -641,13 +641,13 @@ const OrderDetail = ({
                         const inTime = utilService.getInFrameTime(
                           order.startTime,
                           order.endTime,
-                          order.intendedReceiveDate
+                          order.intendedReceiveDate,
                         );
                         if (inTime > 0) {
                           getOrderDetail();
                           Alert.alert(
                             "Oops!",
-                            "Đã quá thời gian để thực hiện thao tác này!"
+                            "Đã quá thời gian để thực hiện thao tác này!",
                           );
                           return false;
                         }
@@ -717,41 +717,41 @@ const OrderDetail = ({
                                                 getOrderDetail();
                                               },
                                               (
-                                                warningInfo: WarningMessageValue
+                                                warningInfo: WarningMessageValue,
                                               ) => {},
                                               (error: any) => {
                                                 Alert.alert(
                                                   "Oops!",
                                                   error?.response?.data?.error
                                                     ?.message ||
-                                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                                                 );
                                               },
-                                              true
+                                              true,
                                             );
                                           },
                                         },
                                         {
                                           text: "Hủy",
                                         },
-                                      ]
+                                      ],
                                     );
                                   },
                                   (error: any) => {
                                     Alert.alert(
                                       "Oops!",
                                       error?.response?.data?.error?.message ||
-                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                                     );
                                   },
-                                  false
+                                  false,
                                 );
                               },
                             },
                             {
                               text: "Hủy",
                             },
-                          ]
+                          ],
                         );
                       }}
                     >
@@ -771,7 +771,7 @@ const OrderDetail = ({
                 utilService.getInFrameTime(
                   order.startTime,
                   order.endTime,
-                  order.intendedReceiveDate
+                  order.intendedReceiveDate,
                 ) <= 0 && (
                   <View className="flex-row items-center gap-x-1">
                     <TouchableOpacity
@@ -779,13 +779,13 @@ const OrderDetail = ({
                         const inTime = utilService.getInFrameTime(
                           order.startTime,
                           order.endTime,
-                          order.intendedReceiveDate
+                          order.intendedReceiveDate,
                         );
                         if (inTime > 0) {
                           getOrderDetail();
                           Alert.alert(
                             "Oops!",
-                            "Đã quá thời gian để thực hiện thao tác này!"
+                            "Đã quá thời gian để thực hiện thao tác này!",
                           );
                           return false;
                         }

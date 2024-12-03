@@ -72,7 +72,7 @@ const DeliveryPackageGroupCreate = () => {
     {
       isConfirm: false,
       deliveryPackages: [],
-    }
+    },
   );
   const [currentDeliveryPersonId, setCurrentDeliveryPersonId] = useState(0);
   const [isAnyUnCreatedFrame, setIsAnyUnCreatedFrame] = useState(true);
@@ -91,7 +91,7 @@ const DeliveryPackageGroupCreate = () => {
           },
         })
         .then((response) => response.data),
-    [query]
+    [query],
   );
   const onRefresh = () => {
     orderFetchResult?.refetch();
@@ -102,7 +102,7 @@ const DeliveryPackageGroupCreate = () => {
     const allOrders = orderFetchResult?.data?.value.items || [];
     const requestData = gpkgCreateRequest;
     const assignedOrderIds = new Set(
-      requestData.deliveryPackages.flatMap((pkg) => pkg.orderIds)
+      requestData.deliveryPackages.flatMap((pkg) => pkg.orderIds),
     );
 
     return allOrders.filter((order) => !assignedOrderIds.has(order.id));
@@ -114,7 +114,7 @@ const DeliveryPackageGroupCreate = () => {
     const assignedOrderIds = new Set(
       requestData.deliveryPackages
         .filter((pkg) => pkg.shopDeliveryStaffId === shopDeliveryStaffId)
-        .flatMap((pkg) => pkg.orderIds)
+        .flatMap((pkg) => pkg.orderIds),
     );
 
     return allOrders.filter((order) => assignedOrderIds.has(order.id));
@@ -123,7 +123,7 @@ const DeliveryPackageGroupCreate = () => {
     setGPKGCreateRequest((prevRequest) => {
       const deliveryPackages = [...prevRequest.deliveryPackages];
       const deliveryPackage = deliveryPackages.find(
-        (pkg) => pkg.shopDeliveryStaffId === personId
+        (pkg) => pkg.shopDeliveryStaffId === personId,
       );
 
       if (deliveryPackage) {
@@ -170,13 +170,13 @@ const DeliveryPackageGroupCreate = () => {
       setPersonsList(
         sortPersonsList(
           deliveryPersonFetchResult.data?.value || [],
-          getAssignedOrdersOf
-        )
+          getAssignedOrdersOf,
+        ),
       );
   }, [deliveryPersonFetchResult.data?.value]);
   const getCurrentPerson = () => {
     return deliveryPersonFetchResult.data?.value.find(
-      (person) => person.staffInfor.id == currentDeliveryPersonId
+      (person) => person.staffInfor.id == currentDeliveryPersonId,
     );
   };
 
@@ -185,7 +185,7 @@ const DeliveryPackageGroupCreate = () => {
       setIsSubmitting(true);
       const response = await apiClient.post(
         `shop-owner/delivery-package`,
-        requestData
+        requestData,
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -196,7 +196,7 @@ const DeliveryPackageGroupCreate = () => {
             utilService.formatTime(query.startTime) +
             " - " +
             utilService.formatTime(query.endTime)
-          } ngày ${utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}`
+          } ngày ${utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}`,
         );
         router.back();
       } else if (isWarning) {
@@ -218,7 +218,7 @@ const DeliveryPackageGroupCreate = () => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);
@@ -228,7 +228,7 @@ const DeliveryPackageGroupCreate = () => {
     if (gpkgCreateRequest.deliveryPackages.length == 0) {
       Alert.alert(
         "Oops!",
-        "Bạn cần phân công ít nhất một đơn hàng để hoàn tất!"
+        "Bạn cần phân công ít nhất một đơn hàng để hoàn tất!",
       );
       return;
     }
@@ -245,7 +245,7 @@ const DeliveryPackageGroupCreate = () => {
   };
   const sortPersonsList = (
     personsList: FrameStaffInfoModel[],
-    getAssignedOrdersOf: (personId: number) => { length: number }
+    getAssignedOrdersOf: (personId: number) => { length: number },
   ): FrameStaffInfoModel[] => {
     return personsList.sort((a, b) => {
       // 1. person.staffInfor.id == 0 sẽ đứng đầu
@@ -318,7 +318,7 @@ const DeliveryPackageGroupCreate = () => {
                 globalCompleteDeliveryConfirm.setStep(0);
                 globalCompleteDeliveryConfirm.setId(order.id);
                 globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
-                  onRefresh()
+                  onRefresh(),
                 );
                 globalCompleteDeliveryConfirm.setIsModalVisible(true);
                 globalCompleteDeliveryConfirm.setModel(order);
@@ -404,7 +404,7 @@ const DeliveryPackageGroupCreate = () => {
                 globalCompleteDeliveryConfirm.setStep(0);
                 globalCompleteDeliveryConfirm.setId(order.id);
                 globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
-                  onRefresh()
+                  onRefresh(),
                 );
                 globalCompleteDeliveryConfirm.setIsModalVisible(true);
                 globalCompleteDeliveryConfirm.setModel(order);
@@ -558,13 +558,13 @@ const DeliveryPackageGroupCreate = () => {
                 const assignedOrderIds = new Set(
                   requestData.deliveryPackages
                     .filter((pkg) => pkg.shopDeliveryStaffId === personId)
-                    .flatMap((pkg) => pkg.orderIds)
+                    .flatMap((pkg) => pkg.orderIds),
                 );
 
                 return allOrders.filter((order) =>
-                  assignedOrderIds.has(order.id)
+                  assignedOrderIds.has(order.id),
                 );
-              })
+              }),
             );
             deliveryPersonFetchResult.refetch();
             setIsOpenSuggestAssign(false);
@@ -573,7 +573,7 @@ const DeliveryPackageGroupCreate = () => {
             Alert.alert(
               "Oops!",
               error?.response?.data?.error?.message ||
-                "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                "Yêu cầu bị từ chối, vui lòng thử lại sau!",
             );
           }}
           {...query}

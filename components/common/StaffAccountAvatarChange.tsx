@@ -44,7 +44,7 @@ const StaffAccountAvatarChange: React.FC<AvatarChangeProps> = () => {
     [endpoints.STAFF_INFO],
     async (): Promise<FetchValueResponse<ShopDeliveryStaffModel>> =>
       apiClient.get(endpoints.STAFF_INFO).then((response) => response.data),
-    []
+    [],
   );
   const [user, setUser] = useState({
     avatarUrl:
@@ -74,7 +74,7 @@ const StaffAccountAvatarChange: React.FC<AvatarChangeProps> = () => {
   useFocusEffect(
     React.useCallback(() => {
       if (staffAccount.isFetched) staffAccount.refetch();
-    }, [])
+    }, []),
   );
 
   const pickImage = async (isPickByCam: boolean = false) => {
@@ -84,7 +84,7 @@ const StaffAccountAvatarChange: React.FC<AvatarChangeProps> = () => {
       if (libraryStatus !== "granted") {
         Alert.alert(
           "Oops",
-          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!"
+          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!",
         );
         return;
       }
@@ -138,13 +138,13 @@ const StaffAccountAvatarChange: React.FC<AvatarChangeProps> = () => {
       if (blob.size > CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_BYTE) {
         Alert.alert(
           "Oops",
-          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`
+          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`,
         );
         return;
       }
       setAvatar(imageURI);
       const fileName = `shop-owner-avatar.${getExtensionFromMimeType(
-        blob.type
+        blob.type,
       )}`;
       const formData = new FormData();
       formData.append("file", {
@@ -182,7 +182,7 @@ const StaffAccountAvatarChange: React.FC<AvatarChangeProps> = () => {
         "Oops!",
         error?.response?.data?.error?.message ||
           error?.response?.data?.value?.File[0] ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       staffAccount.refetch();

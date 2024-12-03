@@ -71,20 +71,20 @@ const OrderDeliveryAutoSuggestAssign = ({
           },
         })
         .then((response) => response.data),
-    []
+    [],
   );
 
   useFocusEffect(
     React.useCallback(() => {
       personsFetcher.refetch();
-    }, [])
+    }, []),
   );
 
   const onAutoAssign = async () => {
     if (personIds.length === 0) {
       Alert.alert(
         "Vui lòng lựa chọn",
-        "Bạn cần chọn ít nhất một người đảm nhận giao đơn"
+        "Bạn cần chọn ít nhất một người đảm nhận giao đơn",
       );
       return;
     }
@@ -103,7 +103,7 @@ const OrderDeliveryAutoSuggestAssign = ({
             endTime,
             intendedReceiveDate,
           },
-        }
+        },
       );
       onSuccess(response.data.value);
     } catch (error: any) {
@@ -133,20 +133,20 @@ const OrderDeliveryAutoSuggestAssign = ({
                 if (
                   personIds.length <
                   (personsFetcher.data?.value || []).map(
-                    (item) => item.staffInfor.id
+                    (item) => item.staffInfor.id,
                   ).length
                 )
                   setPersonIds(
                     (personsFetcher.data?.value || []).map(
-                      (item) => item.staffInfor.id
-                    )
+                      (item) => item.staffInfor.id,
+                    ),
                   );
                 else setPersonIds([]);
               }}
             >
               {personIds.length ==
               (personsFetcher.data?.value || []).map(
-                (item) => item.staffInfor.id
+                (item) => item.staffInfor.id,
               ).length ? (
                 <View className="mr-2">
                   <Ionicons name="checkmark-circle" size={19} color="green" />
@@ -171,7 +171,7 @@ const OrderDeliveryAutoSuggestAssign = ({
                       setPersonIds([...personIds, person.staffInfor.id]);
                     else
                       setPersonIds(
-                        personIds.filter((id) => id != person.staffInfor.id)
+                        personIds.filter((id) => id != person.staffInfor.id),
                       );
                   }}
                 >
@@ -191,7 +191,7 @@ const OrderDeliveryAutoSuggestAssign = ({
                     {person.staffInfor.id == 0
                       ? "Bạn"
                       : utilService.shortenName(
-                          person.staffInfor.fullName
+                          person.staffInfor.fullName,
                         )}{" "}
                     <Text className="text-gray-700 text-[11px]">
                       ({person.waiting + person.delivering} đơn chưa giao/hoàn

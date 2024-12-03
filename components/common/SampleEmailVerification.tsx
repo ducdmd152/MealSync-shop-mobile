@@ -45,7 +45,7 @@ const SampleEmailVerification = ({
   useFocusEffect(
     React.useCallback(() => {
       resetTimeCounter();
-    }, [])
+    }, []),
   );
 
   return (

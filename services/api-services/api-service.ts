@@ -69,7 +69,7 @@ export class APIService<T extends APIEntityModel> {
 
 const createAPIService = <T extends APIEntityModel>(
   apiClient: AxiosInstance,
-  endpoint: string
+  endpoint: string,
 ) => new APIService<T>(apiClient, endpoint);
 
 export default createAPIService;

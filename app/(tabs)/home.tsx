@@ -45,7 +45,7 @@ export default function HomeScreen() {
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
         .then((response) => response.data),
-    []
+    [],
   );
   const statistics = useFetchWithRQWithFetchFunc(
     [endpoints.HOME_STATISTICS].concat(["home"]),
@@ -53,13 +53,13 @@ export default function HomeScreen() {
       apiClient
         .get(endpoints.HOME_STATISTICS)
         .then((response) => response.data),
-    []
+    [],
   );
   useFocusEffect(
     React.useCallback(() => {
       shopProfile.refetch();
       statistics.refetch();
-    }, [])
+    }, []),
   );
   return (
     <View className="w-full h-full flex-1 items-center justify-start bg-white p-2">
@@ -93,7 +93,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[1].statuses
+                  filterStatuses[1].statuses,
                 );
                 router.push("/order");
               }}
@@ -109,7 +109,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[2].statuses
+                  filterStatuses[2].statuses,
                 );
                 router.push("/order");
               }}
@@ -126,7 +126,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[3].statuses
+                  filterStatuses[3].statuses,
                 );
                 router.push("/order");
               }}
@@ -145,7 +145,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[4].statuses
+                  filterStatuses[4].statuses,
                 );
                 router.push("/order");
               }}
@@ -162,7 +162,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[5].statuses
+                  filterStatuses[5].statuses,
                 );
                 router.push("/order");
               }}
@@ -179,7 +179,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[6].statuses
+                  filterStatuses[6].statuses,
                 );
                 router.push("/order");
               }}
@@ -211,7 +211,7 @@ export default function HomeScreen() {
             <Text className="text-center text-lg font-bold">
               {statistics.data?.value.orderStatisticInMonth.revenue != undefined
                 ? utilService.formatPrice(
-                    statistics.data?.value.orderStatisticInMonth.revenue
+                    statistics.data?.value.orderStatisticInMonth.revenue,
                   ) + " đ"
                 : "--------"}{" "}
             </Text>

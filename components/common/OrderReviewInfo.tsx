@@ -22,7 +22,7 @@ const formatCreatedDate = (createdDate: string): string => {
   const now = dayjs();
   const daysDiff = dayjs(now.local().format("YYYY-MM-DD")).diff(
     dayjs(date.local().format("YYYY-MM-DD")).local(),
-    "day"
+    "day",
   );
   if (daysDiff < 1) {
     return date.local().format("HH:mm") + " hôm nay";
@@ -63,7 +63,7 @@ const OrderReviewInfo = ({
       apiClient
         .get(`shop-onwer/review/order/${order.id}`)
         .then((response) => response.data),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const OrderReviewInfo = ({
   useFocusEffect(
     React.useCallback(() => {
       reviewFetcher.refetch();
-    }, [order])
+    }, [order]),
   );
 
   // console.log("fetch.data?.value: ", fetch.data?.value);

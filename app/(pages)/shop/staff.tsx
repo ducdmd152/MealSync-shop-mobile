@@ -49,7 +49,7 @@ const StaffManagement = () => {
           },
         })
         .then((response) => response.data),
-    [query]
+    [query],
   );
   query;
   //   console.log(staffsFetch.data?.value.items);
@@ -57,12 +57,12 @@ const StaffManagement = () => {
     React.useCallback(() => {
       staffsFetch.refetch();
       globalStaffState.setOnAfterCompleted(() => staffsFetch.refetch());
-    }, [])
+    }, []),
   );
 
   const onChangeStaffStatusSubmit = async (
     staff: ShopDeliveryStaffModel,
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     setIsSubmitting(true);
     await apiClient
@@ -81,7 +81,7 @@ const StaffManagement = () => {
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
         );
       })
       .finally(() => {
@@ -129,9 +129,9 @@ const StaffManagement = () => {
                       {
                         type: "success",
                         duration: 2000,
-                      }
+                      },
                     );
-                  }
+                  },
                 );
               },
             },
@@ -146,14 +146,14 @@ const StaffManagement = () => {
                       type: "info",
                       duration: 2000,
                     });
-                  }
+                  },
                 );
               },
             },
             {
               text: "Hủy",
             },
-          ]
+          ],
         );
       };
     } else {
@@ -176,16 +176,16 @@ const StaffManagement = () => {
                       {
                         type: "success",
                         duration: 2000,
-                      }
+                      },
                     );
-                  }
+                  },
                 );
               },
             },
             {
               text: "Hủy",
             },
-          ]
+          ],
         );
       };
     }
@@ -215,7 +215,7 @@ const StaffManagement = () => {
         title="Thêm mới"
         handlePress={() => {
           globalStaffState.setIsDetailsOrUpdateOrCreateMode(
-            StaffModalAction.Create
+            StaffModalAction.Create,
           );
           globalStaffState.setIsDetailsModalVisible(true);
         }}
@@ -288,7 +288,7 @@ const StaffManagement = () => {
             <TouchableOpacity
               onPress={() => {
                 globalStaffState.setIsDetailsOrUpdateOrCreateMode(
-                  StaffModalAction.Details
+                  StaffModalAction.Details,
                 );
                 globalStaffState.setModel(staff);
                 globalStaffState.setIsDetailsModalVisible(true);

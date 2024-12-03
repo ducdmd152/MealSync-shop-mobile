@@ -15,7 +15,7 @@ const formatRecentDate = (createdDate: string): string => {
   const now = dayjs();
   const daysDiff = dayjs(now.local().format("YYYY-MM-DD")).diff(
     dayjs(date.local().format("YYYY-MM-DD")).local(),
-    "day"
+    "day",
   );
   if (daysDiff < 1) {
     return date.local().format("HH:mm");
@@ -31,7 +31,7 @@ const Chats = () => {
   const globalSocketState = useGlobalSocketState();
   const { socket, setSocket } = globalSocketState;
   const [orderChannelList, setOrderChannelList] = useState<SocketChannelInfo[]>(
-    []
+    [],
   );
   const globalAuthState = useGlobalAuthState();
   const authId = globalAuthState.authDTO?.id || 0;
@@ -43,10 +43,10 @@ const Chats = () => {
         .get(
           `order/chat-info?${orderChannelList
             .map((channel) => `ids=${channel.id}`)
-            .join("&")}`
+            .join("&")}`,
         )
         .then((response) => response.data),
-    [orderChannelList]
+    [orderChannelList],
   );
   // useEffect(() => {
   //   console.log(
@@ -61,7 +61,7 @@ const Chats = () => {
       orderChannelInfosFetcher.data?.value.find((info) => info.id == orderId)
     ) {
       return orderChannelInfosFetcher.data?.value.find(
-        (info) => info.id == orderId
+        (info) => info.id == orderId,
       );
     }
     return {
@@ -80,7 +80,7 @@ const Chats = () => {
             return (
               dayjs(b.updated_at).valueOf() - dayjs(a.updated_at).valueOf()
             );
-          })
+          }),
         );
       });
     }
@@ -95,7 +95,7 @@ const Chats = () => {
       // return () => {
       //   dispatch(globalSlice.actions.setCurrentScreen(""));
       // };
-    }, [])
+    }, []),
   );
 
   return (

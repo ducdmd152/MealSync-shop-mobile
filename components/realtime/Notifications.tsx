@@ -44,7 +44,7 @@ const Notifications = () => {
           },
         })
         .then((response) => response.data),
-    [infiniteSize]
+    [infiniteSize],
   );
   const markAsReadAll = async () => {
     try {
@@ -81,7 +81,7 @@ const Notifications = () => {
         notiFetcher.data.value.items.map((item) => {
           const already = notifications.find((noti) => noti.id == item.id);
           return already || item;
-        })
+        }),
       );
   }, [notiFetcher.data?.value.items]);
   useFocusEffect(
@@ -89,11 +89,11 @@ const Notifications = () => {
       globalHeaderPage.setIsNotiPageFocusing(true);
       return () => {
         setNotifications(
-          notifications.map((item) => ({ ...item, isRead: true }))
+          notifications.map((item) => ({ ...item, isRead: true })),
         );
         globalHeaderPage.setIsNotiPageFocusing(false);
       };
-    }, [])
+    }, []),
   );
   const renderItem = ({ item, index }: { item: NotiModel; index: number }) => (
     <TouchableOpacity

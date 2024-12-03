@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 const useFetchWithRQWithFetchFunc = <Response,>(
   keyBase: any[],
   fetchFunc: () => Promise<Response>,
-  deps?: any[]
+  deps?: any[],
 ) => {
   const isFirstRender = useRef(true);
 
@@ -23,7 +23,7 @@ const useFetchWithRQWithFetchFunc = <Response,>(
         query.refetch();
       }
     },
-    deps ? [...deps] : []
+    deps ? [...deps] : [],
   );
 
   return query;

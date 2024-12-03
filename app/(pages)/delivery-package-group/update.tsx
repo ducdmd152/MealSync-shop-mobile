@@ -64,7 +64,7 @@ const DeliveryPackageGroupUpdate = () => {
   const [isOpenSuggestAssign, setIsOpenSuggestAssign] = useState(false);
   const [gPKGDetails, setGPKGDetails] =
     useState<DeliveryPackageGroupDetailsModel>(
-      {} as DeliveryPackageGroupDetailsModel
+      {} as DeliveryPackageGroupDetailsModel,
     );
 
   const orders =
@@ -75,7 +75,7 @@ const DeliveryPackageGroupUpdate = () => {
     {
       isConfirm: false,
       deliveryPackages: [],
-    }
+    },
   );
 
   const getGPKGDetails = async () => {
@@ -106,7 +106,7 @@ const DeliveryPackageGroupUpdate = () => {
     } catch (error: any) {
       setErrorMsg(
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại!"
+          "Yêu cầu bị từ chối, vui lòng thử lại!",
       );
     } finally {
       setIsDetailsLoading(false);
@@ -126,7 +126,7 @@ const DeliveryPackageGroupUpdate = () => {
           },
         })
         .then((response) => response.data),
-    [query]
+    [query],
   );
   const onRefresh = () => {
     getGPKGDetails();
@@ -139,13 +139,13 @@ const DeliveryPackageGroupUpdate = () => {
       setIsEditable(!utilService.isCurrentTimeGreaterThanEndTime(query));
       // if (!utilService.isCurrentTimeGreaterThanEndTime(query))
       getGPKGDetails();
-    }, [])
+    }, []),
   );
   useEffect(() => {
     if (isEditable == false) {
       Alert.alert(
         "Oops!",
-        "Khung giờ này đã quá thời hạn để chỉnh sửa phân công!"
+        "Khung giờ này đã quá thời hạn để chỉnh sửa phân công!",
       );
       router.back();
     }
@@ -155,7 +155,7 @@ const DeliveryPackageGroupUpdate = () => {
   const [currentDeliveryPersonId, setCurrentDeliveryPersonId] = useState(0);
   const [personsList, setPersonsList] = useState<FrameStaffInfoModel[]>([]);
   const sortPersonsList = (
-    personsList: FrameStaffInfoModel[]
+    personsList: FrameStaffInfoModel[],
   ): FrameStaffInfoModel[] => {
     return personsList.sort((a, b) => {
       // 1. person.staffInfor.id == 0 sẽ đứng đầu
@@ -177,14 +177,14 @@ const DeliveryPackageGroupUpdate = () => {
   useEffect(() => {
     if (deliveryPersonFetchResult.data?.value)
       setPersonsList(
-        sortPersonsList(deliveryPersonFetchResult.data?.value || [])
+        sortPersonsList(deliveryPersonFetchResult.data?.value || []),
       );
   }, [deliveryPersonFetchResult.data?.value, gPKGDetails]);
   function getUnassignedOrders(): OrderFetchModel[] {
     const allOrders = orders;
     const requestData = gpkgCreateRequest;
     const assignedOrderIds = new Set(
-      requestData.deliveryPackages.flatMap((pkg) => pkg.orderIds)
+      requestData.deliveryPackages.flatMap((pkg) => pkg.orderIds),
     );
 
     return allOrders.filter((order) => !assignedOrderIds.has(order.id));
@@ -196,7 +196,7 @@ const DeliveryPackageGroupUpdate = () => {
     const assignedOrderIds = new Set(
       requestData.deliveryPackages
         .filter((pkg) => pkg.shopDeliveryStaffId === shopDeliveryStaffId)
-        .flatMap((pkg) => pkg.orderIds)
+        .flatMap((pkg) => pkg.orderIds),
     );
 
     return allOrders.filter((order) => assignedOrderIds.has(order.id));
@@ -205,7 +205,7 @@ const DeliveryPackageGroupUpdate = () => {
     setGPKGCreateRequest((prevRequest) => {
       const deliveryPackages = [...prevRequest.deliveryPackages];
       const deliveryPackage = deliveryPackages.find(
-        (pkg) => pkg.shopDeliveryStaffId === personId
+        (pkg) => pkg.shopDeliveryStaffId === personId,
       );
 
       if (deliveryPackage) {
@@ -249,7 +249,7 @@ const DeliveryPackageGroupUpdate = () => {
 
   const getCurrentPerson = () => {
     return deliveryPersonFetchResult.data?.value.find(
-      (person) => person.staffInfor.id == currentDeliveryPersonId
+      (person) => person.staffInfor.id == currentDeliveryPersonId,
     );
   };
 
@@ -258,7 +258,7 @@ const DeliveryPackageGroupUpdate = () => {
       setIsSubmitting(true);
       const response = await apiClient.put(
         `shop-owner/delivery-package-group`,
-        requestData
+        requestData,
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -269,7 +269,7 @@ const DeliveryPackageGroupUpdate = () => {
             utilService.formatTime(query.startTime) +
             " - " +
             utilService.formatTime(query.endTime)
-          } ngày ${utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}`
+          } ngày ${utilService.formatDateDdMmYyyy(query.intendedReceiveDate)}`,
         );
         // router.back();
       } else if (isWarning) {
@@ -292,7 +292,7 @@ const DeliveryPackageGroupUpdate = () => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);
@@ -306,7 +306,7 @@ const DeliveryPackageGroupUpdate = () => {
     if (gpkgCreateRequest.deliveryPackages.length == 0) {
       Alert.alert(
         "Oops!",
-        "Bạn cần phân công ít nhất một đơn hàng để hoàn tất!"
+        "Bạn cần phân công ít nhất một đơn hàng để hoàn tất!",
       );
       return;
     }
@@ -375,7 +375,7 @@ const DeliveryPackageGroupUpdate = () => {
 
                 globalCompleteDeliveryConfirm.setId(order.id);
                 globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
-                  onRefresh()
+                  onRefresh(),
                 );
                 globalCompleteDeliveryConfirm.setIsModalVisible(true);
                 globalCompleteDeliveryConfirm.setModel(order);
@@ -463,7 +463,7 @@ const DeliveryPackageGroupUpdate = () => {
 
                 globalCompleteDeliveryConfirm.setId(order.id);
                 globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
-                  onRefresh()
+                  onRefresh(),
                 );
                 globalCompleteDeliveryConfirm.setIsModalVisible(true);
                 globalCompleteDeliveryConfirm.setModel(order);
@@ -645,7 +645,7 @@ const DeliveryPackageGroupUpdate = () => {
             Alert.alert(
               "Oops!",
               error?.response?.data?.error?.message ||
-                "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                "Yêu cầu bị từ chối, vui lòng thử lại sau!",
             );
             getGPKGDetails();
           }}

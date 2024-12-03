@@ -11,7 +11,7 @@ const useFetchWithRQConfig = <Model extends APIEntityModel>(
   keyBase: any[],
   apiService: APIService<Model>,
   requestConfig?: AxiosRequestConfig,
-  deps?: any[]
+  deps?: any[],
 ) => {
   const isFirstRender = useRef(true);
 
@@ -35,7 +35,7 @@ const useFetchWithRQConfig = <Model extends APIEntityModel>(
         query.refetch();
       }
     },
-    deps ? [...deps] : []
+    deps ? [...deps] : [],
   );
   return query;
 };

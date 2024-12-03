@@ -12,7 +12,7 @@ import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
 import useOrderDetailPageState from "@/hooks/states/useOrderDetailPageState";
 import { useColorScheme } from "@/hooks/themes/useColorScheme";
 import sessionService from "@/services/session-service";
-import { NotiEntityTypes, NotiModel } from "@/types/models/ChatModel";
+import { NotiEntityTypes } from "@/types/models/ChatModel";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
 import messaging from "@react-native-firebase/messaging";
 import {

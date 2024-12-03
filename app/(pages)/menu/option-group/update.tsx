@@ -79,7 +79,7 @@ const OptionGroupUpdate: React.FC = () => {
       (optionGroupModel.options || []).map((item) => ({
         ...item,
         error: { title: "", price: "" },
-      }))
+      })),
     );
     setIsAvailable(optionGroupModel.status === 1);
   }, [optionGroupModel]);
@@ -129,7 +129,7 @@ const OptionGroupUpdate: React.FC = () => {
     if (isRequire && minSelect < 1) {
       Alert.alert(
         "Nhập liệu",
-        "Nhóm lựa chọn bắt buộc cần tối thiểu 1 câu trả lời!"
+        "Nhóm lựa chọn bắt buộc cần tối thiểu 1 câu trả lời!",
       );
       setMinSelect(1);
     } else if (minSelect < 0) {
@@ -139,21 +139,21 @@ const OptionGroupUpdate: React.FC = () => {
       setMinSelect(options.length);
       Alert.alert(
         "Nhập liệu",
-        `Vui lòng nhập chọn tối thiểu không quá ${options.length} số lựa chọn hiện có!`
+        `Vui lòng nhập chọn tối thiểu không quá ${options.length} số lựa chọn hiện có!`,
       );
     } else if (minSelect > maxSelect) {
       setMaxSelect(minSelect);
     } else if (maxSelect < 1) {
       Alert.alert(
         "Nhập liệu",
-        "Nhóm lựa chọn bắt buộc cần tối đa ít nhất 1 câu trả lời!"
+        "Nhóm lựa chọn bắt buộc cần tối đa ít nhất 1 câu trả lời!",
       );
       setMaxSelect(1);
     } else if (maxSelect > options.length) {
       setMaxSelect(options.length);
       Alert.alert(
         "Nhập liệu",
-        `Vui lòng nhập chọn tối đa không quá ${options.length} số lựa chọn hiện có!`
+        `Vui lòng nhập chọn tối đa không quá ${options.length} số lựa chọn hiện có!`,
       );
     } else if (minSelect > maxSelect) {
       setMinSelect(maxSelect);
@@ -182,12 +182,13 @@ const OptionGroupUpdate: React.FC = () => {
     if (
       !options.every(
         (option) =>
-          option.title && (option.price > 0 || option.isCalculatePrice == false)
+          option.title &&
+          (option.price > 0 || option.isCalculatePrice == false),
       )
     ) {
       Alert.alert(
         "Lỗi ",
-        "Vui lòng nhập tiêu đề và giá hợp lệ cho các lựa chọn."
+        "Vui lòng nhập tiêu đề và giá hợp lệ cho các lựa chọn.",
       );
 
       return false;
@@ -198,7 +199,7 @@ const OptionGroupUpdate: React.FC = () => {
       if (isNaN(min) || isNaN(max) || min < 1 || max < min) {
         Alert.alert(
           "Lỗi",
-          "Vui lòng nhập số chọn tối thiểu và tối đa hợp lệ (tối thiểu ≥ 1 và tối đa ≥ tối thiểu)."
+          "Vui lòng nhập số chọn tối thiểu và tối đa hợp lệ (tối thiểu ≥ 1 và tối đa ≥ tối thiểu).",
         );
         return false;
       }
@@ -206,7 +207,7 @@ const OptionGroupUpdate: React.FC = () => {
     if (options.filter((item) => item.isDefault).length < minSelect) {
       Alert.alert(
         "Lựa chọn mặc định ",
-        `Vui lòng chọn đủ tối thiểu ${minSelect} lựa chọn mặc định .`
+        `Vui lòng chọn đủ tối thiểu ${minSelect} lựa chọn mặc định .`,
       );
 
       return false;
@@ -214,7 +215,7 @@ const OptionGroupUpdate: React.FC = () => {
     if (options.filter((item) => item.isDefault).length > maxSelect) {
       Alert.alert(
         "Lựa chọn mặc định ",
-        `Vui lòng chỉ chọn tối đa ${maxSelect} cho lựa chọn mặc định .`
+        `Vui lòng chỉ chọn tối đa ${maxSelect} cho lựa chọn mặc định .`,
       );
 
       return false;
@@ -240,7 +241,7 @@ const OptionGroupUpdate: React.FC = () => {
   const handleOptionChange = (
     index: number,
     field: keyof Option,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     // if (isTrySubmitted > 0) setIsTrySubmitted(isTrySubmitted + 1);
 
@@ -252,7 +253,7 @@ const OptionGroupUpdate: React.FC = () => {
               isCalculatePrice: Boolean(value),
               price: value ? 1000 : 0,
             }
-          : item
+          : item,
       );
       setOptions(updatedOptions);
     } else if (field == "price") {
@@ -262,12 +263,12 @@ const OptionGroupUpdate: React.FC = () => {
               ...item,
               price: Number(value),
             }
-          : item
+          : item,
       );
       setOptions(updatedOptions);
     } else {
       const updatedOptions = options.map((item, i) =>
-        i === index ? { ...item, [field]: value } : item
+        i === index ? { ...item, [field]: value } : item,
       );
       setOptions(updatedOptions);
     }
@@ -293,7 +294,7 @@ const OptionGroupUpdate: React.FC = () => {
             setOptions(updatedOptions);
           },
         },
-      ]
+      ],
     );
   };
 
@@ -316,7 +317,7 @@ const OptionGroupUpdate: React.FC = () => {
       setIsLoading(true);
       const response = await apiClient.put(
         "shop-owner/option-group" + "/" + optionGroupModel.id,
-        data
+        data,
       );
 
       Alert.alert("Hoàn tất", "Đã cập nhật nhóm thành công");
@@ -325,7 +326,7 @@ const OptionGroupUpdate: React.FC = () => {
       // console.log(error);
       Alert.alert(
         "Xảy ra lỗi khi cập nhật nhóm",
-        error?.response?.data?.error?.message || "Vui lòng thử lại!"
+        error?.response?.data?.error?.message || "Vui lòng thử lại!",
       );
     } finally {
       setIsLoading(false);
@@ -383,7 +384,7 @@ const OptionGroupUpdate: React.FC = () => {
                       handleOptionChange(
                         index,
                         "price",
-                        parseFormattedNumber(text)
+                        parseFormattedNumber(text),
                       );
                     }}
                     iconRight={
@@ -397,7 +398,7 @@ const OptionGroupUpdate: React.FC = () => {
                             handleOptionChange(
                               index,
                               "isCalculatePrice",
-                              value
+                              value,
                             );
 
                             setIsTrySubmitted(isTrySubmitted + 1);
@@ -432,7 +433,7 @@ const OptionGroupUpdate: React.FC = () => {
                           options.filter((item) => item.status == 1).length <= 1
                         ) {
                           Alert.alert(
-                            "Mỗi nhóm lựa chọn cần ít nhất một câu trả lời được bật"
+                            "Mỗi nhóm lựa chọn cần ít nhất một câu trả lời được bật",
                           );
                           return;
                         }
@@ -457,7 +458,7 @@ const OptionGroupUpdate: React.FC = () => {
                                     handleOptionChange(
                                       index,
                                       "status",
-                                      3 - item.status
+                                      3 - item.status,
                                     ),
                                 },
                               ]
@@ -468,14 +469,14 @@ const OptionGroupUpdate: React.FC = () => {
                                     handleOptionChange(
                                       index,
                                       "status",
-                                      3 - item.status
+                                      3 - item.status,
                                     ),
                                 },
                                 {
                                   text: "Hủy",
                                   // style: "cancel",
                                 },
-                              ]
+                              ],
                         );
                       }}
                       containerStyleClasses="w-22 h-10 bg-red-500 bg-white border-2 border-red-400 box-border border-0"
@@ -609,17 +610,17 @@ const OptionGroupUpdate: React.FC = () => {
                           id: optionGroupModel.id,
                           isConfirm: true,
                         },
-                      }
+                      },
                     );
                     Alert.alert(
                       "Hoàn tất",
-                      `Đã xóa nhóm lựa chọn "${optionGroupModel.title}"!`
+                      `Đã xóa nhóm lựa chọn "${optionGroupModel.title}"!`,
                     );
                     router.back();
                   } catch (error: any) {
                     console.log(
                       error,
-                      `shop-owner/option-group/${optionGroupModel.id}`
+                      `shop-owner/option-group/${optionGroupModel.id}`,
                     );
                     if (error.response && error.response.status === 404) {
                       Alert.alert("Oops!", "Nhóm lựa chọn không còn tồn tại!");
@@ -628,7 +629,7 @@ const OptionGroupUpdate: React.FC = () => {
                       Alert.alert(
                         "Oops!",
                         error?.response?.data?.error?.message ||
-                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                       );
                     }
                   }

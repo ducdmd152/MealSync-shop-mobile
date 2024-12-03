@@ -45,21 +45,21 @@ function maskPhoneNumber(phoneNumber: string): string {
 const getInFrameTime = (
   startTime: number,
   endTime: number,
-  intendedReceiveDate: string
+  intendedReceiveDate: string,
 ) => {
   const startFrameDate = dayjs(
     dayjs(intendedReceiveDate)
       .local()
       .set("hour", Math.floor(startTime / 100))
       .set("minute", startTime % 100)
-      .toDate()
+      .toDate(),
   );
   const endFrameDate = dayjs(
     dayjs(intendedReceiveDate)
       .local()
       .set("hour", Math.floor(endTime / 100))
       .set("minute", endTime % 100)
-      .toDate()
+      .toDate(),
   );
   const current = new Date();
   if (current < startFrameDate.toDate()) return -1;
@@ -69,21 +69,21 @@ const getInFrameTime = (
 const getInDeliveryTime = (
   startTime: number,
   endTime: number,
-  intendedReceiveDate: string
+  intendedReceiveDate: string,
 ) => {
   const startFrameDate = dayjs(
     dayjs(intendedReceiveDate)
       .local()
       .set("hour", Math.floor(startTime / 100))
       .set("minute", startTime % 100)
-      .toDate()
+      .toDate(),
   ).subtract(15, "minute");
   const endFrameDate = dayjs(
     dayjs(intendedReceiveDate)
       .local()
       .set("hour", Math.floor(endTime / 100))
       .set("minute", endTime % 100)
-      .toDate()
+      .toDate(),
   );
   const current = new Date();
   if (current < startFrameDate.toDate()) return -1;
@@ -187,7 +187,7 @@ const utilService = {
       Number(month) - 1,
       Number(day),
       Math.floor(frame.endTime / 100),
-      frame.endTime % 100
+      frame.endTime % 100,
     );
     // console.log(
     //   "currentUTCDate > frameEndDateTime ",
@@ -296,7 +296,7 @@ const utilService = {
 
       // Giải mã payload từ Base64Url sang chuỗi JSON
       const payloadJson = atob(
-        payloadBase64.replace(/_/g, "/").replace(/-/g, "+")
+        payloadBase64.replace(/_/g, "/").replace(/-/g, "+"),
       );
 
       // Chuyển chuỗi JSON thành đối tượng
@@ -320,7 +320,7 @@ const utilService = {
 
       // Giải mã payload từ Base64Url sang chuỗi JSON
       const payloadJson = atob(
-        payloadBase64.replace(/_/g, "/").replace(/-/g, "+")
+        payloadBase64.replace(/_/g, "/").replace(/-/g, "+"),
       );
 
       // Chuyển chuỗi JSON thành đối tượng
@@ -331,7 +331,9 @@ const utilService = {
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"
       ]
         ? Number(
-            payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"]
+            payload[
+              "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"
+            ],
           )
         : 0;
     } catch (error) {

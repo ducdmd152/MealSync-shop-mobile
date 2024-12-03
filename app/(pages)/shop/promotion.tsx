@@ -73,7 +73,7 @@ const Promotion = () => {
           },
         })
         .then((response) => response.data),
-    [searchValue, status, fromDate, toDate]
+    [searchValue, status, fromDate, toDate],
   );
   const toggleFromDatePicker = () => {
     setFromDatePickerVisibility(!isFromDatePickerVisible);
@@ -85,7 +85,7 @@ const Promotion = () => {
   useFocusEffect(
     React.useCallback(() => {
       promotions.refetch();
-    }, [])
+    }, []),
   );
   return (
     <PageLayoutWrapper isScroll={false}>
@@ -282,7 +282,7 @@ const Promotion = () => {
                       }}
                     >
                       {promotionStatuses.find(
-                        (item) => item.key === promotion.status
+                        (item) => item.key === promotion.status,
                       )?.label || "------"}
                     </Text>
                   </View>

@@ -46,7 +46,7 @@ const StaffDetailsModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const globalStaffState = useGlobalStaffState();
   const [model, setModel] = useState<ShopDeliveryStaffModel>(
-    {} as ShopDeliveryStaffModel
+    {} as ShopDeliveryStaffModel,
   );
 
   const getDetails = async () => {
@@ -64,7 +64,7 @@ const StaffDetailsModal = ({
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
         );
       }
     } finally {
@@ -101,7 +101,7 @@ const StaffDetailsModal = ({
   useFocusEffect(React.useCallback(() => {}, []));
   const onChangeStaffStatusSubmit = async (
     staff: ShopDeliveryStaffModel,
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     setIsSubmitting(true);
     await apiClient
@@ -121,7 +121,7 @@ const StaffDetailsModal = ({
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
         );
       })
       .finally(() => {
@@ -130,7 +130,7 @@ const StaffDetailsModal = ({
   };
   const onDelete = async (
     staff: ShopDeliveryStaffModel,
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     setIsSubmitting(true);
     await apiClient
@@ -149,7 +149,7 @@ const StaffDetailsModal = ({
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
         );
       })
       .finally(() => {
@@ -158,7 +158,7 @@ const StaffDetailsModal = ({
   };
   const getStaffStatusComponent = (
     staff: ShopDeliveryStaffModel,
-    isCreatedMode: boolean = false
+    isCreatedMode: boolean = false,
   ) => {
     let label = "";
     let bgColor = "";
@@ -221,7 +221,7 @@ const StaffDetailsModal = ({
                     //     duration: 2000,
                     //   }
                     // );
-                  }
+                  },
                 );
               },
             },
@@ -255,14 +255,14 @@ const StaffDetailsModal = ({
                     //   type: "info",
                     //   duration: 2000,
                     // });
-                  }
+                  },
                 );
               },
             },
             {
               text: "Hủy",
             },
-          ]
+          ],
         );
       };
     } else {
@@ -306,14 +306,14 @@ const StaffDetailsModal = ({
                     //     duration: 2000,
                     //   }
                     // );
-                  }
+                  },
                 );
               },
             },
             {
               text: "Hủy",
             },
-          ]
+          ],
         );
       };
     }
@@ -394,7 +394,7 @@ const StaffDetailsModal = ({
           title="Chỉnh sửa thông tin"
           handlePress={() => {
             globalStaffState.setIsDetailsOrUpdateOrCreateMode(
-              StaffModalAction.Update
+              StaffModalAction.Update,
             );
             setModel(globalStaffState.model);
           }}
@@ -513,7 +513,7 @@ const StaffDetailsModal = ({
               ...result.value,
             });
             globalStaffState.setIsDetailsOrUpdateOrCreateMode(
-              StaffModalAction.Details
+              StaffModalAction.Details,
             );
             Toast.show({
               type: "success",
@@ -533,7 +533,7 @@ const StaffDetailsModal = ({
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
           );
         })
         .finally(() => {
@@ -555,7 +555,7 @@ const StaffDetailsModal = ({
               ...result.value,
             });
             globalStaffState.setIsDetailsOrUpdateOrCreateMode(
-              StaffModalAction.Details
+              StaffModalAction.Details,
             );
             Toast.show({
               type: "success",
@@ -575,7 +575,7 @@ const StaffDetailsModal = ({
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
           );
         })
         .finally(() => {
@@ -681,7 +681,7 @@ const StaffDetailsModal = ({
           isLoading={isSubmitting}
           handlePress={() => {
             globalStaffState.setIsDetailsOrUpdateOrCreateMode(
-              StaffModalAction.Details
+              StaffModalAction.Details,
             );
           }}
           containerStyleClasses="mt-2 w-full h-[36px] px-4 bg-transparent border-[1px] border-gray-400 font-semibold z-10"
@@ -798,8 +798,8 @@ const StaffDetailsModal = ({
             {globalStaffState.isDetailsOrUpdateOrCreateMode == 1
               ? details
               : globalStaffState.isDetailsOrUpdateOrCreateMode == 2
-              ? editation
-              : creation}
+                ? editation
+                : creation}
           </View>
         </TouchableWithoutFeedback>
       </View>

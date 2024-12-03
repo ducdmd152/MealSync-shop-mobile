@@ -150,7 +150,7 @@ const PromotionCreate = () => {
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
           );
         });
     } else {
@@ -559,7 +559,7 @@ const PromotionCreate = () => {
                     value={utilService.formatPrice(
                       promotion.applyType == PromotionApplyType.AmountApply
                         ? promotion.amountValue
-                        : promotion.maximumApplyValue
+                        : promotion.maximumApplyValue,
                     )}
                     onChangeText={(text) =>
                       handleChange("maximumApplyValue", text)

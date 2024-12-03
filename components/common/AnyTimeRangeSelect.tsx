@@ -87,7 +87,7 @@ const AnyTimeRangeSelect = ({
 
   const handleStartTimeChange = (
     index: number,
-    isAutoSameEndTimeOfStartSelect: boolean = true
+    isAutoSameEndTimeOfStartSelect: boolean = true,
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
@@ -112,7 +112,7 @@ const AnyTimeRangeSelect = ({
   };
   const handleEndTimeChange = (
     index: number,
-    isAutoFixStartTime: boolean = true
+    isAutoFixStartTime: boolean = true,
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
@@ -139,13 +139,13 @@ const AnyTimeRangeSelect = ({
         startTime: 0,
         endTime: 2400,
       },
-    ])
+    ]),
   );
 
   const initStateMapping = () => {
     if (frames.length == 0) return;
     const foundStartIndex = frames.findIndex(
-      (item) => item.startTime === startTime
+      (item) => item.startTime === startTime,
     );
     handleStartTimeChange(foundStartIndex !== -1 ? foundStartIndex : 0, false);
 
@@ -161,7 +161,7 @@ const AnyTimeRangeSelect = ({
       setTimeout(() => {
         setIsRefreshing(false);
       }, 0);
-    }, [])
+    }, []),
   );
 
   //   useEffect(() => {
@@ -210,7 +210,7 @@ const AnyTimeRangeSelect = ({
                 if (frames.length == 0) return;
                 handleStartTimeChange(
                   selectedIndex,
-                  isAutoSameEndTimeOfStartSelect
+                  isAutoSameEndTimeOfStartSelect,
                 );
               }}
             />

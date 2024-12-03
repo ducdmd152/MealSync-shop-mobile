@@ -80,16 +80,16 @@ const FoodUpdate = () => {
   const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
     useState(false);
   const [selectedShopCategory, setSelectedShopCategory] = useState(
-    foodDetailModel.shopCategoryId
+    foodDetailModel.shopCategoryId,
   );
 
   const [selectedPlatformCategory, setSelectedPlatformCategory] = useState(
-    foodDetailModel.platformCategoryId
+    foodDetailModel.platformCategoryId,
   );
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
     (foodDetailModel.optionGroups || [])?.map((item) =>
-      item.optionGroupId.toString()
-    )
+      item.optionGroupId.toString(),
+    ),
   );
   const [selectedOperatingSlots, setSelectedOperatingSlots] = useState<
     string[]
@@ -107,13 +107,13 @@ const FoodUpdate = () => {
     setSelectedPlatformCategory(foodDetailModel.platformCategoryId);
     setSelectedOptionGroups(
       (foodDetailModel.optionGroups || [])?.map((item) =>
-        item.optionGroupId.toString()
-      )
+        item.optionGroupId.toString(),
+      ),
     );
     setStatus(foodDetailModel.status);
     setIsSoldOut(foodDetailModel.isSoldOut);
     setSelectedOperatingSlots(
-      foodDetailModel.operatingSlots.map((item) => item.id.toString())
+      foodDetailModel.operatingSlots.map((item) => item.id.toString()),
     );
     setImageURI(foodDetailModel.imageUrl);
   }, [foodDetailModel]);
@@ -125,7 +125,7 @@ const FoodUpdate = () => {
   useEffect(() => {
     formik.setFieldValue(
       "platformCategoryId",
-      Number(selectedPlatformCategory)
+      Number(selectedPlatformCategory),
     );
     console.log(formik.values);
   }, [selectedPlatformCategory]);
@@ -156,7 +156,7 @@ const FoodUpdate = () => {
           {
             text: "Hủy",
           },
-        ]
+        ],
       );
     }
   };
@@ -171,7 +171,7 @@ const FoodUpdate = () => {
       apiClient
         .get(endpoints.SHOP_CATEGORY_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: platformCategories,
@@ -184,7 +184,7 @@ const FoodUpdate = () => {
       apiClient
         .get(endpoints.PLATFORM_CATEGORY_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: optionGroups,
@@ -205,7 +205,7 @@ const FoodUpdate = () => {
           },
         })
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: operatingSlots,
@@ -218,7 +218,7 @@ const FoodUpdate = () => {
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   // console.log(
   //   "fsdfsf",
@@ -263,17 +263,17 @@ const FoodUpdate = () => {
             isSoldOut: isSoldOut,
             price: Number(values.price),
             foodOptionGroups: selectedOptionGroups.map((item) =>
-              Number(item)
+              Number(item),
             ) as number[],
             operatingSlots: selectedOperatingSlots.map((item) =>
-              Number(item)
+              Number(item),
             ) as number[],
           };
           console.log("FOOD DATA UPDATE: ", foodData);
           // Send POST request to the API
           const response = await apiClient.put(
             "shop-owner/food/update",
-            foodData
+            foodData,
           );
           console.log("RESPONSE : ", response);
 
@@ -283,7 +283,7 @@ const FoodUpdate = () => {
         } catch (error: any) {
           Alert.alert(
             "Xảy ra lỗi khi tạo món",
-            error?.response?.data?.error?.message || "Vui lòng thử lại!"
+            error?.response?.data?.error?.message || "Vui lòng thử lại!",
           );
         } finally {
           setIsSubmiting(false);
@@ -312,7 +312,7 @@ const FoodUpdate = () => {
               },
             },
           ],
-          { cancelable: false }
+          { cancelable: false },
         );
         return;
       }
@@ -341,7 +341,7 @@ const FoodUpdate = () => {
         return 1;
       }
       return 0;
-    }
+    },
   );
 
   return (
@@ -506,7 +506,7 @@ const FoodUpdate = () => {
                   (cat: PlatformCategoryModel) => ({
                     key: cat.id.toString(),
                     value: cat.name,
-                  })
+                  }),
                 ) || []
               ).find((item) => item.key == selectedPlatformCategory.toString())}
               setSelected={setSelectedPlatformCategory}
@@ -515,7 +515,7 @@ const FoodUpdate = () => {
                   (cat: PlatformCategoryModel) => ({
                     key: cat.id.toString(),
                     value: cat.name,
-                  })
+                  }),
                 ) || []
               }
               save="key"
@@ -563,12 +563,12 @@ const FoodUpdate = () => {
                     (group: OptionGroupModel) => ({
                       key: group.id.toString(),
                       value: group.title,
-                    })
+                    }),
                   ) || []
                 ).filter((item) =>
                   selectedOptionGroups.some(
-                    (value) => value.toString() === item.key
-                  )
+                    (value) => value.toString() === item.key,
+                  ),
                 ) as { key: any; value: any }[]
               }
               setSelected={setSelectedOptionGroups}
@@ -627,8 +627,8 @@ const FoodUpdate = () => {
                 })) || []
               ).filter((item) =>
                 selectedOperatingSlots.some(
-                  (slotId) => slotId.toString() == item.key
-                )
+                  (slotId) => slotId.toString() == item.key,
+                ),
               )}
               selectedText="Khoảng đã chọn"
               setSelected={setSelectedOperatingSlots}
@@ -655,8 +655,8 @@ const FoodUpdate = () => {
                 isSoldOut
                   ? "Tạm hết hàng"
                   : status == 1
-                  ? "Đang mở bán"
-                  : "Đã tạm ẩn"
+                    ? "Đang mở bán"
+                    : "Đã tạm ẩn"
               }
               otherStyleClasses="w-[142px]"
               otherInputStyleClasses="h-12"
@@ -701,11 +701,11 @@ const FoodUpdate = () => {
                           id: foodDetailModel.id,
                           isConfirm: true,
                         },
-                      }
+                      },
                     );
                     Alert.alert(
                       "Hoàn tất",
-                      `Đã xóa "${foodDetailModel.name}" khỏi thực đơn!`
+                      `Đã xóa "${foodDetailModel.name}" khỏi thực đơn!`,
                     );
                     router.replace("/menu");
                   } catch (error: any) {
@@ -716,7 +716,7 @@ const FoodUpdate = () => {
                       Alert.alert(
                         "Oops!",
                         error?.response?.data?.error?.message ||
-                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                       );
                     }
                   }

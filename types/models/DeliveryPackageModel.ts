@@ -59,7 +59,7 @@ export const deliveryPackageDescMapping = [
 ];
 
 export const getDeliveryPackageStatusDescription = (
-  status: number
+  status: number,
 ): { value: number; description: string; bgColor: string } | undefined => {
   return deliveryPackageDescMapping.find((item) => item.value === status);
 };

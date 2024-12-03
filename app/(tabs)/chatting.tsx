@@ -12,7 +12,7 @@ const Chatting = () => {
       return () => {
         globalHeaderPage.setIsChattingFocusing(false);
       };
-    }, [])
+    }, []),
   );
 
   return (

@@ -68,10 +68,10 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
         .then((response) => response.data),
-    []
+    [],
   );
   const [model, setModel] = useState<ShopProfileUpdateModel>(
-    emptyShopProfileUpdate
+    emptyShopProfileUpdate,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isAnyRequestSubmit = useRef(false);
@@ -91,7 +91,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       shopOwnerName: shopProfile.data?.value.shopOwnerName || "",
       dormitoryIds:
         shopProfile.data?.value.shopDormitories.map(
-          (item) => item.dormitoryId
+          (item) => item.dormitoryId,
         ) || [],
       logoUrl: shopProfile.data?.value.logoUrl || "",
       bannerUrl: shopProfile.data?.value.bannerUrl || "",
@@ -111,7 +111,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
   useFocusEffect(
     React.useCallback(() => {
       shopProfile.refetch();
-    }, [])
+    }, []),
   );
 
   const [errors, setErrors] = useState<any>({});
@@ -164,7 +164,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);
@@ -185,7 +185,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
                 type: "normal",
                 duration: 3000,
                 normalColor: "#06b6d4",
-              }
+              },
             );
           }}
         >
@@ -274,7 +274,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
                 setModel({
                   ...model,
                   dormitoryIds: model.dormitoryIds.filter(
-                    (item) => item != Dormitories.A
+                    (item) => item != Dormitories.A,
                   ),
                 });
             }}
@@ -293,7 +293,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
                 setModel({
                   ...model,
                   dormitoryIds: model.dormitoryIds.filter(
-                    (item) => item != Dormitories.B
+                    (item) => item != Dormitories.B,
                   ),
                 });
             }}

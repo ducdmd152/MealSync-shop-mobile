@@ -115,7 +115,7 @@ const SignUp = () => {
       console.log(error, error.response);
       Alert.alert(
         "Lỗi đăng ký!",
-        error?.response?.data?.error?.message || "Lỗi mất rồi!"
+        error?.response?.data?.error?.message || "Lỗi mất rồi!",
       );
     } finally {
       setIsSubmitting(false);
@@ -171,7 +171,7 @@ const SignUp = () => {
           if (form.name.length < 6) {
             Alert.alert(
               "Thông báo",
-              "Tên chủ cửa hàng phải có ít nhất 6 ký tự."
+              "Tên chủ cửa hàng phải có ít nhất 6 ký tự.",
             );
             return;
           }
@@ -183,7 +183,7 @@ const SignUp = () => {
           if (!validatePassword(form.password)) {
             Alert.alert(
               "Thông báo",
-              "Mật khẩu phải có ít nhất 1 chữ hoa, 1 chữ thường, 1 ký tự đặc biệt và 1 số."
+              "Mật khẩu phải có ít nhất 1 chữ hoa, 1 chữ thường, 1 ký tự đặc biệt và 1 số.",
             );
             return;
           }
@@ -241,7 +241,7 @@ const SignUp = () => {
               setSelectedDormitories((prev) =>
                 prev.includes(dormitory.id)
                   ? prev.filter((id) => id !== dormitory.id)
-                  : [...prev, dormitory.id]
+                  : [...prev, dormitory.id],
               );
             }}
             label={<Text className="text-[16px]">{dormitory.name}</Text>}

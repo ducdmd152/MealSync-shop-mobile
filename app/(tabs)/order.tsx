@@ -129,7 +129,7 @@ const Order = () => {
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const [query, setQuery] = useState<OrderFetchQuery>({
     status: globalOrderStatusesFilterState.statuses,
@@ -167,10 +167,10 @@ const Order = () => {
               ...query,
               pageSize: infiniteSize,
             },
-          }
+          },
         )
         .then((response) => response.data),
-    [query, infiniteSize]
+    [query, infiniteSize],
   );
   const {
     data: orderFetchData,
@@ -184,7 +184,7 @@ const Order = () => {
     setCacheOrderList(orderFetchData?.value.items || []);
     console.log(
       "ordersFetcher.data?.value.items.length: ",
-      ordersFetcher.data?.value.items.length
+      ordersFetcher.data?.value.items.length,
     );
   }, [orderFetchData?.value.items]);
   useEffect(() => {
@@ -199,7 +199,7 @@ const Order = () => {
     ) {
       globalTimeRangeState.setMinTime(operatingSlots.value[0].startTime);
       globalTimeRangeState.setMaxTime(
-        operatingSlots.value[operatingSlots.value.length - 1].endTime
+        operatingSlots.value[operatingSlots.value.length - 1].endTime,
       );
     }
   }, [operatingSlots, isOperatingSlotsLoading, isOperatingSlotsRefetching]);
@@ -209,7 +209,7 @@ const Order = () => {
     setQuery({
       ...query,
       intendedReceiveDate: dayjs(globalTimeRangeState.date).format(
-        "YYYY/MM/DD"
+        "YYYY/MM/DD",
       ),
       startTime: globalTimeRangeState.startTime,
       endTime: globalTimeRangeState.endTime,
@@ -261,7 +261,7 @@ const Order = () => {
       return () => {
         setIsFocusing(false);
       };
-    }, [])
+    }, []),
   );
   const setCacheOrderInList = (order: OrderFetchModel) =>
     setCacheOrderList(
@@ -270,15 +270,15 @@ const Order = () => {
           ? item
           : {
               ...order,
-            }
-      )
+            },
+      ),
     );
 
   const handleCancel = (order: OrderFetchModel) => {
     const inTime = utilService.getInFrameTime(
       order.startTime,
       order.endTime,
-      order.intendedReceiveDate
+      order.intendedReceiveDate,
     );
     if (inTime > 0) {
       orderFetchRefetch();
@@ -288,7 +288,7 @@ const Order = () => {
 
     const cancelRequest = (
       reason: string,
-      setIsSubmitting: (value: boolean) => void
+      setIsSubmitting: (value: boolean) => void,
     ) => {
       if (reason.trim().length == 0) {
         Alert.alert("Oops", "Vui lòng điền lí do!");
@@ -319,8 +319,8 @@ const Order = () => {
                 : {
                     ...item,
                     status: OrderStatus.Cancelled,
-                  }
-            )
+                  },
+            ),
           );
           setIsCancelModal(false);
           setIsSubmitting(false);
@@ -364,8 +364,8 @@ const Order = () => {
                             : {
                                 ...item,
                                 status: OrderStatus.Cancelled,
-                              }
-                        )
+                              },
+                        ),
                       );
                       setIsCancelModal(false);
                       setIsSubmitting(false);
@@ -375,26 +375,26 @@ const Order = () => {
                       Alert.alert(
                         "Oops!",
                         error?.response?.data?.error?.message ||
-                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                       );
                       setIsSubmitting(false);
                     },
-                    true
+                    true,
                   );
                 },
               },
-            ]
+            ],
           );
         },
         (error: any) => {
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
           );
           setIsSubmitting(false);
         },
-        false
+        false,
       );
     };
     setIsCancelModal(true);
@@ -424,7 +424,7 @@ const Order = () => {
     const inTime = utilService.getInFrameTime(
       order.startTime,
       order.endTime,
-      order.intendedReceiveDate
+      order.intendedReceiveDate,
     );
     if (inTime > 0) {
       orderFetchRefetch();
@@ -434,7 +434,7 @@ const Order = () => {
 
     const rejectRequest = (
       reason: string,
-      setIsSubmitting: (value: boolean) => void
+      setIsSubmitting: (value: boolean) => void,
     ) => {
       if (reason.trim().length == 0) {
         Alert.alert("Oops", "Vui lòng điền lí do!");
@@ -461,8 +461,8 @@ const Order = () => {
                 : {
                     ...item,
                     status: OrderStatus.Rejected,
-                  }
-            )
+                  },
+            ),
           );
           setIsCancelModal(false);
           setIsSubmitting(false);
@@ -472,10 +472,10 @@ const Order = () => {
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
           );
           setIsSubmitting(false);
-        }
+        },
       );
     };
     setIsCancelModal(true);
@@ -569,7 +569,7 @@ const Order = () => {
                 <Text className="text-[10px] italic text-gray-500">
                   Người đi giao:{" "}
                   {utilService.shortenName(
-                    order.shopDeliveryStaff?.fullName || ""
+                    order.shopDeliveryStaff?.fullName || "",
                   )}
                 </Text>
               )}
@@ -586,7 +586,7 @@ const Order = () => {
             utilService.getInFrameTime(
               order.startTime,
               order.endTime,
-              order.intendedReceiveDate
+              order.intendedReceiveDate,
             ) <= 0 && (
               <View className="flex-row items-center gap-x-1">
                 <TouchableOpacity
@@ -594,13 +594,13 @@ const Order = () => {
                     const inTime = utilService.getInFrameTime(
                       order.startTime,
                       order.endTime,
-                      order.intendedReceiveDate
+                      order.intendedReceiveDate,
                     );
                     if (inTime > 0) {
                       orderFetchRefetch();
                       Alert.alert(
                         "Oops!",
-                        "Đã quá thời gian để thực hiện thao tác này!"
+                        "Đã quá thời gian để thực hiện thao tác này!",
                       );
                       return false;
                     }
@@ -624,7 +624,7 @@ const Order = () => {
                                   {
                                     type: "info",
                                     duration: 1500,
-                                  }
+                                  },
                                 );
                                 // Alert.alert(
                                 //   "Hoàn tất",
@@ -637,8 +637,8 @@ const Order = () => {
                                       : {
                                           ...item,
                                           status: OrderStatus.Confirmed,
-                                        }
-                                  )
+                                        },
+                                  ),
                                 );
                               },
                               (warningInfo: WarningMessageValue) => {},
@@ -646,16 +646,16 @@ const Order = () => {
                                 Alert.alert(
                                   "Oops!",
                                   error?.response?.data?.error?.message ||
-                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                                 );
-                              }
+                              },
                             );
                           },
                         },
                         {
                           text: "Hủy",
                         },
-                      ]
+                      ],
                     );
                   }}
                   className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
@@ -674,7 +674,7 @@ const Order = () => {
             utilService.getInFrameTime(
               order.startTime,
               order.endTime,
-              order.intendedReceiveDate
+              order.intendedReceiveDate,
             ) <= 0 && (
               <View className="flex-row items-center gap-x-1">
                 <TouchableOpacity
@@ -682,13 +682,13 @@ const Order = () => {
                     const inTime = utilService.getInFrameTime(
                       order.startTime,
                       order.endTime,
-                      order.intendedReceiveDate
+                      order.intendedReceiveDate,
                     );
                     if (inTime > 0) {
                       orderFetchRefetch();
                       Alert.alert(
                         "Oops!",
-                        "Đã quá thời gian để thực hiện thao tác này!"
+                        "Đã quá thời gian để thực hiện thao tác này!",
                       );
                       return false;
                     }
@@ -712,7 +712,7 @@ const Order = () => {
                                   {
                                     type: "info",
                                     duration: 1500,
-                                  }
+                                  },
                                 );
                                 // Alert.alert(
                                 //   "Hoàn tất",
@@ -725,8 +725,8 @@ const Order = () => {
                                       : {
                                           ...item,
                                           status: OrderStatus.Preparing,
-                                        }
-                                  )
+                                        },
+                                  ),
                                 );
                               },
                               (warningInfo: WarningMessageValue) => {
@@ -747,7 +747,7 @@ const Order = () => {
                                             {
                                               type: "info",
                                               duration: 1500,
-                                            }
+                                            },
                                           );
                                           // Alert.alert(
                                           //   "Hoàn tất",
@@ -761,22 +761,22 @@ const Order = () => {
                                                     ...item,
                                                     status:
                                                       OrderStatus.Preparing,
-                                                  }
-                                            )
+                                                  },
+                                            ),
                                           );
                                         },
                                         (
-                                          warningInfo: WarningMessageValue
+                                          warningInfo: WarningMessageValue,
                                         ) => {},
                                         (error: any) => {
                                           Alert.alert(
                                             "Oops!",
                                             error?.response?.data?.error
                                               ?.message ||
-                                              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                                           );
                                         },
-                                        true
+                                        true,
                                       );
                                     },
                                   },
@@ -789,17 +789,17 @@ const Order = () => {
                                 Alert.alert(
                                   "Oops!",
                                   error?.response?.data?.error?.message ||
-                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                                 );
                               },
-                              false
+                              false,
                             );
                           },
                         },
                         {
                           text: "Hủy",
                         },
-                      ]
+                      ],
                     );
                   }}
                   className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
@@ -818,7 +818,7 @@ const Order = () => {
             utilService.getInFrameTime(
               order.startTime,
               order.endTime,
-              order.intendedReceiveDate
+              order.intendedReceiveDate,
             ) <= 0 && (
               <View className="flex-row items-center gap-x-1">
                 <TouchableOpacity
@@ -826,13 +826,13 @@ const Order = () => {
                     const inTime = utilService.getInFrameTime(
                       order.startTime,
                       order.endTime,
-                      order.intendedReceiveDate
+                      order.intendedReceiveDate,
                     );
                     if (inTime > 0) {
                       orderFetchRefetch();
                       Alert.alert(
                         "Oops!",
-                        "Đã quá thời gian để thực hiện thao tác này!"
+                        "Đã quá thời gian để thực hiện thao tác này!",
                       );
                       return false;
                     }
@@ -975,7 +975,7 @@ const Order = () => {
               {
                 type: "success",
                 duration: 3000,
-              }
+              },
             );
           }}
           order={order}
@@ -1071,7 +1071,7 @@ const Order = () => {
                       onChange={(params) => {
                         if (params.date) {
                           globalTimeRangeState.setDate(
-                            dayjs(params.date).toDate()
+                            dayjs(params.date).toDate(),
                           );
                         }
                         setDatePickerVisibility(false);

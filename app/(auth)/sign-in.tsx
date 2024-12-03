@@ -33,7 +33,7 @@ const SignIn = () => {
       email: Yup.string()
         .matches(
           /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-          "Vui lòng nhập email không hợp lệ!"
+          "Vui lòng nhập email không hợp lệ!",
         )
         .required("Vui lòng nhập email!"),
       password: Yup.string()
@@ -58,7 +58,7 @@ const SignIn = () => {
           ? (response.data?.value?.accountResponse as AuthDTO)
           : null;
         sessionService.setAuthToken(
-          response.data?.value?.tokenResponse?.accessToken || ""
+          response.data?.value?.tokenResponse?.accessToken || "",
         );
         sessionService.setAuthRole(roleId);
         if (authDTO) sessionService.setAuthDTO(authDTO);
@@ -84,7 +84,7 @@ const SignIn = () => {
         } else {
           setServerError(
             error?.response?.data?.error?.message ||
-              "Hệ thống đang bảo trì, vui lòng thử lại sau!"
+              "Hệ thống đang bảo trì, vui lòng thử lại sau!",
           );
         }
       } finally {
@@ -96,7 +96,7 @@ const SignIn = () => {
   useFocusEffect(
     React.useCallback(() => {
       formik.resetForm();
-    }, [])
+    }, []),
   );
 
   return (

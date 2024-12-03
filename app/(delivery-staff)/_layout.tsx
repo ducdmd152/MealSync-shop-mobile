@@ -23,7 +23,7 @@ export default function DeliveryStaffLayout() {
     [endpoints.STAFF_INFO],
     async (): Promise<FetchValueResponse<ShopDeliveryStaffModel>> =>
       apiClient.get(endpoints.STAFF_INFO).then((response) => response.data),
-    []
+    [],
   );
   useEffect(() => {
     if (staffAccount.data?.value.accountStatus == ShopDeliveryStaffStatus.Off) {
@@ -37,7 +37,7 @@ export default function DeliveryStaffLayout() {
   useFocusEffect(
     React.useCallback(() => {
       if (staffAccount.isFetched) staffAccount.refetch();
-    }, [])
+    }, []),
   );
   return (
     <SafeAreaView className="h-full">

@@ -46,7 +46,7 @@ const PromotionDetails = () => {
     setIsFetching(true);
     try {
       const response = await apiClient.get<ValueResponse<PromotionModel>>(
-        `shop-owner/promotion/${promotion.id}/detail`
+        `shop-owner/promotion/${promotion.id}/detail`,
       );
       globalPromotionState.setPromotion({ ...response.data.value });
     } catch (error: any) {
@@ -57,7 +57,7 @@ const PromotionDetails = () => {
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
         );
         router.replace("/shop/promotion");
       }
@@ -99,7 +99,7 @@ const PromotionDetails = () => {
                 Alert.alert(
                   "Oops!",
                   error?.response?.data?.error?.message ||
-                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                    "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                 );
               });
           },
@@ -107,13 +107,13 @@ const PromotionDetails = () => {
         {
           text: "Hủy",
         },
-      ]
+      ],
     );
   };
   useFocusEffect(
     React.useCallback(() => {
       getDetails();
-    }, [])
+    }, []),
   );
 
   return (
@@ -244,7 +244,7 @@ const PromotionDetails = () => {
                 placeholder="Nhập tỷ lệ giảm giá"
                 value={
                   promotionApplyTypes.find(
-                    (item) => item.key == promotion.applyType
+                    (item) => item.key == promotion.applyType,
                   )?.label || ""
                 }
                 readOnly
@@ -322,7 +322,7 @@ const PromotionDetails = () => {
                     value={utilService.formatPrice(
                       promotion.applyType == PromotionApplyType.AmountApply
                         ? promotion.amountValue
-                        : promotion.maximumApplyValue
+                        : promotion.maximumApplyValue,
                     )}
                     readOnly
                     keyboardType="numeric"

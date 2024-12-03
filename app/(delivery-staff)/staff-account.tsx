@@ -66,12 +66,12 @@ const Account = () => {
     [endpoints.STAFF_INFO],
     async (): Promise<FetchValueResponse<ShopDeliveryStaffModel>> =>
       apiClient.get(endpoints.STAFF_INFO).then((response) => response.data),
-    []
+    [],
   );
   useFocusEffect(
     React.useCallback(() => {
       if (staffAccount.isFetched) staffAccount.refetch();
-    }, [])
+    }, []),
   );
   const navigation = useNavigation();
   const redirections = {

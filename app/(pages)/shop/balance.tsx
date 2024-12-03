@@ -34,7 +34,7 @@ const Balance = () => {
     [endpoints.BALANCE].concat(["withdrawal-create-page"]),
     async (): Promise<ValueResponse<BalanceModel>> =>
       apiClient.get(endpoints.BALANCE).then((response) => response.data),
-    []
+    [],
   );
   const [infiniteSize, setInfitieSize] = useState(INFINITE_LOAD_SIZE);
   const [isRendering, setIsRendering] = useState(false);
@@ -54,7 +54,7 @@ const Balance = () => {
           },
         })
         .then((response) => response.data),
-    [infiniteSize]
+    [infiniteSize],
   );
   useEffect(() => {
     if (transactionsFetcher.isFetched) {
@@ -69,7 +69,7 @@ const Balance = () => {
       balanceFetch.refetch();
       setInfitieSize(INFINITE_LOAD_SIZE);
       // transactionsFetcher.refetch();
-    }, [])
+    }, []),
   );
   const renderItem = ({
     item,
@@ -180,7 +180,7 @@ const Balance = () => {
                     ? utilService.formatPrice(
                         balanceFetch.data.value.availableAmount +
                           balanceFetch.data.value.incomingAmount +
-                          balanceFetch.data.value.reportingAmount
+                          balanceFetch.data.value.reportingAmount,
                       )
                     : "---------"}
                 </Text>
@@ -220,7 +220,7 @@ const Balance = () => {
                   value={
                     balanceFetch.data?.value
                       ? utilService.formatPrice(
-                          balanceFetch.data.value.availableAmount
+                          balanceFetch.data.value.availableAmount,
                         ) + "₫"
                       : "---------"
                   }
@@ -246,7 +246,7 @@ const Balance = () => {
                     value={
                       balanceFetch.data?.value
                         ? utilService.formatPrice(
-                            balanceFetch.data.value.incomingAmount
+                            balanceFetch.data.value.incomingAmount,
                           ) + "₫"
                         : "---------"
                     }
@@ -273,7 +273,7 @@ const Balance = () => {
                     value={
                       balanceFetch.data?.value
                         ? utilService.formatPrice(
-                            balanceFetch.data.value.reportingAmount
+                            balanceFetch.data.value.reportingAmount,
                             // || 10000000
                           ) + "₫"
                         : "---------"

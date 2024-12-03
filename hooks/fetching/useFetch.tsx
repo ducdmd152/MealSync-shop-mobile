@@ -10,7 +10,7 @@ import FetchResponse from "../../types/responses/FetchResponse";
 const useFetch = <M extends APIEntityModel>(
   service: APIService<M>,
   requestConfig?: AxiosRequestConfig,
-  deps?: any[]
+  deps?: any[],
 ) => {
   const [models, setModels] = useState<M[]>([]);
   const [pageable, setPageable] = useState<PageableModel>({} as PageableModel);
@@ -40,7 +40,7 @@ const useFetch = <M extends APIEntityModel>(
 
       return () => cancel();
     },
-    deps ? [...deps] : []
+    deps ? [...deps] : [],
   );
 
   return { models, pageable, isLoading, isError, error, setModels, setError };

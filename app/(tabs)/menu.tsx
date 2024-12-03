@@ -14,7 +14,7 @@ const Menu = () => {
   const [index, setIndex] = useState(0);
   const menuSessionIndex = usePathState((state) => state.menuSessionIndex);
   const setMenuSessionIndex = usePathState(
-    (state) => state.setMenuSessionIndex
+    (state) => state.setMenuSessionIndex,
   );
   useEffect(() => {
     if (index != menuSessionIndex) setIndex(menuSessionIndex);

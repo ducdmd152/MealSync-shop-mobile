@@ -77,7 +77,7 @@ const Statistics = () => {
           },
         })
         .then((response) => response.data),
-    [fromDate, toDate]
+    [fromDate, toDate],
   );
   // useEffect(() => {
   //   console.log(
@@ -90,7 +90,7 @@ const Statistics = () => {
   useFocusEffect(
     React.useCallback(() => {
       statistics.refetch();
-    }, [])
+    }, []),
   );
   return (
     <PageLayoutWrapper

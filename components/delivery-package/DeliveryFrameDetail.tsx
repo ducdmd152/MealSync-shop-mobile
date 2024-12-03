@@ -86,7 +86,7 @@ const DeliveryFrameDetail = ({
     React.useCallback(() => {
       getGPKGDetails(true);
       setIsEditable(!utilService.isCurrentTimeGreaterThanEndTime(query));
-    }, [])
+    }, []),
   );
 
   // console.log("getCurrentUTCDate", utilService.getCurrentUTCDate());
@@ -94,7 +94,7 @@ const DeliveryFrameDetail = ({
     if (!gPKGDetails?.deliveryPackageGroups) return !initExtend;
     if (extendPKGs.length < gPKGDetails?.deliveryPackageGroups.length) {
       setExtendPKGs(
-        Array(gPKGDetails.deliveryPackageGroups.length).fill(initExtend)
+        Array(gPKGDetails.deliveryPackageGroups.length).fill(initExtend),
       );
       return true;
     }
@@ -213,15 +213,15 @@ const DeliveryFrameDetail = ({
                               key={order.id}
                               onPress={() => {
                                 globalCompleteDeliveryConfirm.setIsShowActionale(
-                                  true
+                                  true,
                                 );
 
                                 globalCompleteDeliveryConfirm.setId(order.id);
                                 globalCompleteDeliveryConfirm.setOnAfterCompleted(
-                                  () => getGPKGDetails()
+                                  () => getGPKGDetails(),
                                 );
                                 globalCompleteDeliveryConfirm.setIsModalVisible(
-                                  true
+                                  true,
                                 );
                                 globalCompleteDeliveryConfirm.setModel(order);
                                 globalCompleteDeliveryConfirm.setStep(0);
@@ -262,12 +262,12 @@ const DeliveryFrameDetail = ({
                                         onPress={() => {
                                           if (
                                             utilService.isCurrentTimeGreaterThanEndTime(
-                                              query
+                                              query,
                                             )
                                           ) {
                                             Alert.alert(
                                               "Oops!",
-                                              "Đã quá thời gian cho phép chỉnh sửa!"
+                                              "Đã quá thời gian cho phép chỉnh sửa!",
                                             );
                                             setIsEditable(false);
                                             return;
@@ -310,7 +310,7 @@ const DeliveryFrameDetail = ({
                                     className={`text-[10px] font-medium me-2 px-2.5 py-1 rounded `}
                                   >
                                     {utilService.formatPrice(
-                                      order.totalPrice - order.totalPromotion
+                                      order.totalPrice - order.totalPromotion,
                                     )}{" "}
                                     ₫
                                   </Text>
@@ -341,7 +341,7 @@ const DeliveryFrameDetail = ({
                     globalCompleteDeliveryConfirm.setIsShowActionale(true);
                     globalCompleteDeliveryConfirm.setId(order.id);
                     globalCompleteDeliveryConfirm.setOnAfterCompleted(() =>
-                      getGPKGDetails()
+                      getGPKGDetails(),
                     );
                     globalCompleteDeliveryConfirm.setIsModalVisible(true);
                     globalCompleteDeliveryConfirm.setModel(order);
@@ -369,7 +369,7 @@ const DeliveryFrameDetail = ({
                             ) {
                               Alert.alert(
                                 "Oops!",
-                                "Đã quá thời gian cho phép chỉnh sửa!"
+                                "Đã quá thời gian cho phép chỉnh sửa!",
                               );
                               setIsEditable(false);
                               return;

@@ -30,7 +30,7 @@ export const uploadPreviewImage = async (uri: string) => {
   if (blob.size > CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_BYTE) {
     Alert.alert(
       "Oops",
-      `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`
+      `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`,
     );
     return;
   }
@@ -52,7 +52,7 @@ export const uploadPreviewImage = async (uri: string) => {
         Authorization: `Bearer ${await sessionService.getAuthToken()}`,
         "Content-Type": "multipart/form-data",
       },
-    }
+    },
   );
   return result.data.value?.url || CONSTANTS.url.noImageAvailable;
 };

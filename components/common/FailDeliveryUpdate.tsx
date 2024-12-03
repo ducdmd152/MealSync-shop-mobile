@@ -48,14 +48,14 @@ const FailDeliveryUpdate = ({
   useFocusEffect(
     React.useCallback(() => {
       setRequest({ ...failDeliveryInfo.deliveryFaileEvidence });
-    }, [])
+    }, []),
   );
   const requestFailDelivery = () => {
     console.log("request data: ", request);
     apiClient
       .put(
         `shop-owner-staff/order/${failDeliveryInfo.id}/delivery-fail`,
-        request
+        request,
       )
       .then((response) => {
         afterCompleted();
@@ -71,7 +71,7 @@ const FailDeliveryUpdate = ({
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
         );
         return false;
       })

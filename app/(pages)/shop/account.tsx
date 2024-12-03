@@ -20,12 +20,12 @@ const Account = () => {
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
         .then((response) => response.data),
-    []
+    [],
   );
   useFocusEffect(
     React.useCallback(() => {
       shopProfile.refetch();
-    }, [])
+    }, []),
   );
   return (
     <PageLayoutWrapper>

@@ -59,7 +59,7 @@ const ReportReplyModal = ({
         content: "",
         images: [],
       });
-    }, [reportId])
+    }, [reportId]),
   );
   useEffect(() => {
     if (!isImageHandling && isSubmitting) {
@@ -93,7 +93,7 @@ const ReportReplyModal = ({
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);

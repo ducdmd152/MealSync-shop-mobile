@@ -20,7 +20,7 @@ const TabHeader = () => {
       apiClient
         .get("shop-owner-staff/notification/total-unread")
         .then((response) => response.data),
-    [globalHeaderPage.isNotiPageFocusing]
+    [globalHeaderPage.isNotiPageFocusing],
   );
   useEffect(() => {
     if (globalNotiState.toggleChangingFlag) numberOfUnreaded.refetch();
