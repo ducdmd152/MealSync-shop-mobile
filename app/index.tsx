@@ -1,15 +1,13 @@
-import { StatusBar } from "expo-status-bar";
-import { Link, router } from "expo-router";
+import CustomButton from "@/components/custom/CustomButton";
+import { images } from "@/constants";
+import { router } from "expo-router";
 import {
   Image,
-  Text,
-  View,
   SafeAreaView,
   ScrollView,
-  ImageBackground,
+  Text,
+  View
 } from "react-native";
-import { images } from "@/constants";
-import CustomButton from "@/components/custom/CustomButton";
 
 export default function HomeScreen() {
   return (

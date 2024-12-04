@@ -1,4 +1,4 @@
-package com.anonymous.MealSyncshopmobile
+package com.anonymous.shopmobiel
 
 import android.os.Build
 import android.os.Bundle

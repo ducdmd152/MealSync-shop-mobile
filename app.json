@@ -2,13 +2,13 @@
   "expo": {
     "name": "MealSync-shop-mobile",
     "slug": "MealSync-shop-mobile",
-    "scheme": "myapp",
+    "scheme": "myapp2",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/splash.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -16,8 +16,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.anonymous.MealSyncshopmobile",
-      "googleServicesFile": "./google-services.json",
+      "package": "com.anonymous.shopmobiel",
       "newArchEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -54,7 +53,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "7c81e665-3603-4258-95d9-4c54b53c0bc6"
+        "projectId": "53e672ab-2365-4749-be4e-0c61b054d3e9"
       }
     }
   }

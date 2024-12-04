@@ -1,18 +1,11 @@
-import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
-import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
-import ImageViewingModal from "@/components/target-modals/ImageViewingModal";
-import ReviewReplyModal from "@/components/target-modals/ReviewReplyModal";
-import StaffDetailsModal from "@/components/target-modals/StaffDetailsModal";
-import WithdrawDetailsModal from "@/components/target-modals/WithdrawDetailsModal";
 import TanStackProvider from "@/config/providers/TanStackProvider";
-import { images } from "@/constants";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
 import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
 import useOrderDetailPageState from "@/hooks/states/useOrderDetailPageState";
 import { useColorScheme } from "@/hooks/themes/useColorScheme";
 import sessionService from "@/services/session-service";
-import { NotiEntityTypes, NotiModel } from "@/types/models/ChatModel";
+import { NotiEntityTypes } from "@/types/models/ChatModel";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
 // import messaging from "@react-native-firebase/messaging";
 import {
@@ -21,9 +14,8 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { router, Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
-import { Alert, Image, PermissionsAndroid, StyleSheet } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
@@ -31,7 +23,7 @@ import Toast from "react-native-toast-message";
 import { ToastProvider } from "react-native-toast-notifications";
 import { io } from "socket.io-client";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 // const requestUserPermissions = async () => {
 //   const authStatus = await messaging().requestPermission();
 //   const enabled =
@@ -88,13 +80,13 @@ export default function RootLayout() {
   useEffect(() => {
     setLoaded(fontsLoaded && isCheckedAuth); // list of loaded statuses
   }, [fontsLoaded, isCheckedAuth]);
-
+/* 
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
-
+ */
   useEffect(() => {
     const checkAuth = async () => {
       const token = await sessionService.getAuthToken();
@@ -151,7 +143,7 @@ export default function RootLayout() {
       }
 
       // Connect to the server with JWT authentication
-      const newSocket = io("https://socketio.mealsync.org/", {
+      const newSocket = io("https://socketio.1wolfalone1.com/", {
         auth: {
           token: token,
         },
@@ -203,7 +195,7 @@ export default function RootLayout() {
   useEffect(() => {
     // Function to initialize socket connection with token from AsyncStorage
 
-    initializeSocket();
+    // initializeSocket();
 
     // Cleanup function to disconnect the socket on unmount
     return () => {
@@ -212,7 +204,7 @@ export default function RootLayout() {
       }
     };
   }, [globalAuthState.token]); // Empty dependency array to run once on mount and when globalAuthState.token update
-  if (!loaded) {
+  /* if (!loaded) {
     return (
       <Image
         source={images.splashBg}
@@ -221,7 +213,7 @@ export default function RootLayout() {
       />
     );
   }
-
+ */
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       {/* <SafeAreaView style={{ flex: 1 }}> */}
@@ -255,12 +247,12 @@ export default function RootLayout() {
                   />
                   <Stack.Screen name="+not-found" />
                 </Stack>
-                <OrderDetailBottomSheet />
+              {/*   <OrderDetailBottomSheet />
                 <ImageViewingModal />
                 <ReviewReplyModal />
                 <StaffDetailsModal />
                 <WithdrawDetailsModal titleStyleClasses="font-semibold" />
-                <CompleteDeliveryConfirmModal />
+                <CompleteDeliveryConfirmModal /> */}
               {/* </NavigationContainer> */}
               {/* <FlashMessage position="bottom" /> */}
               {/* </KeyboardAvoidingView> */}
