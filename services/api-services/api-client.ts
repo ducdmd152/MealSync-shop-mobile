@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import sessionService from "../session-service";
-export const BASE_URL = "https://api.mealsync.org/api/v1/";
+export const BASE_URL = "https://api.1wolfalone1.com/api/v1/";
 const apiClient = axios.create({
   baseURL: BASE_URL,
 });

@@ -14,7 +14,7 @@ import { useColorScheme } from "@/hooks/themes/useColorScheme";
 import sessionService from "@/services/session-service";
 import { NotiEntityTypes, NotiModel } from "@/types/models/ChatModel";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
-import messaging from "@react-native-firebase/messaging";
+// import messaging from "@react-native-firebase/messaging";
 import {
   DefaultTheme,
   // NavigationContainer,
@@ -32,17 +32,17 @@ import { ToastProvider } from "react-native-toast-notifications";
 import { io } from "socket.io-client";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
-const requestUserPermissions = async () => {
-  const authStatus = await messaging().requestPermission();
-  const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+// const requestUserPermissions = async () => {
+//   const authStatus = await messaging().requestPermission();
+//   const enabled =
+//     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+//     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-  if (enabled) {
-    console.log("Authorization status:", authStatus);
-  }
-};
+//   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+//   if (enabled) {
+//     console.log("Authorization status:", authStatus);
+//   }
+// };
 
 export default function RootLayout() {
   const [loaded, setLoaded] = useState(false);
@@ -68,22 +68,22 @@ export default function RootLayout() {
   //   "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
   // });
 
-  useEffect(() => {
-    // FIREBASE NOTIFICATION
-    messaging()
-      .getInitialNotification()
-      .then((notification) => {
-        console.log(notification);
-      });
-    messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log(remoteMessage, "on open");
-    });
-    messaging().setBackgroundMessageHandler(async (msg) => {
-      console.log(msg, "in background");
-    });
-    const unsubscribe = messaging().onMessage(async (msg) => {});
-    return unsubscribe;
-  }, []);
+  // useEffect(() => {
+  //   // FIREBASE NOTIFICATION
+  //   messaging()
+  //     .getInitialNotification()
+  //     .then((notification) => {
+  //       console.log(notification);
+  //     });
+  //   messaging().onNotificationOpenedApp((remoteMessage) => {
+  //     console.log(remoteMessage, "on open");
+  //   });
+  //   messaging().setBackgroundMessageHandler(async (msg) => {
+  //     console.log(msg, "in background");
+  //   });
+  //   const unsubscribe = messaging().onMessage(async (msg) => {});
+  //   return unsubscribe;
+  // }, []);
 
   useEffect(() => {
     setLoaded(fontsLoaded && isCheckedAuth); // list of loaded statuses
@@ -116,20 +116,20 @@ export default function RootLayout() {
 
     checkAuth();
   }, []);
-  useEffect(() => {
-    if (!isReady || !globalAuthState.token) return;
-    requestUserPermissions();
-    messaging()
-      .getToken()
-      .then((token) => {
-        console.log(token, " device tokenn");
-        if (globalAuthState.token)
-          sessionService.handleRegistrationDevice(token);
-      })
-      .catch((err) => {
-        console.log(err, " cannot register device in message()");
-      });
-  }, [isReady, globalAuthState.token]);
+  // useEffect(() => {
+  //   if (!isReady || !globalAuthState.token) return;
+  //   requestUserPermissions();
+  //   messaging()
+  //     .getToken()
+  //     .then((token) => {
+  //       console.log(token, " device tokenn");
+  //       if (globalAuthState.token)
+  //         sessionService.handleRegistrationDevice(token);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err, " cannot register device in message()");
+  //     });
+  // }, [isReady, globalAuthState.token]);
 
   useEffect(() => {
     setIsReady(true); // all provider ready
