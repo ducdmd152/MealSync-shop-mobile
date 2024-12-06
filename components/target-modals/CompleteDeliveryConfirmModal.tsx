@@ -236,8 +236,8 @@ const CompleteDeliveryConfirmModal = ({
   useEffect(() => {
     if (!isSuccessImageHandling && isSuccessSubmitting) {
       if (successImageHandleError) {
-        setImageHandleError(false);
-        setIsSubmitting(false);
+        setSuccessImageHandleError(false);
+        setIsSuccessSubmitting(false);
         return;
       }
       requestSuccessDelivery();
@@ -434,6 +434,7 @@ const CompleteDeliveryConfirmModal = ({
               text: "Xác nhận bằng hình ảnh",
               onPress: () => {
                 setIsSuccessSubmitting(false);
+                setSuccessImageUrls([]);
                 globalCompleteDeliveryConfirm.setStep(3);
               },
             },
@@ -706,19 +707,21 @@ const CompleteDeliveryConfirmModal = ({
   );
   const confirmByImageStep = (
     <View className="gap-y-2 py-2">
-      <Text className="text-[14px] text-center font-semibold">
+      {/* <Text className="text-[14px] text-center font-semibold">
         Xác nhận bằng hình ảnh
-      </Text>
-      <PreviewMultiTakeImagesUpload
-        imageHandleError={successImageHandleError}
-        setImageHandleError={setSuccessImageHandleError}
-        isImageHandling={isSuccessImageHandling}
-        setIsImageHandling={setIsSuccessImageHandling}
-        maxNumberOfPics={3}
-        uris={successImageUrls}
-        setUris={(uris) => setSuccessImageUrls(uris)}
-        imageWidth={80}
-      />
+      </Text> */}
+      <View className="flex-row justify-center">
+        <PreviewMultiTakeImagesUpload
+          imageHandleError={successImageHandleError}
+          setImageHandleError={setSuccessImageHandleError}
+          isImageHandling={isSuccessImageHandling}
+          setIsImageHandling={setIsSuccessImageHandling}
+          maxNumberOfPics={3}
+          uris={successImageUrls}
+          setUris={(uris) => setSuccessImageUrls(uris)}
+          imageWidth={80}
+        />
+      </View>
       <CustomButton
         title="Xác nhận giao thành công"
         isLoading={isSuccessSubmitting}
@@ -857,52 +860,54 @@ const CompleteDeliveryConfirmModal = ({
             </TouchableOpacity> */}
           </View>
 
-          <View className="flex-row items-center justify-center">
-            <View className="mt-2 justify-center items-center">
-              {order != undefined && (
-                <Text
-                  className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
-                    getOrderStatusDescription(order.status)?.bgColor
-                  }`}
-                  style={{
-                    backgroundColor: getOrderStatusDescription(order.status)
-                      ?.bgColor,
-                  }}
-                >
-                  {getOrderStatusDescription(order.status)?.description}
-                </Text>
-              )}
+          {step == 0 && (
+            <View className="flex-row items-center justify-center">
+              <View className="mt-2 justify-center items-center">
+                {order != undefined && (
+                  <Text
+                    className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
+                      getOrderStatusDescription(order.status)?.bgColor
+                    }`}
+                    style={{
+                      backgroundColor: getOrderStatusDescription(order.status)
+                        ?.bgColor,
+                    }}
+                  >
+                    {getOrderStatusDescription(order.status)?.description}
+                  </Text>
+                )}
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsOrderDetailViewMode(!isOrderDetailViewMode);
+                  // globalOrderDetailPageState.setOrder(order);
+                  // globalCompleteDeliveryConfirm.setIsModalVisible(false);
+                  // onParentClose();
+                  // globalOrderDetailPageState.setOnBeforeBack(() => {
+                  //   onParentOpen();
+                  //   getOrderDetail();
+                  //   globalCompleteDeliveryConfirm.setIsModalVisible(true);
+                  // });
+                  // router.push("/order/details");
+                }}
+                className="mt-2 justify-center items-center ml-2 rounded-sm overflow-hidden"
+              >
+                {order != undefined && authRole == 2 && (
+                  <Text
+                    className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded`}
+                    style={{
+                      backgroundColor: getOrderStatusDescription(order.status)
+                        ?.bgColor,
+                    }}
+                  >
+                    {!isOrderDetailViewMode
+                      ? "Xem chi tiết đơn"
+                      : "Rút gọn thông tin"}
+                  </Text>
+                )}
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                setIsOrderDetailViewMode(!isOrderDetailViewMode);
-                // globalOrderDetailPageState.setOrder(order);
-                // globalCompleteDeliveryConfirm.setIsModalVisible(false);
-                // onParentClose();
-                // globalOrderDetailPageState.setOnBeforeBack(() => {
-                //   onParentOpen();
-                //   getOrderDetail();
-                //   globalCompleteDeliveryConfirm.setIsModalVisible(true);
-                // });
-                // router.push("/order/details");
-              }}
-              className="mt-2 justify-center items-center ml-2 rounded-sm overflow-hidden"
-            >
-              {order != undefined && authRole == 2 && step == 0 && (
-                <Text
-                  className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded`}
-                  style={{
-                    backgroundColor: getOrderStatusDescription(order.status)
-                      ?.bgColor,
-                  }}
-                >
-                  {!isOrderDetailViewMode
-                    ? "Xem chi tiết đơn"
-                    : "Rút gọn thông tin"}
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
+          )}
           {stepComponents[step]}
         </View>
       </View>
