@@ -18,6 +18,7 @@ import {
 } from "react-native";
 
 import CustomModal from "../common/CustomModal";
+import ImageViewingModal from "../target-modals/ImageViewingModal";
 interface PreviewImageUploadProps extends ViewProps {
   uris: string[];
   setUris: (uri: string[]) => void;
@@ -63,7 +64,7 @@ const PreviewMultiImagesUpload = ({
       if (libraryStatus !== "granted") {
         Alert.alert(
           "Oops",
-          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!",
+          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!"
         );
         return;
       }
@@ -96,7 +97,7 @@ const PreviewMultiImagesUpload = ({
       if (blob.size > CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_BYTE) {
         Alert.alert(
           "Oops",
-          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`,
+          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`
         );
         setIsSelectPicking(true);
         return;
@@ -110,7 +111,7 @@ const PreviewMultiImagesUpload = ({
   };
   useEffect(() => {
     setIsImageHandling(
-      uris.filter((uri) => imageService.isLocalImage(uri)).length > 0,
+      uris.filter((uri) => imageService.isLocalImage(uri)).length > 0
     );
   }, [uris]);
   // console.log("uris: ", uris);
@@ -212,7 +213,7 @@ const PreviewMultiImagesUpload = ({
               if (uris.length == maxNumberOfPics) {
                 Alert.alert(
                   "Oops",
-                  `Bạn chỉ có thể chọn tối đa ${maxNumberOfPics} hình ảnh!`,
+                  `Bạn chỉ có thể chọn tối đa ${maxNumberOfPics} hình ảnh!`
                 );
                 return;
               }
@@ -271,6 +272,7 @@ const PreviewMultiImagesUpload = ({
           </TouchableOpacity>
         </View>
       </CustomModal>
+      <ImageViewingModal />
     </View>
   );
 };

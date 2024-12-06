@@ -20,6 +20,7 @@ import {
 } from "react-native";
 
 import CustomModal from "../common/CustomModal";
+import ImageViewingModal from "../target-modals/ImageViewingModal";
 interface EvidencePreviewMultiImagesUploadProps extends ViewProps {
   uris: ImageEvidenceModel[];
   setUris: (uri: ImageEvidenceModel[]) => void;
@@ -66,7 +67,7 @@ const EvidencePreviewMultiImagesUpload = ({
       if (libraryStatus !== "granted") {
         Alert.alert(
           "Oops",
-          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!",
+          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!"
         );
         return;
       }
@@ -99,7 +100,7 @@ const EvidencePreviewMultiImagesUpload = ({
       if (blob.size > CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_BYTE) {
         Alert.alert(
           "Oops",
-          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`,
+          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`
         );
         setIsSelectPicking(true);
         return;
@@ -121,7 +122,7 @@ const EvidencePreviewMultiImagesUpload = ({
     setUris(
       uris.concat([
         { imageUrl: uri, takePictureDateTime: new Date().toISOString() },
-      ]),
+      ])
     );
     try {
       const url =
@@ -132,7 +133,7 @@ const EvidencePreviewMultiImagesUpload = ({
           .filter((item) => item.imageUrl != uri)
           .concat([
             { imageUrl: url, takePictureDateTime: new Date().toISOString() },
-          ]),
+          ])
       );
       console.log("upload hinh ok setIsImageHandling(false);");
       setIsImageHandling(false);
@@ -172,7 +173,7 @@ const EvidencePreviewMultiImagesUpload = ({
               globalImageViewState.setUrl(uri.imageUrl);
               globalImageViewState.setDescription(
                 "Cập nhật vào " +
-                  dayjs(uri.takePictureDateTime).format("HH:mm DD/MM/YYYY"),
+                  dayjs(uri.takePictureDateTime).format("HH:mm DD/MM/YYYY")
               );
               globalImageViewState.setIsModalVisible(true);
             }}
@@ -226,7 +227,7 @@ const EvidencePreviewMultiImagesUpload = ({
               if (uris.length == maxNumberOfPics) {
                 Alert.alert(
                   "Oops",
-                  `Bạn chỉ có thể chọn tối đa ${maxNumberOfPics} hình ảnh!`,
+                  `Bạn chỉ có thể chọn tối đa ${maxNumberOfPics} hình ảnh!`
                 );
                 return;
               }
@@ -285,6 +286,7 @@ const EvidencePreviewMultiImagesUpload = ({
           </TouchableOpacity>
         </View>
       </CustomModal>
+      <ImageViewingModal />
     </View>
   );
 };

@@ -33,6 +33,7 @@ import OrderReportInfo from "../common/OrderReportInfo";
 import OrderReviewInfo from "../common/OrderReviewInfo";
 import dayjs from "dayjs";
 import ReviewReplyModal from "../target-modals/ReviewReplyModal";
+import ImageViewingModal from "../target-modals/ImageViewingModal";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -884,6 +885,7 @@ const OrderDetail = ({
         setIsOpen={setIsCancelModal}
       />
       <ReviewReplyModal />
+      <ImageViewingModal />
       <Toast topOffset={-20} />
     </View>
   );
