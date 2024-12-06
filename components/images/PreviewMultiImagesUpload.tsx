@@ -208,6 +208,7 @@ const PreviewMultiImagesUpload = ({
 
         {(uris.length != maxNumberOfPics || isHideAddWhenMax == false) && (
           <TouchableOpacity
+            disabled={isImageHandling}
             className="overflow-hidden rounded-lg"
             onPress={() => {
               if (uris.length == maxNumberOfPics) {
