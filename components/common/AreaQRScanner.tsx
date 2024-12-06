@@ -23,7 +23,7 @@ interface AreaQRScannerProps extends ViewProps {
   handleQRCode: (
     data: string,
     onSuccess: () => void,
-    onError: (error: any) => void,
+    onError: (error: any) => void
   ) => Promise<boolean>;
 }
 const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
@@ -63,7 +63,7 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
         if (status != "granted")
           Alert.alert("Oops", "Vui lòng cho phép truy cập camera để tiếp tục.");
       })();
-    }, []),
+    }, [])
   );
 
   return (
@@ -97,25 +97,37 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
                 },
                 (error: any) => {
                   setIsSubmitting(false);
-                  Alert.alert(
-                    "Oops!",
-                    error?.response?.data?.error?.message ||
-                      "Yêu cầu bị từ chối, vui lòng thử lại sau!",
-                    [
-                      {
-                        text: "Thử lại",
-                        onPress: async () => {
-                          setTimeout(() => {
-                            qrLock.current = false;
-                          }, 1000);
+                  if (
+                    error.response &&
+                    (error.response.status == 500 ||
+                      error.response.status == 501 ||
+                      error.response.status == 502)
+                  ) {
+                    Alert.alert(
+                      "Oops!",
+                      error?.response?.data?.error?.message ||
+                        "Xử lí bị gián đoạn, vui lòng thử lại!"
+                    );
+                  } else
+                    Alert.alert(
+                      "Oops!",
+                      error?.response?.data?.error?.message ||
+                        "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+                      [
+                        {
+                          text: "Thử lại",
+                          onPress: async () => {
+                            setTimeout(() => {
+                              qrLock.current = false;
+                            }, 1000);
+                          },
                         },
-                      },
-                      // {
-                      //   text: "Hủy",
-                      // },
-                    ],
-                  );
-                },
+                        // {
+                        //   text: "Hủy",
+                        // },
+                      ]
+                    );
+                }
               );
             }, 100);
           }

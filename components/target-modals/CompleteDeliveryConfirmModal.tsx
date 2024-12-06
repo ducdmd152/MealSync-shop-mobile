@@ -101,11 +101,23 @@ const CompleteDeliveryConfirmModal = ({
       globalCompleteDeliveryConfirm.onAfterCompleted();
       globalCompleteDeliveryConfirm.setIsModalVisible(false);
       setIsViewOrderFoodDetail(false);
-      Alert.alert(
-        "Oops!",
-        error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-      );
+      if (
+        error.response &&
+        (error.response.status == 500 ||
+          error.response.status == 501 ||
+          error.response.status == 502)
+      ) {
+        Alert.alert(
+          "Oops!",
+          error?.response?.data?.error?.message ||
+            "Xử lí bị gián đoạn, vui lòng thử lại!"
+        );
+      } else
+        Alert.alert(
+          "Oops!",
+          error?.response?.data?.error?.message ||
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+        );
       // console.log(error?.response?.data?.error);
       // Alert.alert(
       //   "Oops",
@@ -252,11 +264,23 @@ const CompleteDeliveryConfirmModal = ({
         return true;
       })
       .catch((error: any) => {
-        Alert.alert(
-          "Oops!",
-          error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-        );
+        if (
+          error.response &&
+          (error.response.status == 500 ||
+            error.response.status == 501 ||
+            error.response.status == 502)
+        ) {
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Xử lí bị gián đoạn, vui lòng thử lại!"
+          );
+        } else
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
         return false;
       })
       .finally(() => {
@@ -286,11 +310,23 @@ const CompleteDeliveryConfirmModal = ({
         return true;
       })
       .catch((error: any) => {
-        Alert.alert(
-          "Oops!",
-          error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-        );
+        if (
+          error.response &&
+          (error.response.status == 500 ||
+            error.response.status == 501 ||
+            error.response.status == 502)
+        ) {
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Xử lí bị gián đoạn, vui lòng thử lại!"
+          );
+        } else
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
         return false;
       })
       .finally(() => {
