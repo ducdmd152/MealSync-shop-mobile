@@ -59,7 +59,7 @@ const ReportReplyModal = ({
         content: "",
         images: [],
       });
-    }, [reportId])
+    }, [reportId]),
   );
   useEffect(() => {
     if (!isImageHandling && isSubmitting) {
@@ -86,13 +86,14 @@ const ReportReplyModal = ({
           text2: `Đã trả lời báo cáo cho đơn MS-${orderId}.`,
         });
         setIsOpen(false);
+        onAfterCompleted();
       }
     } catch (error: any) {
       console.log("error: ", error?.response?.data?.error);
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);

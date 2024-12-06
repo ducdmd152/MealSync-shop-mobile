@@ -12,7 +12,7 @@ const onMultiDelivery = (
   orderIds: number[],
   onSuccess: () => void,
   onError: (error: any) => void,
-  isConfirm = false
+  isConfirm = false,
 ) => {
   orderAPIService.delivery(
     orderIds,
@@ -35,7 +35,7 @@ const onMultiDelivery = (
     },
     (error: any) => {
       onError(error);
-    }
+    },
   );
 };
 const onDelivery = (
@@ -43,7 +43,7 @@ const onDelivery = (
   onRefresh: () => void,
   onSuccess: () => void,
   onError: (error: any) => void,
-  onBeforeSubmit = () => {}
+  onBeforeSubmit = () => {},
 ) => {
   if (
     utilService.isCurrentTimeGreaterThanEndTime({
@@ -71,7 +71,7 @@ const onDelivery = (
       {
         text: "Hủy",
       },
-    ]
+    ],
   );
 };
 

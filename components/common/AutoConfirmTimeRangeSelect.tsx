@@ -97,7 +97,7 @@ const AutoConfirmTimeRangeSelect = ({
 
   const handleStartTimeChange = (
     index: number,
-    isAutoSameEndTimeOfStartSelect: boolean = true
+    isAutoSameEndTimeOfStartSelect: boolean = true,
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
@@ -122,7 +122,7 @@ const AutoConfirmTimeRangeSelect = ({
   };
   const handleEndTimeChange = (
     index: number,
-    isAutoFixStartTime: boolean = true
+    isAutoFixStartTime: boolean = true,
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
@@ -149,13 +149,13 @@ const AutoConfirmTimeRangeSelect = ({
         startTime: 100,
         endTime: 600,
       },
-    ])
+    ]),
   );
 
   const initStateMapping = () => {
     if (frames.length == 0) return;
     const foundStartIndex = frames.findIndex(
-      (item) => item.startTime === startTime
+      (item) => item.startTime === startTime,
     );
     handleStartTimeChange(foundStartIndex !== -1 ? foundStartIndex : 0, false);
 
@@ -171,7 +171,7 @@ const AutoConfirmTimeRangeSelect = ({
       setTimeout(() => {
         setIsRefreshing(false);
       }, 0);
-    }, [])
+    }, []),
   );
 
   //   useEffect(() => {
@@ -210,9 +210,8 @@ const AutoConfirmTimeRangeSelect = ({
               renderItem={(item, index) => {
                 return (
                   <Text
-                    className={`text-lg text-gray-600 ${
-                      index == selectedEndIndex &&
-                      "font-semibold text-gray-800 "
+                    className={`text-[18px] text-gray-600 ${
+                      index == selectedEndIndex && "font-bold text-gray-800 "
                     }`}
                   >
                     {formatTime(item)}
@@ -238,9 +237,8 @@ const AutoConfirmTimeRangeSelect = ({
               renderItem={(item, index) => {
                 return (
                   <Text
-                    className={`text-lg text-gray-600 ${
-                      index == selectedStartIndex &&
-                      "font-semibold text-gray-800 "
+                    className={`text-[18px] text-gray-600 ${
+                      index == selectedStartIndex && "font-bold text-gray-800 "
                     }`}
                   >
                     {formatTime(item)}
@@ -251,7 +249,7 @@ const AutoConfirmTimeRangeSelect = ({
                 if (frames.length == 0) return;
                 handleStartTimeChange(
                   selectedIndex,
-                  isAutoSameEndTimeOfStartSelect
+                  isAutoSameEndTimeOfStartSelect,
                 );
               }}
             />

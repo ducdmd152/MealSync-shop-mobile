@@ -68,7 +68,7 @@ const PreviewImageUpload = ({
       if (libraryStatus !== "granted") {
         Alert.alert(
           "Oops",
-          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!"
+          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!",
         );
         return;
       }
@@ -101,7 +101,7 @@ const PreviewImageUpload = ({
       if (blob.size > CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_BYTE) {
         Alert.alert(
           "Oops",
-          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`
+          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`,
         );
         setIsSelectPicking(true);
         return;

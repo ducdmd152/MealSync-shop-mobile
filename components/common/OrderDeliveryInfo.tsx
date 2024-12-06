@@ -39,7 +39,7 @@ const OrderDeliveryInfo = ({
       apiClient
         .get(`shop-owner-staff/order/${order.id}/delivery-infor`)
         .then((response) => response.data),
-    []
+    [],
   );
   useEffect(() => {
     if (!fetch.isFetching) fetch.refetch();
@@ -52,11 +52,11 @@ const OrderDeliveryInfo = ({
           .local()
           .set("hour", Math.floor(order.endTime / 100))
           .set("minute", order.endTime % 100)
-          .toDate()
+          .toDate(),
       ).add(2, "hours");
 
       setIsEditable(!(new Date() > endFrameDate.toDate()));
-    }, [])
+    }, []),
   );
 
   // console.log("fetch.data?.value: ", fetch.data?.value);
@@ -111,13 +111,13 @@ const OrderDeliveryInfo = ({
                         .local()
                         .set("hour", Math.floor(order.endTime / 100))
                         .set("minute", order.endTime % 100)
-                        .toDate()
+                        .toDate(),
                     ).add(2, "hours");
                     if (new Date() > endFrameDate.toDate()) {
                       setIsEditable(false);
                       Alert.alert(
                         "Oops!",
-                        "Đã quá thời gian để thực hiện thao tác này!"
+                        "Đã quá thời gian để thực hiện thao tác này!",
                       );
                       return;
                     }
@@ -147,8 +147,8 @@ const OrderDeliveryInfo = ({
                       globalImageViewState.setDescription(
                         "Cập nhật vào " +
                           dayjs(evidence.takePictureDateTime).format(
-                            "HH:mm DD/MM/YYYY"
-                          )
+                            "HH:mm DD/MM/YYYY",
+                          ),
                       );
                       globalImageViewState.setIsModalVisible(true);
                     }}

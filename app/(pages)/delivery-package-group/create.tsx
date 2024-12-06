@@ -508,10 +508,7 @@ const DeliveryPackageGroupCreate = () => {
         </View>
       )}
 
-      <CompleteDeliveryConfirmModal
-        onParentOpen={() => {}}
-        onParentClose={() => {}}
-      />
+      <CompleteDeliveryConfirmModal />
       <CustomModal
         title={``}
         hasHeader={false}

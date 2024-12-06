@@ -494,6 +494,8 @@ const DeliveryFrameDetail = ({
           isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
         />
       </CustomModal>
+      <Toast position="bottom" />
+      <CompleteDeliveryConfirmModal />
       {/* <Portal> */}
       {/* <ModalPaper
         visible={isOpenOrderAssign}
@@ -508,7 +510,6 @@ const DeliveryFrameDetail = ({
         
       </ModalPaper> */}
       {/* </Portal> */}
-      <Toast position="bottom" />
     </View>
   );
 };

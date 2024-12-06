@@ -2,7 +2,7 @@ import Chats from "@/components/realtime/Chats";
 import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
 import { useFocusEffect } from "expo-router";
 import React from "react";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 
 const Chatting = () => {
   const globalHeaderPage = useGlobalHeaderPage();
@@ -12,7 +12,7 @@ const Chatting = () => {
       return () => {
         globalHeaderPage.setIsChattingFocusing(false);
       };
-    }, [])
+    }, []),
   );
 
   return (

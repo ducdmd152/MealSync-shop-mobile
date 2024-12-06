@@ -1,36 +1,44 @@
-import CustomModal from "@/components/common/CustomModal";
-import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
+import { View, Text, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
+import Avatar from "react-native-paper/lib/typescript/components/Avatar/AvatarIcon";
+import AvatarChange from "@/components/common/AvatarChange";
+import ImageUpload from "@/components/common/ImageUpload";
 import CustomButton from "@/components/custom/CustomButton";
-import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
 import FormField from "@/components/custom/FormFieldCustom";
-import PreviewImageUpload from "@/components/images/PreviewImageUpload";
-import CONSTANTS from "@/constants/data";
-import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import useModelState from "@/hooks/states/useModelState";
-import apiClient from "@/services/api-services/api-client";
-import { endpoints } from "@/services/api-services/api-service-instances";
-import imageService from "@/services/image-service";
+import CustomDropdown from "@/components/custom/CustomDropdown";
+import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
+import {
+  MultipleSelectList,
+  SelectList,
+} from "react-native-dropdown-select-list";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { Switch } from "react-native-paper";
 import sessionService from "@/services/session-service";
-import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
-import OptionGroupModel from "@/types/models/OptionGroupModel";
-import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
 import APICommonResponse from "@/types/responses/APICommonResponse";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
+import OptionGroupModel from "@/types/models/OptionGroupModel";
+import * as Yup from "yup";
 import FetchResponse, {
   FetchOnlyListResponse,
 } from "@/types/responses/FetchResponse";
-import { Ionicons } from "@expo/vector-icons";
-import { router, useFocusEffect } from "expo-router";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import useModelState from "@/hooks/states/useModelState";
+import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
+import PreviewImageUpload from "@/components/images/PreviewImageUpload";
+import imageService from "@/services/image-service";
+import CONSTANTS from "@/constants/data";
+import { TouchableOpacity } from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { SelectList } from "react-native-dropdown-select-list";
-import { Switch } from "react-native-paper";
-import * as Yup from "yup";
+import CustomModal from "@/components/common/CustomModal";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -72,16 +80,16 @@ const FoodUpdate = () => {
   const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
     useState(false);
   const [selectedShopCategory, setSelectedShopCategory] = useState(
-    foodDetailModel.shopCategoryId
+    foodDetailModel.shopCategoryId,
   );
 
   const [selectedPlatformCategory, setSelectedPlatformCategory] = useState(
-    foodDetailModel.platformCategoryId
+    foodDetailModel.platformCategoryId,
   );
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
     (foodDetailModel.optionGroups || [])?.map((item) =>
-      item.optionGroupId.toString()
-    )
+      item.optionGroupId.toString(),
+    ),
   );
   const [selectedOperatingSlots, setSelectedOperatingSlots] = useState<
     string[]
@@ -99,13 +107,13 @@ const FoodUpdate = () => {
     setSelectedPlatformCategory(foodDetailModel.platformCategoryId);
     setSelectedOptionGroups(
       (foodDetailModel.optionGroups || [])?.map((item) =>
-        item.optionGroupId.toString()
-      )
+        item.optionGroupId.toString(),
+      ),
     );
     setStatus(foodDetailModel.status);
     setIsSoldOut(foodDetailModel.isSoldOut);
     setSelectedOperatingSlots(
-      foodDetailModel.operatingSlots.map((item) => item.id.toString())
+      foodDetailModel.operatingSlots.map((item) => item.id.toString()),
     );
     setImageURI(foodDetailModel.imageUrl);
   }, [foodDetailModel]);
@@ -117,7 +125,7 @@ const FoodUpdate = () => {
   useEffect(() => {
     formik.setFieldValue(
       "platformCategoryId",
-      Number(selectedPlatformCategory)
+      Number(selectedPlatformCategory),
     );
     console.log(formik.values);
   }, [selectedPlatformCategory]);
@@ -148,7 +156,7 @@ const FoodUpdate = () => {
           {
             text: "Hủy",
           },
-        ]
+        ],
       );
     }
   };
@@ -163,7 +171,7 @@ const FoodUpdate = () => {
       apiClient
         .get(endpoints.SHOP_CATEGORY_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: platformCategories,
@@ -176,7 +184,7 @@ const FoodUpdate = () => {
       apiClient
         .get(endpoints.PLATFORM_CATEGORY_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: optionGroups,
@@ -197,7 +205,7 @@ const FoodUpdate = () => {
           },
         })
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: operatingSlots,
@@ -210,7 +218,7 @@ const FoodUpdate = () => {
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   // console.log(
   //   "fsdfsf",
@@ -255,17 +263,17 @@ const FoodUpdate = () => {
             isSoldOut: isSoldOut,
             price: Number(values.price),
             foodOptionGroups: selectedOptionGroups.map((item) =>
-              Number(item)
+              Number(item),
             ) as number[],
             operatingSlots: selectedOperatingSlots.map((item) =>
-              Number(item)
+              Number(item),
             ) as number[],
           };
           console.log("FOOD DATA UPDATE: ", foodData);
           // Send POST request to the API
           const response = await apiClient.put(
             "shop-owner/food/update",
-            foodData
+            foodData,
           );
           console.log("RESPONSE : ", response);
 
@@ -275,7 +283,7 @@ const FoodUpdate = () => {
         } catch (error: any) {
           Alert.alert(
             "Xảy ra lỗi khi tạo món",
-            error?.response?.data?.error?.message || "Vui lòng thử lại!"
+            error?.response?.data?.error?.message || "Vui lòng thử lại!",
           );
         } finally {
           setIsSubmiting(false);
@@ -304,7 +312,7 @@ const FoodUpdate = () => {
               },
             },
           ],
-          { cancelable: false }
+          { cancelable: false },
         );
         return;
       }
@@ -333,16 +341,9 @@ const FoodUpdate = () => {
         return 1;
       }
       return 0;
-    }
+    },
   );
-  useFocusEffect(
-    React.useCallback(() => {
-      platformCategoriesRefetch();
-      shopCategoriesRefetch();
-      optionGroupsRefetch();
-      operatingSlotsRefetch();
-    }, [])
-  );
+
   return (
     <PageLayoutWrapper>
       <View className="p-4 bg-white">
@@ -505,7 +506,7 @@ const FoodUpdate = () => {
                   (cat: PlatformCategoryModel) => ({
                     key: cat.id.toString(),
                     value: cat.name,
-                  })
+                  }),
                 ) || []
               ).find((item) => item.key == selectedPlatformCategory.toString())}
               setSelected={setSelectedPlatformCategory}
@@ -514,7 +515,7 @@ const FoodUpdate = () => {
                   (cat: PlatformCategoryModel) => ({
                     key: cat.id.toString(),
                     value: cat.name,
-                  })
+                  }),
                 ) || []
               }
               save="key"
@@ -562,12 +563,12 @@ const FoodUpdate = () => {
                     (group: OptionGroupModel) => ({
                       key: group.id.toString(),
                       value: group.title,
-                    })
+                    }),
                   ) || []
                 ).filter((item) =>
                   selectedOptionGroups.some(
-                    (value) => value.toString() === item.key
-                  )
+                    (value) => value.toString() === item.key,
+                  ),
                 ) as { key: any; value: any }[]
               }
               setSelected={setSelectedOptionGroups}
@@ -626,8 +627,8 @@ const FoodUpdate = () => {
                 })) || []
               ).filter((item) =>
                 selectedOperatingSlots.some(
-                  (slotId) => slotId.toString() == item.key
-                )
+                  (slotId) => slotId.toString() == item.key,
+                ),
               )}
               selectedText="Khoảng đã chọn"
               setSelected={setSelectedOperatingSlots}
@@ -654,8 +655,8 @@ const FoodUpdate = () => {
                 isSoldOut
                   ? "Tạm hết hàng"
                   : status == 1
-                  ? "Đang mở bán"
-                  : "Đã tạm ẩn"
+                    ? "Đang mở bán"
+                    : "Đã tạm ẩn"
               }
               otherStyleClasses="w-[142px]"
               otherInputStyleClasses="h-12"
@@ -700,11 +701,11 @@ const FoodUpdate = () => {
                           id: foodDetailModel.id,
                           isConfirm: true,
                         },
-                      }
+                      },
                     );
                     Alert.alert(
                       "Hoàn tất",
-                      `Đã xóa "${foodDetailModel.name}" khỏi thực đơn!`
+                      `Đã xóa "${foodDetailModel.name}" khỏi thực đơn!`,
                     );
                     router.replace("/menu");
                   } catch (error: any) {
@@ -715,7 +716,7 @@ const FoodUpdate = () => {
                       Alert.alert(
                         "Oops!",
                         error?.response?.data?.error?.message ||
-                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                       );
                     }
                   }

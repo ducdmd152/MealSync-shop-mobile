@@ -108,7 +108,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
           },
         })
         .then((response) => response.data),
-    [query]
+    [query],
   );
   useEffect(() => {
     setTmpCategories(categories?.value || []);
@@ -128,19 +128,21 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                   if (!category.foods) return category;
 
                   const updatedFoods = category.foods.map((f) =>
-                    f.id === food.id ? { ...f, status: 1, isSoldOut: false } : f
+                    f.id === food.id
+                      ? { ...f, status: 1, isSoldOut: false }
+                      : f,
                   );
 
                   // Trả về category mới với foods đã cập nhật
                   return { ...category, foods: updatedFoods };
-                })
+                }),
               );
               const response = await apiClient.put(
                 "shop-owner/food/" + food.id + "/status",
                 {
                   status: 1,
                   isSoldOut: false,
-                }
+                },
               );
 
               toast.show(`Đã bật mở bán ${food.name}!`, {
@@ -156,7 +158,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
               } else
                 Alert.alert(
                   "Xảy ra lỗi",
-                  error?.response?.data?.error?.message || "Vui lòng thử lại!"
+                  error?.response?.data?.error?.message || "Vui lòng thử lại!",
                 );
             } finally {
               setStatusingIdList(statusingIdList.filter((id) => id != food.id));
@@ -184,26 +186,26 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     const updatedFoods = category.foods.map((f) =>
                       f.id === food.id
                         ? { ...f, status: 1, isSoldOut: true }
-                        : f
+                        : f,
                     );
 
                     // Trả về category mới với foods đã cập nhật
                     return { ...category, foods: updatedFoods };
-                  })
+                  }),
                 );
                 const response = await apiClient.put(
                   "shop-owner/food/" + food.id + "/status",
                   {
                     status: 1,
                     isSoldOut: true,
-                  }
+                  },
                 );
                 toast.show(
                   `Tạm hết hàng cho ${food.name}, món sẽ tự động mở bán trở lại vào ngày mai!`,
                   {
                     type: "info",
                     duration: 3000,
-                  }
+                  },
                 );
 
                 // router.replace("/menu/option-group/link");
@@ -214,11 +216,12 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                 } else
                   Alert.alert(
                     "Xảy ra lỗi",
-                    error?.response?.data?.error?.message || "Vui lòng thử lại!"
+                    error?.response?.data?.error?.message ||
+                      "Vui lòng thử lại!",
                   );
               } finally {
                 setStatusingIdList(
-                  statusingIdList.filter((id) => id != food.id)
+                  statusingIdList.filter((id) => id != food.id),
                 );
               }
             },
@@ -235,26 +238,26 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     const updatedFoods = category.foods.map((f) =>
                       f.id === food.id
                         ? { ...f, status: 2, isSoldOut: false }
-                        : f
+                        : f,
                     );
 
                     // Trả về category mới với foods đã cập nhật
                     return { ...category, foods: updatedFoods };
-                  })
+                  }),
                 );
                 const response = await apiClient.put(
                   "shop-owner/food/" + food.id + "/status",
                   {
                     status: 2,
                     isSoldOut: false,
-                  }
+                  },
                 );
                 toast.show(
                   `Tạm ẩn món ${food.name}, món sẽ được ẩn đến khi bạn mở bán trở lại!`,
                   {
                     type: "info",
                     duration: 2000,
-                  }
+                  },
                 );
 
                 // router.replace("/menu/option-group/link");
@@ -265,11 +268,12 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                 } else
                   Alert.alert(
                     "Xảy ra lỗi",
-                    error?.response?.data?.error?.message || "Vui lòng thử lại!"
+                    error?.response?.data?.error?.message ||
+                      "Vui lòng thử lại!",
                   );
               } finally {
                 setStatusingIdList(
-                  statusingIdList.filter((id) => id != food.id)
+                  statusingIdList.filter((id) => id != food.id),
                 );
               }
             },
@@ -277,7 +281,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
           {
             text: "Hủy",
           },
-        ]
+        ],
       );
     }
   };
@@ -292,7 +296,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
           isCollapsible:
             oldExtendCategories.find((cat) => cat.id == category.id)
               ?.isCollapsible ?? true,
-        })) as ExtendCategoryModel[]
+        })) as ExtendCategoryModel[],
       );
     }
   }, [tmpCategories]);
@@ -300,7 +304,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   useFocusEffect(
     React.useCallback(() => {
       refetch();
-    }, [])
+    }, []),
   );
 
   // console.log(extendCategories);
@@ -319,8 +323,8 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
               extendCategories?.map((cat) =>
                 item.id === cat.id
                   ? { ...cat, isCollapsible: !cat.isCollapsible }
-                  : cat
-              )
+                  : cat,
+              ),
             )
           }
           onLongPress={drag}
@@ -340,7 +344,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                 setNotFoundInfo(
                   notFoundInfo.message,
                   "/menu",
-                  notFoundInfo.linkDesc
+                  notFoundInfo.linkDesc,
                 );
                 try {
                   const response = await apiClient.get<
@@ -358,7 +362,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     Alert.alert(
                       "Oops!",
                       error?.response?.data?.error?.message ||
-                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                        "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                     );
                   }
                 }
@@ -426,8 +430,8 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                       {food.isSoldOut
                         ? "Tạm hết hàng"
                         : food.status == 1
-                        ? "Đang mở bán"
-                        : "Tạm ẩn"}
+                          ? "Đang mở bán"
+                          : "Tạm ẩn"}
                     </Text>
                   </View>
                 </View>
@@ -444,8 +448,8 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                             .map(
                               (item) =>
                                 `${utilService.formatTime(
-                                  item.startTime
-                                )} - ${utilService.formatTime(item.endTime)}`
+                                  item.startTime,
+                                )} - ${utilService.formatTime(item.endTime)}`,
                             )
                             .join(" | ")}`}
                     </Text>
@@ -456,7 +460,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                       setNotFoundInfo(
                         notFoundInfo.message,
                         "/menu",
-                        notFoundInfo.linkDesc
+                        notFoundInfo.linkDesc,
                       );
                       try {
                         const response = await apiClient.get<
@@ -474,7 +478,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                           Alert.alert(
                             "Oops!",
                             error?.response?.data?.error?.message ||
-                              "Hệ thống đang bảo trì, vui lòng thử lại sau!"
+                              "Hệ thống đang bảo trì, vui lòng thử lại sau!",
                           );
                         }
                       }

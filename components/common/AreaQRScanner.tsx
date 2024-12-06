@@ -23,7 +23,7 @@ interface AreaQRScannerProps extends ViewProps {
   handleQRCode: (
     data: string,
     onSuccess: () => void,
-    onError: (error: any) => void
+    onError: (error: any) => void,
   ) => Promise<boolean>;
 }
 const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
@@ -63,7 +63,7 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
         if (status != "granted")
           Alert.alert("Oops", "Vui lòng cho phép truy cập camera để tiếp tục.");
       })();
-    }, [])
+    }, []),
   );
 
   return (
@@ -113,9 +113,9 @@ const AreaQRScanner: React.FC<AreaQRScannerProps> = ({
                       // {
                       //   text: "Hủy",
                       // },
-                    ]
+                    ],
                   );
-                }
+                },
               );
             }, 100);
           }

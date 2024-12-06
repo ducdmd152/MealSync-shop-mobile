@@ -29,7 +29,7 @@ const PasswordUpdate = () => {
         confirmPassword: "",
       });
       isAnyRequestSubmit.current = false;
-    }, [])
+    }, []),
   );
 
   const [errors, setErrors] = useState<any>({});
@@ -146,7 +146,7 @@ const PasswordUpdate = () => {
                   if (!validate(data)) {
                     Alert.alert(
                       "Oops",
-                      "Vui lòng hoàn thành thông tin hợp lệ!"
+                      "Vui lòng hoàn thành thông tin hợp lệ!",
                     );
                     return;
                   }
@@ -168,7 +168,7 @@ const PasswordUpdate = () => {
                       Alert.alert(
                         "Oops!",
                         error?.response?.data?.error?.message ||
-                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                       );
                     })
                     .finally(() => {

@@ -129,7 +129,9 @@ const CustomMultipleSelectList: React.FC<CustomMultipleSelectListProps> = ({
     if (defaultOptions && !_defaultOptionsDefined) {
       _setDefaultOptionsDefined(true);
       setSelected(
-        defaultOptions.map((item) => (save === "key" ? item?.key : item?.value))
+        defaultOptions.map((item) =>
+          save === "key" ? item?.key : item?.value,
+        ),
       );
       // setSelectedVal(defaultOptions.map((item) => item?.value));
     }
@@ -138,7 +140,7 @@ const CustomMultipleSelectList: React.FC<CustomMultipleSelectListProps> = ({
     setSelectedVal(
       data
         .filter((item) => selected.includes(item.key))
-        .map((item) => item?.value)
+        .map((item) => item?.value),
     );
   }, [selected]);
 

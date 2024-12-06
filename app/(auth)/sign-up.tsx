@@ -265,7 +265,7 @@ const SignUp = () => {
             >
               chính sách dành cho cửa hàng
             </Text>{" "}
-            trên hệ thống MealSync
+            trên hệ thống mealsync
           </Text>
         }
       />

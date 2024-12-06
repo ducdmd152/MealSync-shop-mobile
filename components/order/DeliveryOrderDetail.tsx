@@ -59,7 +59,7 @@ const DeliveryOrderDetail = ({
     if (isRefetching) setIsReloading(true);
     try {
       const response = await apiClient.get<ValueResponse<OrderFetchModel>>(
-        `shop-owner/order/${orderId}`
+        `shop-owner/order/${orderId}`,
       );
       setOrder({ ...response.data.value });
     } catch (error: any) {

@@ -30,7 +30,7 @@ const CategoryUpdate = () => {
     console.log("refetching...");
     try {
       const response = await apiClient.get<ValueResponse<ShopCategoryModel>>(
-        `shop-owner/category/${shopCategoryModel.id}`
+        `shop-owner/category/${shopCategoryModel.id}`,
       );
       setShopCategoryModel({ ...response.data.value });
     } catch (error: any) {
@@ -41,7 +41,7 @@ const CategoryUpdate = () => {
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
         );
       }
     }
@@ -51,7 +51,7 @@ const CategoryUpdate = () => {
     React.useCallback(() => {
       if (isFirstTime.current) isFirstTime.current = false;
       else refetch();
-    }, [])
+    }, []),
   );
   useEffect(() => {
     setCategoryName(shopCategoryModel.name);
@@ -72,7 +72,7 @@ const CategoryUpdate = () => {
       setIsSubmitting(true);
       const response = await apiClient.put(
         "shop-owner/category/" + shopCategoryModel.id,
-        data
+        data,
       );
       const { value, isSuccess, error } = response.data;
 
@@ -82,14 +82,14 @@ const CategoryUpdate = () => {
       } else {
         Alert.alert(
           "Thông báo",
-          error.message || "Có lỗi xảy ra khi cập danh mục!"
+          error.message || "Có lỗi xảy ra khi cập danh mục!",
         );
       }
     } catch (error: any) {
       Alert.alert(
         "Lỗi",
         error?.response?.data?.error?.message ||
-          "Hệ thống đang bảo trì, vui lòng thử lại sau."
+          "Hệ thống đang bảo trì, vui lòng thử lại sau.",
       );
     } finally {
       setIsSubmitting(false);
@@ -107,11 +107,11 @@ const CategoryUpdate = () => {
         onPress: async () => {
           try {
             const response = await apiClient.delete(
-              `shop-owner/category/${shopCategoryModel.id}`
+              `shop-owner/category/${shopCategoryModel.id}`,
             );
             Alert.alert(
               "Hoàn tất",
-              `Đã xóa danh mục ${shopCategoryModel.name}!`
+              `Đã xóa danh mục ${shopCategoryModel.name}!`,
             );
             router.replace("/menu");
           } catch (error: any) {
@@ -122,7 +122,7 @@ const CategoryUpdate = () => {
               Alert.alert(
                 "Oops!",
                 error?.response?.data?.error?.message ||
-                  "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                  "Yêu cầu bị từ chối, vui lòng thử lại sau!",
               );
               refetch();
             }
@@ -190,7 +190,7 @@ const CategoryUpdate = () => {
                           setNotFoundInfo(
                             notFoundInfo.message,
                             "/menu",
-                            notFoundInfo.linkDesc
+                            notFoundInfo.linkDesc,
                           );
                           try {
                             const response = await apiClient.get<
@@ -209,7 +209,7 @@ const CategoryUpdate = () => {
                               Alert.alert(
                                 "Oops!",
                                 error?.response?.data?.error?.message ||
-                                  "Hệ thống đang bảo trì, vui lòng thử lại sau!"
+                                  "Hệ thống đang bảo trì, vui lòng thử lại sau!",
                               );
                             }
                           }

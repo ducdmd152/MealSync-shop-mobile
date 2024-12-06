@@ -112,37 +112,6 @@ export default function TabLayout() {
             ),
           }}
         />
-        {/* TEMPLATE ONLY */}
-        <Tabs.Screen
-          name="index-template"
-          options={{
-            title: "Home-template",
-            headerShown: false,
-            href: null,
-            tabBarStyle: { display: "none" },
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "home" : "home-outline"}
-                color={color}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="explore-template"
-          options={{
-            title: "Explorer-template",
-            headerShown: false,
-            href: null,
-            tabBarStyle: { display: "none" },
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "code-slash" : "code-slash-outline"}
-                color={color}
-              />
-            ),
-          }}
-        />
       </Tabs>
     </SafeAreaView>
   );

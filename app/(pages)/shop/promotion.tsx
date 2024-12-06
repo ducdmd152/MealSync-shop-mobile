@@ -73,7 +73,7 @@ const Promotion = () => {
           },
         })
         .then((response) => response.data),
-    [searchValue, status, fromDate, toDate]
+    [searchValue, status, fromDate, toDate],
   );
   const toggleFromDatePicker = () => {
     setFromDatePickerVisibility(!isFromDatePickerVisible);
@@ -85,7 +85,7 @@ const Promotion = () => {
   useFocusEffect(
     React.useCallback(() => {
       promotions.refetch();
-    }, [])
+    }, []),
   );
   return (
     <PageLayoutWrapper isScroll={false}>
@@ -149,7 +149,7 @@ const Promotion = () => {
                 className="border-2 border-gray-300 p-2 rounded-md"
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-black mx-2 text-lg">
+                  <Text className="text-black mx-2 text-[18px]">
                     {fromDate.format("DD/MM/YYYY")}
                   </Text>
                   <Ionicons name="create-outline" size={21} color="gray-600" />
@@ -167,7 +167,7 @@ const Promotion = () => {
                 className="border-2 border-gray-300 p-2 rounded-md"
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-black mx-2 text-lg">
+                  <Text className="text-black mx-2 text-[18px]">
                     {toDate.local().format("DD/MM/YYYY")}
                   </Text>
                   <Ionicons name="create-outline" size={21} color="gray-600" />
@@ -282,7 +282,7 @@ const Promotion = () => {
                       }}
                     >
                       {promotionStatuses.find(
-                        (item) => item.key === promotion.status
+                        (item) => item.key === promotion.status,
                       )?.label || "------"}
                     </Text>
                   </View>

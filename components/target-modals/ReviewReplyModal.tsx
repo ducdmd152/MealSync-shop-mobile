@@ -52,7 +52,7 @@ const ReviewReplyModal = ({
         comment: "",
         imageUrls: [],
       });
-    }, [globalReviewReplyState])
+    }, [globalReviewReplyState]),
   );
   useEffect(() => {
     if (!isImageHandling && isSubmitting) {
@@ -74,7 +74,7 @@ const ReviewReplyModal = ({
       if (isSuccess) {
         Alert.alert(
           "Hoàn tất",
-          `Đã trả lời đánh giá của đơn hàng MS-${globalReviewReplyState.id}`
+          `Đã trả lời đánh giá của đơn hàng MS-${globalReviewReplyState.id}`,
         );
         globalReviewReplyState.setIsModalVisible(false);
         globalReviewReplyState.onAfterCompleted();
@@ -84,7 +84,7 @@ const ReviewReplyModal = ({
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);

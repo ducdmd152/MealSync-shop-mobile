@@ -59,10 +59,10 @@ const StaffDeliveryPackage = () => {
         .get(
           globalAuthState.roleId == 2
             ? endpoints.OPERATING_SLOT_LIST
-            : "shop-staff/operating-slot"
+            : "shop-staff/operating-slot",
         )
         .then((response) => response.data),
-    []
+    [],
   );
 
   const [query, setQuery] = useState<DeliveryPackageFetchQuery>({
@@ -89,7 +89,7 @@ const StaffDeliveryPackage = () => {
       // console.log("operatingSlots?.value: ", operatingSlots?.value);
       globalTimeRangeState.setMinTime(operatingSlots.value[0].startTime);
       globalTimeRangeState.setMaxTime(
-        operatingSlots.value[operatingSlots.value.length - 1].endTime
+        operatingSlots.value[operatingSlots.value.length - 1].endTime,
       );
     }
   }, [operatingSlots, isOperatingSlotsLoading, isOperatingSlotsRefetching]);
@@ -98,7 +98,7 @@ const StaffDeliveryPackage = () => {
     setQuery({
       ...query,
       intendedReceiveDate: dayjs(globalTimeRangeState.date).format(
-        "YYYY/MM/DD"
+        "YYYY/MM/DD",
       ),
       startTime: globalTimeRangeState.startTime,
       endTime: globalTimeRangeState.endTime,
@@ -108,14 +108,14 @@ const StaffDeliveryPackage = () => {
   useFocusEffect(
     React.useCallback(() => {
       operatingSlotsRefetch();
-    }, [])
+    }, []),
   );
   const [index, setIndex] = useState(0);
   const deliveryPackageIndex = usePathState(
-    (state) => state.deliveryPackageIndex
+    (state) => state.deliveryPackageIndex,
   );
   const setDeliveryPackageIndex = usePathState(
-    (state) => state.setDeliveryPackageIndex
+    (state) => state.setDeliveryPackageIndex,
   );
   return (
     <View className="w-full h-full bg-white text-black relative">
@@ -157,7 +157,7 @@ const StaffDeliveryPackage = () => {
                 className="border-2 border-gray-300 p-2 rounded-md"
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-black mx-2 text-lg">
+                  <Text className="text-black mx-2 text-[18px]">
                     {formatDate(query.intendedReceiveDate)}
                   </Text>
                   <Ionicons name="create-outline" size={21} color="gray-600" />
@@ -185,7 +185,7 @@ const StaffDeliveryPackage = () => {
                       onChange={(params) => {
                         if (params.date) {
                           globalTimeRangeState.setDate(
-                            dayjs(params.date).toDate()
+                            dayjs(params.date).toDate(),
                           );
                         }
                         setDatePickerVisibility(false);
@@ -208,7 +208,7 @@ const StaffDeliveryPackage = () => {
                 className="border-2 border-gray-300 p-2 rounded-md"
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-black mx-2 text-lg">
+                  <Text className="text-black mx-2 text-[18px]">
                     {formatTime(query.startTime) +
                       " - " +
                       formatTime(query.endTime)}

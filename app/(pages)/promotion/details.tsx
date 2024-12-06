@@ -1,38 +1,21 @@
-import {
-  View,
-  Text,
-  Alert,
-  TextInput,
-  TouchableOpacity,
-  Image,
-} from "react-native";
-import React, { useRef, useState } from "react";
+import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
+import CustomButton from "@/components/custom/CustomButton";
+import CONSTANTS from "@/constants/data";
+import usePromotionModelState from "@/hooks/states/usePromotionModelState";
+import apiClient from "@/services/api-services/api-client";
+import utilService from "@/services/util-service";
 import PromotionModel, {
-  initPromotionSampleObject,
   PromotionApplyType,
   promotionApplyTypes,
 } from "@/types/models/PromotionModel";
-import dayjs from "dayjs";
-import apiClient from "@/services/api-services/api-client";
 import ValueResponse from "@/types/responses/ValueReponse";
-import { useToast } from "react-native-toast-notifications";
+import dayjs from "dayjs";
 import { router, useFocusEffect } from "expo-router";
+import React, { useRef, useState } from "react";
+import { Alert, Image, Text, TextInput, View } from "react-native";
 import { Switch, TouchableRipple } from "react-native-paper";
-import DateTimePicker from "react-native-ui-datepicker";
-import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
-import ImageUpload from "@/components/common/ImageUpload";
-import CustomButton from "@/components/custom/CustomButton";
-import { SelectList } from "react-native-dropdown-select-list";
-import utilService from "@/services/util-service";
-import { Ionicons } from "@expo/vector-icons";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import usePromotionModelState from "@/hooks/states/usePromotionModelState";
-import CONSTANTS from "@/constants/data";
-// Initialize the timezone plugins
-dayjs.extend(utc);
-dayjs.extend(timezone);
+import { useToast } from "react-native-toast-notifications";
+
 const PromotionDetails = () => {
   const toast = useToast();
   const isAnyRequestSubmit = useRef(false);

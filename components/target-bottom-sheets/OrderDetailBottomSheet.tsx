@@ -27,6 +27,7 @@ const OrderDetailBottomSheet = () => {
           <TouchableOpacity
             className="items-center"
             onPress={() => {
+              // console.log("presssingg...");
               globalOrderDetailState.setIsDetailBottomSheetVisible(false);
             }}
           >
@@ -43,7 +44,7 @@ const OrderDetailBottomSheet = () => {
                 setDetailBottomSheetDisplay(false);
                 Alert.alert(
                   `Đơn hàng MS-${globalOrderDetailState.id} không tồn tại`,
-                  "Vui lòng thử lại!"
+                  "Vui lòng thử lại!",
                 );
                 setTimeout(() => {
                   globalOrderDetailState.setIsDetailBottomSheetVisible(false);

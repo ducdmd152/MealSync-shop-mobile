@@ -1,17 +1,16 @@
-import { View, Text } from "react-native";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
-import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
+import { Text, View } from "react-native";
 import ScrollPicker, {
   ScrollPickerHandle,
 } from "react-native-wheel-scrollview-picker";
-import CustomButton from "../custom/CustomButton";
-import { useFocusEffect } from "@react-navigation/native";
-import useTimeRangeState from "@/hooks/states/useTimeRangeState";
 
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
@@ -75,7 +74,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
 
   const handleStartTimeChange = (
     index: number,
-    isAutoFixEndTime: boolean = true
+    isAutoFixEndTime: boolean = true,
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
@@ -88,11 +87,14 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
     refStart.current && refStart.current.scrollToTargetIndex(selectedIndex);
     setSelectdStartIndex(selectedIndex);
     setStartTime(frames[selectedIndex].startTime);
-    if (isAutoFixEndTime) handleEndTimeChange(selectedIndex, false);
+    if (isAutoFixEndTime) {
+      if (frames[selectedIndex].startTime >= frames[selectedEndIndex].endTime)
+        handleEndTimeChange(selectedIndex, false);
+    }
   };
   const handleEndTimeChange = (
     index: number,
-    isAutoFixStartTime: boolean = true
+    isAutoFixStartTime: boolean = true,
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
@@ -125,22 +127,22 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const [frames, setFrames] = useState(
     convertToTimeFrames(
       operatingSlots?.value.map((item: OperatingSlotModel) => ({
         startTime: item.startTime,
         endTime: item.endTime,
-      })) || []
-    )
+      })) || [{ startTime: 0, endTime: 2400 }],
+    ),
   );
 
   const globalStateMapping = () => {
-    console.log("frames.length: ", frames.length);
+    // console.log("frames.length: ", frames.length);
     if (frames.length == 0) return;
     const foundStartIndex = frames.findIndex(
-      (item) => item.startTime === startTime
+      (item) => item.startTime === startTime,
     );
     handleStartTimeChange(foundStartIndex !== -1 ? foundStartIndex : 0, false);
 
@@ -154,8 +156,8 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
         operatingSlots?.value.map((item: OperatingSlotModel) => ({
           startTime: item.startTime,
           endTime: item.endTime,
-        })) || []
-      )
+        })) || [{ startTime: 0, endTime: 2400 }],
+      ),
     );
   }, [operatingSlots?.value]);
   useEffect(() => {
@@ -167,8 +169,8 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       setIsRefreshing(true);
       setTimeout(() => {
         setIsRefreshing(false);
-      }, 0);
-    }, [operatingSlots])
+      }, 100);
+    }, [operatingSlots]),
   );
 
   //   useEffect(() => {
@@ -205,9 +207,8 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
               renderItem={(item, index) => {
                 return (
                   <Text
-                    className={`text-lg text-gray-600 ${
-                      index == selectedStartIndex &&
-                      "font-semibold text-gray-800 "
+                    className={`text-[18px] text-gray-600 ${
+                      index == selectedStartIndex && "font-bold text-gray-800 "
                     }`}
                   >
                     {formatTime(item)}
@@ -232,9 +233,8 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
               renderItem={(item, index) => {
                 return (
                   <Text
-                    className={`text-lg text-gray-600 ${
-                      index == selectedEndIndex &&
-                      "font-semibold text-gray-800 "
+                    className={`text-[18px] text-gray-600 ${
+                      index == selectedEndIndex && "font-bold text-gray-800 "
                     }`}
                   >
                     {formatTime(item)}

@@ -1,9 +1,12 @@
+import CustomModal from "@/components/common/CustomModal";
 import TimeRangeSelect from "@/components/common/TimeRangeSelect";
 import CustomButton from "@/components/custom/CustomButton";
 import OrderDeliveryAssign from "@/components/delivery-package/OrderDeliveryAssign";
+import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
 import OrderCancelModal from "@/components/target-modals/OrderCancelModal";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
 import useGlobalOrderDetailState from "@/hooks/states/useGlobalOrderDetailState";
 import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
 import useTimeRangeState from "@/hooks/states/useTimeRangeState";
@@ -19,7 +22,6 @@ import OrderFetchModel, {
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
 import { Dormitories } from "@/types/models/ShopProfileModel";
-import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
 import PagingRequestQuery from "@/types/queries/PagingRequestQuery";
 import FetchResponse, {
   FetchOnlyListResponse,
@@ -32,6 +34,7 @@ import { BlurView } from "expo-blur";
 import { useFocusEffect } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   Image,
@@ -42,15 +45,9 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ActivityIndicator,
+  FlatList,
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import {
-  Modal as ModalPaper,
-  Portal,
-  Searchbar,
-  TouchableRipple,
-} from "react-native-paper";
+import { Searchbar, TouchableRipple } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
 import DateTimePicker from "react-native-ui-datepicker";
 const formatTime = (time: number): string => {
@@ -90,6 +87,7 @@ const Order = () => {
   //   console.log(await sessionService.getAuthToken());
   // })();
   const simpleToast = useToast();
+  const globalNotiState = useGlobalNotiState();
   const globalTimeRangeState = useTimeRangeState();
   const [order, setOrder] = useState<OrderFetchModel>({} as OrderFetchModel);
   const [cacheOrderList, setCacheOrderList] = useState<OrderFetchModel[]>([]);
@@ -230,6 +228,14 @@ const Order = () => {
   //   console.log(query.status);
   // }, [query.status]);
   useEffect(() => {
+    if (
+      globalNotiState.toggleChangingFlag &&
+      isFocusing &&
+      !ordersFetcher.isFetching
+    )
+      ordersFetcher.refetch();
+  }, [globalNotiState.toggleChangingFlag]);
+  useEffect(() => {
     if (isFocusing) {
       setQuery({
         ...query,
@@ -258,12 +264,12 @@ const Order = () => {
         item.id != order.id
           ? item
           : {
-              ...item,
+              ...order,
             }
       )
     );
 
-  const handleCancel = (orderId: number) => {
+  const handleCancel = (order: OrderFetchModel) => {
     const inTime = utilService.getInFrameTime(
       order.startTime,
       order.endTime,
@@ -285,7 +291,7 @@ const Order = () => {
       }
       setIsSubmitting(true);
       orderAPIService.cancel(
-        orderId,
+        order.id,
         reason,
         () => {
           // Alert.alert(
@@ -297,13 +303,13 @@ const Order = () => {
           //   text1: "Hoàn tất",
           //   text2: `Đã hủy đơn hàng MS-${orderId}!`,
           // });
-          simpleToast.show(`Đã hủy đơn hàng MS-${orderId}!`, {
+          simpleToast.show(`Đã hủy đơn hàng MS-${order.id}!`, {
             type: "info",
             duration: 1500,
           });
           setCacheOrderList(
             cacheOrderList.map((item) =>
-              item.id != orderId
+              item.id != order.id
                 ? item
                 : {
                     ...item,
@@ -319,7 +325,7 @@ const Order = () => {
           Alert.alert(
             "Xác nhận",
             warningInfo?.message ||
-              `Đơn hàng MS-${orderId} đã gần đến giờ đi giao (<=1h), bạn sẽ bị đánh cảnh cáo nếu tiếp tục hủy?`,
+              `Đơn hàng MS-${order.id} đã gần đến giờ đi giao (<=1h), bạn sẽ bị đánh cảnh cáo nếu tiếp tục hủy?`,
             [
               {
                 text: "Không",
@@ -330,7 +336,7 @@ const Order = () => {
                 onPress: async () => {
                   setIsSubmitting(true);
                   orderAPIService.cancel(
-                    orderId,
+                    order.id,
                     reason,
                     () => {
                       // const toast = Toast.show({
@@ -338,7 +344,7 @@ const Order = () => {
                       //   text1: "Hoàn tất",
                       //   text2: `Đã hủy đơn hàng MS-${orderId}!`,
                       // });
-                      simpleToast.show(`Đã hủy đơn hàng MS-${orderId}!`, {
+                      simpleToast.show(`Đã hủy đơn hàng MS-${order.id}!`, {
                         type: "info",
                         duration: 1500,
                       });
@@ -348,7 +354,7 @@ const Order = () => {
                       // );
                       setCacheOrderList(
                         cacheOrderList.map((item) =>
-                          item.id != orderId
+                          item.id != order.id
                             ? item
                             : {
                                 ...item,
@@ -389,7 +395,7 @@ const Order = () => {
     setIsCancelModal(true);
     setIsCancelOrReject(true);
     setRequest(() => cancelRequest);
-    setOrderDetailId(orderId);
+    setOrderDetailId(order.id);
 
     // Alert.alert(
     //   "Xác nhận",
@@ -408,7 +414,8 @@ const Order = () => {
     //   ]
     // );
   };
-  const handleReject = (orderId: number) => {
+  const handleReject = (order: OrderFetchModel) => {
+    // console.log("Check reject: ");
     const inTime = utilService.getInFrameTime(
       order.startTime,
       order.endTime,
@@ -430,7 +437,7 @@ const Order = () => {
       }
       setIsSubmitting(true);
       orderAPIService.reject(
-        orderId,
+        order.id,
         reason,
         () => {
           // const toast = Toast.show({
@@ -438,13 +445,13 @@ const Order = () => {
           //   text1: `MS-${orderId}`,
           //   text2: `Đã từ chối đơn hàng MS-${orderId}!`,
           // });
-          simpleToast.show(`Đã từ chối đơn hàng MS-${orderId}!`, {
+          simpleToast.show(`Đã từ chối đơn hàng MS-${order.id}!`, {
             type: "info",
             duration: 1500,
           });
           setCacheOrderList(
             cacheOrderList.map((item) =>
-              item.id != orderId
+              item.id != order.id
                 ? item
                 : {
                     ...item,
@@ -469,7 +476,7 @@ const Order = () => {
     setIsCancelModal(true);
     setIsCancelOrReject(false);
     setRequest(() => rejectRequest);
-    setOrderDetailId(orderId);
+    setOrderDetailId(order.id);
   };
 
   const renderItem = ({ item }: { item: OrderFetchModel }) => {
@@ -651,7 +658,7 @@ const Order = () => {
                   <Text className="text-[13.5px]">Nhận đơn</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => handleReject(order.id)}
+                  onPress={() => handleReject(order)}
                   className="bg-white border-[#fda4af] bg-[#fda4af] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                 >
                   <Text className="text-[13.2px]">Từ chối</Text>
@@ -795,7 +802,7 @@ const Order = () => {
                   <Text className="text-[13.5px]">Chuẩn bị</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => handleCancel(order.id)}
+                  onPress={() => handleCancel(order)}
                   className="bg-white border-[#d6d3d1] bg-[#d6d3d1] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
                 >
                   <Text className="text-[13.2px]">Hủy</Text>
@@ -933,42 +940,43 @@ const Order = () => {
         iconLeft={<Ionicons name="filter-outline" size={21} color="white" />}
         textStyleClasses="text-[14px] text-gray-900 ml-1 text-white"
       />
-      <Portal>
-        <ModalPaper
-          visible={isOpenOrderAssign}
-          onDismiss={() => setIsOpenOrderAssign(false)}
-          contentContainerStyle={{
-            backgroundColor: "white",
-            padding: 20,
-            margin: 20,
-          }}
-        >
-          <OrderDeliveryAssign
-            onComplete={(shopDeliveryStaff) => {
-              setIsOpenOrderAssign(false);
+      <CustomModal
+        title={`MS-${order.id} Chi tiết đặt hàng`}
+        hasHeader={false}
+        isOpen={isOpenOrderAssign}
+        setIsOpen={(value) => setIsOpenOrderAssign(value)}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[98%]"
+        onBackdropPress={() => {
+          setIsOpenOrderAssign(false);
+        }}
+      >
+        <OrderDeliveryAssign
+          onComplete={(shopDeliveryStaff) => {
+            setIsOpenOrderAssign(false);
 
-              setCacheOrderInList({
-                ...order,
-                shopDeliveryStaff: shopDeliveryStaff,
-              });
-              if (shopDeliveryStaff === null) {
-                return;
+            setCacheOrderInList({
+              ...order,
+              shopDeliveryStaff: shopDeliveryStaff,
+            });
+            ordersFetcher.refetch();
+            if (shopDeliveryStaff === null) {
+              return;
+            }
+            simpleToast.show(
+              `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+                shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
+              }!`,
+              {
+                type: "success",
+                duration: 3000,
               }
-              simpleToast.show(
-                `Đơn hàng MS-${order.id} sẽ được giao bởi ${
-                  shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
-                }!`,
-                {
-                  type: "success",
-                  duration: 3000,
-                }
-              );
-            }}
-            order={order}
-            isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
-          />
-        </ModalPaper>
-      </Portal>
+            );
+          }}
+          order={order}
+          isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
+        />
+      </CustomModal>
 
       <View className="w-full gap-2">
         <View className="w-full">
@@ -1030,7 +1038,7 @@ const Order = () => {
                 className="border-2 border-gray-300 p-2 rounded-md"
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-black mx-2 text-lg">
+                  <Text className="text-black mx-2 text-[18px]">
                     {formatDate(query.intendedReceiveDate)}
                   </Text>
                   <Ionicons name="create-outline" size={21} color="gray-600" />
@@ -1081,7 +1089,7 @@ const Order = () => {
                 className="border-2 border-gray-300 p-2 rounded-md"
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-black mx-2 text-lg">
+                  <Text className="text-black mx-2 text-[18px]">
                     {formatTime(query.startTime) +
                       " - " +
                       formatTime(query.endTime)}
@@ -1163,6 +1171,7 @@ const Order = () => {
           </View>
         )}
       </BottomSheet> */}
+      <OrderDetailBottomSheet />
       <OrderCancelModal
         orderId={orderDetailId}
         request={request}

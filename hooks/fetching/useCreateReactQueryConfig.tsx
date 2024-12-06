@@ -1,5 +1,12 @@
-import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
-import { APIEntityModel, APIService } from '@/services/api-services/api-service';
+import {
+  useMutation,
+  UseMutationResult,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  APIEntityModel,
+  APIService,
+} from "@/services/api-services/api-service";
 
 const useCreateReactQueryConfig = <Model extends APIEntityModel>(
   keyBaseOfList: any[],
@@ -17,9 +24,13 @@ const useCreateReactQueryConfig = <Model extends APIEntityModel>(
     mutationFn: createFunction,
 
     onMutate: (newData: Model) => {
-      const previousData = queryClient.getQueryData<Model[]>([keyBaseOfList]) || [];
+      const previousData =
+        queryClient.getQueryData<Model[]>([keyBaseOfList]) || [];
 
-      queryClient.setQueryData<Model[]>([keyBaseOfList], (data = []) => [newData, ...data]);
+      queryClient.setQueryData<Model[]>([keyBaseOfList], (data = []) => [
+        newData,
+        ...data,
+      ]);
 
       return { previousData };
     },

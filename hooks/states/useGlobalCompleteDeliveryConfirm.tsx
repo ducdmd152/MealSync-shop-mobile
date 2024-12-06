@@ -37,7 +37,7 @@ const useGlobalCompleteDeliveryConfirm = create<GlobalCompleteDeliveryConfirm>(
     setTitle: (title: string) => set({ title: title }),
     isShowActionale: true,
     setIsShowActionale: (param: boolean) => set({ isShowActionale: param }),
-  })
+  }),
 );
 
 export default useGlobalCompleteDeliveryConfirm;

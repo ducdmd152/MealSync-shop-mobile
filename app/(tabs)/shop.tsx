@@ -27,37 +27,42 @@ import { WITHDRAW_STATUSES_FILTER } from "@/types/models/WithdrawalModel";
 import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
 import useGlobalStaffState from "@/hooks/states/useGlobalStaffState";
 import { CommonActions } from "@react-navigation/native";
+import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 
 const Shop = () => {
   const navigation = useNavigation();
   const globalWithdrawalState = useGlobalWithdrawalState();
   const globalStaffState = useGlobalStaffState();
+  const globalSocketState = useGlobalSocketState();
+  const globalAuthState = useGlobalAuthState();
+
   const redirections = {
     shop: [
       {
         text: "Hồ sơ cửa hàng",
         icon: <Ionicons size={20} name="storefront-outline" />,
         handlePress: () => router.push("/shop/profile"),
-        textStyleClasses: "text-gray-800",
+        textStyleClasses: "text-gray-800 text-[16px]",
       },
       {
         text: "Khuyến mãi",
         icon: <Ionicons size={19.5} name="pricetags-outline" />,
         handlePress: () => router.push("/shop/promotion"),
-        textStyleClasses: "text-gray-800",
+        textStyleClasses: "text-gray-800 text-[16px]",
       },
       {
         text: "Lượt đánh giá",
         icon: <Ionicons size={20} name="star-outline" />,
         handlePress: () => router.push("/shop/review"),
-        textStyleClasses: "text-gray-800",
+        textStyleClasses: "text-gray-800 text-[16px]",
       },
 
       {
         text: "Hiệu suất bán hàng",
         icon: <Ionicons size={20} name="stats-chart-outline" />,
         handlePress: () => router.push("/shop/statistics"),
-        textStyleClasses: "text-gray-800",
+        textStyleClasses: "text-gray-800 text-[16px]",
       },
       {
         text: "Nhân viên giao hàng",
@@ -66,13 +71,13 @@ const Shop = () => {
           globalStaffState.setQuery({ searchText: "", status: 0 });
           router.push("/shop/staff");
         },
-        textStyleClasses: "text-gray-800",
+        textStyleClasses: "text-gray-800 text-[16px]",
       },
       {
         text: "Cài đặt cửa hàng",
         icon: <Ionicons size={20} name="settings-outline" />,
         handlePress: () => router.push("/shop/setting"),
-        textStyleClasses: "text-gray-800",
+        textStyleClasses: "text-gray-800 text-[16px]",
       },
     ] as LinkItem[],
     balance: [
@@ -80,7 +85,7 @@ const Shop = () => {
         text: "Quản lí số dư",
         icon: <Ionicons size={20} name="wallet-outline" />,
         handlePress: () => router.push("/shop/balance"),
-        textStyleClasses: "text-gray-800",
+        textStyleClasses: "text-gray-800 text-[16px]",
       },
       {
         text: "Yêu cầu rút tiền",
@@ -89,7 +94,7 @@ const Shop = () => {
           globalWithdrawalState.setStatuses(WITHDRAW_STATUSES_FILTER[0].value);
           router.push("/shop/withdrawal");
         },
-        textStyleClasses: "text-gray-800",
+        textStyleClasses: "text-gray-800 text-[16px]",
       },
     ] as LinkItem[],
     account: [
@@ -97,7 +102,7 @@ const Shop = () => {
         text: "Tài khoản của tôi",
         icon: <Ionicons size={20} name="person-circle-outline" />,
         handlePress: () => router.push("/shop/account"),
-        textStyleClasses: "text-gray-800",
+        textStyleClasses: "text-gray-800 text-[16px]",
       },
 
       {
@@ -105,12 +110,18 @@ const Shop = () => {
         icon: <Ionicons size={20} name="log-out-outline" />,
         handlePress: () => {
           sessionService.clear();
+          globalAuthState.clear();
+
+          if (globalSocketState.socket != null) {
+            globalSocketState.socket.disconnect();
+            globalSocketState.setSocket(null);
+          }
           navigation.reset({
             index: 0,
             routes: [{ name: "index" }],
           });
         },
-        textStyleClasses: "text-gray-600",
+        textStyleClasses: "text-gray-600 text-[16px]",
       },
     ] as LinkItem[],
   };
@@ -125,7 +136,7 @@ const Shop = () => {
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
         .then((response) => response.data),
-    []
+    [],
   );
   const [cache, setCache] = useState<ShopProfileGetModel>({
     status: 2,
@@ -138,7 +149,7 @@ const Shop = () => {
   useFocusEffect(
     React.useCallback(() => {
       shopProfile.refetch();
-    }, [])
+    }, []),
   );
   useEffect(() => {
     if (!shopProfile.isFetching && shopProfile.isSuccess)
@@ -146,7 +157,7 @@ const Shop = () => {
   }, [shopProfile.data?.value]);
   const getShopStatusDescription = (
     status: number,
-    isReceivingOrderPaused: boolean
+    isReceivingOrderPaused: boolean,
   ) => {
     if (status === 0) return "";
     if (status == 1) return "Chưa được phê duyệt";
@@ -160,13 +171,13 @@ const Shop = () => {
       isReceivingOrderPaused: boolean;
       isConfirm: boolean;
     },
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     try {
       setIsSubmitting(true);
       const response = await apiClient.put(
         `shop-owner/shop-owner/active-inactive`,
-        request
+        request,
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -181,7 +192,7 @@ const Shop = () => {
             onPress: async () => {
               onChangeShopStatusRequest(
                 { ...request, isConfirm: true },
-                onSuccess
+                onSuccess,
               );
             },
           },
@@ -194,7 +205,7 @@ const Shop = () => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
       );
     } finally {
       setIsSubmitting(false);
@@ -203,7 +214,7 @@ const Shop = () => {
   const onChangeShopStatusSubmit = async (
     status: number,
     isReceivingOrderPaused: boolean,
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     onChangeShopStatusRequest(
       {
@@ -211,7 +222,7 @@ const Shop = () => {
         isReceivingOrderPaused,
         isConfirm: false,
       },
-      onSuccess
+      onSuccess,
     );
   };
   return (
@@ -231,14 +242,14 @@ const Shop = () => {
           </View>
 
           <View className="gap-y-0">
-            <Text className="text-lg italic text-gray text-primary font-medium mb-[-4px]">
+            <Text className="text-lg italic text-gray text-primary font-medium text-[18px] mb-[-4px]">
               {cache.name || "----------------"}
             </Text>
 
-            <Text className="text-[11px] italic text-gray text-primary font-medium ">
+            <Text className="text-[11px] italic text-gray text-primary font-medium text-[12px]">
               {getShopStatusDescription(
                 cache.status ? cache.status : 0,
-                cache.isReceivingOrderPaused || false
+                cache.isReceivingOrderPaused || false,
               )}
             </Text>
           </View>
@@ -272,7 +283,7 @@ const Shop = () => {
                             {
                               type: "success",
                               duration: 2000,
-                            }
+                            },
                           );
                         });
                       },
@@ -280,7 +291,7 @@ const Shop = () => {
                     {
                       text: "Hủy",
                     },
-                  ]
+                  ],
                 );
               } else {
                 Alert.alert(
@@ -309,7 +320,7 @@ const Shop = () => {
                             {
                               type: "info",
                               duration: 2000,
-                            }
+                            },
                           );
                         });
                       },
@@ -317,7 +328,7 @@ const Shop = () => {
                     {
                       text: "Hủy",
                     },
-                  ]
+                  ].reverse(),
                 );
               }
             }}

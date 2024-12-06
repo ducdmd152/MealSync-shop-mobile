@@ -9,6 +9,7 @@ import {
   RefreshControl,
   TextInput,
   ActivityIndicator,
+  FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
@@ -27,7 +28,6 @@ import { useFocusEffect } from "expo-router";
 import FetchResponse from "@/types/responses/FetchResponse";
 import sessionService from "@/services/session-service";
 import dayjs from "dayjs";
-import { FlatList } from "react-native-gesture-handler";
 const INFINITE_LOAD_SIZE = 15;
 const Balance = () => {
   const balanceFetch = useFetchWithRQWithFetchFunc(

@@ -69,7 +69,7 @@ interface Props {
   isAnyUnCreatedFrame: boolean;
   setIsAnyUnCreatedFrame: (value: boolean) => void;
   setOrderFetchResult: (
-    result: UseQueryResult<FetchResponse<OrderFetchModel>, Error>
+    result: UseQueryResult<FetchResponse<OrderFetchModel>, Error>,
   ) => void;
   onSuggest: () => void;
 }
@@ -104,10 +104,10 @@ const GPKGDateTimeFrameSelect = ({
         .get(
           endpoints.UNCREATED_GPKG_FRAME_LIST +
             "?intendedReceiveDate=" +
-            query.intendedReceiveDate
+            query.intendedReceiveDate,
         )
         .then((response) => response.data),
-    [query]
+    [query],
   );
 
   const orderFetchResult = useFetchWithRQWithFetchFunc(
@@ -127,17 +127,17 @@ const GPKGDateTimeFrameSelect = ({
               pageIndex: 1,
               pageSize: 100_000_000,
             },
-          }
+          },
         )
         .then((response) => response.data),
-    [query]
+    [query],
   );
   // console.log("orderFetchData: ", orderFetchData?.value.items);
   useEffect(() => {
     if (!isGPKGFrameListLoading && !isGPKGFrameListRefetching) {
       setFrames(
         gPKGFrameListData?.value.timeFrames.filter((item) => !item.isCreated) ||
-          []
+          [],
       );
       if (
         isAnyUnCreatedFrame !=
@@ -150,8 +150,8 @@ const GPKGDateTimeFrameSelect = ({
           gPKGFrameListData?.value.timeFrames.filter((item) => !item.isCreated)
             .length != undefined &&
             gPKGFrameListData?.value.timeFrames.filter(
-              (item) => !item.isCreated
-            ).length > 0
+              (item) => !item.isCreated,
+            ).length > 0,
         );
       }
       handleFrameChange(0);
@@ -160,7 +160,7 @@ const GPKGDateTimeFrameSelect = ({
   useFocusEffect(
     React.useCallback(() => {
       gPKGFrameListRefetch();
-    }, [])
+    }, []),
   );
 
   const handleFrameChange = (index: number) => {
@@ -182,7 +182,7 @@ const GPKGDateTimeFrameSelect = ({
   useFocusEffect(
     React.useCallback(() => {
       gPKGFrameListRefetch();
-    }, [])
+    }, []),
   );
   // console.log("gPKGFrameListData: ", frames);
   const frameSelect = (
@@ -196,14 +196,14 @@ const GPKGDateTimeFrameSelect = ({
           ref={refFrameSelect}
           wrapperHeight={100}
           dataSource={frames.map(
-            (range) => range.startTime * 10000 + range.endTime
+            (range) => range.startTime * 10000 + range.endTime,
           )}
           selectedIndex={selectedFrameIndex}
           renderItem={(item, index) => {
             return (
               <Text
-                className={`text-lg text-gray-600 ${
-                  index == selectedFrameIndex && "font-semibold text-gray-800 "
+                className={`text-[18px] text-gray-600 ${
+                  index == selectedFrameIndex && "font-bold text-gray-800 "
                 }`}
               >
                 {utilService.formatTime(Math.floor(item / 10000)) +
@@ -262,7 +262,7 @@ const GPKGDateTimeFrameSelect = ({
                           ...query,
                           intendedReceiveDate:
                             utilService.formatDateTimeToYyyyMmDd(
-                              params.date.toLocaleString()
+                              params.date.toLocaleString(),
                             ),
                         });
                       }

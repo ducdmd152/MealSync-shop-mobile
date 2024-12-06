@@ -5,6 +5,7 @@ import {
   Image,
   ScrollView,
   RefreshControl,
+  FlatList,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import CONSTANTS from "@/constants/data";
@@ -22,22 +23,8 @@ import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
 import useOrderDetailPageState from "@/hooks/states/useOrderDetailPageState";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
 import { ActivityIndicator } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-interface NotiModel {
-  id: number;
-  accountId: number;
-  referenceId: number;
-  imageUrl: string;
-  title: string;
-  content: string;
-  // data: string; // Chuỗi JSON, có thể cần parse thành đối tượng nếu cần dùng chi tiết
-  entityType: number;
-  isRead: boolean;
-  createdDate: string;
-}
-enum EntityTypes {
-  Order = 1,
-}
+import { NotiModel, NotiEntityTypes } from "@/types/models/ChatModel";
+
 const INFINITE_LOAD_SIZE = 10;
 const Notifications = () => {
   const globalHeaderPage = useGlobalHeaderPage();
@@ -112,7 +99,7 @@ const Notifications = () => {
     <TouchableOpacity
       key={item.id}
       onPress={() => {
-        if (item.entityType == EntityTypes.Order) {
+        if (item.entityType == NotiEntityTypes.Order) {
           globalOrderDetailPageState.setOrder({} as OrderDetailModel);
           globalOrderDetailPageState.setId(item.referenceId);
           router.push("/order/details");
@@ -141,7 +128,7 @@ const Notifications = () => {
             ellipsizeMode="tail"
           >
             {item.title +
-              (item.entityType == EntityTypes.Order
+              (item.entityType == NotiEntityTypes.Order
                 ? ` MS-${item.referenceId}`
                 : "")}
           </Text>
@@ -221,7 +208,7 @@ const Notifications = () => {
         <TouchableOpacity
           key={item.id}
           onPress={() => {
-            if (item.entityType == EntityTypes.Order) {
+            if (item.entityType == NotiEntityTypes.Order) {
               globalOrderDetailPageState.setOrder({} as OrderDetailModel);
               globalOrderDetailPageState.setId(item.referenceId);
               router.push("/order/details");
@@ -247,7 +234,7 @@ const Notifications = () => {
                 ellipsizeMode="tail"
               >
                 {item.title +
-                  (item.entityType == EntityTypes.Order
+                  (item.entityType == NotiEntityTypes.Order
                     ? ` MS-${item.referenceId}`
                     : "")}
               </Text>

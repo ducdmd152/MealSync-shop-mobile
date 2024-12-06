@@ -36,8 +36,9 @@ const CustomModal = ({
         >
           {hasHeader && (
             <View className="flex-row items-center justify-between">
-              <Text className={titleStyleClasses}>{title}</Text>
+              <Text className={`${titleStyleClasses}`}>{title}</Text>
               <TouchableOpacity
+                className="p-[1px]"
                 onPress={() => {
                   (close || setIsOpen)(false);
                 }}

@@ -24,7 +24,7 @@ const Chatting = () => {
     REACT_QUERY_CACHE_KEYS.TEST,
     (): Promise<FetchResponse<TestModel>> =>
       apiClient.get(endpoints.TEST).then((response) => response.data),
-    [toggle]
+    [toggle],
   );
 
   const { data } = fetch;

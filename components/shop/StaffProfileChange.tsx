@@ -34,15 +34,15 @@ const StaffProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
     [endpoints.STAFF_INFO],
     async (): Promise<FetchValueResponse<ShopDeliveryStaffModel>> =>
       apiClient.get(endpoints.STAFF_INFO).then((response) => response.data),
-    []
+    [],
   );
   useFocusEffect(
     React.useCallback(() => {
       if (staffAccount.isFetched) staffAccount.refetch();
-    }, [])
+    }, []),
   );
   const [model, setModel] = useState<ShopDeliveryStaffModel>(
-    emptyShopDeliveryStaff
+    emptyShopDeliveryStaff,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isAnyRequestSubmit = useRef(false);
@@ -152,7 +152,7 @@ const StaffProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
         );
       })
       .finally(() => {

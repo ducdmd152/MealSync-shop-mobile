@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "MealSync-shop-mobile",
-    "slug": "MealSync-shop-mobile",
+    "name": "mealsync-shop-mobile",
+    "slug": "mealsync-shop-mobile",
     "scheme": "myapp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,6 +16,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.anonymous.mealsyncshopmobile",
+      "newArchEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -26,8 +28,7 @@
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.RECORD_AUDIO"
-      ],
-      "package": "com.anonymous.MealSyncshopmobile"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -39,7 +40,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Cho phép ứng dụng sẽ truy cập thư viện của bạn."
+          "photosPermission": "Cho phép ứng dụng sẽ truy cập thư viện của bạn.",
+          "cameraPermission": "Cho phép ứng dụng sử dụng camera của bạn."
         }
       ],
       "expo-font"

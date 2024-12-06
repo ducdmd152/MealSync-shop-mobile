@@ -39,7 +39,7 @@ const OrderDeliveryAssign = ({
       ? order.shopDeliveryStaff
       : ({
           id: -1,
-        } as StaffInfoModel)
+        } as StaffInfoModel),
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUnAssignSubmitting, setIsUnAssignSubmitting] = useState(false);
@@ -62,7 +62,7 @@ const OrderDeliveryAssign = ({
           },
           params: {
             intendedReceiveDate: utilService.formatDateTimeToYyyyMmDd(
-              order.intendedReceiveDate
+              order.intendedReceiveDate,
             ),
             startTime: order.startTime,
             endTime: order.endTime,
@@ -70,7 +70,7 @@ const OrderDeliveryAssign = ({
           },
         })
         .then((response) => response.data),
-    []
+    [],
   );
 
   useFocusEffect(
@@ -81,15 +81,15 @@ const OrderDeliveryAssign = ({
           ? order.shopDeliveryStaff
           : ({
               id: -1,
-            } as StaffInfoModel)
+            } as StaffInfoModel),
       );
-    }, [])
+    }, []),
   );
   const onAssign = () => {
     if (staffInfo.id < 0) {
       Alert.alert(
         "Vui lòng lựa chọn",
-        "Bạn cần chọn người đảm nhận giao đơn hàng MS-" + order.id
+        "Bạn cần chọn người đảm nhận giao đơn hàng MS-" + order.id,
       );
       return;
     }
@@ -147,7 +147,7 @@ const OrderDeliveryAssign = ({
                             {
                               type: "success",
                               duration: 4000,
-                            }
+                            },
                           );
                           // Alert.alert(
                           //   "Hoàn tất",
@@ -162,11 +162,11 @@ const OrderDeliveryAssign = ({
                           Alert.alert(
                             "Oops!",
                             error?.response?.data?.error?.message ||
-                              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                           );
                         },
                         true,
-                        setIsSubmitting
+                        setIsSubmitting,
                       );
                     },
                   },
@@ -179,11 +179,11 @@ const OrderDeliveryAssign = ({
                 Alert.alert(
                   "Oops!",
                   error?.response?.data?.error?.message ||
-                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                    "Yêu cầu bị từ chối, vui lòng thử lại sau!",
                 );
               },
               !isNeedForReconfimation,
-              setIsSubmitting
+              setIsSubmitting,
             );
           },
         },
@@ -191,13 +191,13 @@ const OrderDeliveryAssign = ({
           text: "Không",
           // style: "cancel",
         },
-      ]
+      ],
     );
   };
   const onUnAssignRequest = async (
     isConfirmWarning: boolean,
     onSuccess = () => {},
-    onError = (error: any) => {}
+    onError = (error: any) => {},
   ) => {
     try {
       setIsUnAssignSubmitting(true);
@@ -205,7 +205,7 @@ const OrderDeliveryAssign = ({
         `shop-owner/order/${order.id}/un-assign`,
         {
           isConfirm: isConfirmWarning,
-        }
+        },
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -249,9 +249,9 @@ const OrderDeliveryAssign = ({
               Alert.alert(
                 "Oops!",
                 error?.response?.data?.error?.message ||
-                  "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                  "Yêu cầu bị từ chối, vui lòng thử lại sau!",
               );
-            }
+            },
           );
         },
       },
@@ -289,7 +289,10 @@ const OrderDeliveryAssign = ({
                 <Ionicons name="checkmark-circle" size={19} color="green" />
               </View>
             ) : (
-              <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2 rounded-full" />
+              <View
+                className="w-[18px] h-[18px] border-[2px] border-gray-200 mr-2"
+                style={{ borderRadius: 100 }}
+              />
             )}
             <Text className="font-semibold">
               Bạn{" "}
@@ -328,7 +331,10 @@ const OrderDeliveryAssign = ({
                       />
                     </View>
                   ) : (
-                    <View className="w-[18px] h-[18px] border-2 border-gray-200 mr-2 rounded-full" />
+                    <View
+                      className="w-[18px] h-[18px] border-2 border-gray-200 mr-2"
+                      style={{ borderRadius: 100 }}
+                    />
                   )}
 
                   <Text className="font-semibold">

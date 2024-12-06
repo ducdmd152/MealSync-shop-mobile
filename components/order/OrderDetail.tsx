@@ -30,6 +30,9 @@ import CustomButton from "../custom/CustomButton";
 import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 import OrderCancelModal from "../target-modals/OrderCancelModal";
 import OrderReportInfo from "../common/OrderReportInfo";
+import OrderReviewInfo from "../common/OrderReviewInfo";
+import dayjs from "dayjs";
+import ReviewReplyModal from "../target-modals/ReviewReplyModal";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -60,6 +63,7 @@ interface Props {
   orderId: number;
   onNotFound?: () => void;
   containerStyleClasses?: string;
+  innerContainerStyleClasses?: string;
   hasHeaderInfo?: boolean;
   showActionButtons?: boolean;
   order: OrderDetailModel;
@@ -69,6 +73,8 @@ const OrderDetail = ({
   orderId,
   onNotFound = () => {},
   containerStyleClasses = "",
+  innerContainerStyleClasses = "",
+
   hasHeaderInfo = false,
   showActionButtons = true,
   order,
@@ -296,7 +302,7 @@ const OrderDetail = ({
       {order?.id != undefined && (
         <View className="w-full h-full">
           {hasHeaderInfo && (
-            <View className="pt-4 px-2 gap-y-3 pb-1 mb-2">
+            <View className="pt-4 px-2 gap-y-1 pb-1 mb-2">
               <View className="flex-row items-center justify-between">
                 <Text className="text-[12.5px] text-gray-800 font-semibold mt-1">
                   Đơn hàng MS-{order.id}
@@ -323,17 +329,13 @@ const OrderDetail = ({
               <View>
                 <Text className="text-[10px] text-gray-500 italic text-right">
                   Được đặt vào{" "}
-                  {new Date(order.orderDate).toLocaleTimeString("vi-VN", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}{" "}
-                  {new Date(order.orderDate).toLocaleDateString()}
+                  {dayjs(order.orderDate).local().format("HH:mm DD/MM/YYYY")}
                 </Text>
               </View>
             </View>
           )}
           <ScrollView
-            className="flex-1"
+            className={`flex-1 ${innerContainerStyleClasses}`}
             refreshControl={
               <RefreshControl
                 tintColor={"#FCF450"}
@@ -357,23 +359,27 @@ const OrderDetail = ({
                 order.status <= OrderStatus.Completed ? (
                   <TouchableOpacity
                     onPress={() => {
-                      Alert.alert("Số điện thoại", "", [
-                        {
-                          text: "Gọi " + order.customer?.phoneNumber,
-                          onPress: () =>
-                            Linking.openURL(
-                              `tel:${order.customer?.phoneNumber}`
-                            ),
-                        },
-                        {
-                          text: "Sao chép",
-                          onPress: () =>
-                            Clipboard.setString(
-                              order.customer?.phoneNumber || ""
-                            ),
-                        },
-                        { text: "Hủy", style: "cancel" },
-                      ]);
+                      Alert.alert(
+                        "Số điện thoại",
+                        undefined,
+                        [
+                          {
+                            text: "Gọi " + order.customer?.phoneNumber,
+                            onPress: () =>
+                              Linking.openURL(
+                                `tel:${order.customer?.phoneNumber}`
+                              ),
+                          },
+                          {
+                            text: "Sao chép",
+                            onPress: () =>
+                              Clipboard.setString(
+                                order.customer?.phoneNumber || ""
+                              ),
+                          },
+                          { text: "Hủy" },
+                        ].reverse()
+                      );
                     }}
                   >
                     <Text className="text-[14px] text-gray-700 font-semibold text-[#0e7490]">
@@ -525,15 +531,19 @@ const OrderDetail = ({
               </View>
             )}
 
-            {order.status >= OrderStatus.Delivered && (
+            {(order.status == OrderStatus.IssueReported ||
+              order.status == OrderStatus.UnderReview ||
+              order.status == OrderStatus.Resolved) && (
               <OrderReportInfo order={order} isLoading={isLoading} />
             )}
-            <View className="mt-2 bg-white p-2">
-              <Text>Khu vực rating & feedback</Text>
-            </View>
+            {order.status >= OrderStatus.Delivered && (
+              <OrderReviewInfo order={order} isLoading={isLoading} />
+            )}
           </ScrollView>
           {showActionButtons && (
-            <View className="items-center justify-center bg-white pt-2">
+            <View
+              className={`items-center justify-center bg-white pt-2 ${innerContainerStyleClasses}`}
+            >
               {order.status == OrderStatus.Pending &&
                 utilService.getInFrameTime(
                   order.startTime,
@@ -873,6 +883,7 @@ const OrderDetail = ({
         isOpen={isCancelModal}
         setIsOpen={setIsCancelModal}
       />
+      <ReviewReplyModal />
       <Toast topOffset={-20} />
     </View>
   );

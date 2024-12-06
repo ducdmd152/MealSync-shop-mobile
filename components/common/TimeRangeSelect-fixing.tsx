@@ -75,7 +75,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
 
   const handleStartTimeChange = (
     index: number,
-    isAutoFixEndTime: boolean = true
+    isAutoFixEndTime: boolean = true,
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
@@ -89,7 +89,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
   };
   const handleEndTimeChange = (
     index: number,
-    isAutoFixStartTime: boolean = true
+    isAutoFixStartTime: boolean = true,
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
@@ -120,21 +120,21 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const [frames, setFrames] = useState(
     convertToTimeFrames(
       operatingSlots?.value.map((item: OperatingSlotModel) => ({
         startTime: item.startTime,
         endTime: item.endTime,
-      })) || []
-    )
+      })) || [],
+    ),
   );
 
   const globalStateMapping = () => {
     if (frames.length == 0) return;
     const foundStartIndex = frames.findIndex(
-      (item) => item.startTime === startTime
+      (item) => item.startTime === startTime,
     );
     handleStartTimeChange(foundStartIndex !== -1 ? foundStartIndex : 0, false);
 
@@ -160,7 +160,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       setTimeout(() => {
         // setIsRefreshing(false);
       }, 0);
-    }, [operatingSlots])
+    }, [operatingSlots]),
   );
 
   //   useEffect(() => {
@@ -197,7 +197,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
               renderItem={(item, index) => {
                 return (
                   <Text
-                    className={`text-lg text-gray-600 ${
+                    className={`text-[18px] text-gray-600 ${
                       item == startTime && "font-semibold text-gray-800 "
                     }`}
                   >
@@ -223,7 +223,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
               renderItem={(item, index) => {
                 return (
                   <Text
-                    className={`text-lg text-gray-600 ${
+                    className={`text-[18px] text-gray-600 ${
                       item == endTime && "font-semibold text-gray-800 "
                     }`}
                   >

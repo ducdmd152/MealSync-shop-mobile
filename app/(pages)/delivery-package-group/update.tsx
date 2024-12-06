@@ -652,6 +652,7 @@ const DeliveryPackageGroupUpdate = () => {
           {...query}
         />
       </CustomModal>
+      <CompleteDeliveryConfirmModal />
     </PageLayoutWrapper>
   );
 };

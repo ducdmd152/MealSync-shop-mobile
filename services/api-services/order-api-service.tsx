@@ -11,8 +11,8 @@ const orderAPIService = {
     onWarning: (warningInfo: WarningMessageValue) => void,
     onFailure: (error: any) => void,
     setIsSubmitting: (isSubmitting: boolean) => void = (
-      isSubmitting: boolean
-    ) => {}
+      isSubmitting: boolean,
+    ) => {},
   ) => {
     try {
       setIsSubmitting(true);
@@ -20,7 +20,7 @@ const orderAPIService = {
         `shop-owner/order/${orderId}/confirm`,
         {
           reason: "no-comment",
-        }
+        },
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -44,8 +44,8 @@ const orderAPIService = {
     onWarning: (warningInfo: WarningMessageValue) => void,
     onFailure: (error: any) => void,
     setIsSubmitting: (isSubmitting: boolean) => void = (
-      isSubmitting: boolean
-    ) => {}
+      isSubmitting: boolean,
+    ) => {},
   ) => {
     try {
       setIsSubmitting(true);
@@ -53,7 +53,7 @@ const orderAPIService = {
         `shop-owner/order/${orderId}/reject`,
         {
           reason: reason || "no-comment",
-        }
+        },
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -77,8 +77,8 @@ const orderAPIService = {
     onFailure: (error: any) => void,
     isConfirmWarning: boolean = false,
     setIsSubmitting: (isSubmitting: boolean) => void = (
-      isSubmitting: boolean
-    ) => {}
+      isSubmitting: boolean,
+    ) => {},
   ) => {
     try {
       setIsSubmitting(true);
@@ -87,7 +87,7 @@ const orderAPIService = {
         {
           reason: "no-comment",
           isConfirm: isConfirmWarning,
-        }
+        },
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -112,8 +112,8 @@ const orderAPIService = {
     onFailure: (error: any) => void,
     isConfirmWarning: boolean = false,
     setIsSubmitting: (isSubmitting: boolean) => void = (
-      isSubmitting: boolean
-    ) => {}
+      isSubmitting: boolean,
+    ) => {},
   ) => {
     try {
       setIsSubmitting(true);
@@ -122,7 +122,7 @@ const orderAPIService = {
         {
           reason: reason || "no-comment",
           isConfirm: isConfirmWarning,
-        }
+        },
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -147,8 +147,8 @@ const orderAPIService = {
     onFailure: (error: any) => void,
     isConfirmWarning: boolean = false,
     setIsSubmitting: (isSubmitting: boolean) => void = (
-      isSubmitting: boolean
-    ) => {}
+      isSubmitting: boolean,
+    ) => {},
   ) => {
     try {
       setIsSubmitting(true);
@@ -158,7 +158,7 @@ const orderAPIService = {
           shopDeliveryStaffId: staffId == 0 ? null : staffId,
           isConfirm: isConfirmWarning,
           reason: "no-comment",
-        }
+        },
       );
       const { value, isSuccess, isWarning, error } = response.data;
 
@@ -182,9 +182,9 @@ const orderAPIService = {
     onWarning: (warningInfo: WarningMessageValue) => void,
     onFailure: (error: any) => void,
     setIsSubmitting: (isSubmitting: boolean) => void = (
-      isSubmitting: boolean
+      isSubmitting: boolean,
     ) => {},
-    isConfirmWarning: boolean = false
+    isConfirmWarning: boolean = false,
   ) => {
     try {
       setIsSubmitting(true);
@@ -193,7 +193,7 @@ const orderAPIService = {
         {
           ids: orderIds,
           isConfirm: isConfirmWarning,
-        }
+        },
       );
       const { value, isSuccess, isWarning, error } = response.data;
 

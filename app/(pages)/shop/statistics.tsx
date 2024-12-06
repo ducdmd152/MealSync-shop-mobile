@@ -77,7 +77,7 @@ const Statistics = () => {
           },
         })
         .then((response) => response.data),
-    [fromDate, toDate]
+    [fromDate, toDate],
   );
   // useEffect(() => {
   //   console.log(
@@ -90,7 +90,7 @@ const Statistics = () => {
   useFocusEffect(
     React.useCallback(() => {
       statistics.refetch();
-    }, [])
+    }, []),
   );
   return (
     <PageLayoutWrapper
@@ -125,7 +125,7 @@ const Statistics = () => {
             className="border-2 border-gray-300 p-2 rounded-md"
           >
             <View className="flex-row justify-between items-center">
-              <Text className="text-black mx-2 text-lg">
+              <Text className="text-black mx-2 text-[18px]">
                 {fromDate.format("DD/MM/YYYY")}
               </Text>
               <Ionicons name="create-outline" size={21} color="gray-600" />
@@ -141,7 +141,7 @@ const Statistics = () => {
             className="border-2 border-gray-300 p-2 rounded-md"
           >
             <View className="flex-row justify-between items-center">
-              <Text className="text-black mx-2 text-lg">
+              <Text className="text-black mx-2 text-[18px]">
                 {toDate.format("DD/MM/YYYY")}
               </Text>
               <Ionicons name="create-outline" size={21} color="gray-600" />

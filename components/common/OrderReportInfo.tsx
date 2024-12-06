@@ -59,7 +59,7 @@ const OrderReportInfo = ({
       apiClient
         .get(`shop-owner/order/${order.id}/report`)
         .then((response) => response.data),
-    []
+    [],
   );
   const getIsInTimeForReply = () => {
     const endFrameDate = dayjs(
@@ -67,7 +67,7 @@ const OrderReportInfo = ({
         .local()
         .set("hour", Math.floor(order.endTime / 100))
         .set("minute", order.endTime % 100)
-        .toDate()
+        .toDate(),
     ).add(22, "hours"); // 12h-22h to reply
     return new Date() < endFrameDate.toDate();
   };
@@ -78,7 +78,7 @@ const OrderReportInfo = ({
     React.useCallback(() => {
       reportsFetcher.refetch();
       setIsEditable(getIsInTimeForReply());
-    }, [])
+    }, []),
   );
 
   // console.log("fetch.data?.value: ", fetch.data?.value);
@@ -106,7 +106,7 @@ const OrderReportInfo = ({
             className={`text-[11px] font-medium me-2 px-2.5 py-[2px] rounded`}
             style={{
               backgroundColor: STATUSES.find(
-                (item) => item.value == report?.status
+                (item) => item.value == report?.status,
               )?.bgColor,
             }}
           >
@@ -123,7 +123,7 @@ const OrderReportInfo = ({
                     setIsEditable(false);
                     Alert.alert(
                       "Oops!",
-                      "Đã quá thời gian để thực hiện thao tác này!"
+                      "Đã quá thời gian để thực hiện thao tác này!",
                     );
                     return;
                   }
@@ -155,8 +155,8 @@ const OrderReportInfo = ({
                       globalImageViewState.setDescription(
                         "Cập nhật vào " +
                           dayjs(evidence.takePictureDateTime).format(
-                            "HH:mm DD/MM/YYYY"
-                          )
+                            "HH:mm DD/MM/YYYY",
+                          ),
                       );
                       globalImageViewState.setIsModalVisible(true);
                     }}
@@ -182,7 +182,7 @@ const OrderReportInfo = ({
         {reply && (
           <View className="py-2 pl-4 mr-[-14px]  rounded-md">
             <View className="flex-row gap-x-4 items-center justify-between">
-              <Text className="text-gray-800 font-semibold">
+              <Text className="text-gray-800 text-[12.9px] font-bold">
                 Phản hồi từ cửa hàng
               </Text>
               <Text className="text-gray-600 text-[12px] mr-6">
@@ -205,8 +205,8 @@ const OrderReportInfo = ({
                         globalImageViewState.setDescription(
                           "Cập nhật vào " +
                             dayjs(evidence.takePictureDateTime).format(
-                              "HH:mm DD/MM/YYYY"
-                            )
+                              "HH:mm DD/MM/YYYY",
+                            ),
                         );
                         globalImageViewState.setIsModalVisible(true);
                       }}

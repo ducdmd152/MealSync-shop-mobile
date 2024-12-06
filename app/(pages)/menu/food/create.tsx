@@ -1,35 +1,42 @@
-import CustomModal from "@/components/common/CustomModal";
-import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
+import { View, Text, Alert, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import Avatar from "react-native-paper/lib/typescript/components/Avatar/AvatarIcon";
+import AvatarChange from "@/components/common/AvatarChange";
+import ImageUpload from "@/components/common/ImageUpload";
 import CustomButton from "@/components/custom/CustomButton";
-import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
 import FormField from "@/components/custom/FormFieldCustom";
-import PreviewImageUpload from "@/components/images/PreviewImageUpload";
-import CONSTANTS from "@/constants/data";
-import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import apiClient from "@/services/api-services/api-client";
-import { endpoints } from "@/services/api-services/api-service-instances";
-import imageService from "@/services/image-service";
+import CustomDropdown from "@/components/custom/CustomDropdown";
+import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
+import {
+  MultipleSelectList,
+  SelectList,
+} from "react-native-dropdown-select-list";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { Switch } from "react-native-paper";
 import sessionService from "@/services/session-service";
-import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
-import OptionGroupModel from "@/types/models/OptionGroupModel";
-import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
 import APICommonResponse from "@/types/responses/APICommonResponse";
+import apiClient from "@/services/api-services/api-client";
+import { endpoints } from "@/services/api-services/api-service-instances";
+import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
+import OptionGroupModel from "@/types/models/OptionGroupModel";
+import * as Yup from "yup";
 import FetchResponse, {
   FetchOnlyListResponse,
 } from "@/types/responses/FetchResponse";
-import { Ionicons } from "@expo/vector-icons";
-import { router, useFocusEffect } from "expo-router";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import imageService from "@/services/image-service";
+import CONSTANTS from "@/constants/data";
+import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
+import PreviewImageUpload from "@/components/images/PreviewImageUpload";
+import CustomModal from "@/components/common/CustomModal";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { SelectList } from "react-native-dropdown-select-list";
-import { Switch } from "react-native-paper";
-import * as Yup from "yup";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -69,7 +76,7 @@ const FoodCreate = () => {
   const [selectedShopCategory, setSelectedShopCategory] = useState(-1);
   const [selectedPlatformCategory, setSelectedPlatformCategory] = useState(-1);
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
-    []
+    [],
   );
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
@@ -80,7 +87,7 @@ const FoodCreate = () => {
   >([]);
   const [isAvailable, setIsAvailable] = useState(true);
   const [imageURI, setImageURI] = useState(
-    "https://join.travelmanagers.com.au/wp-content/uploads/2017/09/default-placeholder-300x300.png"
+    "https://join.travelmanagers.com.au/wp-content/uploads/2017/09/default-placeholder-300x300.png",
   );
 
   useEffect(() => {
@@ -90,7 +97,7 @@ const FoodCreate = () => {
   useEffect(() => {
     formik.setFieldValue(
       "platformCategoryId",
-      Number(selectedPlatformCategory)
+      Number(selectedPlatformCategory),
     );
     // console.log(formik.values);
   }, [selectedPlatformCategory]);
@@ -107,7 +114,7 @@ const FoodCreate = () => {
       apiClient
         .get(endpoints.SHOP_CATEGORY_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: platformCategories,
@@ -120,7 +127,7 @@ const FoodCreate = () => {
       apiClient
         .get(endpoints.PLATFORM_CATEGORY_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: optionGroups,
@@ -141,7 +148,7 @@ const FoodCreate = () => {
           },
         })
         .then((response) => response.data),
-    []
+    [],
   );
   const {
     data: operatingSlots,
@@ -154,16 +161,9 @@ const FoodCreate = () => {
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    []
+    [],
   );
-  useFocusEffect(
-    React.useCallback(() => {
-      platformCategoriesRefetch();
-      shopCategoriesRefetch();
-      optionGroupsRefetch();
-      operatingSlotsRefetch();
-    }, [])
-  );
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -192,17 +192,17 @@ const FoodCreate = () => {
             status: isAvailable ? 1 : 2,
             price: Number(values.price),
             foodOptionGroups: selectedOptionGroups.map((item) =>
-              Number(item)
+              Number(item),
             ) as number[],
             operatingSlots: selectedOperatingSlots.map((item) =>
-              Number(item)
+              Number(item),
             ) as number[],
           };
           console.log("CREATE FOOD DATA: ", foodData);
           // Send POST request to the API
           const response = await apiClient.post(
             "shop-owner/food/create",
-            foodData
+            foodData,
           );
           console.log("RESPONSE : ", response);
 
@@ -212,7 +212,7 @@ const FoodCreate = () => {
         } catch (error: any) {
           Alert.alert(
             "Xảy ra lỗi khi tạo món",
-            error?.response?.data?.error?.message || "Vui lòng thử lại!"
+            error?.response?.data?.error?.message || "Vui lòng thử lại!",
           );
         } finally {
           setIsSubmiting(false);
@@ -241,7 +241,7 @@ const FoodCreate = () => {
               },
             },
           ],
-          { cancelable: false }
+          { cancelable: false },
         );
         return;
       }
@@ -270,7 +270,7 @@ const FoodCreate = () => {
         return 1;
       }
       return 0;
-    }
+    },
   );
   console.log("Re-render: ", selectedOptionGroups);
   return (
@@ -414,7 +414,7 @@ const FoodCreate = () => {
                   (cat: PlatformCategoryModel) => ({
                     key: cat.id.toString(),
                     value: cat.name,
-                  })
+                  }),
                 ) || []
               }
               save="key"

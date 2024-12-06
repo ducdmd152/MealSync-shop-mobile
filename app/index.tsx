@@ -15,11 +15,6 @@ export default function HomeScreen() {
   return (
     <SafeAreaView className="bg-white text-white h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
-        {/* <ImageBackground
-          source={images.welcomeBg}
-          resizeMode="cover"
-          className="w-full h-full justify-center items-center"
-        > */}
         <View className="w-full justify-center items-center h-full px-4">
           <View className="flex-1 w-full justify-center items-center mt-12">
             <Image
@@ -27,11 +22,6 @@ export default function HomeScreen() {
               className="ml-2 w-[240px] h-[200px]"
               resizeMode="contain"
             />
-            {/* <Image
-              source={images.cards}
-              className="max-w-[380px] w-full h-[280px]"
-              resizeMode="contain"
-            /> */}
             <Text className="text-[16px] text-gray-400 font-bold text-center">
               Ứng dụng đặt đồ ăn theo giờ
               {"\n"}
@@ -61,7 +51,6 @@ export default function HomeScreen() {
             />
           </View>
         </View>
-        {/* </ImageBackground> */}
       </ScrollView>
     </SafeAreaView>
   );

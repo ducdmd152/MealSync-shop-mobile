@@ -1,4 +1,5 @@
 import CustomButton from "@/components/custom/CustomButton";
+import StaffDetailsModal from "@/components/target-modals/StaffDetailsModal";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import useGlobalStaffState, {
   StaffModalAction,
@@ -329,6 +330,7 @@ const StaffManagement = () => {
           ))}
         </View>
       </ScrollView>
+      <StaffDetailsModal />
     </View>
   );
 };

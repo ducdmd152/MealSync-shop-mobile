@@ -1,5 +1,8 @@
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import CustomButton from "@/components/custom/CustomButton";
+import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
+import ImageViewingModal from "@/components/target-modals/ImageViewingModal";
+import ReviewReplyModal from "@/components/target-modals/ReviewReplyModal";
 import CONSTANTS from "@/constants/data";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import useGlobalImageViewingState from "@/hooks/states/useGlobalImageViewingState";
@@ -406,6 +409,9 @@ const Review = () => {
           ))}
         </View>
       </View>
+      <OrderDetailBottomSheet />
+      <ImageViewingModal />
+      <ReviewReplyModal />
     </PageLayoutWrapper>
   );
 };

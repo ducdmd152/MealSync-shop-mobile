@@ -8,10 +8,13 @@ import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetc
 import { endpoints } from "@/services/api-services/api-service-instances";
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import apiClient from "@/services/api-services/api-client";
+import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
+
 import {
   ShopDeliveryStaffModel,
   ShopDeliveryStaffStatus,
 } from "@/types/models/StaffInfoModel";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 interface LinkItem {
   text: string;
   icon: ReactNode;
@@ -56,16 +59,19 @@ const LinkGroup: React.FC<LinkGroupProps> = ({
   );
 };
 const Account = () => {
+  const globalSocketState = useGlobalSocketState();
+  const globalAuthState = useGlobalAuthState();
+
   const staffAccount = useFetchWithRQWithFetchFunc(
     [endpoints.STAFF_INFO],
     async (): Promise<FetchValueResponse<ShopDeliveryStaffModel>> =>
       apiClient.get(endpoints.STAFF_INFO).then((response) => response.data),
-    []
+    [],
   );
   useFocusEffect(
     React.useCallback(() => {
       if (staffAccount.isFetched) staffAccount.refetch();
-    }, [])
+    }, []),
   );
   const navigation = useNavigation();
   const redirections = {
@@ -87,6 +93,11 @@ const Account = () => {
         icon: <Ionicons size={22} name="log-out-outline" />,
         handlePress: () => {
           sessionService.clear();
+          globalAuthState.clear();
+          if (globalSocketState.socket != null) {
+            globalSocketState.socket.disconnect();
+            globalSocketState.setSocket(null);
+          }
           navigation.reset({
             index: 0,
             routes: [{ name: "index" }],

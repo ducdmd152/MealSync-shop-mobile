@@ -1,4 +1,5 @@
 import CustomButton from "@/components/custom/CustomButton";
+import WithdrawDetailsModal from "@/components/target-modals/WithdrawDetailsModal";
 import CONSTANTS from "@/constants/data";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import useGlobalWithdrawalState from "@/hooks/states/useGlobalWithdrawalState";
@@ -135,7 +136,7 @@ const Withdrawal = () => {
                 className="border-2 border-gray-300 p-2 rounded-md"
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-black mx-2 text-lg">
+                  <Text className="text-black mx-2 text-[18px]">
                     {fromDate.format("DD/MM/YYYY")}
                   </Text>
                   <Ionicons name="create-outline" size={21} color="gray-600" />
@@ -153,7 +154,7 @@ const Withdrawal = () => {
                 className="border-2 border-gray-300 p-2 rounded-md"
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-black mx-2 text-lg">
+                  <Text className="text-black mx-2 text-[18px]">
                     {toDate.local().format("DD/MM/YYYY")}
                   </Text>
                   <Ionicons name="create-outline" size={21} color="gray-600" />
@@ -332,6 +333,7 @@ const Withdrawal = () => {
           </ScrollView>
         </View>
       </View>
+      <WithdrawDetailsModal titleStyleClasses="font-semibold" />
     </View>
   );
 };
