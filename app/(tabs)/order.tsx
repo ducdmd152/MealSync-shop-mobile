@@ -539,9 +539,9 @@ const Order = () => {
               <Text className="text-md italic text-gray-500">
                 {order.orderDetailSummaryShort.split("+")[0]}
               </Text>
-              {order.orderDetails.length > 1 && (
+              {order.orderDetailSummaryShort.split("+").length > 1 && (
                 <Text className="text-md italic text-gray-500">
-                  +{order.orderDetailSummary.split("+")[1]}
+                  +{order.orderDetailSummaryShort.split("+")[1]}
                 </Text>
               )}
             </View>
