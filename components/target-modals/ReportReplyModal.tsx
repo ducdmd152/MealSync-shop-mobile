@@ -1,5 +1,5 @@
-import useGlobalReviewReplyState from "@/hooks/states/useGlobalReviewReplyState";
 import apiClient from "@/services/api-services/api-client";
+import { ReportReplyModel } from "@/types/models/ReportModel";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -9,16 +9,15 @@ import {
   Keyboard,
   Text,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  TouchableOpacity,
 } from "react-native";
 import Modal from "react-native-modal";
+import Toast from "react-native-toast-message";
 import CustomButton from "../custom/CustomButton";
 import PreviewMultiImagesUpload from "../images/PreviewMultiImagesUpload";
 import ImageViewingModal from "./ImageViewingModal";
-import { ReportReplyModel } from "@/types/models/ReportModel";
-import Toast from "react-native-toast-message";
 interface Props {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
@@ -59,7 +58,7 @@ const ReportReplyModal = ({
         content: "",
         images: [],
       });
-    }, [reportId]),
+    }, [reportId])
   );
   useEffect(() => {
     if (!isImageHandling && isSubmitting) {
@@ -93,7 +92,7 @@ const ReportReplyModal = ({
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
       );
     } finally {
       setIsSubmitting(false);
