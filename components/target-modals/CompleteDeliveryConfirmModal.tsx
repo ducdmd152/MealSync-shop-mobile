@@ -9,7 +9,6 @@ import OrderFetchModel, {
   getOrderStatusDescription,
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
-import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
 import ValueResponse from "@/types/responses/ValueReponse";
 import { Ionicons } from "@expo/vector-icons";
 import dayjs from "dayjs";
@@ -21,13 +20,13 @@ import {
   Dimensions,
   Keyboard,
   Linking,
-  Text,
-  TextInput,
-  View,
   RefreshControl,
   ScrollView,
+  Text,
+  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 import Modal from "react-native-modal";
@@ -38,6 +37,7 @@ import OrderDeliveryInfo from "../common/OrderDeliveryInfo";
 import CustomButton from "../custom/CustomButton";
 import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 import EvidencePreviewMultiImagesUpload from "../images/EvidencePreviewMultiImagesUpload";
+import PreviewMultiTakeImagesUpload from "../images/PreviewMultiTakeImagesUpload";
 import OrderDetail from "../order/OrderDetail";
 interface Props {
   containerStyleClasses?: string;
@@ -67,6 +67,12 @@ const CompleteDeliveryConfirmModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImageHandling, setImageHandling] = useState(false);
   const [imageHandleError, setImageHandleError] = useState<any>(false);
+
+  const [isSuccessSubmitting, setIsSuccessSubmitting] = useState(false);
+  const [isSuccessImageHandling, setIsSuccessImageHandling] = useState(false);
+  const [successImageHandleError, setSuccessImageHandleError] =
+    useState<any>(false);
+  const [successImageUrls, setSuccessImageUrls] = useState<string[]>([]);
   const globalOrderDetailPageState = useOrderDetailPageState();
   const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
   const { model: order, setModel: setOrder } = globalCompleteDeliveryConfirm;
@@ -215,6 +221,16 @@ const CompleteDeliveryConfirmModal = ({
       requestFailDelivery();
     }
   }, [isImageHandling]);
+  useEffect(() => {
+    if (!isSuccessImageHandling && isSuccessSubmitting) {
+      if (successImageHandleError) {
+        setImageHandleError(false);
+        setIsSubmitting(false);
+        return;
+      }
+      requestSuccessDelivery();
+    }
+  }, [isSuccessImageHandling]);
 
   const requestFailDelivery = () => {
     apiClient
@@ -248,6 +264,40 @@ const CompleteDeliveryConfirmModal = ({
         setIsSubmitting(false);
       });
   };
+  const requestSuccessDelivery = () => {
+    apiClient
+      .put(
+        `shop-owner-staff/order/${globalCompleteDeliveryConfirm.id}/delivered-by-proof`,
+        {
+          imageProofs: successImageUrls,
+        }
+      )
+      .then((response) => {
+        setOrder({ ...order, status: OrderStatus.Delivered });
+        getOrderDetail();
+        Toast.show({
+          type: "success",
+          text1: "Hoàn tất",
+          text2: `Giao thành công đơn hàng MS-${globalCompleteDeliveryConfirm.id}`,
+          // time: 15000
+        });
+        setStep(0);
+        globalCompleteDeliveryConfirm.onAfterCompleted();
+        return true;
+      })
+      .catch((error: any) => {
+        Alert.alert(
+          "Oops!",
+          error?.response?.data?.error?.message ||
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+        );
+        return false;
+      })
+      .finally(() => {
+        globalCompleteDeliveryConfirm.onAfterCompleted();
+        setIsSuccessSubmitting(false);
+      });
+  };
   const submitFailDelivery = async () => {
     if (request.reason.trim().length == 0) {
       Alert.alert("Vui lòng thông mô tả tương tứng với lí do đã chọn.");
@@ -263,6 +313,22 @@ const CompleteDeliveryConfirmModal = ({
       return;
     }
     requestFailDelivery();
+  };
+  const submitSuccessDelivery = async () => {
+    if (successImageUrls.length == 0) {
+      Alert.alert("Vui lòng chụp ít nhất một hình ảnh.");
+      return;
+    }
+
+    setIsSuccessSubmitting(true);
+    if (isSuccessImageHandling) return;
+
+    if (successImageHandleError) {
+      setSuccessImageHandleError(false);
+      setIsSuccessSubmitting(false);
+      return;
+    }
+    requestSuccessDelivery();
   };
 
   const getActionComponent = (order: OrderFetchModel) => {
@@ -323,7 +389,20 @@ const CompleteDeliveryConfirmModal = ({
         title={`Giao thành công`}
         handlePress={() => {
           if (!actionInTimeValidation()) return;
-          globalCompleteDeliveryConfirm.setStep(1);
+          Alert.alert("Xác nhận giao thành công", "", [
+            {
+              text: "Xác nhận bằng QR Code",
+              onPress: () => globalCompleteDeliveryConfirm.setStep(1),
+            },
+            {
+              text: "Xác nhận bằng hình ảnh",
+              onPress: () => {
+                setIsSuccessSubmitting(false);
+                globalCompleteDeliveryConfirm.setStep(3);
+              },
+            },
+            { text: "Hủy", style: "cancel" },
+          ]);
         }}
         containerStyleClasses="w-full mt-2 h-[42px]  px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
         textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white text-gray-800"
@@ -567,7 +646,7 @@ const CompleteDeliveryConfirmModal = ({
         getActionComponent(order)}
     </View>
   );
-  const confirmSuccessStep = (
+  const confirmByQRCodeSuccessStep = (
     <View className="gap-y-2 py-2">
       <View className="mt-2 bg-gray-200 p-1 items-center justify-center rounded-xl">
         <AreaQRScanner
@@ -578,6 +657,41 @@ const CompleteDeliveryConfirmModal = ({
       <Text className="text-[12px] text-center text-green-500 font-semibold">
         Quét mã xác nhận giao thành công
       </Text>
+      <TouchableOpacity
+        onPress={() => setStep(0)}
+        className="flex-row justify-center gap-x-2 p-2 border-[1px] border-gray-200 rounded-lg"
+      >
+        <Ionicons name="arrow-back-outline" size={14} color="#475569" />
+        <Text className="text-[12px] text-center text-gray-600 font-semibold align-center">
+          {"Quay lại"}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+  const confirmByImageStep = (
+    <View className="gap-y-2 py-2">
+      <Text className="text-[14px] text-center font-semibold">
+        Xác nhận bằng hình ảnh
+      </Text>
+      <PreviewMultiTakeImagesUpload
+        imageHandleError={successImageHandleError}
+        setImageHandleError={setSuccessImageHandleError}
+        isImageHandling={isSuccessImageHandling}
+        setIsImageHandling={setIsSuccessImageHandling}
+        maxNumberOfPics={3}
+        uris={successImageUrls}
+        setUris={(uris) => setSuccessImageUrls(uris)}
+        imageWidth={80}
+      />
+      <CustomButton
+        title="Xác nhận giao thành công"
+        isLoading={isSuccessSubmitting}
+        containerStyleClasses="mt-5 bg-primary h-[40px] bg-[#4ade80] border-[#86efac]"
+        textStyleClasses="text-white text-[14px]"
+        handlePress={() => {
+          submitSuccessDelivery();
+        }}
+      />
       <TouchableOpacity
         onPress={() => setStep(0)}
         className="flex-row justify-center gap-x-2 p-2 border-[1px] border-gray-200 rounded-lg"
@@ -664,7 +778,12 @@ const CompleteDeliveryConfirmModal = ({
       </TouchableOpacity>
     </View>
   );
-  const stepComponents = [selectActionStep, confirmSuccessStep, failSubmitStep];
+  const stepComponents = [
+    selectActionStep,
+    confirmByQRCodeSuccessStep,
+    failSubmitStep,
+    confirmByImageStep,
+  ];
   return (
     <Modal
       isVisible={globalCompleteDeliveryConfirm.isModalVisible}
@@ -733,7 +852,7 @@ const CompleteDeliveryConfirmModal = ({
               }}
               className="mt-2 justify-center items-center ml-2 rounded-sm overflow-hidden"
             >
-              {order != undefined && authRole == 2 && (
+              {order != undefined && authRole == 2 && step == 0 && (
                 <Text
                   className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded`}
                   style={{

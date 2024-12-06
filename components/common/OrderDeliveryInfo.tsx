@@ -39,7 +39,7 @@ const OrderDeliveryInfo = ({
       apiClient
         .get(`shop-owner-staff/order/${order.id}/delivery-infor`)
         .then((response) => response.data),
-    [],
+    []
   );
   useEffect(() => {
     if (!fetch.isFetching) fetch.refetch();
@@ -52,11 +52,11 @@ const OrderDeliveryInfo = ({
           .local()
           .set("hour", Math.floor(order.endTime / 100))
           .set("minute", order.endTime % 100)
-          .toDate(),
+          .toDate()
       ).add(2, "hours");
 
       setIsEditable(!(new Date() > endFrameDate.toDate()));
-    }, []),
+    }, [])
   );
 
   // console.log("fetch.data?.value: ", fetch.data?.value);
@@ -80,6 +80,41 @@ const OrderDeliveryInfo = ({
               {dayjs(info?.receiveAt).local().format("HH:mm DD/MM/YYYY")}
             </Text>
           </View>
+          {info.isDeliveredByQR && (
+            <Text className="text-[11px] mt-1 mb-[-2px] text-green-800">
+              Đã xác nhận bằng QR Code
+            </Text>
+          )}
+          {!info.isDeliveredByQR && (
+            <View className="flex-row gap-x-2 mt-1">
+              {info.deliverySuccessImageUrls
+                .map((imageUrl) => ({
+                  imageUrl,
+                  takePictureDateTime: info.receiveAt,
+                }))
+                .map((evidence) => (
+                  <TouchableOpacity
+                    key={evidence.imageUrl}
+                    onPress={() => {
+                      globalImageViewState.setUrl(evidence.imageUrl);
+                      globalImageViewState.setDescription(
+                        "Cập nhật vào " +
+                          dayjs(evidence.takePictureDateTime).format(
+                            "HH:mm DD/MM/YYYY"
+                          )
+                      );
+                      globalImageViewState.setIsModalVisible(true);
+                    }}
+                  >
+                    <Image
+                      source={{ uri: evidence.imageUrl }}
+                      className="w-[52px] h-[52px] rounded-md"
+                      resizeMode="cover"
+                    />
+                  </TouchableOpacity>
+                ))}
+            </View>
+          )}
         </View>
       );
     if (info?.deliveryStatus == 2)
@@ -111,13 +146,13 @@ const OrderDeliveryInfo = ({
                         .local()
                         .set("hour", Math.floor(order.endTime / 100))
                         .set("minute", order.endTime % 100)
-                        .toDate(),
+                        .toDate()
                     ).add(2, "hours");
                     if (new Date() > endFrameDate.toDate()) {
                       setIsEditable(false);
                       Alert.alert(
                         "Oops!",
-                        "Đã quá thời gian để thực hiện thao tác này!",
+                        "Đã quá thời gian để thực hiện thao tác này!"
                       );
                       return;
                     }
@@ -147,8 +182,8 @@ const OrderDeliveryInfo = ({
                       globalImageViewState.setDescription(
                         "Cập nhật vào " +
                           dayjs(evidence.takePictureDateTime).format(
-                            "HH:mm DD/MM/YYYY",
-                          ),
+                            "HH:mm DD/MM/YYYY"
+                          )
                       );
                       globalImageViewState.setIsModalVisible(true);
                     }}

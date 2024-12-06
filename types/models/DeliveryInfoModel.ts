@@ -10,8 +10,10 @@ export interface DeliveryFailModel {
 }
 export interface OrderDeliveryInfoModel {
   id: number;
+  isDeliveredByQR: boolean;
   lastestDeliveryFailAt: string;
   receiveAt: string;
   deliveryStatus: number;
   deliveryFaileEvidence: DeliveryFailModel;
+  deliverySuccessImageUrls: string[];
 }
