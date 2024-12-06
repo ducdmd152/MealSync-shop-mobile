@@ -112,11 +112,11 @@ export default function RootLayout() {
       globalAuthState.setRoleId(roleId);
       if (roleId == 2) {
         setIsCheckedAuth(true);
-        router.replace("/home");
+        // router.replace("/home");
       }
       if (roleId == 3) {
         setIsCheckedAuth(true);
-        router.replace("/staff-home");
+        // router.replace("/staff-home");
       } else {
       }
     };

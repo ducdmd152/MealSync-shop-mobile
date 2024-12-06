@@ -15,17 +15,18 @@ import { useCallback, useState } from "react";
 
 export default function HomeScreen() {
   const globalAuthState = useGlobalAuthState();
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const roleId = globalAuthState.roleId;
-  //     if (roleId == 0) {
-  //       router.replace("/home");
-  //     }
-  //     if (roleId == 3) {
-  //       router.replace("/staff-home");
-  //     }
-  //   }, [])
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      const roleId = globalAuthState.roleId;
+      if (roleId == 0) {
+      } else if (roleId == 2) {
+        router.replace("/home");
+      }
+      if (roleId == 3) {
+        router.replace("/staff-home");
+      }
+    }, [])
+  );
   // console.log("globalAuthState.token: ", globalAuthState.token);
   return (
     <SafeAreaView className="bg-white text-white h-full">
