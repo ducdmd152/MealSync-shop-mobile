@@ -1,21 +1,19 @@
-import { StatusBar } from "expo-status-bar";
-import { Link, router, useFocusEffect } from "expo-router";
-import { ScrollView, Text, View, TouchableOpacity } from "react-native";
-import { ThemedText } from "@/components/already-components/ThemedText";
 import CustomButton from "@/components/custom/CustomButton";
-import { Ionicons } from "@expo/vector-icons";
-import { ActivityIndicator, Avatar } from "react-native-paper";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import CONSTANTS from "@/constants/data";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import { FetchValueResponse } from "@/types/responses/FetchResponse";
-import { ShopProfileGetModel } from "@/types/models/ShopProfileModel";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
-import React from "react";
-import CONSTANTS from "@/constants/data";
 import utilService from "@/services/util-service";
-import useOrderStatusFilterState from "@/hooks/states/useOrderStatusFilter";
 import { filterStatuses } from "@/types/models/OrderFetchModel";
+import { ShopProfileGetModel } from "@/types/models/ShopProfileModel";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
+import { Ionicons } from "@expo/vector-icons";
+import { Link, router, useFocusEffect } from "expo-router";
+import React from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Avatar } from "react-native-paper";
 interface HomeStatisticsModel {
   orderStatisticInToday: {
     date: string;
@@ -45,7 +43,7 @@ export default function HomeScreen() {
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
         .then((response) => response.data),
-    [],
+    []
   );
   const statistics = useFetchWithRQWithFetchFunc(
     [endpoints.HOME_STATISTICS].concat(["home"]),
@@ -53,13 +51,13 @@ export default function HomeScreen() {
       apiClient
         .get(endpoints.HOME_STATISTICS)
         .then((response) => response.data),
-    [],
+    []
   );
   useFocusEffect(
     React.useCallback(() => {
       shopProfile.refetch();
       statistics.refetch();
-    }, []),
+    }, [])
   );
   return (
     <View className="w-full h-full flex-1 items-center justify-start bg-white p-2">
@@ -93,7 +91,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[1].statuses,
+                  filterStatuses[1].statuses
                 );
                 router.push("/order");
               }}
@@ -109,7 +107,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[2].statuses,
+                  filterStatuses[2].statuses
                 );
                 router.push("/order");
               }}
@@ -126,7 +124,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[3].statuses,
+                  filterStatuses[3].statuses
                 );
                 router.push("/order");
               }}
@@ -145,7 +143,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[4].statuses,
+                  filterStatuses[4].statuses
                 );
                 router.push("/order");
               }}
@@ -162,7 +160,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[5].statuses,
+                  filterStatuses[5].statuses
                 );
                 router.push("/order");
               }}
@@ -179,7 +177,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={() => {
                 globalOrderStatusesFilterState.setStatuses(
-                  filterStatuses[6].statuses,
+                  filterStatuses[6].statuses
                 );
                 router.push("/order");
               }}
@@ -211,7 +209,7 @@ export default function HomeScreen() {
             <Text className="text-center text-lg font-bold">
               {statistics.data?.value.orderStatisticInMonth.revenue != undefined
                 ? utilService.formatPrice(
-                    statistics.data?.value.orderStatisticInMonth.revenue,
+                    statistics.data?.value.orderStatisticInMonth.revenue
                   ) + " đ"
                 : "--------"}{" "}
             </Text>

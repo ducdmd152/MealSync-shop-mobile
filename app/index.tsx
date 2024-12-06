@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Link, router } from "expo-router";
+import { Link, router, useFocusEffect } from "expo-router";
 import {
   Image,
   Text,
@@ -11,10 +11,22 @@ import {
 import { images } from "@/constants";
 import CustomButton from "@/components/custom/CustomButton";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
+import { useCallback, useState } from "react";
 
 export default function HomeScreen() {
   const globalAuthState = useGlobalAuthState();
-  console.log("globalAuthState.token: ", globalAuthState.token);
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const roleId = globalAuthState.roleId;
+  //     if (roleId == 0) {
+  //       router.replace("/home");
+  //     }
+  //     if (roleId == 3) {
+  //       router.replace("/staff-home");
+  //     }
+  //   }, [])
+  // );
+  // console.log("globalAuthState.token: ", globalAuthState.token);
   return (
     <SafeAreaView className="bg-white text-white h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>

@@ -9,9 +9,9 @@ import sessionService from "@/services/session-service";
 import { NotiEntityTypes } from "@/types/models/ChatModel";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
-import { router, Stack } from "expo-router";
+import { router, Stack, useFocusEffect } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, Image, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
@@ -50,7 +50,15 @@ export default function RootLayout() {
   const globalNotiState = useGlobalNotiState();
   const [isReady, setIsReady] = useState(false);
   const globalOrderDetailPageState = useOrderDetailPageState();
-
+  const [isFocusing, setIsFocusing] = useState(false);
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocusing(true);
+      return () => {
+        setIsFocusing(false);
+      };
+    }, [])
+  );
   // const [fontsLoaded, error] = useFonts({
   //   "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
   //   "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -93,20 +101,24 @@ export default function RootLayout() {
   useEffect(() => {
     const checkAuth = async () => {
       const token = await sessionService.getAuthToken();
+
       if (!token) {
         setIsCheckedAuth(true);
         return;
       }
       const roleId = await sessionService.getAuthRole();
+
       globalAuthState.setToken(token);
       globalAuthState.setRoleId(roleId);
       if (roleId == 2) {
+        setIsCheckedAuth(true);
         router.replace("/home");
       }
-      if (roleId == 3) router.replace("/staff-home");
-      else {
+      if (roleId == 3) {
+        setIsCheckedAuth(true);
+        router.replace("/staff-home");
+      } else {
       }
-      setIsCheckedAuth(true);
     };
 
     checkAuth();
