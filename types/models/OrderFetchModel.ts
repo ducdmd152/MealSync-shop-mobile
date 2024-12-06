@@ -121,7 +121,7 @@ export const orderStatusDescMapping = [
 ];
 
 export const getOrderStatusDescription = (
-  status: number
+  status: number,
 ): { value: number; description: string; bgColor: string } | undefined => {
   return orderStatusDescMapping.find((item) => item.value === status);
 };
