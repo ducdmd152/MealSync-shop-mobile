@@ -13,7 +13,6 @@ import apiClient from "@/services/api-services/api-client";
 import OrderFetchModel from "@/types/models/OrderFetchModel";
 import Toast from "react-native-toast-message";
 import { useFocusEffect } from "expo-router";
-import ImageViewingModal from "../target-modals/ImageViewingModal";
 interface Props {
   order: OrderFetchModel;
   failDeliveryInfo: OrderDeliveryInfoModel;
@@ -48,14 +47,14 @@ const FailDeliveryUpdate = ({
   useFocusEffect(
     React.useCallback(() => {
       setRequest({ ...failDeliveryInfo.deliveryFaileEvidence });
-    }, []),
+    }, [])
   );
   const requestFailDelivery = () => {
     console.log("request data: ", request);
     apiClient
       .put(
         `shop-owner-staff/order/${failDeliveryInfo.id}/delivery-fail`,
-        request,
+        request
       )
       .then((response) => {
         afterCompleted();
@@ -71,7 +70,7 @@ const FailDeliveryUpdate = ({
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
         );
         return false;
       })
@@ -166,7 +165,6 @@ const FailDeliveryUpdate = ({
           {"Hủy"}
         </Text>
       </TouchableOpacity>
-      <ImageViewingModal />
     </View>
   );
 };
