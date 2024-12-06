@@ -1,9 +1,3 @@
-import OrderDetailBottomSheet from "@/components/target-bottom-sheets/OrderDetailBottomSheet";
-import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
-import ImageViewingModal from "@/components/target-modals/ImageViewingModal";
-import ReviewReplyModal from "@/components/target-modals/ReviewReplyModal";
-import StaffDetailsModal from "@/components/target-modals/StaffDetailsModal";
-import WithdrawDetailsModal from "@/components/target-modals/WithdrawDetailsModal";
 import TanStackProvider from "@/config/providers/TanStackProvider";
 import { images } from "@/constants";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
@@ -14,15 +8,11 @@ import { useColorScheme } from "@/hooks/themes/useColorScheme";
 import sessionService from "@/services/session-service";
 import { NotiEntityTypes } from "@/types/models/ChatModel";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
-import {
-  DefaultTheme,
-  NavigationContainer,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
-import { Alert, Image, PermissionsAndroid, StyleSheet } from "react-native";
+import { Alert, Image, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
@@ -30,9 +20,9 @@ import Toast from "react-native-toast-message";
 import { ToastProvider } from "react-native-toast-notifications";
 import { io } from "socket.io-client";
 // Initialize the timezone plugins
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
 import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 // Prevent the splash screen from auto-hiding before asset loading is complete.

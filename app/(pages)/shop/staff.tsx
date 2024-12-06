@@ -19,12 +19,12 @@ import React from "react";
 import {
   Alert,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  RefreshControl,
 } from "react-native";
 import { Searchbar, Switch } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
