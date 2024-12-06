@@ -10,8 +10,11 @@ import {
 } from "react-native";
 import { images } from "@/constants";
 import CustomButton from "@/components/custom/CustomButton";
+import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 
 export default function HomeScreen() {
+  const globalAuthState = useGlobalAuthState();
+  console.log("globalAuthState.token: ", globalAuthState.token);
   return (
     <SafeAreaView className="bg-white text-white h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
@@ -33,22 +36,26 @@ export default function HomeScreen() {
             <Text className="text-gray-300 mt-7 text-center ">
               Phiên bản dành cho cửa hàng
             </Text>
-            <CustomButton
-              title="Đăng nhập"
-              handlePress={() => {
-                router.replace("/sign-in");
-              }}
-              containerStyleClasses="w-full mt-4 bg-primary"
-              textStyleClasses="text-white"
-            />
-            <CustomButton
-              title="Đăng ký"
-              handlePress={() => {
-                router.replace("/sign-up");
-              }}
-              containerStyleClasses="w-full mt-4 bg-white border-gray-600 border-2"
-              textStyleClasses="text-gray-600"
-            />
+            {globalAuthState.token == "" && (
+              <CustomButton
+                title="Đăng nhập"
+                handlePress={() => {
+                  router.replace("/sign-in");
+                }}
+                containerStyleClasses="w-full mt-4 bg-primary"
+                textStyleClasses="text-white"
+              />
+            )}
+            {globalAuthState.token == "" && (
+              <CustomButton
+                title="Đăng ký"
+                handlePress={() => {
+                  router.replace("/sign-up");
+                }}
+                containerStyleClasses="w-full mt-4 bg-white border-gray-600 border-2"
+                textStyleClasses="text-gray-600"
+              />
+            )}
           </View>
         </View>
       </ScrollView>
