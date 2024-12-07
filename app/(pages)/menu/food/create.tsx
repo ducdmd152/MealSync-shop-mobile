@@ -4,6 +4,7 @@ import CustomButton from "@/components/custom/CustomButton";
 import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
 import FormField from "@/components/custom/FormFieldCustom";
 import PreviewImageUpload from "@/components/images/PreviewImageUpload";
+import ShopContainerManagement from "@/components/menu/ShopContainerManagement";
 import CONSTANTS from "@/constants/data";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
@@ -71,6 +72,8 @@ const FoodCreate = () => {
   const [selectedShopCategory, setSelectedShopCategory] = useState(-1);
   const [selectedPlatformCategory, setSelectedPlatformCategory] = useState(-1);
   const [selectedPackingUnitId, setSelectedPackingUnitId] = useState(-1);
+  const [isContainerManagementModal, setIsContainerManagementModal] =
+    useState(false);
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
     []
   );
@@ -514,7 +517,7 @@ const FoodCreate = () => {
               (trong trường hợp vật đựng có khối lượng đáng kể).
             </Text>
             <TouchableOpacity
-              onPress={() => setIsRearrangeOptionGroupsInFood(true)}
+              onPress={() => setIsContainerManagementModal(true)}
               className="w-full mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
             >
               <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
@@ -724,6 +727,23 @@ const FoodCreate = () => {
           </View>
         </Modal>
       </Portal>
+      <CustomModal
+        title=""
+        hasHeader={false}
+        isOpen={isContainerManagementModal}
+        setIsOpen={(value) => {
+          setIsContainerManagementModal(value);
+        }}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[96%]"
+        onBackdropPress={() => {
+          setIsContainerManagementModal(false);
+        }}
+      >
+        <ShopContainerManagement
+          exit={() => setIsContainerManagementModal(false)}
+        />
+      </CustomModal>
     </PageLayoutWrapper>
   );
 };
