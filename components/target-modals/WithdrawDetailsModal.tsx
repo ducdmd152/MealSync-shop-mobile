@@ -41,12 +41,15 @@ const WithdrawDetailsModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const globalWithdrawalState = useGlobalWithdrawalState();
-
+  console.log(
+    "globalWithdrawalState.withdrawal: ",
+    globalWithdrawalState.withdrawal
+  );
   const getDetails = async () => {
     // setIsLoading(true);
     try {
       const response = await apiClient.get<ValueResponse<WithdrawalModel>>(
-        `shop-owner/withdrawal/${globalWithdrawalState.withdrawal.id}`,
+        `shop-owner/withdrawal/${globalWithdrawalState.withdrawal.id}`
       );
       globalWithdrawalState.setWithdrawal({ ...response.data.value });
     } catch (error: any) {
@@ -57,7 +60,7 @@ const WithdrawDetailsModal = ({
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
         );
       }
     } finally {
@@ -110,7 +113,7 @@ const WithdrawDetailsModal = ({
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
       );
     } finally {
       setIsLoading(false);
@@ -121,12 +124,12 @@ const WithdrawDetailsModal = ({
     [endpoints.BALANCE].concat(["withdrawal-page"]),
     async (): Promise<ValueResponse<BalanceModel>> =>
       apiClient.get(endpoints.BALANCE).then((response) => response.data),
-    [],
+    []
   );
   useFocusEffect(
     React.useCallback(() => {
       balanceFetch.refetch();
-    }, []),
+    }, [])
   );
   return (
     <Modal
@@ -151,13 +154,12 @@ const WithdrawDetailsModal = ({
                   backgroundColor:
                     withdrawalStatuses.find(
                       (item) =>
-                        item.key === globalWithdrawalState.withdrawal.status,
+                        item.key === globalWithdrawalState.withdrawal.status
                     )?.bgColor || "#e5e5e5",
                 }}
               >
                 {withdrawalStatuses.find(
-                  (item) =>
-                    item.key === globalWithdrawalState.withdrawal.status,
+                  (item) => item.key === globalWithdrawalState.withdrawal.status
                 )?.label || "------"}
               </Text>
               {/* <TouchableOpacity
@@ -178,7 +180,7 @@ const WithdrawDetailsModal = ({
                     className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
                     placeholder="Số tiền cần rút"
                     value={utilService.formatPrice(
-                      globalWithdrawalState.withdrawal.amount,
+                      globalWithdrawalState.withdrawal.amount
                     )}
                     onChangeText={(text) => {}}
                     keyboardType="numeric"
@@ -244,7 +246,7 @@ const WithdrawDetailsModal = ({
                           placeholder="Số tiền cần rút"
                           value={utilService.formatPrice(
                             globalWithdrawalState.withdrawal.walletHistory
-                              .avaiableAmountBefore,
+                              ?.avaiableAmountBefore
                           )}
                           onChangeText={(text) => {}}
                           keyboardType="numeric"
@@ -263,7 +265,7 @@ const WithdrawDetailsModal = ({
                           className="border border-gray-300 mt-1 px-3 pt-2 rounded text-[15px] pb-3"
                           value={utilService.formatPrice(
                             globalWithdrawalState.withdrawal.walletHistory
-                              .avaiableAmountAfter,
+                              ?.avaiableAmountAfter
                           )}
                           onChangeText={(text) => {}}
                           keyboardType="numeric"
@@ -312,7 +314,7 @@ const WithdrawDetailsModal = ({
                           text: "Không",
                           // style: "cancel",
                         },
-                      ],
+                      ]
                     )
                   }
                   containerStyleClasses="mt-2 w-full h-[40px] px-4 bg-transparent border-2 border-gray-200 bg-secondary-100 font-semibold z-10"

@@ -258,7 +258,7 @@ const WithdrawalCreate = () => {
                 <TextInput
                   className="border-0 border-gray-300 py-2 rounded text-[20px]"
                   value={`${
-                    balanceFetch.data?.value.availableAmount
+                    balanceFetch.data?.value?.availableAmount
                       ? utilService.formatPrice(
                           balanceFetch.data?.value.availableAmount
                         )
