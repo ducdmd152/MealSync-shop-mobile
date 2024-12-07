@@ -468,9 +468,9 @@ const DeliveryPKGDetail = ({
         />
       </CustomModal>
       {utilService.getInDeliveryTime(
-        order.startTime,
-        order.endTime,
-        order.intendedReceiveDate
+        pkgDetails.startTime,
+        pkgDetails.endTime,
+        pkgDetails.intendedReceiveDate
       ) == 0 && (
         <CustomButton
           title="Đi giao"
