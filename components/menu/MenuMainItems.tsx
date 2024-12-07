@@ -72,7 +72,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
       // });
 
       const response = await apiClient.put("shop-owner/category/re-arrange", {
-        ids: extendCategories.map((category) => category.id),
+        ids: data.map((category) => category.id),
       });
       const { value, isSuccess, error } = response.data;
       // toast.show("Cập nhật thứ tự thành công!", {
@@ -420,7 +420,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                     />
                     <Text
                       className={`ml-2 text-gray-500 italic text-[6px] text-secondary-200 text-gray-500 ${
-                        Platform.OS == "android" ? "mt-[-12px] text-[7px]" : ""
+                        Platform.OS == "android" ? "mt-[-9px] text-[7px]" : ""
                       }`}
                     >
                       {food.isSoldOut
