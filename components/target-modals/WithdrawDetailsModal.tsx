@@ -221,7 +221,7 @@ const WithdrawDetailsModal = ({
                 </Text>
                 <TextInput
                   className="border border-gray-300 mt-1 p-2 px-3 rounded text-[15px]"
-                  placeholder="Nhập số tài khoản..."
+                  placeholder=""
                   keyboardType="numeric"
                   value={globalWithdrawalState.withdrawal.bankAccountName}
                   placeholderTextColor="#888"

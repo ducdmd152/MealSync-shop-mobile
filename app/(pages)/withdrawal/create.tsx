@@ -418,7 +418,6 @@ const WithdrawalCreate = () => {
                 <TextInput
                   className="border border-gray-300 mt-1 p-2 px-3 rounded text-[20px]"
                   placeholder="Nhập tên chủ tài khoản..."
-                  keyboardType="numeric"
                   onFocus={() => setIsUnderKeywodFocusing(true)}
                   onBlur={() => setIsUnderKeywodFocusing(false)}
                   value={withdrawalCreateModel.bankAccountName}
