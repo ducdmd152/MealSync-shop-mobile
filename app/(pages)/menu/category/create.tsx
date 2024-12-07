@@ -29,7 +29,7 @@ const CategoryPage = () => {
 
       if (isSuccess) {
         Alert.alert("Thành công", `Danh mục "${value.name}" đã được thêm!`);
-        router.replace("/menu");
+        router.back();
       } else {
         Alert.alert(
           "Thông báo",

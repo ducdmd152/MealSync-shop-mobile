@@ -10,6 +10,7 @@ import FoodDetailModel from "@/types/models/FoodDetailModel";
 import FoodModel from "@/types/models/FoodModel";
 import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
 import APICommonResponse from "@/types/responses/APICommonResponse";
+import { FetchOnlyListResponse } from "@/types/responses/FetchResponse";
 import ValueResponse from "@/types/responses/ValueReponse";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomSheet } from "@rneui/themed";
@@ -100,7 +101,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
     refetch,
   } = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.FOOD_LIST,
-    (): Promise<FoodListResponse> =>
+    (): Promise<FetchOnlyListResponse<ShopCategoryModel>> =>
       apiClient
         .get(endpoints.FOOD_LIST, {
           params: {
@@ -299,7 +300,9 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      refetch();
+      if (!isFetching) {
+        refetch();
+      }
     }, [])
   );
 

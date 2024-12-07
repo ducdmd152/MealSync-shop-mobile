@@ -36,7 +36,7 @@ const CategoryUpdate = () => {
     } catch (error: any) {
       if (error.response && error.response.status === 404) {
         Alert.alert("Oops!", "Danh mục này không còn tồn tại!");
-        router.replace("/menu");
+        router.back();
       } else {
         Alert.alert(
           "Oops!",
@@ -78,7 +78,7 @@ const CategoryUpdate = () => {
 
       if (isSuccess) {
         Alert.alert("Thành công", `Danh mục "${value.name}" đã được cập nhật!`);
-        router.push("/menu");
+        router.back();
       } else {
         Alert.alert(
           "Thông báo",
@@ -113,11 +113,11 @@ const CategoryUpdate = () => {
               "Hoàn tất",
               `Đã xóa danh mục ${shopCategoryModel.name}!`
             );
-            router.replace("/menu");
+            router.back();
           } catch (error: any) {
             if (error.response && error.response.status === 404) {
               Alert.alert("Oops!", "Danh mục này không còn tồn tại!");
-              router.replace("/menu");
+              router.back();
             } else {
               Alert.alert(
                 "Oops!",
