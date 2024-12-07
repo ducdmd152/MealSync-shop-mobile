@@ -5,6 +5,7 @@ import {
   StyleProp,
   ViewStyle,
   ActivityIndicator,
+  TextStyle,
 } from "react-native";
 
 export interface CustomButtonProps {
@@ -14,7 +15,7 @@ export interface CustomButtonProps {
   containerStyleClasses?: string;
   containerStyleObject?: StyleProp<ViewStyle>;
   textStyleClasses?: string;
-  textStyleObject?: StyleProp<ViewStyle>;
+  textStyleObject?: StyleProp<TextStyle>;
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
   isLoading?: boolean;
