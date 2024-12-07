@@ -884,8 +884,6 @@ const FoodUpdate = () => {
                 }}
                 keyExtractor={(item) => `option-group-${item}`}
                 onDragEnd={({ data }) => {
-                  // console.log("Before drag: ", selectedOptionGroups);
-                  // console.log("After drag: ", data);
                   setSelectedOptionGroups(data);
                 }}
               />

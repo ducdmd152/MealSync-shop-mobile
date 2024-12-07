@@ -11,12 +11,12 @@ import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import imageService from "@/services/image-service";
 import sessionService from "@/services/session-service";
+import { FoodPackingUnit } from "@/types/models/FoodPackagingUnitModel";
 import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import OptionGroupModel from "@/types/models/OptionGroupModel";
 import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
 import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
 import APICommonResponse from "@/types/responses/APICommonResponse";
-import { FoodPackingUnit } from "@/types/models/FoodPackagingUnitModel";
 import FetchResponse, {
   FetchOnlyListResponse,
 } from "@/types/responses/FetchResponse";
@@ -29,7 +29,7 @@ import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { SelectList } from "react-native-dropdown-select-list";
-import { Switch } from "react-native-paper";
+import { Modal, Portal, Switch } from "react-native-paper";
 import * as Yup from "yup";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -626,87 +626,86 @@ const FoodCreate = () => {
           handlePress={formik.handleSubmit}
         />
       </View>
-      <CustomModal
-        title=""
-        hasHeader={false}
-        isOpen={isRearrangeOptionGroupsInFood}
-        setIsOpen={(value) => {
-          setIsRearrangeOptionGroupsInFood(value);
-        }}
-        titleStyleClasses="text-center flex-1"
-        containerStyleClasses="w-[85%]"
-        onBackdropPress={() => {
-          setIsRearrangeOptionGroupsInFood(false);
-        }}
-      >
-        <Text className="text-center text-[12px] font-semibold">
-          Sắp xếp thứ tự hiển thị {"\n"} các nhóm đã chọn trên sản phẩm này
-        </Text>
-        <View
-          className="mt-3"
-          style={
-            {
-              // height: selectedOptionGroups.length * 120,
-            }
-          }
+      <Portal>
+        <Modal
+          visible={isRearrangeOptionGroupsInFood}
+          onDismiss={() => setIsRearrangeOptionGroupsInFood(false)}
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-          {!selectedOptionGroups.length && (
-            <View className="h-20 w-full items-center justify-center">
-              <Text className="text-[13.2px] text-center italic gray-700">
-                Bạn chưa liên kết với nhóm lựa chọn nào
-              </Text>
-              <CustomButton
-                title="Thoát"
-                containerStyleClasses="mt-5 bg-white border-gray-300 border-[2px] h-8"
-                textStyleClasses="text-white text-[14px] text-gray-500 font-normal"
-                handlePress={() => {
-                  setIsRearrangeOptionGroupsInFood(false);
+          <View className="w-[80%] bg-white p-4 rounded-md">
+            <Text className="text-center text-[12px] font-semibold">
+              Sắp xếp thứ tự hiển thị {"\n"} các nhóm đã chọn trên sản phẩm này
+            </Text>
+            <View
+              className="mt-3"
+              style={
+                {
+                  // height: selectedOptionGroups.length * 120,
+                }
+              }
+            >
+              {!selectedOptionGroups.length && (
+                <View className="h-20 w-full items-center justify-center">
+                  <Text className="text-[13.2px] text-center italic gray-700">
+                    Bạn chưa liên kết với nhóm lựa chọn nào
+                  </Text>
+                  <CustomButton
+                    title="Thoát"
+                    containerStyleClasses="mt-5 bg-white border-gray-300 border-[2px] h-8"
+                    textStyleClasses="text-white text-[14px] text-gray-500 font-normal"
+                    handlePress={() => {
+                      setIsRearrangeOptionGroupsInFood(false);
+                    }}
+                  />
+                </View>
+              )}
+              <DraggableFlatList
+                style={{ width: "100%", flexGrow: 1 }}
+                data={selectedOptionGroups}
+                renderItem={({ item, drag }: RenderItemParams<string>) => {
+                  return (
+                    <View key={item}>
+                      <TouchableOpacity
+                        className="border-[1px] border-gray-200 flex-row justify-between items-center p-2 mb-2 rounded-lg"
+                        onLongPress={drag}
+                      >
+                        <Text className="w-full text-center text-[#14b8a6] font-semibold">
+                          {getOptionGroup(Number(item))?.title || "------"}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                }}
+                keyExtractor={(item) => `option-group-${item}`}
+                onDragEnd={({ data }) => {
+                  // console.log("Before drag: ", selectedOptionGroups);
+                  // console.log("After drag: ", data);
+                  setSelectedOptionGroups(data);
                 }}
               />
-            </View>
-          )}
-          <DraggableFlatList
-            style={{ width: "100%", flexGrow: 1 }}
-            data={selectedOptionGroups}
-            renderItem={({ item, drag }: RenderItemParams<string>) => {
-              return (
-                <View key={item}>
-                  <TouchableOpacity
-                    className="border-[1px] border-gray-200 flex-row justify-between items-center p-2 mb-2 rounded-lg"
-                    onLongPress={drag}
-                  >
-                    <Text className="w-full text-center text-[#14b8a6] font-semibold">
-                      {getOptionGroup(Number(item))?.title || "------"}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            }}
-            keyExtractor={(item) => `option-group-${item}`}
-            onDragEnd={({ data }) => {
-              // console.log("Before drag: ", selectedOptionGroups);
-              // console.log("After drag: ", data);
-              setSelectedOptionGroups(data);
-            }}
-          />
-          {selectedOptionGroups.length > 0 && (
-            <CustomButton
-              title="Hoàn tất"
-              containerStyleClasses="mt-3 bg-secondary h-10"
-              textStyleClasses="text-white text-[14px]"
-              handlePress={() => {
-                setIsRearrangeOptionGroupsInFood(false);
-              }}
-            />
-          )}
+              {selectedOptionGroups.length > 0 && (
+                <CustomButton
+                  title="Hoàn tất"
+                  containerStyleClasses="mt-3 bg-secondary h-10"
+                  textStyleClasses="text-white text-[14px]"
+                  handlePress={() => {
+                    setIsRearrangeOptionGroupsInFood(false);
+                  }}
+                />
+              )}
 
-          {/* {getSelectedOptionGroups().map((item) => (
+              {/* {getSelectedOptionGroups().map((item) => (
             <View key={item.id}>
               <Text>{item.title}</Text>
             </View>
           ))} */}
-        </View>
-      </CustomModal>
+            </View>
+          </View>
+        </Modal>
+      </Portal>
     </PageLayoutWrapper>
   );
 };
