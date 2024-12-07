@@ -1,42 +1,36 @@
-import { View, Text, Alert, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
-import Avatar from "react-native-paper/lib/typescript/components/Avatar/AvatarIcon";
-import AvatarChange from "@/components/common/AvatarChange";
-import ImageUpload from "@/components/common/ImageUpload";
-import CustomButton from "@/components/custom/CustomButton";
-import FormField from "@/components/custom/FormFieldCustom";
-import CustomDropdown from "@/components/custom/CustomDropdown";
+import CustomModal from "@/components/common/CustomModal";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
-import {
-  MultipleSelectList,
-  SelectList,
-} from "react-native-dropdown-select-list";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { Switch } from "react-native-paper";
-import sessionService from "@/services/session-service";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import CustomButton from "@/components/custom/CustomButton";
+import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
+import FormField from "@/components/custom/FormFieldCustom";
+import PreviewImageUpload from "@/components/images/PreviewImageUpload";
+import CONSTANTS from "@/constants/data";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
-import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
-import APICommonResponse from "@/types/responses/APICommonResponse";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
-import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
+import imageService from "@/services/image-service";
+import sessionService from "@/services/session-service";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import OptionGroupModel from "@/types/models/OptionGroupModel";
-import * as Yup from "yup";
+import { PlatformCategoryModel } from "@/types/models/PlatformCategory";
+import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
+import APICommonResponse from "@/types/responses/APICommonResponse";
+import { FoodPackingUnit } from "@/types/models/FoodPackagingUnitModel";
 import FetchResponse, {
   FetchOnlyListResponse,
 } from "@/types/responses/FetchResponse";
-import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useFormik } from "formik";
-import imageService from "@/services/image-service";
-import CONSTANTS from "@/constants/data";
-import CustomMultipleSelectList from "@/components/custom/CustomMultipleSelectList";
-import PreviewImageUpload from "@/components/images/PreviewImageUpload";
-import CustomModal from "@/components/common/CustomModal";
+import React, { useEffect, useState } from "react";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
+import { SelectList } from "react-native-dropdown-select-list";
+import { Switch } from "react-native-paper";
+import * as Yup from "yup";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -44,6 +38,7 @@ const validationSchema = Yup.object().shape({
   price: Yup.number().min(1, "Giá phải lớn hơn 0").required("Giá là bắt buộc"),
   platformCategoryId: Yup.number().min(0, "Danh mục hệ thống là bắt buộc"),
   shopCategoryId: Yup.number().min(0, "Danh mục cửa hàng là bắt buộc"),
+  foodPackingUnit: Yup.number().min(0, "Khối lượng quy đổi là bắt buộc"),
 });
 const formatPrice = (value: number) => {
   // console.log(
@@ -75,8 +70,9 @@ const FoodCreate = () => {
   const [price, setPrice] = useState(0);
   const [selectedShopCategory, setSelectedShopCategory] = useState(-1);
   const [selectedPlatformCategory, setSelectedPlatformCategory] = useState(-1);
+  const [selectedPackingUnitId, setSelectedPackingUnitId] = useState(-1);
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
-    [],
+    []
   );
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
@@ -87,7 +83,7 @@ const FoodCreate = () => {
   >([]);
   const [isAvailable, setIsAvailable] = useState(true);
   const [imageURI, setImageURI] = useState(
-    "https://join.travelmanagers.com.au/wp-content/uploads/2017/09/default-placeholder-300x300.png",
+    "https://join.travelmanagers.com.au/wp-content/uploads/2017/09/default-placeholder-300x300.png"
   );
 
   useEffect(() => {
@@ -97,11 +93,14 @@ const FoodCreate = () => {
   useEffect(() => {
     formik.setFieldValue(
       "platformCategoryId",
-      Number(selectedPlatformCategory),
+      Number(selectedPlatformCategory)
     );
     // console.log(formik.values);
   }, [selectedPlatformCategory]);
-
+  useEffect(() => {
+    formik.setFieldValue("foodPackingUnitId", Number(selectedPackingUnitId));
+    console.log(formik.values);
+  }, [selectedPackingUnitId]);
   const onToggleSwitch = () => setIsAvailable(!isAvailable);
   const {
     data: shopCategories,
@@ -114,7 +113,7 @@ const FoodCreate = () => {
       apiClient
         .get(endpoints.SHOP_CATEGORY_LIST)
         .then((response) => response.data),
-    [],
+    []
   );
   const {
     data: platformCategories,
@@ -127,7 +126,20 @@ const FoodCreate = () => {
       apiClient
         .get(endpoints.PLATFORM_CATEGORY_LIST)
         .then((response) => response.data),
-    [],
+    []
+  );
+  const foodPackingUnitFetcher = useFetchWithRQWithFetchFunc(
+    [endpoints.FOOD_PACKING_UNIT_LIST],
+    (): Promise<FetchResponse<FoodPackingUnit>> =>
+      apiClient
+        .get(endpoints.FOOD_PACKING_UNIT_LIST, {
+          params: {
+            pageIndex: 1,
+            pageSize: 100_000_000,
+          },
+        })
+        .then((response) => response.data),
+    []
   );
   const {
     data: optionGroups,
@@ -148,7 +160,7 @@ const FoodCreate = () => {
           },
         })
         .then((response) => response.data),
-    [],
+    []
   );
   const {
     data: operatingSlots,
@@ -161,7 +173,7 @@ const FoodCreate = () => {
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    [],
+    []
   );
 
   const formik = useFormik({
@@ -171,6 +183,7 @@ const FoodCreate = () => {
       price: 0,
       platformCategoryId: -1,
       shopCategoryId: -1,
+      foodPackingUnitId: -1,
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -192,17 +205,17 @@ const FoodCreate = () => {
             status: isAvailable ? 1 : 2,
             price: Number(values.price),
             foodOptionGroups: selectedOptionGroups.map((item) =>
-              Number(item),
+              Number(item)
             ) as number[],
             operatingSlots: selectedOperatingSlots.map((item) =>
-              Number(item),
+              Number(item)
             ) as number[],
           };
           console.log("CREATE FOOD DATA: ", foodData);
           // Send POST request to the API
           const response = await apiClient.post(
             "shop-owner/food/create",
-            foodData,
+            foodData
           );
           console.log("RESPONSE : ", response);
 
@@ -212,7 +225,7 @@ const FoodCreate = () => {
         } catch (error: any) {
           Alert.alert(
             "Xảy ra lỗi khi tạo món",
-            error?.response?.data?.error?.message || "Vui lòng thử lại!",
+            error?.response?.data?.error?.message || "Vui lòng thử lại!"
           );
         } finally {
           setIsSubmiting(false);
@@ -241,7 +254,7 @@ const FoodCreate = () => {
               },
             },
           ],
-          { cancelable: false },
+          { cancelable: false }
         );
         return;
       }
@@ -270,7 +283,7 @@ const FoodCreate = () => {
         return 1;
       }
       return 0;
-    },
+    }
   );
   console.log("Re-render: ", selectedOptionGroups);
   return (
@@ -414,7 +427,7 @@ const FoodCreate = () => {
                   (cat: PlatformCategoryModel) => ({
                     key: cat.id.toString(),
                     value: cat.name,
-                  }),
+                  })
                 ) || []
               }
               save="key"
@@ -437,7 +450,60 @@ const FoodCreate = () => {
               trên hệ thống.
             </Text>
           </View>
-
+          <View>
+            <FormField
+              title="Khối lượng quy đổi"
+              otherStyleClasses="mt-5"
+              otherInputStyleClasses="h-12"
+              otherTextInputStyleClasses="text-sm"
+              isRequired={true}
+              placeholder="0"
+              value={""}
+              handleChangeText={() => {}}
+              keyboardType="numeric"
+              labelOnly={true}
+            />
+            <SelectList
+              setSelected={setSelectedPackingUnitId}
+              data={
+                foodPackingUnitFetcher.data?.value.items.map((unit) => ({
+                  key: unit.id.toString(),
+                  value:
+                    unit.name +
+                    " ~ " +
+                    unit.weight +
+                    "kg" +
+                    (unit.type == 2 ? " (bạn đã tạo)" : ""),
+                })) || []
+              }
+              save="key"
+              placeholder="Khối lượng quy đổi"
+              searchPlaceholder="Tìm kiếm..."
+            />
+            {(formik.touched.foodPackingUnitId &&
+            formik.errors.foodPackingUnitId
+              ? formik.errors.foodPackingUnitId
+              : "") && (
+              <Text className="text-red-500 mt-2 text-left w-full italic">
+                {formik.touched.foodPackingUnitId &&
+                formik.errors.foodPackingUnitId
+                  ? formik.errors.foodPackingUnitId
+                  : ""}
+              </Text>
+            )}
+            <Text className="text-[12px] text-gray-600 italic mt-1 ml-1">
+              Khối lượng này là khối lượng của sản phẩm và vật đựng tương ứng
+              (trong trường hợp vật đựng có khối lượng đáng kể).
+            </Text>
+            <TouchableOpacity
+              onPress={() => setIsRearrangeOptionGroupsInFood(true)}
+              className="w-full mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
+            >
+              <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
+                Quản lí vật đựng và khối lượng quy đổi
+              </Text>
+            </TouchableOpacity>
+          </View>
           <View className="mt-5">
             <View className="flex-row items-center justify-between">
               <FormField
