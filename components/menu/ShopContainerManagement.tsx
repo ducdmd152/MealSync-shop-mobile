@@ -10,6 +10,7 @@ import CustomButton from "../custom/CustomButton";
 import CustomModal from "../common/CustomModal";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import Toast from "react-native-toast-message";
+import { Ionicons } from "@expo/vector-icons";
 
 const ShopContainerManagement = ({ exit }: { exit: () => void }) => {
   const foodPackingUnitFetcher = useFetchWithRQWithFetchFunc(
@@ -63,9 +64,20 @@ const ShopContainerManagement = ({ exit }: { exit: () => void }) => {
         {units.map((unit) => (
           <View key={unit.id}>
             <TouchableOpacity className="border-[1px] border-gray-200 flex-row justify-between items-center p-2 mb-2 rounded-lg">
-              <Text className="w-full text-center text-[#14b8a6] font-semibold">
+              <Text className="flex-1 text-center text-[#14b8a6] font-semibold">
                 {unit.name + " ~ " + unit.weight + "kg"}
               </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setUnitModel(unit);
+                  setIsCreateOrEdit(true);
+                }}
+              >
+                <Ionicons name="create-outline" size={24} color="#227B94" />
+              </TouchableOpacity>
+              <TouchableOpacity className="ml-1" onPress={() => {}}>
+                <Ionicons name="trash-outline" size={22} color="#FF9001" />
+              </TouchableOpacity>
             </TouchableOpacity>
           </View>
         ))}
