@@ -7,6 +7,7 @@ export const endpoints = {
   FOOD_LIST: "shop-owner/food",
   SHOP_CATEGORY_LIST: "shop-owner/category",
   PLATFORM_CATEGORY_LIST: "platform-category",
+  FOOD_PACKING_UNIT_LIST: "shop-onwer/food-packing-unit",
   OPTION_GROUP_LIST: "shop-owner/option-group",
   OPERATING_SLOT_LIST: "shop-owner/operating-slot",
   STAFF_OPERATING_SLOT_LIST: "shop-staff/operating-slot",
@@ -37,5 +38,5 @@ export const endpoints = {
 
 export const testApiService = createHttpService<TestModel>(
   apiClient,
-  endpoints.TEST,
+  endpoints.TEST
 );

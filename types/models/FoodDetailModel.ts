@@ -1,3 +1,4 @@
+import { FoodPackingUnit } from "./FoodPackagingUnitModel";
 import { OperatingSlotModel } from "./OperatingSlotModel";
 import OptionGroupModel from "./OptionGroupModel";
 export interface FoodOptionGroupModel {
@@ -14,6 +15,7 @@ export default interface FoodDetailModel {
   imageUrl: string;
   status: number;
   isSoldOut: boolean;
+  foodPackingUnit: FoodPackingUnit;
   operatingSlots: OperatingSlotModel[];
   optionGroups?: FoodOptionGroupModel[];
 }

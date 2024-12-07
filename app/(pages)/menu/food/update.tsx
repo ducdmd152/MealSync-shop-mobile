@@ -39,6 +39,7 @@ import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
 import CustomModal from "@/components/common/CustomModal";
+import { FoodPackingUnit } from "@/types/models/FoodPackagingUnitModel";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -46,6 +47,7 @@ const validationSchema = Yup.object().shape({
   price: Yup.number().min(1, "Giá phải lớn hơn 0").required("Giá là bắt buộc"),
   platformCategoryId: Yup.number().min(0, "Danh mục hệ thống là bắt buộc"),
   shopCategoryId: Yup.number().min(0, "Danh mục cửa hàng là bắt buộc"),
+  foodPackingUnit: Yup.number().min(0, "Khối lượng quy đổi là bắt buộc"),
 });
 const formatPrice = (value: number) => {
   // console.log(
@@ -80,16 +82,19 @@ const FoodUpdate = () => {
   const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
     useState(false);
   const [selectedShopCategory, setSelectedShopCategory] = useState(
-    foodDetailModel.shopCategoryId,
+    foodDetailModel.shopCategoryId
   );
 
   const [selectedPlatformCategory, setSelectedPlatformCategory] = useState(
-    foodDetailModel.platformCategoryId,
+    foodDetailModel.platformCategoryId
+  );
+  const [selectedPackingUnitId, setSelectedPackingUnitId] = useState(
+    foodDetailModel.foodPackingUnit.id
   );
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
     (foodDetailModel.optionGroups || [])?.map((item) =>
-      item.optionGroupId.toString(),
-    ),
+      item.optionGroupId.toString()
+    )
   );
   const [selectedOperatingSlots, setSelectedOperatingSlots] = useState<
     string[]
@@ -105,15 +110,16 @@ const FoodUpdate = () => {
     setPrice(foodDetailModel.price);
     setSelectedShopCategory(foodDetailModel.shopCategoryId);
     setSelectedPlatformCategory(foodDetailModel.platformCategoryId);
+    setSelectedPackingUnitId(foodDetailModel.foodPackingUnit.id);
     setSelectedOptionGroups(
       (foodDetailModel.optionGroups || [])?.map((item) =>
-        item.optionGroupId.toString(),
-      ),
+        item.optionGroupId.toString()
+      )
     );
     setStatus(foodDetailModel.status);
     setIsSoldOut(foodDetailModel.isSoldOut);
     setSelectedOperatingSlots(
-      foodDetailModel.operatingSlots.map((item) => item.id.toString()),
+      foodDetailModel.operatingSlots.map((item) => item.id.toString())
     );
     setImageURI(foodDetailModel.imageUrl);
   }, [foodDetailModel]);
@@ -125,10 +131,14 @@ const FoodUpdate = () => {
   useEffect(() => {
     formik.setFieldValue(
       "platformCategoryId",
-      Number(selectedPlatformCategory),
+      Number(selectedPlatformCategory)
     );
     console.log(formik.values);
   }, [selectedPlatformCategory]);
+  useEffect(() => {
+    formik.setFieldValue("foodPackingUnitId", Number(selectedPackingUnitId));
+    console.log(formik.values);
+  }, [selectedPackingUnitId]);
 
   const onStatusSwitch = () => {
     if (isSoldOut || status == 2) {
@@ -156,7 +166,7 @@ const FoodUpdate = () => {
           {
             text: "Hủy",
           },
-        ],
+        ]
       );
     }
   };
@@ -171,7 +181,7 @@ const FoodUpdate = () => {
       apiClient
         .get(endpoints.SHOP_CATEGORY_LIST)
         .then((response) => response.data),
-    [],
+    []
   );
   const {
     data: platformCategories,
@@ -184,7 +194,20 @@ const FoodUpdate = () => {
       apiClient
         .get(endpoints.PLATFORM_CATEGORY_LIST)
         .then((response) => response.data),
-    [],
+    []
+  );
+  const foodPackingUnitFetcher = useFetchWithRQWithFetchFunc(
+    [endpoints.FOOD_PACKING_UNIT_LIST],
+    (): Promise<FetchResponse<FoodPackingUnit>> =>
+      apiClient
+        .get(endpoints.FOOD_PACKING_UNIT_LIST, {
+          params: {
+            pageIndex: 1,
+            pageSize: 100_000_000,
+          },
+        })
+        .then((response) => response.data),
+    []
   );
   const {
     data: optionGroups,
@@ -205,7 +228,7 @@ const FoodUpdate = () => {
           },
         })
         .then((response) => response.data),
-    [],
+    []
   );
   const {
     data: operatingSlots,
@@ -218,7 +241,7 @@ const FoodUpdate = () => {
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    [],
+    []
   );
   // console.log(
   //   "fsdfsf",
@@ -240,6 +263,7 @@ const FoodUpdate = () => {
       price: foodDetailModel.price,
       platformCategoryId: foodDetailModel.platformCategoryId,
       shopCategoryId: foodDetailModel.shopCategoryId,
+      foodPackingUnitId: foodDetailModel.foodPackingUnit.id,
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -263,17 +287,17 @@ const FoodUpdate = () => {
             isSoldOut: isSoldOut,
             price: Number(values.price),
             foodOptionGroups: selectedOptionGroups.map((item) =>
-              Number(item),
+              Number(item)
             ) as number[],
             operatingSlots: selectedOperatingSlots.map((item) =>
-              Number(item),
+              Number(item)
             ) as number[],
           };
           console.log("FOOD DATA UPDATE: ", foodData);
           // Send POST request to the API
           const response = await apiClient.put(
             "shop-owner/food/update",
-            foodData,
+            foodData
           );
           console.log("RESPONSE : ", response);
 
@@ -282,8 +306,8 @@ const FoodUpdate = () => {
           // router.push("/menu");
         } catch (error: any) {
           Alert.alert(
-            "Xảy ra lỗi khi tạo món",
-            error?.response?.data?.error?.message || "Vui lòng thử lại!",
+            "Xảy ra lỗi khi cập nhật món",
+            error?.response?.data?.error?.message || "Vui lòng thử lại!"
           );
         } finally {
           setIsSubmiting(false);
@@ -312,7 +336,7 @@ const FoodUpdate = () => {
               },
             },
           ],
-          { cancelable: false },
+          { cancelable: false }
         );
         return;
       }
@@ -341,7 +365,7 @@ const FoodUpdate = () => {
         return 1;
       }
       return 0;
-    },
+    }
   );
 
   return (
@@ -506,7 +530,7 @@ const FoodUpdate = () => {
                   (cat: PlatformCategoryModel) => ({
                     key: cat.id.toString(),
                     value: cat.name,
-                  }),
+                  })
                 ) || []
               ).find((item) => item.key == selectedPlatformCategory.toString())}
               setSelected={setSelectedPlatformCategory}
@@ -515,7 +539,7 @@ const FoodUpdate = () => {
                   (cat: PlatformCategoryModel) => ({
                     key: cat.id.toString(),
                     value: cat.name,
-                  }),
+                  })
                 ) || []
               }
               save="key"
@@ -537,6 +561,67 @@ const FoodUpdate = () => {
               Danh mục này được sử dụng để phân loại và hỗ trợ tìm kiếm dễ dàng
               trên hệ thống.
             </Text>
+          </View>
+
+          <View>
+            <FormField
+              title="Khối lượng quy đổi"
+              otherStyleClasses="mt-5"
+              otherInputStyleClasses="h-12"
+              otherTextInputStyleClasses="text-sm"
+              isRequired={true}
+              placeholder="0"
+              value={""}
+              handleChangeText={() => {}}
+              keyboardType="numeric"
+              labelOnly={true}
+            />
+            <SelectList
+              defaultOption={(
+                foodPackingUnitFetcher.data?.value.items.map((unit) => ({
+                  key: unit.id.toString(),
+                  value: unit.name + " ~ " + unit.weight + "kg",
+                })) || []
+              ).find((item) => item.key == selectedPackingUnitId.toString())}
+              setSelected={setSelectedPackingUnitId}
+              data={
+                foodPackingUnitFetcher.data?.value.items.map((unit) => ({
+                  key: unit.id.toString(),
+                  value:
+                    unit.name +
+                    " ~ " +
+                    unit.weight +
+                    "kg" +
+                    (unit.type == 2 ? " (bạn đã tạo)" : ""),
+                })) || []
+              }
+              save="key"
+              placeholder="Khối lượng quy đổi"
+              searchPlaceholder="Tìm kiếm..."
+            />
+            {(formik.touched.foodPackingUnitId &&
+            formik.errors.foodPackingUnitId
+              ? formik.errors.foodPackingUnitId
+              : "") && (
+              <Text className="text-red-500 mt-2 text-left w-full italic">
+                {formik.touched.foodPackingUnitId &&
+                formik.errors.foodPackingUnitId
+                  ? formik.errors.foodPackingUnitId
+                  : ""}
+              </Text>
+            )}
+            <Text className="text-[12px] text-gray-600 italic mt-1 ml-1">
+              Khối lượng này là khối lượng của sản phẩm và vật đựng tương ứng
+              (trong trường hợp vật đựng có khối lượng đáng kể).
+            </Text>
+            <TouchableOpacity
+              onPress={() => setIsRearrangeOptionGroupsInFood(true)}
+              className="w-full mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
+            >
+              <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
+                Quản lí vật đựng và khối lượng quy đổi
+              </Text>
+            </TouchableOpacity>
           </View>
 
           <View>
@@ -563,12 +648,12 @@ const FoodUpdate = () => {
                     (group: OptionGroupModel) => ({
                       key: group.id.toString(),
                       value: group.title,
-                    }),
+                    })
                   ) || []
                 ).filter((item) =>
                   selectedOptionGroups.some(
-                    (value) => value.toString() === item.key,
-                  ),
+                    (value) => value.toString() === item.key
+                  )
                 ) as { key: any; value: any }[]
               }
               setSelected={setSelectedOptionGroups}
@@ -618,36 +703,38 @@ const FoodUpdate = () => {
             <Text className="text-[12px] text-gray-600 italic mt-1 ml-1 mb-2">
               Chọn theo các khoảng thời gian hoạt động của cửa hàng
             </Text>
-            <CustomMultipleSelectList
-              selected={selectedOperatingSlots}
-              defaultOptions={(
-                operatingSlots?.value?.map((item: OperatingSlotModel) => ({
-                  key: item.id.toString(),
-                  value: item.frameFormat,
-                })) || []
-              ).filter((item) =>
-                selectedOperatingSlots.some(
-                  (slotId) => slotId.toString() == item.key,
-                ),
-              )}
-              selectedText="Khoảng đã chọn"
-              setSelected={setSelectedOperatingSlots}
-              data={
-                operatingSlots?.value?.map((item: OperatingSlotModel) => ({
-                  key: item.id.toString(),
-                  value: item.frameFormat,
-                })) || []
-              }
-              save="key"
-              placeholder="Lựa chọn khoảng thời gian phục vụ"
-              onSelect={() => {}}
-              search={false}
-              label="Các khoảng thời gian đã chọn"
-              dropdownShown={false}
-              closeicon={
-                <Ionicons name="checkmark-outline" size={22} color="gray" />
-              }
-            />
+            {selectedOperatingSlots && (
+              <CustomMultipleSelectList
+                selected={selectedOperatingSlots}
+                defaultOptions={(
+                  operatingSlots?.value?.map((item: OperatingSlotModel) => ({
+                    key: item.id.toString(),
+                    value: item.frameFormat,
+                  })) || []
+                ).filter((item) =>
+                  selectedOperatingSlots.some(
+                    (slotId) => slotId.toString() == item.key
+                  )
+                )}
+                selectedText="Khoảng đã chọn"
+                setSelected={setSelectedOperatingSlots}
+                data={
+                  operatingSlots?.value?.map((item: OperatingSlotModel) => ({
+                    key: item.id.toString(),
+                    value: item.frameFormat,
+                  })) || []
+                }
+                save="key"
+                placeholder="Lựa chọn khoảng thời gian phục vụ"
+                onSelect={() => {}}
+                search={false}
+                label="Các khoảng thời gian đã chọn"
+                dropdownShown={false}
+                closeicon={
+                  <Ionicons name="checkmark-outline" size={22} color="gray" />
+                }
+              />
+            )}
           </View>
           <View className="flex-row items-center justify-start mt-2">
             <FormField
@@ -655,8 +742,8 @@ const FoodUpdate = () => {
                 isSoldOut
                   ? "Tạm hết hàng"
                   : status == 1
-                    ? "Đang mở bán"
-                    : "Đã tạm ẩn"
+                  ? "Đang mở bán"
+                  : "Đã tạm ẩn"
               }
               otherStyleClasses="w-[142px]"
               otherInputStyleClasses="h-12"
@@ -701,11 +788,11 @@ const FoodUpdate = () => {
                           id: foodDetailModel.id,
                           isConfirm: true,
                         },
-                      },
+                      }
                     );
                     Alert.alert(
                       "Hoàn tất",
-                      `Đã xóa "${foodDetailModel.name}" khỏi thực đơn!`,
+                      `Đã xóa "${foodDetailModel.name}" khỏi thực đơn!`
                     );
                     router.replace("/menu");
                   } catch (error: any) {
@@ -716,7 +803,7 @@ const FoodUpdate = () => {
                       Alert.alert(
                         "Oops!",
                         error?.response?.data?.error?.message ||
-                          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
                       );
                     }
                   }
