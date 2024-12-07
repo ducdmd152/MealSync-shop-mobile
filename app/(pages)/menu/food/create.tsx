@@ -514,7 +514,7 @@ const FoodCreate = () => {
             )}
             <Text className="text-[12px] text-gray-600 italic mt-1 ml-1">
               Khối lượng này là khối lượng của sản phẩm và vật đựng tương ứng
-              (trong trường hợp vật đựng có khối lượng đáng kể).
+              (trường hợp vật đựng có khối lượng đáng kể).
             </Text>
             <TouchableOpacity
               onPress={() => setIsContainerManagementModal(true)}
