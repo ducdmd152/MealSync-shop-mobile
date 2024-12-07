@@ -38,6 +38,7 @@ interface Props {
   startTime: number;
   endTime: number;
   intendedReceiveDate: string;
+  exit: () => void;
   // staffIds: number[];
   // setStaffIds: (ids: number[]) => void;
 }
@@ -49,6 +50,7 @@ const OrderMultiSelectToDelivery = ({
   startTime,
   endTime,
   intendedReceiveDate,
+  exit,
 }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderIds, setOrderIds] = useState<number[]>([]);
@@ -81,33 +83,37 @@ const OrderMultiSelectToDelivery = ({
   };
   return (
     <View>
-      {/* <Text className="font-semibold">Tiến hành đi giao</Text> */}
-
-      {orders.length == 0 && <Text>Không có đơn hàng đang chuẩn bị nào</Text>}
-
+      <Text className="font-semibold text-center">Tiến hành đi giao</Text>
+      {orders.length == 0 && (
+        <Text className="mt-3 italic text-center">
+          Không có đơn hàng đang chuẩn bị nào
+        </Text>
+      )}
       <View>
         <View className="">
-          <TouchableOpacity
-            className={`mt-2 flex-row items-center px-[4px] py-[8px] border-2 border-gray-200 rounded-md`}
-            onPress={() => {
-              if (orderIds.length < orders.length)
-                setOrderIds(orders.map((item) => item.id));
-              else setOrderIds([]);
-            }}
-          >
-            {orderIds.length == orders.length ? (
-              <View className="mr-2">
-                <Ionicons name="checkmark-circle" size={19} color="green" />
-              </View>
-            ) : (
-              <View
-                className="w-[18px] h-[18px] border-2 border-gray-200 mr-2"
-                style={{ borderRadius: 100 }}
-              />
-            )}
+          {orders.length > 0 && (
+            <TouchableOpacity
+              className={`mt-2 flex-row items-center px-[4px] py-[8px] border-2 border-gray-200 rounded-md`}
+              onPress={() => {
+                if (orderIds.length < orders.length)
+                  setOrderIds(orders.map((item) => item.id));
+                else setOrderIds([]);
+              }}
+            >
+              {orderIds.length == orders.length ? (
+                <View className="mr-2">
+                  <Ionicons name="checkmark-circle" size={19} color="green" />
+                </View>
+              ) : (
+                <View
+                  className="w-[18px] h-[18px] border-2 border-gray-200 mr-2"
+                  style={{ borderRadius: 100 }}
+                />
+              )}
 
-            <Text className="italic">Chọn tất cả</Text>
-          </TouchableOpacity>
+              <Text className="italic">Chọn tất cả</Text>
+            </TouchableOpacity>
+          )}
           {orders.map((order) => (
             <TouchableOpacity
               key={order.id}
@@ -127,8 +133,9 @@ const OrderMultiSelectToDelivery = ({
               )}
 
               <Text className="font-semibold">
-                Đơn MS-{order.id} |
-                <Text className="text-gray-700 text-[11px]">
+                Đơn MS-{order.id}
+                <Text className="text-gray-700 text-[12px]">
+                  {" "}
                   (giao đến{" "}
                   {order.dormitoryId == Dormitories.A ? "Khu A" : "Khu B"})
                 </Text>
@@ -137,15 +144,27 @@ const OrderMultiSelectToDelivery = ({
           ))}
         </View>
       </View>
-      <CustomButton
-        title="Tiến hành giao"
-        handlePress={() => {
-          onMutilDelivery();
-        }}
-        isLoading={isSubmitting}
-        containerStyleClasses="mt-5 h-[36px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold z-10"
-        textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
-      />
+      {orders.length > 0 && (
+        <CustomButton
+          title="Tiến hành giao"
+          handlePress={() => {
+            onMutilDelivery();
+          }}
+          isLoading={isSubmitting}
+          containerStyleClasses="mt-5 h-[36px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold z-10"
+          textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+        />
+      )}
+      {orders.length == 0 && (
+        <CustomButton
+          title="Thoát"
+          handlePress={() => {
+            exit();
+          }}
+          containerStyleClasses="mt-5 h-[36px] px-4 bg-transparent border-2 border-gray-200 font-semibold z-10"
+          textStyleClasses="text-[16px] text-gray-900 ml-1 text-gray-700"
+        />
+      )}
       {/* <Toast position="bottom" /> */}
     </View>
   );

@@ -417,12 +417,12 @@ const DeliveryPKGDetail = ({
       )}
       <CustomModal
         title="Tiến hành đi giao"
-        // hasHeader={false}
+        hasHeader={false}
         isOpen={isMultiSelectToDelivery}
         setIsOpen={(value) => {
           setIsMultiSelectToDelivery(value);
         }}
-        titleStyleClasses="text-center flex-1"
+        titleStyleClasses="text-center flex-1 font-bold text-[14px]"
         containerStyleClasses="w-[90%]"
         onBackdropPress={() => {
           setIsMultiSelectToDelivery(false);
@@ -436,12 +436,13 @@ const DeliveryPKGDetail = ({
           endTime={pkgDetails.endTime}
           intendedReceiveDate={pkgDetails.intendedReceiveDate}
           onRefetch={() => getPKGDetails()}
+          exit={() => setIsMultiSelectToDelivery(false)}
           onSuccess={() => {
             getPKGDetails();
             Toast.show({
               type: "info",
               text1: "Hoàn tất",
-              text2: `Các đơn hàng được chọn đã chuyển sang trạng thái giao hàng`,
+              text2: `Các đơn được chọn đã chuyển sang trạng thái giao hàng`,
             });
             setIsMultiSelectToDelivery(false);
           }}
@@ -487,7 +488,7 @@ const DeliveryPKGDetail = ({
               return;
             }
             getPKGDetails();
-            // do something
+            setIsMultiSelectToDelivery(true);
           }}
           containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold"
           textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
