@@ -75,7 +75,57 @@ const ShopContainerManagement = ({ exit }: { exit: () => void }) => {
               >
                 <Ionicons name="create-outline" size={24} color="#227B94" />
               </TouchableOpacity>
-              <TouchableOpacity className="ml-1" onPress={() => {}}>
+              <TouchableOpacity
+                className="ml-1"
+                onPress={() => {
+                  Alert.alert(`Xác nhận`, `Bạn muốn xóa vật đựng này?`, [
+                    {
+                      text: "Xác nhận xóa",
+                      onPress: async () => {
+                        apiClient
+                          .delete(`shop-onwer/food-packing-unit/${unit.id}`)
+                          .then((response) => {
+                            // console.log(response.data);
+                            foodPackingUnitFetcher.refetch();
+                            Toast.show({
+                              type: "success",
+                              text1: "Hoàn tất",
+                              text2: `Đã xóa "${
+                                unit.name + " ~ " + unit.weight + "kg"
+                              }".`,
+                              // time: 15000
+                            });
+                          })
+                          .catch((error: any) => {
+                            if (
+                              error.response &&
+                              (error.response.status == 500 ||
+                                error.response.status == 501 ||
+                                error.response.status == 502)
+                            ) {
+                              Alert.alert(
+                                "Oops!",
+                                error?.response?.data?.error?.message ||
+                                  "Xử lí bị gián đoạn, vui lòng thử lại!"
+                              );
+                            } else
+                              Alert.alert(
+                                "Oops!",
+                                error?.response?.data?.error?.message ||
+                                  "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                              );
+                          })
+                          .finally(() => {
+                            // setIsSubmitting(false);
+                          });
+                      },
+                    },
+                    {
+                      text: "Hủy",
+                    },
+                  ]);
+                }}
+              >
                 <Ionicons name="trash-outline" size={22} color="#FF9001" />
               </TouchableOpacity>
             </TouchableOpacity>
