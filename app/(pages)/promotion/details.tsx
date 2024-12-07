@@ -1,5 +1,6 @@
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import CustomButton from "@/components/custom/CustomButton";
+import PreviewImageUpload from "@/components/images/PreviewImageUpload";
 import CONSTANTS from "@/constants/data";
 import usePromotionModelState from "@/hooks/states/usePromotionModelState";
 import apiClient from "@/services/api-services/api-client";
@@ -331,12 +332,17 @@ const PromotionDetails = () => {
             </View>
             {/* Placeholder for ImageUploader */}
             <View className="mb-2">
-              {/* <Text className="font-bold">Banner</Text> */}
-              <Image
-                resizeMode="cover"
-                className="w-full h-[140px]"
-                source={{
-                  uri: promotion.bannerUrl || CONSTANTS.url.noImageAvailable,
+              <PreviewImageUpload
+                isViewOnly={true}
+                className="flex-row w-full justify-center items-center overflow-hidden mx-[-1px] border-2 rounded-lg border-gray-300 mt-1"
+                aspect={[1, 1 / (16 / 9)]}
+                uri={promotion.bannerUrl || CONSTANTS.url.noImageAvailable}
+                setUri={(uri: string) => {
+                  setPromotion({
+                    ...promotion,
+                    bannerUrl: uri,
+                  });
+                  // console.log("uri: ", uri);
                 }}
               />
             </View>

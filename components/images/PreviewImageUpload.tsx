@@ -30,6 +30,7 @@ export interface PreviewImageUploadProps extends ViewProps {
   isAutoShadow?: boolean;
   afterPickImage?: (uri: string) => void;
   pickIconColor?: string;
+  isViewOnly?: boolean;
 }
 const imageShadowStyle = StyleSheet.create({
   shadow: {
@@ -56,6 +57,7 @@ const PreviewImageUpload = ({
   afterPickImage = (uri: string) => {},
   isAutoShadow = false,
   pickIconColor = "#a78bfa",
+  isViewOnly = false,
   ...props
 }: PreviewImageUploadProps) => {
   const [isSelectPicking, setIsSelectPicking] = useState(false);
@@ -68,7 +70,7 @@ const PreviewImageUpload = ({
       if (libraryStatus !== "granted") {
         Alert.alert(
           "Oops",
-          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!",
+          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!"
         );
         return;
       }
@@ -101,7 +103,7 @@ const PreviewImageUpload = ({
       if (blob.size > CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_BYTE) {
         Alert.alert(
           "Oops",
-          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`,
+          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`
         );
         setIsSelectPicking(true);
         return;
@@ -138,13 +140,15 @@ const PreviewImageUpload = ({
           resizeMode="cover"
           source={{ uri: uri }}
         />
-        <IconButton
-          icon="camera"
-          iconColor={pickIconColor}
-          size={24}
-          style={{ position: "absolute", right: -10, bottom: -10 }}
-          onPress={() => setIsSelectPicking(true)}
-        />
+        {!isViewOnly && (
+          <IconButton
+            icon="camera"
+            iconColor={pickIconColor}
+            size={24}
+            style={{ position: "absolute", right: -10, bottom: -10 }}
+            onPress={() => setIsSelectPicking(true)}
+          />
+        )}
       </View>
       <CustomModal
         title=""

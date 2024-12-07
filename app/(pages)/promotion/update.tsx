@@ -1,6 +1,8 @@
 import ImageUpload from "@/components/common/ImageUpload";
 import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import CustomButton from "@/components/custom/CustomButton";
+import PreviewImageUpload from "@/components/images/PreviewImageUpload";
+import CONSTANTS from "@/constants/data";
 import usePromotionModelState from "@/hooks/states/usePromotionModelState";
 import apiClient from "@/services/api-services/api-client";
 import utilService from "@/services/util-service";
@@ -173,6 +175,7 @@ const PromotionUpdate = () => {
           }
         })
         .catch((error: any) => {
+          // console.log("error?.response?.data: ", error?.response?.data);
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
@@ -623,24 +626,17 @@ const PromotionUpdate = () => {
             {/* Placeholder for ImageUploader */}
             <View className="mb-2">
               <Text className="font-bold">Banner</Text>
-              <ImageUpload
-                containerStyleClasses="mt-2 w-full bg-red"
-                uri={promotion.bannerUrl}
+              <PreviewImageUpload
+                className="flex-row w-full justify-center items-center overflow-hidden ml-[2px] border-2 rounded-lg border-gray-300 mt-1"
+                aspect={[1, 1 / (16 / 9)]}
+                uri={promotion.bannerUrl || CONSTANTS.url.noImageAvailable}
                 setUri={(uri: string) => {
                   setPromotion({
                     ...promotion,
-                    bannerUrl: promotion.bannerUrl,
+                    bannerUrl: uri,
                   });
+                  // console.log("uri: ", uri);
                 }}
-                imageStyleObject={{ height: 140, width: "100%" }}
-                updateButton={
-                  <CustomButton
-                    title="Lưu"
-                    containerStyleClasses="bg-white  bg-[#227B94] h-8"
-                    textStyleClasses="text-sm text-white"
-                    handlePress={() => {}}
-                  />
-                }
               />
             </View>
 
