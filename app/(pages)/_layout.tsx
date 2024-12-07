@@ -55,11 +55,11 @@ const PageLayout = () => {
         />
         <Stack.Screen
           name="menu/food/create"
-          options={{ headerTitle: "Tạo mới sản phẩm" }}
+          options={{ headerTitle: "Thêm món mới" }}
         />
         <Stack.Screen
           name="menu/food/update"
-          options={{ headerTitle: "Cập nhật sản phẩm" }}
+          options={{ headerTitle: "Cập nhật món" }}
         />
         <Stack.Screen
           name="menu/option-group/create"
