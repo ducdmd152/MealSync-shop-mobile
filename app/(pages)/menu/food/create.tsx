@@ -21,9 +21,9 @@ import FetchResponse, {
   FetchOnlyListResponse,
 } from "@/types/responses/FetchResponse";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
@@ -77,7 +77,13 @@ const FoodCreate = () => {
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
     useState(false);
-
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setIsRearrangeOptionGroupsInFood(false);
+      };
+    }, [])
+  );
   const [selectedOperatingSlots, setSelectedOperatingSlots] = useState<
     string[]
   >([]);
@@ -304,7 +310,7 @@ const FoodCreate = () => {
             }}
           />
           <Text className="italic text-gray-700 mt-2">
-            Tối đa 5MB, nhận diện tệp .PNG, .JPG
+            Tối đa 5MB, nhận diện tệp .PNG, .JPG, .HEIC
           </Text>
         </View>
         <View className="border-b-2 border-gray-200 my-2" />

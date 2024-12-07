@@ -12,7 +12,7 @@ import {
   SelectList,
 } from "react-native-dropdown-select-list";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Modal, Portal, Switch } from "react-native-paper";
 import sessionService from "@/services/session-service";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
@@ -40,7 +40,6 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import CustomModal from "@/components/common/CustomModal";
 import { FoodPackingUnit } from "@/types/models/FoodPackagingUnitModel";
-import { useFocusEffect } from "@react-navigation/native";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
