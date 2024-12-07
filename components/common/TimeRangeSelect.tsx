@@ -74,7 +74,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
 
   const handleStartTimeChange = (
     index: number,
-    isAutoFixEndTime: boolean = true,
+    isAutoFixEndTime: boolean = true
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
@@ -94,7 +94,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
   };
   const handleEndTimeChange = (
     index: number,
-    isAutoFixStartTime: boolean = true,
+    isAutoFixStartTime: boolean = true
   ) => {
     if (frames.length == 0) return;
     const selectedIndex = index == frames.length ? index - 1 : index;
@@ -127,22 +127,22 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    [],
+    []
   );
   const [frames, setFrames] = useState(
     convertToTimeFrames(
       operatingSlots?.value.map((item: OperatingSlotModel) => ({
         startTime: item.startTime,
         endTime: item.endTime,
-      })) || [{ startTime: 0, endTime: 2400 }],
-    ),
+      })) || [{ startTime: 0, endTime: 2400 }]
+    )
   );
 
   const globalStateMapping = () => {
     // console.log("frames.length: ", frames.length);
     if (frames.length == 0) return;
     const foundStartIndex = frames.findIndex(
-      (item) => item.startTime === startTime,
+      (item) => item.startTime === startTime
     );
     handleStartTimeChange(foundStartIndex !== -1 ? foundStartIndex : 0, false);
 
@@ -156,8 +156,8 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
         operatingSlots?.value.map((item: OperatingSlotModel) => ({
           startTime: item.startTime,
           endTime: item.endTime,
-        })) || [{ startTime: 0, endTime: 2400 }],
-      ),
+        })) || [{ startTime: 0, endTime: 2400 }]
+      )
     );
   }, [operatingSlots?.value]);
   useEffect(() => {
@@ -170,7 +170,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       setTimeout(() => {
         setIsRefreshing(false);
       }, 100);
-    }, [operatingSlots]),
+    }, [operatingSlots])
   );
 
   //   useEffect(() => {
