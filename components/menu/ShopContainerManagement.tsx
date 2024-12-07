@@ -170,7 +170,7 @@ const ShopContainerManagement = ({ exit }: { exit: () => void }) => {
               />
               <Text className="text-[12px] text-gray-600 italic mt-1 ml-1">
                 Khối lượng này là khối lượng bao gồm sản phẩm và vật đựng tương
-                ứng (trường hợp vật đựng có khối lượng đáng kể).
+                ứng (trong trường hợp vật đựng có khối lượng đáng kể).
               </Text>
             </View>
           </View>

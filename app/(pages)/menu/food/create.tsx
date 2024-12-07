@@ -25,12 +25,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useFormik } from "formik";
 import React, { useCallback, useEffect, useState } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TouchableOpacity, View, TextInput } from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { SelectList } from "react-native-dropdown-select-list";
 import { Modal, Portal, Switch } from "react-native-paper";
+import { useToast } from "react-native-toast-notifications";
 import * as Yup from "yup";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -66,6 +67,7 @@ interface PlatformCategoryListResponse extends APICommonResponse {
 }
 
 const FoodCreate = () => {
+  const toast = useToast();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState(0);
@@ -74,10 +76,12 @@ const FoodCreate = () => {
   const [selectedPackingUnitId, setSelectedPackingUnitId] = useState(-1);
   const [isContainerManagementModal, setIsContainerManagementModal] =
     useState(false);
+  const [isCreateCategoryModal, setIsCreateCategoryModal] = useState(false);
   const [selectedOptionGroups, setSelectedOptionGroups] = useState<string[]>(
     []
   );
   const [isSubmiting, setIsSubmiting] = useState(false);
+  const [categoryName, setCategoryName] = useState("");
   const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
     useState(false);
   // useFocusEffect(
@@ -124,6 +128,46 @@ const FoodCreate = () => {
         .then((response) => response.data),
     []
   );
+  const handleAddCategory = async () => {
+    if (!categoryName.trim()) {
+      Alert.alert("Nhập liệu", "Vui lòng nhập tên danh mục");
+      return;
+    }
+
+    const data = {
+      name: categoryName,
+      description: "",
+      imageUrl: null,
+    };
+
+    try {
+      setIsSubmiting(true);
+      const response = await apiClient.post("shop-owner/category/create", data);
+      const { value, isSuccess, error } = response.data;
+
+      if (isSuccess) {
+        toast.show(`Danh mục "${value.name}" đã được thêm!`, {
+          type: "success",
+          duration: 1500,
+        });
+        setIsCreateCategoryModal(false);
+        shopCategoriesRefetch();
+      } else {
+        Alert.alert(
+          "Thông báo",
+          error.message || "Có lỗi xảy ra khi thêm danh mục!"
+        );
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Oops",
+        error?.response?.data?.error?.message ||
+          "Hệ thống đang bảo trì, vui lòng thử lại sau."
+      );
+    } finally {
+      setIsSubmiting(false);
+    }
+  };
   const {
     data: platformCategories,
     isLoading: isPlatformCategoriesLoading,
@@ -424,7 +468,14 @@ const FoodCreate = () => {
             )}
             <Text className="text-[12px] text-gray-600 italic mt-1 ml-1">
               Danh mục này được sử dụng để phân loại và chia nhóm sản phẩm trong
-              cửa hàng của bạn.
+              cửa hàng của bạn. Bạn cũng có thể{" "}
+              <Text
+                onPress={() => setIsCreateCategoryModal(true)}
+                className="text-[12.5px] text-white text-[#227B94] font-semibold"
+              >
+                thêm mới danh mục trong cửa hàng
+              </Text>
+              .
             </Text>
           </View>
 
@@ -743,6 +794,45 @@ const FoodCreate = () => {
         <ShopContainerManagement
           exit={() => setIsContainerManagementModal(false)}
         />
+      </CustomModal>
+      <CustomModal
+        title=""
+        hasHeader={false}
+        isOpen={isCreateCategoryModal}
+        setIsOpen={(value) => {
+          setIsCreateCategoryModal(value);
+        }}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[96%]"
+        onBackdropPress={() => {
+          setIsCreateCategoryModal(false);
+        }}
+      >
+        <View>
+          <View className="mb-2">
+            <Text className="font-bold text-[12.8px]">Tên danh mục</Text>
+            <View className="relative">
+              <TextInput
+                className="border border-gray-300 mt-1 px-3 p-2 pb-3 rounded text-[15px]"
+                value={categoryName}
+                onChangeText={(text) => {
+                  setCategoryName(text.trim());
+                }}
+                placeholder="Nhập tên danh mục..."
+                placeholderTextColor="#888"
+              />
+            </View>
+          </View>
+          <CustomButton
+            isLoading={isSubmiting}
+            title="Thêm mới"
+            containerStyleClasses="mt-3 bg-secondary h-10"
+            textStyleClasses="text-white text-[14px]"
+            handlePress={() => {
+              handleAddCategory();
+            }}
+          />
+        </View>
       </CustomModal>
     </PageLayoutWrapper>
   );

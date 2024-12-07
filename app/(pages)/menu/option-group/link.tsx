@@ -49,7 +49,7 @@ interface ExtendCategoryModel extends ShopCategoryModel {
 }
 const OptionGroupLink = () => {
   const setMenuSessionIndex = usePathState(
-    (state) => state.setMenuSessionIndex,
+    (state) => state.setMenuSessionIndex
   );
   const toast = useToast();
   const [query, setQuery] = useState<FoodListQuery>({} as FoodListQuery);
@@ -61,7 +61,7 @@ const OptionGroupLink = () => {
   const { notFoundInfo, setNotFoundInfo } = usePathState();
   const optionGroupModel = useModelState((state) => state.optionGroupModel);
   const [linkedIdList, setLinkedIdList] = useState<number[]>(
-    (optionGroupModel.foods || []).map((item) => item.id),
+    (optionGroupModel.foods || []).map((item) => item.id)
   );
   const [linkingIdList, setLinkingIdList] = useState<number[]>([]);
 
@@ -90,7 +90,7 @@ const OptionGroupLink = () => {
         type: "danger",
         duration: 5000,
       });
-      // Alert.alert("Lỗi", "Yêu cầu bị từ chối, vui lòng thử lại.");
+      // Alert.alert("Oops", "Yêu cầu bị từ chối, vui lòng thử lại.");
     } finally {
     }
   };
@@ -119,7 +119,7 @@ const OptionGroupLink = () => {
                     {
                       optionGroupId: optionGroupModel.id,
                       foodId: food.id,
-                    },
+                    }
                   );
 
                   toast.show(`Đã thêm vào ${food.name}!`, {
@@ -137,7 +137,7 @@ const OptionGroupLink = () => {
                     Alert.alert(
                       "Xảy ra lỗi",
                       error?.response?.data?.error?.message ||
-                        "Vui lòng thử lại!",
+                        "Vui lòng thử lại!"
                     );
                 } finally {
                   setLinkingIdList(linkingIdList.filter((id) => id != food.id));
@@ -167,7 +167,7 @@ const OptionGroupLink = () => {
                         optionGroupId: optionGroupModel.id,
                         foodId: food.id,
                       },
-                    },
+                    }
                   );
 
                   toast.show(`Đã gỡ khỏi ${food.name}!`, {
@@ -184,14 +184,14 @@ const OptionGroupLink = () => {
                     Alert.alert(
                       "Xảy ra lỗi",
                       error?.response?.data?.error?.message ||
-                        "Vui lòng thử lại!",
+                        "Vui lòng thử lại!"
                     );
                 } finally {
                   setLinkingIdList(linkingIdList.filter((id) => id != food.id));
                 }
               },
             },
-          ],
+          ]
     );
   };
   const {
@@ -203,7 +203,7 @@ const OptionGroupLink = () => {
     REACT_QUERY_CACHE_KEYS.FOOD_LIST,
     (): Promise<FoodListResponse> =>
       apiClient.get(endpoints.FOOD_LIST).then((response) => response.data),
-    [query],
+    [query]
   );
 
   useEffect(() => {
@@ -215,14 +215,14 @@ const OptionGroupLink = () => {
           isCollapsible:
             extendCategories.find((cat) => cat.id == category.id)
               ?.isCollapsible || true,
-        })) as ExtendCategoryModel[],
+        })) as ExtendCategoryModel[]
       );
   }, [categories]);
 
   useFocusEffect(
     React.useCallback(() => {
       refetch();
-    }, []),
+    }, [])
   );
 
   // console.log(extendCategories);
@@ -241,8 +241,8 @@ const OptionGroupLink = () => {
               extendCategories?.map((cat) =>
                 item.id === cat.id
                   ? { ...cat, isCollapsible: !cat.isCollapsible }
-                  : cat,
-              ),
+                  : cat
+              )
             )
           }
           // onLongPress={drag}
@@ -308,7 +308,7 @@ const OptionGroupLink = () => {
                     onPress={() =>
                       handleLinkToggle(
                         !linkedIdList.some((id) => food.id == id),
-                        food,
+                        food
                       )
                     }
                     className={`rounded-md items-center justify-center px-[6px] py-[2.2px] ${

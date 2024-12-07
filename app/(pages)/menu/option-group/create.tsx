@@ -46,7 +46,7 @@ const parseFormattedNumber = (formattedValue: string) => {
 
 const OptionGroupCreate: React.FC = () => {
   const setOptionGroupModel = useModelState(
-    (state) => state.setOptionGroupModel,
+    (state) => state.setOptionGroupModel
   );
   // (async () => {
   //   console.log(await sessionService.getAuthToken());
@@ -124,7 +124,7 @@ const OptionGroupCreate: React.FC = () => {
     if (isRequire && minSelect < 1) {
       Alert.alert(
         "Nhập liệu",
-        "Nhóm lựa chọn bắt buộc cần tối thiểu 1 câu trả lời!",
+        "Nhóm lựa chọn bắt buộc cần tối thiểu 1 câu trả lời!"
       );
       setMinSelect(1);
     } else if (minSelect < 0) {
@@ -134,21 +134,21 @@ const OptionGroupCreate: React.FC = () => {
       setMinSelect(options.length);
       Alert.alert(
         "Nhập liệu",
-        `Vui lòng nhập chọn tối thiểu không quá ${options.length} số lựa chọn hiện có!`,
+        `Vui lòng nhập chọn tối thiểu không quá ${options.length} số lựa chọn hiện có!`
       );
     } else if (minSelect > maxSelect) {
       setMaxSelect(minSelect);
     } else if (maxSelect < 1) {
       Alert.alert(
         "Nhập liệu",
-        "Nhóm lựa chọn bắt buộc cần tối đa ít nhất 1 câu trả lời!",
+        "Nhóm lựa chọn bắt buộc cần tối đa ít nhất 1 câu trả lời!"
       );
       setMaxSelect(1);
     } else if (maxSelect > options.length) {
       setMaxSelect(options.length);
       Alert.alert(
         "Nhập liệu",
-        `Vui lòng nhập chọn tối đa không quá ${options.length} số lựa chọn hiện có!`,
+        `Vui lòng nhập chọn tối đa không quá ${options.length} số lựa chọn hiện có!`
       );
     } else if (minSelect > maxSelect) {
       setMinSelect(maxSelect);
@@ -177,13 +177,12 @@ const OptionGroupCreate: React.FC = () => {
     if (
       !options.every(
         (option) =>
-          option.title &&
-          (option.price > 0 || option.isCalculatePrice == false),
+          option.title && (option.price > 0 || option.isCalculatePrice == false)
       )
     ) {
       Alert.alert(
         "Lỗi ",
-        "Vui lòng nhập tiêu đề và giá hợp lệ cho các lựa chọn.",
+        "Vui lòng nhập tiêu đề và giá hợp lệ cho các lựa chọn."
       );
 
       return false;
@@ -193,8 +192,8 @@ const OptionGroupCreate: React.FC = () => {
       const max = maxSelect;
       if (isNaN(min) || isNaN(max) || min < 1 || max < min) {
         Alert.alert(
-          "Lỗi",
-          "Vui lòng nhập số chọn tối thiểu và tối đa hợp lệ (tối thiểu ≥ 1 và tối đa ≥ tối thiểu).",
+          "Oops",
+          "Vui lòng nhập số chọn tối thiểu và tối đa hợp lệ (tối thiểu ≥ 1 và tối đa ≥ tối thiểu)."
         );
         return false;
       }
@@ -202,7 +201,7 @@ const OptionGroupCreate: React.FC = () => {
     if (options.filter((item) => item.isDefault).length < minSelect) {
       Alert.alert(
         "Lựa chọn mặc định ",
-        `Vui lòng chọn đủ tối thiểu ${minSelect} lựa chọn mặc định .`,
+        `Vui lòng chọn đủ tối thiểu ${minSelect} lựa chọn mặc định .`
       );
 
       return false;
@@ -210,7 +209,7 @@ const OptionGroupCreate: React.FC = () => {
     if (options.filter((item) => item.isDefault).length > maxSelect) {
       Alert.alert(
         "Lựa chọn mặc định ",
-        `Vui lòng chỉ chọn tối đa ${maxSelect} cho lựa chọn mặc định .`,
+        `Vui lòng chỉ chọn tối đa ${maxSelect} cho lựa chọn mặc định .`
       );
 
       return false;
@@ -236,7 +235,7 @@ const OptionGroupCreate: React.FC = () => {
   const handleOptionChange = (
     index: number,
     field: keyof Option,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => {
     // if (isTrySubmitted > 0) setIsTrySubmitted(isTrySubmitted + 1);
 
@@ -248,7 +247,7 @@ const OptionGroupCreate: React.FC = () => {
               isCalculatePrice: Boolean(value),
               price: value ? 1000 : 0,
             }
-          : item,
+          : item
       );
       setOptions(updatedOptions);
     } else if (field == "price") {
@@ -258,12 +257,12 @@ const OptionGroupCreate: React.FC = () => {
               ...item,
               price: Number(value),
             }
-          : item,
+          : item
       );
       setOptions(updatedOptions);
     } else {
       const updatedOptions = options.map((item, i) =>
-        i === index ? { ...item, [field]: value } : item,
+        i === index ? { ...item, [field]: value } : item
       );
       setOptions(updatedOptions);
     }
@@ -293,7 +292,7 @@ const OptionGroupCreate: React.FC = () => {
             setOptions(updatedOptions);
           },
         },
-      ],
+      ]
     );
   };
 
@@ -314,7 +313,7 @@ const OptionGroupCreate: React.FC = () => {
     try {
       const response = await apiClient.post<ValueResponse<OptionGroupModel>>(
         "shop-owner/option-group/create",
-        data,
+        data
       );
       setOptionGroupModel(response.data.value);
 
@@ -326,7 +325,7 @@ const OptionGroupCreate: React.FC = () => {
       } else
         Alert.alert(
           "Xảy ra lỗi khi tạo nhóm",
-          error?.response?.data?.error?.message || "Vui lòng thử lại!",
+          error?.response?.data?.error?.message || "Vui lòng thử lại!"
         );
     } finally {
       setIsLoading(false);
@@ -384,7 +383,7 @@ const OptionGroupCreate: React.FC = () => {
                       handleOptionChange(
                         index,
                         "price",
-                        parseFormattedNumber(text),
+                        parseFormattedNumber(text)
                       );
                     }}
                     iconRight={
@@ -398,7 +397,7 @@ const OptionGroupCreate: React.FC = () => {
                             handleOptionChange(
                               index,
                               "isCalculatePrice",
-                              value,
+                              value
                             );
 
                             setIsTrySubmitted(isTrySubmitted + 1);
@@ -433,7 +432,7 @@ const OptionGroupCreate: React.FC = () => {
                           options.filter((item) => item.status == 1).length <= 1
                         ) {
                           Alert.alert(
-                            "Mỗi nhóm lựa chọn cần ít nhất một câu trả lời được bật",
+                            "Mỗi nhóm lựa chọn cần ít nhất một câu trả lời được bật"
                           );
                           return;
                         }
@@ -458,7 +457,7 @@ const OptionGroupCreate: React.FC = () => {
                                     handleOptionChange(
                                       index,
                                       "status",
-                                      3 - item.status,
+                                      3 - item.status
                                     ),
                                 },
                               ]
@@ -469,14 +468,14 @@ const OptionGroupCreate: React.FC = () => {
                                     handleOptionChange(
                                       index,
                                       "status",
-                                      3 - item.status,
+                                      3 - item.status
                                     ),
                                 },
                                 {
                                   text: "Hủy",
                                   // style: "cancel",
                                 },
-                              ],
+                              ]
                         );
                       }}
                       containerStyleClasses="w-22 h-10 bg-red-500 bg-white border-2 border-red-400 box-border border-0"

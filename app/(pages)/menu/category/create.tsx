@@ -33,14 +33,14 @@ const CategoryPage = () => {
       } else {
         Alert.alert(
           "Thông báo",
-          error.message || "Có lỗi xảy ra khi thêm danh mục!",
+          error.message || "Có lỗi xảy ra khi thêm danh mục!"
         );
       }
     } catch (error: any) {
       Alert.alert(
-        "Lỗi",
+        "Oops",
         error?.response?.data?.error?.message ||
-          "Hệ thống đang bảo trì, vui lòng thử lại sau.",
+          "Hệ thống đang bảo trì, vui lòng thử lại sau."
       );
     } finally {
       setIsSubmitting(false);

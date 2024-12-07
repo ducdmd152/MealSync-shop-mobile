@@ -86,7 +86,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
         type: "danger",
         duration: 5000,
       });
-      // Alert.alert("Lỗi", "Yêu cầu bị từ chối, vui lòng thử lại.");
+      // Alert.alert("Oops", "Yêu cầu bị từ chối, vui lòng thử lại.");
     } finally {
     }
   };
