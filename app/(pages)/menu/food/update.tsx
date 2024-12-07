@@ -40,6 +40,7 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import CustomModal from "@/components/common/CustomModal";
 import { FoodPackingUnit } from "@/types/models/FoodPackagingUnitModel";
+import ShopContainerManagement from "@/components/menu/ShopContainerManagement";
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .min(6, "Tên món phải từ 6 kí tự trở lên")
@@ -79,15 +80,10 @@ const FoodUpdate = () => {
   const [description, setDescription] = useState(foodDetailModel.description);
   const [price, setPrice] = useState(foodDetailModel.price);
   const [isSubmiting, setIsSubmiting] = useState(false);
+  const [isContainerManagementModal, setIsContainerManagementModal] =
+    useState(false);
   const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
     useState(false);
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        setIsRearrangeOptionGroupsInFood(false);
-      };
-    }, [])
-  );
   const [selectedShopCategory, setSelectedShopCategory] = useState(
     foodDetailModel.shopCategoryId
   );
@@ -249,6 +245,20 @@ const FoodUpdate = () => {
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
     []
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      shopCategoriesRefetch();
+      platformCategoriesRefetch();
+      operatingSlotsRefetch();
+      optionGroupsRefetch();
+      foodPackingUnitFetcher.refetch();
+
+      return () => {
+        setIsRearrangeOptionGroupsInFood(false);
+      };
+    }, [])
   );
   // console.log(
   //   "fsdfsf",
@@ -625,7 +635,7 @@ const FoodUpdate = () => {
                 (trong trường hợp vật đựng có khối lượng đáng kể).
               </Text>
               <TouchableOpacity
-                onPress={() => setIsRearrangeOptionGroupsInFood(true)}
+                onPress={() => setIsContainerManagementModal(true)}
                 className="w-full mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
               >
                 <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
@@ -906,6 +916,23 @@ const FoodUpdate = () => {
           </View>
         </Modal>
       </Portal>
+      <CustomModal
+        title=""
+        hasHeader={false}
+        isOpen={isContainerManagementModal}
+        setIsOpen={(value) => {
+          setIsContainerManagementModal(value);
+        }}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[96%]"
+        onBackdropPress={() => {
+          setIsContainerManagementModal(false);
+        }}
+      >
+        <ShopContainerManagement
+          exit={() => setIsContainerManagementModal(false)}
+        />
+      </CustomModal>
     </>
   );
 };

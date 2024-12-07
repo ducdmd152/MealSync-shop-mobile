@@ -77,13 +77,13 @@ const FoodCreate = () => {
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isRearrangeOptionGroupsInFood, setIsRearrangeOptionGroupsInFood] =
     useState(false);
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        setIsRearrangeOptionGroupsInFood(false);
-      };
-    }, [])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     return () => {
+  //       setIsRearrangeOptionGroupsInFood(false);
+  //     };
+  //   }, [])
+  // );
   const [selectedOperatingSlots, setSelectedOperatingSlots] = useState<
     string[]
   >([]);
@@ -181,7 +181,19 @@ const FoodCreate = () => {
         .then((response) => response.data),
     []
   );
+  useFocusEffect(
+    useCallback(() => {
+      shopCategoriesRefetch();
+      platformCategoriesRefetch();
+      operatingSlotsRefetch();
+      optionGroupsRefetch();
+      foodPackingUnitFetcher.refetch();
 
+      return () => {
+        setIsRearrangeOptionGroupsInFood(false);
+      };
+    }, [])
+  );
   const formik = useFormik({
     initialValues: {
       name: "",
