@@ -31,6 +31,9 @@ import {
 import Toast from "react-native-toast-message";
 import { useToast } from "react-native-toast-notifications";
 import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfirmModal";
+import CustomButton from "../custom/CustomButton";
+import OrderMultiSelectToDelivery from "./OrderMultiSelectToDelivery";
+import CustomModal from "../common/CustomModal";
 
 interface Props {
   onNotFound?: () => void;
@@ -58,6 +61,8 @@ const DeliveryPKGDetail = ({
   const [refreshing, setIsRefreshing] = useState(false);
   const globalCompleteDeliveryConfirm = useGlobalCompleteDeliveryConfirm();
   const [isNotFound, setIsNotFound] = useState(false);
+  const [isMultiSelectToDelivery, setIsMultiSelectToDelivery] = useState(false);
+
   const getPKGDetails = async (isFirstTime = false) => {
     // console.log("getPKGDetails nề?: " + isFirstTime);
     setIsLoading(true);
@@ -83,7 +88,11 @@ const DeliveryPKGDetail = ({
 
   useEffect(() => {
     if (!isLoading) {
-      setOrders(pkgDetails?.orders || []);
+      setOrders(
+        (pkgDetails?.orders || []).sort((a, b) => {
+          return a.dormitoryId - b.dormitoryId;
+        })
+      );
     }
   }, [pkgDetails?.orders]);
 
@@ -102,7 +111,7 @@ const DeliveryPKGDetail = ({
     if (status == DeliveryPackageStatus.Completed)
       return orders.filter((order) => order.status > OrderStatus.Delivering);
 
-    return pkgDetails.orders;
+    return orders;
   };
 
   return (
@@ -405,6 +414,84 @@ const DeliveryPKGDetail = ({
               ))}
           </View>
         </ScrollView>
+      )}
+      <CustomModal
+        title="Tiến hành đi giao"
+        // hasHeader={false}
+        isOpen={isMultiSelectToDelivery}
+        setIsOpen={(value) => {
+          setIsMultiSelectToDelivery(value);
+        }}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-[90%]"
+        onBackdropPress={() => {
+          setIsMultiSelectToDelivery(false);
+        }}
+      >
+        <OrderMultiSelectToDelivery
+          orders={orders.filter(
+            (order) => order.status == OrderStatus.Preparing
+          )}
+          startTime={pkgDetails.startTime}
+          endTime={pkgDetails.endTime}
+          intendedReceiveDate={pkgDetails.intendedReceiveDate}
+          onRefetch={() => getPKGDetails()}
+          onSuccess={() => {
+            getPKGDetails();
+            Toast.show({
+              type: "info",
+              text1: "Hoàn tất",
+              text2: `Các đơn hàng được chọn đã chuyển sang trạng thái giao hàng`,
+            });
+            setIsMultiSelectToDelivery(false);
+          }}
+          onError={(error) => {
+            if (
+              error.response &&
+              (error.response.status == 500 ||
+                error.response.status == 501 ||
+                error.response.status == 502)
+            ) {
+              Alert.alert(
+                "Oops!",
+                error?.response?.data?.error?.message ||
+                  "Xử lí bị gián đoạn, vui lòng thử lại!"
+              );
+            } else
+              Alert.alert(
+                "Oops!",
+                error?.response?.data?.error?.message ||
+                  "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+              );
+          }}
+        />
+      </CustomModal>
+      {utilService.getInDeliveryTime(
+        order.startTime,
+        order.endTime,
+        order.intendedReceiveDate
+      ) == 0 && (
+        <CustomButton
+          title="Đi giao"
+          //   isLoading={isSubmitting}
+          handlePress={() => {
+            if (
+              utilService.getInDeliveryTime(
+                pkgDetails.startTime,
+                pkgDetails.endTime,
+                pkgDetails.intendedReceiveDate
+              ) > 0
+            ) {
+              getPKGDetails();
+              Alert.alert("Oops!", "Đã quá thời gian đi giao!");
+              return;
+            }
+            getPKGDetails();
+            // do something
+          }}
+          containerStyleClasses="mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold"
+          textStyleClasses="text-[16px] text-gray-900 ml-1 text-white"
+        />
       )}
       <Toast position="bottom" />
       <CompleteDeliveryConfirmModal />
