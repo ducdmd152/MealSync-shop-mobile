@@ -18,8 +18,10 @@ import apiClient from "@/services/api-services/api-client";
 import ValueResponse from "@/types/responses/ValueReponse";
 import FoodDetailModel from "@/types/models/FoodDetailModel";
 import { ShopCategoryModel } from "@/types/models/ShopCategoryModel";
+import { useToast } from "react-native-toast-notifications";
 
 const CategoryUpdate = () => {
+  const toast = useToast();
   const shopCategoryModel = useModelState((state) => state.shopCategoryModel);
   const [categoryName, setCategoryName] = useState(shopCategoryModel.name);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,7 +79,11 @@ const CategoryUpdate = () => {
       const { value, isSuccess, error } = response.data;
 
       if (isSuccess) {
-        Alert.alert("Thành công", `Danh mục "${value.name}" đã được cập nhật!`);
+        toast.show(`Danh mục "${value.name}" đã được cập nhật!`, {
+          type: "success",
+          duration: 1500,
+        });
+        // Alert.alert("Thành công", `Danh mục "${value.name}" đã được cập nhật!`);
         router.back();
       } else {
         Alert.alert(
@@ -109,10 +115,14 @@ const CategoryUpdate = () => {
             const response = await apiClient.delete(
               `shop-owner/category/${shopCategoryModel.id}`
             );
-            Alert.alert(
-              "Hoàn tất",
-              `Đã xóa danh mục ${shopCategoryModel.name}!`
-            );
+            toast.show(`Đã xóa danh mục ${shopCategoryModel.name}!`, {
+              type: "success",
+              duration: 1500,
+            });
+            // Alert.alert(
+            //   "Hoàn tất",
+            //   `Đã xóa danh mục ${shopCategoryModel.name}!`
+            // );
             router.back();
           } catch (error: any) {
             if (error.response && error.response.status === 404) {

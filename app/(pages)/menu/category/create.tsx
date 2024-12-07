@@ -5,8 +5,10 @@ import { router } from "expo-router";
 import FormField from "@/components/custom/FormFieldCustom";
 import CustomButton from "@/components/custom/CustomButton";
 import apiClient from "@/services/api-services/api-client";
+import { useToast } from "react-native-toast-notifications";
 
 const CategoryPage = () => {
+  const toast = useToast();
   const [categoryName, setCategoryName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,7 +30,11 @@ const CategoryPage = () => {
       const { value, isSuccess, error } = response.data;
 
       if (isSuccess) {
-        Alert.alert("Thành công", `Danh mục "${value.name}" đã được thêm!`);
+        toast.show(`Danh mục "${value.name}" đã được thêm!`, {
+          type: "success",
+          duration: 1500,
+        });
+        // Alert.alert("Thành công", `Danh mục "${value.name}" đã được thêm!`);
         router.back();
       } else {
         Alert.alert(
