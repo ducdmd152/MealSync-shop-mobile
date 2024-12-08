@@ -228,6 +228,7 @@ const SignUp = () => {
       />
       <FormFieldCustom
         title={"Địa chỉ cửa hàng"}
+        selection={{ start: 0, end: 0 }}
         scrollEnabled={true} // Bật cuộn ngang
         multiline={false} // Văn bản chỉ nằm trên 1 dòng
         textAlign="left" // Căn trái
