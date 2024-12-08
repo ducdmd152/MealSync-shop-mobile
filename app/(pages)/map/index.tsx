@@ -4,21 +4,25 @@ import Mapbox from "@rnmapbox/maps";
 import useMapLocationState from "@/hooks/states/useMapLocationState";
 import { images } from "@/constants";
 import apiClient from "@/services/api-services/api-client";
+import CustomButton from "@/components/custom/CustomButton";
+import CustomSearchingSelectList from "@/components/custom/CustomSearchingSelectList";
+import axios from "axios";
 if (Mapbox) {
   Mapbox.setAccessToken(
     "sk.eyJ1IjoiMXdvbGZhbG9uZTEiLCJhIjoiY20zdjRjY2M4MHA0bDJqczkwY252NnhvdyJ9.nrhMmt33T1W-Weqz2zXZpg"
   );
   //   Mapbox.setConnected(true);
 }
-const GOONG_API_KEY = `PElNdAGV5G98AeTOVaRfIZVeBO6XdVPhJSn2HDku`;
+const GOONG_API_KEY_LOAD_MAP = `PElNdAGV5G98AeTOVaRfIZVeBO6XdVPhJSn2HDku`;
+const GOONG_API_KEY_LOAD_LOCATIONS = `SGAxF8mB2bUZahAHucHJyazGmy7THge2YIGAOd5n`;
 const MapPage = () => {
   const globalMapState = useMapLocationState();
-  const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<any>(null);
 
   /* Sử dụng Load Map */ // Kiểu URL cho bản đồ
   const [loadMap] = useState(
-    `https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_API_KEY}`
+    `https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_API_KEY_LOAD_MAP}`
   );
   const coordinates =
     globalMapState.id == 0
@@ -40,24 +44,65 @@ const MapPage = () => {
 
   const handleOnPress = (feature: GeoJSON.Feature) => {};
 
-  const getPlacesAutocomplete = async () => {
-    if (search.trim() === "") {
+  const getPlacesAutocomplete = async (search = "") => {
+    if (search.trim() == "") {
       setSuggestions([]); // Xóa gợi ý nếu không có đầu vào
       return;
     }
 
     try {
-      let autoComplete = await apiClient.get(
-        `https://rsapi.goong.io/place/autocomplete?input=${search}&location=10.88058,106.794595&limit=10&radius=5&api_key=${GOONG_API_KEY}`
+      let autoComplete = await axios.get(
+        `https://rsapi.goong.io/place/autocomplete?input=${search}&location=10.88058,106.794595&limit=5&radius=5&api_key=${GOONG_API_KEY_LOAD_LOCATIONS}`
       );
       setSuggestions(autoComplete.data?.predictions || []);
-    } catch (error) {
-      console.log("Error fetching autocomplete suggestions:", error);
+      console.log(
+        "autoComplete.data?.predictions: ",
+        autoComplete.data?.predictions
+      );
+    } catch (error: any) {
+      console.log(
+        "Error fetching autocomplete suggestions:",
+        error?.response?.data
+      );
     }
   };
+  useEffect(() => {
+    getPlacesAutocomplete();
+  }, []);
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1 }} className="relative">
+        <View className="w-full  z-10 absolute top-2  justify-center items-center">
+          <View className="w-[96%] bg-white rounded-md">
+            <CustomSearchingSelectList
+              dropdownShown={true}
+              onSearch={(text: string) => getPlacesAutocomplete(text)}
+              setSelected={(key: string) =>
+                setSelectedLocation(
+                  suggestions.find((item) => item?.place_id == key)
+                )
+              }
+              data={
+                suggestions.map((item) => ({
+                  key:
+                    item?.place_id || (Math.random() % 1_00_000_000).toString(),
+                  value: item?.description || "",
+                })) || []
+              }
+              save="key"
+              search={true}
+              notFoundText="Không tìm thấy"
+              placeholder="Tìm kiếm địa chỉ..."
+              searchPlaceholder="Tìm kiếm địa chỉ..."
+            />
+          </View>
+        </View>
+        <CustomButton
+          title="Hoàn tất"
+          handlePress={() => {}}
+          containerStyleClasses="w-[96%] mx-2 mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold z-10 absolute bottom-2"
+          textStyleClasses="text-[17px] text-gray-900 ml-1 text-white"
+        />
         <Mapbox.MapView
           logoEnabled={false}
           styleURL={loadMap}
@@ -79,11 +124,11 @@ const MapPage = () => {
               draggable={false} // Cho phép kéo điểm chú thích
             >
               {/* Bạn có thể thêm hình ảnh hoặc biểu tượng vào đây */}
-              <Image
-                source={images.logo}
-                className="ml-2 w-[100px] h-[100px]"
+              {/* <Image
+                source={images.mark}
+                className="w-[40px] h-[40px]"
                 resizeMode="contain"
-              />
+              /> */}
               <Mapbox.Callout title={`${item.label}`} />
             </Mapbox.PointAnnotation>
           ))}
