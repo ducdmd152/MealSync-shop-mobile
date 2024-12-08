@@ -34,6 +34,7 @@ const MapPage = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
         <Mapbox.MapView
+          logoEnabled={false}
           ref={mapViewRef}
           styleURL={loadMap}
           onPress={handleOnPress}
