@@ -113,6 +113,10 @@ const PageLayout = () => {
           name="order/details"
           options={{ headerTitle: "Chi tiết đơn hàng" }}
         />
+        <Stack.Screen
+          name="map/index"
+          options={{ headerTitle: "Chọn địa chỉ" }}
+        />
         <Stack.Screen name="chats/chatbox" options={{ headerShown: false }} />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />

@@ -11,7 +11,7 @@ import {
 } from "@/types/models/ShopProfileModel";
 import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
@@ -68,10 +68,10 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
         .then((response) => response.data),
-    [],
+    []
   );
   const [model, setModel] = useState<ShopProfileUpdateModel>(
-    emptyShopProfileUpdate,
+    emptyShopProfileUpdate
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isAnyRequestSubmit = useRef(false);
@@ -91,7 +91,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       shopOwnerName: shopProfile.data?.value.shopOwnerName || "",
       dormitoryIds:
         shopProfile.data?.value.shopDormitories.map(
-          (item) => item.dormitoryId,
+          (item) => item.dormitoryId
         ) || [],
       logoUrl: shopProfile.data?.value.logoUrl || "",
       bannerUrl: shopProfile.data?.value.bannerUrl || "",
@@ -111,7 +111,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
   useFocusEffect(
     React.useCallback(() => {
       shopProfile.refetch();
-    }, []),
+    }, [])
   );
 
   const [errors, setErrors] = useState<any>({});
@@ -164,7 +164,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       Alert.alert(
         "Oops!",
         error?.response?.data?.error?.message ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
       );
     } finally {
       setIsSubmitting(false);
@@ -185,7 +185,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
                 type: "normal",
                 duration: 3000,
                 normalColor: "#06b6d4",
-              },
+              }
             );
           }}
         >
@@ -250,7 +250,12 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
         otherInputStyleClasses="h-12 border-gray-100"
         // className="mb-1"
         iconRight={
-          <TouchableOpacity className="h-[32px] w-[32px] bg-primary rounded-md justify-center items-center relative">
+          <TouchableOpacity
+            onPress={() => {
+              router.push("/map");
+            }}
+            className="h-[32px] w-[32px] bg-primary rounded-md justify-center items-center relative"
+          >
             <Ionicons name="location-outline" size={28} color="white" />
           </TouchableOpacity>
         }
@@ -274,7 +279,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
                 setModel({
                   ...model,
                   dormitoryIds: model.dormitoryIds.filter(
-                    (item) => item != Dormitories.A,
+                    (item) => item != Dormitories.A
                   ),
                 });
             }}
@@ -293,7 +298,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
                 setModel({
                   ...model,
                   dormitoryIds: model.dormitoryIds.filter(
-                    (item) => item != Dormitories.B,
+                    (item) => item != Dormitories.B
                   ),
                 });
             }}
