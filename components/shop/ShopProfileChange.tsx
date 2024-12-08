@@ -1,7 +1,9 @@
 import CONSTANTS from "@/constants/data";
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import { unSelectLocation } from "@/hooks/states/useMapLocationState";
+import useMapLocationState, {
+  unSelectLocation,
+} from "@/hooks/states/useMapLocationState";
 import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
 import imageService from "@/services/image-service";
@@ -62,6 +64,7 @@ const emptyShopProfileUpdate: ShopProfileUpdateModel = {
 
 const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
   const toast = useToast();
+  const globalMapState = useMapLocationState();
   const shopProfile = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.SHOP_PROFILE_FULL_INFO,
     async (): Promise<FetchValueResponse<ShopProfileGetModel>> =>
@@ -85,6 +88,19 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       }, 100);
     }
   }, [isUnderKeywodFocusing, scrollViewRef]);
+  useEffect(() => {
+    if (isEditMode)
+      setModel({
+        ...model,
+        location: {
+          ...model.location,
+          id: globalMapState.id,
+          address: globalMapState.address,
+          longitude: globalMapState.longitude,
+          latitude: globalMapState.latitude,
+        },
+      });
+  }, [globalMapState]);
   const getModelFromFetch = () => {
     return {
       shopName: shopProfile.data?.value.name || "",
@@ -106,7 +122,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
     isAnyRequestSubmit.current = false;
   }, [isEditMode]);
   useEffect(() => {
-    if (!shopProfile.isFetching) setModel(getModelFromFetch());
+    if (!shopProfile.isFetching && !isEditMode) setModel(getModelFromFetch());
   }, [shopProfile.isFetching]);
   useFocusEffect(
     React.useCallback(() => {
@@ -250,14 +266,20 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
         otherInputStyleClasses="h-12 border-gray-100"
         // className="mb-1"
         iconRight={
-          <TouchableOpacity
-            onPress={() => {
-              router.push("/map");
-            }}
-            className="h-[32px] w-[32px] bg-primary rounded-md justify-center items-center relative"
-          >
-            <Ionicons name="location-outline" size={28} color="white" />
-          </TouchableOpacity>
+          isEditMode ? (
+            <View className="pl-2">
+              <TouchableOpacity
+                onPress={() => {
+                  router.push("/map");
+                }}
+                className="h-[32px] w-[32px] bg-primary rounded-md justify-center items-center relative"
+              >
+                <Ionicons name="location-outline" size={28} color="white" />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View></View>
+          )
         }
       />
       <View className={`gap-y-0 mt-3`}>
