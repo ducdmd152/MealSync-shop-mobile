@@ -37,6 +37,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-font",
       [
         "expo-image-picker",
         {
@@ -44,7 +45,19 @@
           "cameraPermission": "Cho phép ứng dụng sử dụng camera của bạn."
         }
       ],
-      "expo-font"
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsVersion": "11.4.1",
+          "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiMXdvbGZhbG9uZTEiLCJhIjoiY20zdjFsYTRoMG01OTJrcXo5ejI1aXp6ZSJ9.HCVKBO7Xg47nCyK5Uh31hA"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Show current location on map."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
