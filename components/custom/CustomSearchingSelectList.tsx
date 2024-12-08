@@ -173,12 +173,11 @@ const CustomSearchingSelectList: React.FC<SelectListProps> = ({
     }).start();
   };
   const slideup = () => {
-    setSearchText("");
-    // Animated.timing(animatedvalue, {
-    //   toValue: 0,
-    //   duration: 500,
-    //   useNativeDriver: false,
-    // }).start(() => setDropdown(false));
+    Animated.timing(animatedvalue, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: false,
+    }).start(() => setDropdown(false));
   };
 
   React.useEffect(() => {
@@ -292,7 +291,7 @@ const CustomSearchingSelectList: React.FC<SelectListProps> = ({
         </TouchableOpacity>
       )}
 
-      {filtereddata.length >= 1 ? (
+      {dropdown && filtereddata.length >= 1 ? (
         <Animated.View
           style={[
             { maxHeight: animatedvalue },
