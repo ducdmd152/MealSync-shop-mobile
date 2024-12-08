@@ -14,8 +14,10 @@ import empty from "../assets/images/empty.png";
 import signInLogo1 from "../assets/images/sign-in/signin-logo-1.png";
 import signInLogo2 from "../assets/images/sign-in/signin-logo-2.png";
 import signInLogo3 from "../assets/images/sign-in/signin-logo-3.png";
+import mark from "../assets/images/mealsync/mark.webp";
 
 export default {
+  mark,
   splashBg,
   welcomeBg,
   welcomeLogo,
