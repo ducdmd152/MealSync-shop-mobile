@@ -68,10 +68,10 @@ const MapPage = () => {
         `https://rsapi.goong.io/place/autocomplete?input=${search}&location=10.88058,106.794595&limit=5&radius=5&api_key=${GOONG_API_KEY_LOAD_LOCATIONS}`
       );
       setSuggestions(autoComplete.data?.predictions || []);
-      console.log(
-        "autoComplete.data?.predictions: ",
-        autoComplete.data?.predictions
-      );
+      // console.log(
+      //   "autoComplete.data?.predictions: ",
+      //   autoComplete.data?.predictions
+      // );
     } catch (error: any) {
       console.log(
         "Error fetching autocomplete suggestions:",

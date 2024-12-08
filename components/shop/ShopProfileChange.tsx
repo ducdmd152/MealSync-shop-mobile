@@ -102,6 +102,19 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
       });
   }, [globalMapState]);
   const getModelFromFetch = () => {
+    // console.log("Profile: ", {
+    //   shopName: shopProfile.data?.value.name || "",
+    //   shopOwnerName: shopProfile.data?.value.shopOwnerName || "",
+    //   dormitoryIds:
+    //     shopProfile.data?.value.shopDormitories.map(
+    //       (item) => item.dormitoryId
+    //     ) || [],
+    //   logoUrl: shopProfile.data?.value.logoUrl || "",
+    //   bannerUrl: shopProfile.data?.value.bannerUrl || "",
+    //   description: shopProfile.data?.value.description || "", // shop infor not return
+    //   phoneNumber: shopProfile.data?.value.phoneNumber || "",
+    //   location: shopProfile.data?.value.location || unSelectLocation,
+    // });
     return {
       shopName: shopProfile.data?.value.name || "",
       shopOwnerName: shopProfile.data?.value.shopOwnerName || "",
@@ -270,6 +283,12 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
             <View className="pl-2">
               <TouchableOpacity
                 onPress={() => {
+                  globalMapState.setId(model.location.id);
+                  globalMapState.setLocation(
+                    model.location.address,
+                    model.location.latitude,
+                    model.location.longitude
+                  );
                   router.push("/map");
                 }}
                 className="h-[32px] w-[32px] bg-primary rounded-md justify-center items-center relative"
