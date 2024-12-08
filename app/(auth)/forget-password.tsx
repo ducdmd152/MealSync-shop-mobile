@@ -40,7 +40,7 @@ const ForgetPassword = () => {
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
           );
         }
       })
@@ -50,7 +50,7 @@ const ForgetPassword = () => {
   };
   const requestUpdatePassword = (
     code: number = data.code,
-    isVerifying: boolean = false,
+    isVerifying: boolean = false
   ) => {
     setIsSubmitting(true);
     apiClient
@@ -85,7 +85,7 @@ const ForgetPassword = () => {
           Alert.alert(
             "Oops!",
             error?.response?.data?.error?.message ||
-              "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
           );
         }
       })
@@ -255,7 +255,7 @@ const ForgetPasswordVerification = ({
   useFocusEffect(
     React.useCallback(() => {
       resetTimeCounter();
-    }, []),
+    }, [])
   );
 
   return (

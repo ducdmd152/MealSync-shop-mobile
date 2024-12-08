@@ -42,7 +42,7 @@ const EmailUpdate = () => {
         setData({ ...data, currentEmail: mail });
         requestSendCode(true);
       })();
-    }, []),
+    }, [])
   );
 
   const requestSendCode = (isVerifyOldEmail: boolean) => {
@@ -57,7 +57,7 @@ const EmailUpdate = () => {
           : {
               isVerifyOldEmail,
               newEmail: data.newEmail,
-            },
+            }
       )
       .then(() => {
         // no thing to do
@@ -66,7 +66,7 @@ const EmailUpdate = () => {
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
         );
       })
       .finally(() => {
@@ -90,7 +90,7 @@ const EmailUpdate = () => {
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
         );
       })
       .finally(() => {
@@ -122,14 +122,14 @@ const EmailUpdate = () => {
           };
         };
         await sessionService.setAuthToken(
-          data.value.tokenAndInfor.tokenResponse.accessToken,
+          data.value.tokenAndInfor.tokenResponse.accessToken
         );
         globalAuthState.setToken(
-          data.value.tokenAndInfor.tokenResponse.accessToken,
+          data.value.tokenAndInfor.tokenResponse.accessToken
         );
         console.log(
           "accessToken :",
-          data.value.tokenAndInfor.tokenResponse.accessToken,
+          data.value.tokenAndInfor.tokenResponse.accessToken
         );
         router.back();
 
@@ -144,7 +144,7 @@ const EmailUpdate = () => {
         Alert.alert(
           "Oops!",
           error?.response?.data?.error?.message ||
-            "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+            "Yêu cầu bị từ chối, vui lòng thử lại sau!"
         );
       })
       .finally(() => {
@@ -304,7 +304,7 @@ const EmailVerification = ({
   useFocusEffect(
     React.useCallback(() => {
       resetTimeCounter();
-    }, []),
+    }, [])
   );
 
   return (
