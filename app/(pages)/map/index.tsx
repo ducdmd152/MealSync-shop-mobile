@@ -25,7 +25,7 @@ const MapPage = () => {
     `https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_API_KEY_LOAD_MAP}`
   );
   const coordinates =
-    globalMapState.id == 0
+    globalMapState.id == -1
       ? [106.794595, 10.88058]
       : [globalMapState.longitude, globalMapState.latitude];
   const locations = [
@@ -75,7 +75,7 @@ const MapPage = () => {
         <View className="w-full  z-10 absolute top-2  justify-center items-center">
           <View className="w-[96%] bg-white rounded-md">
             <CustomSearchingSelectList
-              dropdownShown={true}
+              dropdownShown={globalMapState.id == -1}
               onSearch={(text: string) => getPlacesAutocomplete(text)}
               setSelected={(key: string) =>
                 setSelectedLocation(

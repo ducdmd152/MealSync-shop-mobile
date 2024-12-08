@@ -7,7 +7,7 @@ export const unSelectLocation = {
   longitude: 0.1,
 };
 interface MapLocationState {
-  id: 0;
+  id: number;
   address: string;
   latitude: number;
   longitude: number;
@@ -15,7 +15,7 @@ interface MapLocationState {
 }
 
 const useMapLocationState = create<MapLocationState>((set) => ({
-  id: 0,
+  id: -1,
   address: "",
   latitude: 0.1,
   longitude: 0.1,
