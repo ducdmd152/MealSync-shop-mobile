@@ -164,6 +164,7 @@ const CustomSearchingSelectList: React.FC<SelectListProps> = ({
   useEffect(() => {
     onSearch(searchText);
   }, [searchText]);
+  // console.log("dropdown: ", dropdown, searchText, filtereddata.length);
   const slidedown = () => {
     setDropdown(true);
     Animated.timing(animatedvalue, {
@@ -215,11 +216,11 @@ const CustomSearchingSelectList: React.FC<SelectListProps> = ({
   }, [defaultOption]);
 
   React.useEffect(() => {
-    if (!_firstRender) {
-      if (dropdownShown) slidedown();
-      else slideup();
-    }
-  }, [dropdownShown]);
+    // if (!_firstRender) {
+    if (dropdown) slidedown();
+    else slideup();
+    // }
+  }, [dropdown]);
 
   return (
     <View>

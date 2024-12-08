@@ -28,7 +28,7 @@ const SignUp = () => {
   const [isAcceptedPolicy, setIsAcceptedPolicy] = useState(false);
   const [selectedDormitories, setSelectedDormitories] = useState<number[]>([]);
   const location = useMapLocationState();
-
+  console.log("location: ", location);
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     name: "",
@@ -70,8 +70,7 @@ const SignUp = () => {
       !form.password ||
       !form.confirmPassword ||
       !form.shopName ||
-      !form.phoneNumber ||
-      !form.address
+      !form.phoneNumber
     ) {
       Alert.alert("Thông báo", "Vui lòng điền đầy đủ thông tin!");
       return;
@@ -229,13 +228,9 @@ const SignUp = () => {
       />
       <FormFieldCustom
         title={"Địa chỉ cửa hàng"}
-        value={form.address}
-        placeholder={"Nhập địa chỉ cửa hàng..."}
-        handleChangeText={(e) => setForm({ ...form, address: e })}
-        otherStyleClasses="mt-3"
-      />
-      <FormFieldCustom
-        title={"Địa chỉ cửa hàng"}
+        scrollEnabled={true} // Bật cuộn ngang
+        multiline={false} // Văn bản chỉ nằm trên 1 dòng
+        textAlign="left" // Căn trái
         value={location.id < 0 ? "" : location.address}
         readOnly={true}
         placeholder={"Chọn địa chỉ cửa hàng..."}
@@ -319,8 +314,10 @@ const SignUp = () => {
 
   useFocusEffect(
     useCallback(() => {
-      location.setId(-1);
-      location.setLocation("", 0.1, 0.1);
+      if (step == 0) {
+        location.setId(-1);
+        location.setLocation("", 0.1, 0.1);
+      }
     }, [])
   );
   return (

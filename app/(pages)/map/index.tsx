@@ -70,7 +70,10 @@ const MapPage = () => {
       setSuggestions(autoComplete.data?.predictions || []);
       // console.log(
       //   "autoComplete.data?.predictions: ",
-      //   autoComplete.data?.predictions
+      //   suggestions.map((item) => ({
+      //     key: item?.place_id || (Math.random() % 1_00_000_000).toString(),
+      //     value: item?.description || "",
+      //   }))
       // );
     } catch (error: any) {
       console.log(
@@ -107,6 +110,12 @@ const MapPage = () => {
       }
       globalMapState.setId(0);
       globalMapState.setLocation(
+        selectedLocation?.structured_formatting.main_text || "",
+        placeDetail?.data?.result.geometry.location.lat || 0.1,
+        placeDetail?.data?.result.geometry.location.lng || 0.1
+      );
+      console.log(
+        "setted: ",
         selectedLocation?.description || "",
         placeDetail?.data?.result.geometry.location.lat || 0.1,
         placeDetail?.data?.result.geometry.location.lng || 0.1
