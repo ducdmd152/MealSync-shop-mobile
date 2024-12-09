@@ -12,9 +12,12 @@ import { images } from "@/constants";
 import CustomButton from "@/components/custom/CustomButton";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import { useCallback, useState } from "react";
+import useMapLocationState from "@/hooks/states/useMapLocationState";
 
 export default function HomeScreen() {
   const globalAuthState = useGlobalAuthState();
+  const location = useMapLocationState();
+
   useFocusEffect(
     useCallback(() => {
       const roleId = globalAuthState.roleId;
@@ -63,6 +66,8 @@ export default function HomeScreen() {
               <CustomButton
                 title="Đăng ký"
                 handlePress={() => {
+                  location.setId(-1);
+                  location.setLocation("", 0.1, 0.1);
                   router.replace("/sign-up");
                 }}
                 containerStyleClasses="w-full mt-4 bg-white border-gray-600 border-2"

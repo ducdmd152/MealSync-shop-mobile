@@ -84,7 +84,7 @@ const MapPage = () => {
   };
 
   const getPlaceDetail = async () => {
-    console.log("getPlaceDetail: ", getPlaceDetail, selectedLocation);
+    // console.log("getPlaceDetail: ", getPlaceDetail, selectedLocation);
     if (!selectedLocation) return;
     try {
       let placeDetail = await axios.get(
@@ -115,12 +115,12 @@ const MapPage = () => {
         placeDetail?.data?.result.geometry.location.lat || 0.1,
         placeDetail?.data?.result.geometry.location.lng || 0.1
       );
-      console.log(
-        "setted: ",
-        selectedLocation?.description || "",
-        placeDetail?.data?.result.geometry.location.lat || 0.1,
-        placeDetail?.data?.result.geometry.location.lng || 0.1
-      );
+      // console.log(
+      //   "setted: ",
+      //   selectedLocation?.description || "",
+      //   placeDetail?.data?.result.geometry.location.lat || 0.1,
+      //   placeDetail?.data?.result.geometry.location.lng || 0.1
+      // );
     } catch (error: any) {
       console.log("Error fetching place details:", error?.response?.data);
     }

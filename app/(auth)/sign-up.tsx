@@ -28,7 +28,7 @@ const SignUp = () => {
   const [isAcceptedPolicy, setIsAcceptedPolicy] = useState(false);
   const [selectedDormitories, setSelectedDormitories] = useState<number[]>([]);
   const location = useMapLocationState();
-  console.log("location: ", location);
+  // console.log("location: ", location);
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     name: "",
@@ -111,7 +111,7 @@ const SignUp = () => {
     setIsSubmitting(true);
     try {
       // Gọi API để gửi dữ liệu
-      console.log("Sign Up: ", requestData);
+      // console.log("Sign Up: ", requestData);
       const result = await apiClient.post("auth/shop-register", requestData);
       sessionService.setAuthEmail(result.data?.value?.email), setStep(2); // to verify code
       // router.replace("/home");
@@ -315,10 +315,12 @@ const SignUp = () => {
 
   useFocusEffect(
     useCallback(() => {
-      if (step == 0) {
-        location.setId(-1);
-        location.setLocation("", 0.1, 0.1);
-      }
+      // console.log("step = ", step);
+      // if (step == 0) {
+      //   console.log("step == 0");
+      //   location.setId(-1);
+      //   location.setLocation("", 0.1, 0.1);
+      // }
     }, [])
   );
   return (
