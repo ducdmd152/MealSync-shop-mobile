@@ -1,38 +1,82 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Button, Text, Alert } from "react-native";
 import OTPTextView from "react-native-otp-textinput";
 import CustomButton from "../custom/CustomButton";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import sessionService from "@/services/session-service";
+import SampleEmailVerification from "../common/SampleEmailVerification";
+import apiClient from "@/services/api-services/api-client";
+import Toast from "react-native-toast-message";
 
 const SignUpVerification = () => {
-  const lengthOfCode = 4;
-  const [code, setCode] = useState("");
-  const otpInput = useRef<OTPTextView | null>(null);
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(true);
+  const handleSubmit = (code: number) => {
+    setIsSubmitting(true);
+    apiClient
+      .post("auth/verify-code", {
+        isVerify: true,
+        email: email.toLowerCase(),
+        code: code,
+        verifyType: 2,
+      })
+      .then(() => {
+        router.replace("/sign-in");
 
-  const clearText = () => {
-    if (otpInput.current) {
-      otpInput.current.clear();
-    }
+        Toast.show({
+          type: "success",
+          text1: "Hoàn tất",
+          text2: `Đăng ký tài khoản và cửa hàng thành công, đăng nhập ngay.`,
+        });
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 404) {
+          Alert.alert("Oops!", "Không tìm thấy tài khoản với email tương ứng");
+          router.replace("/sign-in");
+        } else {
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
+  const onResendCode = () => {
+    setIsSubmitting(true);
+    apiClient
+      .post("auth/send-code", {
+        email: email,
+        verifyType: 2,
+      })
+      .then(() => {})
+      .catch((error) => {
+        if (error.response && error.response.status === 400) {
+          Alert.alert("Oops!", "Không tìm thấy tài khoản với email tương ứng");
+        } else {
+          Alert.alert(
+            "Oops!",
+            error?.response?.data?.error?.message ||
+              "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+          );
+        }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
-  useEffect(() => {
-    (async () => {
-      const mail = await sessionService.getAuthEmail();
-      if (email != null) setEmail(mail || "");
-    })();
-  }, []);
-
-  const onVerify = () => {
-    if (code.length < lengthOfCode)
-      Alert.alert("Hoàn thành nhập liệu", "Vui lòng nhập đầy đủ mã xác thực!");
-    else {
-      console.log("Verifying code: " + code);
-      router.replace("/home");
-    }
-  };
-
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        const mail = await sessionService.getAuthEmail();
+        if (email != null) setEmail(mail || "");
+      })();
+    }, [])
+  );
   //   const setText = () => {
   //     if (otpInput.current) {
   //         otpInput.current.setValue("1234");
@@ -40,36 +84,17 @@ const SignUpVerification = () => {
   //   };
 
   return (
-    <View className="mt-4">
-      <Text className="text-lg text-gray-500 text-center text-semibold mt-2 font-semibold">
-        Mã xác thực đã được gửi qua {email}
-      </Text>
-      <OTPTextView
-        inputCount={lengthOfCode}
-        ref={otpInput}
-        handleTextChange={(text) => {
-          setCode(text);
-        }}
-      />
-      <CustomButton
-        title="Xác thực"
-        handlePress={() => onVerify()}
-        containerStyleClasses="min-h-[52px] mt-6 bg-primary"
-        textStyleClasses="text-[16px] text-white"
-      />
-      <CustomButton
-        title="Nhập lại"
-        handlePress={clearText}
-        containerStyleClasses="min-h-[52px] mt-4 border-2 border-gray-600 bg-white"
-        textStyleClasses="text-[16px] text-gray-600"
-      />
-      {/* <CustomButton
-        title="Quay trở lại"
-        handlePress={setText}
-        containerStyleClasses="min-h-[40px] mt-4 border-2 border-gray-600 bg-white"
-        textStyleClasses="text-[16px] text-gray-600"
-      /> */}
-    </View>
+    <SampleEmailVerification
+      handleSubmit={(code: number) => {
+        handleSubmit(code);
+      }}
+      isSubmitting={isSubmitting}
+      onResendCode={() => {
+        onResendCode();
+      }}
+      limit={2 * 60}
+      email={email}
+    />
   );
 };
 

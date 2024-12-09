@@ -98,3 +98,4 @@ const SampleEmailVerification = ({
     </View>
   );
 };
+export default SampleEmailVerification;

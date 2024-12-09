@@ -140,7 +140,7 @@ const SignUp = () => {
         title={"Email"}
         value={form.email}
         placeholder={"Nhập email của bạn..."}
-        handleChangeText={(e) => setForm({ ...form, email: e })}
+        handleChangeText={(e) => setForm({ ...form, email: e.trim() })}
         keyboardType="email-address"
         otherStyleClasses="mt-2"
       />
