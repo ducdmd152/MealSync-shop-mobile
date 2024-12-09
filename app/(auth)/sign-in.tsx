@@ -12,6 +12,7 @@ import { CommonActions } from "@react-navigation/native";
 import utilService from "@/services/util-service";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import AuthDTO from "@/types/dtos/AuthDTO";
+import useMapLocationState from "@/hooks/states/useMapLocationState";
 
 interface FormValues {
   email: string;
@@ -23,6 +24,7 @@ const SignIn = () => {
   const globalAuthState = useGlobalAuthState();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const location = useMapLocationState();
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -33,7 +35,7 @@ const SignIn = () => {
       email: Yup.string()
         .matches(
           /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-          "Vui lòng nhập email không hợp lệ!",
+          "Vui lòng nhập email không hợp lệ!"
         )
         .required("Vui lòng nhập email!"),
       password: Yup.string()
@@ -58,7 +60,7 @@ const SignIn = () => {
           ? (response.data?.value?.accountResponse as AuthDTO)
           : null;
         sessionService.setAuthToken(
-          response.data?.value?.tokenResponse?.accessToken || "",
+          response.data?.value?.tokenResponse?.accessToken || ""
         );
         sessionService.setAuthRole(roleId);
         if (authDTO) sessionService.setAuthDTO(authDTO);
@@ -84,7 +86,7 @@ const SignIn = () => {
         } else {
           setServerError(
             error?.response?.data?.error?.message ||
-              "Hệ thống đang bảo trì, vui lòng thử lại sau!",
+              "Hệ thống đang bảo trì, vui lòng thử lại sau!"
           );
         }
       } finally {
@@ -96,7 +98,7 @@ const SignIn = () => {
   useFocusEffect(
     React.useCallback(() => {
       formik.resetForm();
-    }, []),
+    }, [])
   );
 
   return (
@@ -189,12 +191,16 @@ const SignIn = () => {
           <View className="justify-center items-center pt-2 gap-2 mt-2">
             <Text className="text-lg text-black font-regular text-center">
               Bạn chưa có tài khoản?{" "}
-              <Link
-                href="/sign-up"
+              <Text
+                onPress={() => {
+                  location.setId(-1);
+                  location.setLocation("", 0.1, 0.1);
+                  router.replace("/sign-up");
+                }}
                 className="text-white text-primary font-semibold"
               >
                 Đăng ký
-              </Link>
+              </Text>
             </Text>
           </View>
         </View>

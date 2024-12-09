@@ -55,6 +55,7 @@ export default function HomeScreen() {
   );
   useFocusEffect(
     React.useCallback(() => {
+      // router.push("/map");
       shopProfile.refetch();
       statistics.refetch();
     }, [])

@@ -2,14 +2,16 @@ import PageLayoutWrapper from "@/components/common/PageLayoutWrapper";
 import CustomButton from "@/components/custom/CustomButton";
 import CustomCheckbox from "@/components/custom/CustomCheckbox";
 import FormFieldCustom from "@/components/custom/FormFieldCustom";
+import SampleCustomCheckbox from "@/components/custom/SampleCustomCheckbox";
 import SignUpVerification from "@/components/sign-up/SignUpVerification";
 import { images } from "@/constants";
+import CONSTANTS from "@/constants/data";
 import useMapLocationState from "@/hooks/states/useMapLocationState";
 import apiClient from "@/services/api-services/api-client";
 import sessionService from "@/services/session-service";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { Link, router, useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -26,7 +28,7 @@ const SignUp = () => {
   const [isAcceptedPolicy, setIsAcceptedPolicy] = useState(false);
   const [selectedDormitories, setSelectedDormitories] = useState<number[]>([]);
   const location = useMapLocationState();
-
+  // console.log("location: ", location);
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     name: "",
@@ -48,17 +50,16 @@ const SignUp = () => {
   ];
 
   const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = CONSTANTS.REGEX.email;
     return emailRegex.test(email);
   };
 
   const validatePassword = (password: string) => {
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = CONSTANTS.REGEX.password;
     return passwordRegex.test(password);
   };
   const validatePhoneNumber = (phoneNumber: string) => {
-    const phoneRegex = /^[0-9]{10}$/;
+    const phoneRegex = CONSTANTS.REGEX.phone;
     return phoneRegex.test(phoneNumber);
   };
 
@@ -69,8 +70,7 @@ const SignUp = () => {
       !form.password ||
       !form.confirmPassword ||
       !form.shopName ||
-      !form.phoneNumber ||
-      !form.address
+      !form.phoneNumber
     ) {
       Alert.alert("Thông báo", "Vui lòng điền đầy đủ thông tin!");
       return;
@@ -86,6 +86,10 @@ const SignUp = () => {
       return;
     }
 
+    if (location.id < 0) {
+      Alert.alert("Thông báo", "Vui lòng chọn địa chỉ của cửa hàng!");
+      return;
+    }
     if (selectedDormitories.length === 0) {
       Alert.alert("Thông báo", "Vui lòng chọn khu vực bán!");
       return;
@@ -107,7 +111,7 @@ const SignUp = () => {
     setIsSubmitting(true);
     try {
       // Gọi API để gửi dữ liệu
-      console.log("Sign Up: ", requestData);
+      // console.log("Sign Up: ", requestData);
       const result = await apiClient.post("auth/shop-register", requestData);
       sessionService.setAuthEmail(result.data?.value?.email), setStep(2); // to verify code
       // router.replace("/home");
@@ -136,7 +140,7 @@ const SignUp = () => {
         title={"Email"}
         value={form.email}
         placeholder={"Nhập email của bạn..."}
-        handleChangeText={(e) => setForm({ ...form, email: e })}
+        handleChangeText={(e) => setForm({ ...form, email: e.trim() })}
         keyboardType="email-address"
         otherStyleClasses="mt-2"
       />
@@ -183,7 +187,7 @@ const SignUp = () => {
           if (!validatePassword(form.password)) {
             Alert.alert(
               "Thông báo",
-              "Mật khẩu phải có ít nhất 1 chữ hoa, 1 chữ thường, 1 ký tự đặc biệt và 1 số."
+              "Mật khẩu phải có ít nhất 8 kí tự, 1 chữ hoa, 1 chữ thường, 1 ký tự đặc biệt và 1 số."
             );
             return;
           }
@@ -224,20 +228,39 @@ const SignUp = () => {
       />
       <FormFieldCustom
         title={"Địa chỉ cửa hàng"}
-        value={form.address}
-        placeholder={"Nhập địa chỉ cửa hàng..."}
-        handleChangeText={(e) => setForm({ ...form, address: e })}
+        selection={{ start: 0, end: 0 }}
+        scrollEnabled={true} // Bật cuộn ngang
+        multiline={false} // Văn bản chỉ nằm trên 1 dòng
+        textAlign="left" // Căn trái
+        value={location.id < 0 ? "" : location.address}
+        readOnly={true}
+        placeholder={"Chọn địa chỉ cửa hàng..."}
+        handleChangeText={(text) => {}}
         otherStyleClasses="mt-3"
+        otherInputStyleClasses="h-12 border-gray-100"
+        // className="mb-1"
+        iconRight={
+          <View className="pl-2">
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/map");
+              }}
+              className="h-[32px] w-[32px] bg-primary rounded-md justify-center items-center relative"
+            >
+              <Ionicons name="location-outline" size={28} color="white" />
+            </TouchableOpacity>
+          </View>
+        }
       />
       <Text className="text-base text-gray-500 font-medium mt-3">
         Khu bán hàng
       </Text>
       <View className="flex-row items-center mt-1">
         {dormitories.map((dormitory) => (
-          <CustomCheckbox
+          <SampleCustomCheckbox
             key={dormitory.id}
-            isChecked={selectedDormitories.includes(dormitory.id)}
-            handlePress={() => {
+            checked={selectedDormitories.includes(dormitory.id)}
+            onToggle={() => {
               setSelectedDormitories((prev) =>
                 prev.includes(dormitory.id)
                   ? prev.filter((id) => id !== dormitory.id)
@@ -290,6 +313,16 @@ const SignUp = () => {
     </View>
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      // console.log("step = ", step);
+      // if (step == 0) {
+      //   console.log("step == 0");
+      //   location.setId(-1);
+      //   location.setLocation("", 0.1, 0.1);
+      // }
+    }, [])
+  );
   return (
     <PageLayoutWrapper>
       <View className="w-full min-h-full justify-center items-center px-4 shink-0">
@@ -310,9 +343,9 @@ const SignUp = () => {
         {step === 2 ? (
           <SignUpVerification />
         ) : step === 0 ? (
-          renderStepOne() // Gọi hàm để render bước đầu tiên
+          renderStepOne()
         ) : (
-          renderStepTwo() // Gọi hàm để render bước thứ hai
+          renderStepTwo()
         )}
 
         {step !== 2 && (

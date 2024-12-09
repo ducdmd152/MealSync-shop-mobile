@@ -23,8 +23,15 @@ import { io } from "socket.io-client";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import Mapbox from "@rnmapbox/maps";
 dayjs.extend(utc);
 dayjs.extend(timezone);
+if (Mapbox) {
+  Mapbox.setAccessToken(
+    "sk.eyJ1IjoiMXdvbGZhbG9uZTEiLCJhIjoiY20zdjRjY2M4MHA0bDJqczkwY252NnhvdyJ9.nrhMmt33T1W-Weqz2zXZpg"
+  );
+  // Mapbox.setConnected(true);
+}
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 // const requestUserPermissions = async () => {
@@ -158,7 +165,7 @@ export default function RootLayout() {
       }
 
       // Connect to the server with JWT authentication
-      const newSocket = io("http://socketio.mealsync.org/", {
+      const newSocket = io("https://socketio.1wolfalone1.com/", {
         auth: {
           token: token,
         },
@@ -210,7 +217,7 @@ export default function RootLayout() {
   useEffect(() => {
     // Function to initialize socket connection with token from AsyncStorage
 
-    // initializeSocket();
+    initializeSocket();
 
     // Cleanup function to disconnect the socket on unmount
     return () => {
