@@ -165,7 +165,7 @@ export default function RootLayout() {
       }
 
       // Connect to the server with JWT authentication
-      const newSocket = io("http://socketio.mealsync.org/", {
+      const newSocket = io("https://socketio.1wolfalone1.com/", {
         auth: {
           token: token,
         },
@@ -217,7 +217,7 @@ export default function RootLayout() {
   useEffect(() => {
     // Function to initialize socket connection with token from AsyncStorage
 
-    // initializeSocket();
+    initializeSocket();
 
     // Cleanup function to disconnect the socket on unmount
     return () => {
