@@ -23,8 +23,15 @@ import { io } from "socket.io-client";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import Mapbox from "@rnmapbox/maps";
 dayjs.extend(utc);
 dayjs.extend(timezone);
+if (Mapbox) {
+  Mapbox.setAccessToken(
+    "sk.eyJ1IjoiMXdvbGZhbG9uZTEiLCJhIjoiY20zdjRjY2M4MHA0bDJqczkwY252NnhvdyJ9.nrhMmt33T1W-Weqz2zXZpg"
+  );
+  // Mapbox.setConnected(true);
+}
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 // const requestUserPermissions = async () => {

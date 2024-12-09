@@ -9,12 +9,12 @@ import CustomSearchingSelectList from "@/components/custom/CustomSearchingSelect
 import axios from "axios";
 import geoService from "@/services/geo-service";
 import { router, useFocusEffect } from "expo-router";
-if (Mapbox) {
-  Mapbox.setAccessToken(
-    "sk.eyJ1IjoiMXdvbGZhbG9uZTEiLCJhIjoiY20zdjRjY2M4MHA0bDJqczkwY252NnhvdyJ9.nrhMmt33T1W-Weqz2zXZpg"
-  );
-  //   Mapbox.setConnected(true);
-}
+// if (Mapbox) {
+//   Mapbox.setAccessToken(
+//     "sk.eyJ1IjoiMXdvbGZhbG9uZTEiLCJhIjoiY20zdjRjY2M4MHA0bDJqczkwY252NnhvdyJ9.nrhMmt33T1W-Weqz2zXZpg"
+//   );
+//   // Mapbox.setConnected(true);
+// }
 const GOONG_API_KEY_LOAD_MAP = `PElNdAGV5G98AeTOVaRfIZVeBO6XdVPhJSn2HDku`;
 const GOONG_API_KEY_LOAD_LOCATIONS = `SGAxF8mB2bUZahAHucHJyazGmy7THge2YIGAOd5n`;
 
@@ -188,56 +188,48 @@ const MapPage = () => {
           containerStyleClasses="w-[96%] mx-2 mt-5 h-[40px] px-4 bg-transparent border-0 border-gray-200 bg-secondary font-semibold z-10 absolute bottom-2"
           textStyleClasses="text-[17px] text-gray-900 ml-1 text-white"
         />
-        <Mapbox.MapView
-          logoEnabled={false}
-          styleURL={loadMap}
-          onPress={handleOnPress}
-          style={{ flex: 1 }}
-          projection="globe" // Phép chiếu được sử dụng khi hiển thị bản đồ
-          zoomEnabled={true}
-        >
-          <Mapbox.Camera
-            // ref={camera}
-            zoomLevel={12.5} // Mức thu phóng của bản đồ
-            centerCoordinate={coordinates}
-          />
-          {globalMapState.id != -1 && (
-            <Mapbox.PointAnnotation
-              id={`pointID-${
-                globalMapState.longitude + ":" + globalMapState.latitude
-              }`} // ID duy nhất cho mỗi điểm chú thích
-              key={`pointKey-${
-                globalMapState.longitude + ":" + globalMapState.latitude
-              }`} // Khóa duy nhất cho mỗi điểm chú thích
-              coordinate={[globalMapState.longitude, globalMapState.latitude]} // Tọa độ của điểm hiển thị
-              draggable={false} // Cho phép kéo điểm chú thích
-            >
-              {/* Bạn có thể thêm hình ảnh hoặc biểu tượng vào đây */}
-              {/* <Image
+        <View style={{ flex: 1 }}>
+          <Mapbox.MapView
+            logoEnabled={false}
+            styleURL={loadMap}
+            onPress={handleOnPress}
+            style={{ flex: 1 }}
+            projection="globe" // Phép chiếu được sử dụng khi hiển thị bản đồ
+            zoomEnabled={true}
+          >
+            <Mapbox.Camera
+              // ref={camera}
+              zoomLevel={12.5} // Mức thu phóng của bản đồ
+              centerCoordinate={coordinates}
+            />
+            {globalMapState.id != -1 && (
+              <Mapbox.PointAnnotation
+                id={`pointID-${globalMapState.longitude}:${globalMapState.latitude}`}
+                key={`pointKey-${globalMapState.longitude}:${globalMapState.latitude}`}
+                coordinate={[globalMapState.longitude, globalMapState.latitude]}
+                draggable={false}
+              >
+                <Mapbox.Callout title={`${globalMapState.address}`} />
+              </Mapbox.PointAnnotation>
+            )}
+            {locations.map((item, index) => (
+              <Mapbox.PointAnnotation
+                id={`pointID-${index}-${item.label}`} // ID duy nhất cho mỗi điểm chú thích
+                key={`pointKey-${index}-${item.label}`} // Khóa duy nhất cho mỗi điểm chú thích
+                coordinate={item.coordinates} // Tọa độ của điểm hiển thị
+                draggable={false} // Cho phép kéo điểm chú thích
+              >
+                {/* Bạn có thể thêm hình ảnh hoặc biểu tượng vào đây */}
+                {/* <Image
                 source={images.mark}
                 className="w-[40px] h-[40px]"
                 resizeMode="contain"
               /> */}
-              <Mapbox.Callout title={`${globalMapState.address}`} />
-            </Mapbox.PointAnnotation>
-          )}
-          {locations.map((item, index) => (
-            <Mapbox.PointAnnotation
-              id={`pointID-${index}-${item.label}`} // ID duy nhất cho mỗi điểm chú thích
-              key={`pointKey-${index}-${item.label}`} // Khóa duy nhất cho mỗi điểm chú thích
-              coordinate={item.coordinates} // Tọa độ của điểm hiển thị
-              draggable={false} // Cho phép kéo điểm chú thích
-            >
-              {/* Bạn có thể thêm hình ảnh hoặc biểu tượng vào đây */}
-              {/* <Image
-                source={images.mark}
-                className="w-[40px] h-[40px]"
-                resizeMode="contain"
-              /> */}
-              <Mapbox.Callout title={`${item.label}`} />
-            </Mapbox.PointAnnotation>
-          ))}
-        </Mapbox.MapView>
+                <Mapbox.Callout title={`${item.label}`} />
+              </Mapbox.PointAnnotation>
+            ))}
+          </Mapbox.MapView>
+        </View>
       </View>
     </SafeAreaView>
   );
