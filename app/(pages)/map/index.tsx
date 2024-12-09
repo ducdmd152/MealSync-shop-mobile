@@ -84,6 +84,7 @@ const MapPage = () => {
   };
 
   const getPlaceDetail = async () => {
+    console.log("getPlaceDetail: ", getPlaceDetail, selectedLocation);
     if (!selectedLocation) return;
     try {
       let placeDetail = await axios.get(
@@ -130,6 +131,7 @@ const MapPage = () => {
   }, [selectedLocation]);
   useFocusEffect(
     useCallback(() => {
+      setSelectedLocation(undefined);
       // setIsFocusing(true);
       // return () => {
       //   setIsFocusing(false);
@@ -142,10 +144,19 @@ const MapPage = () => {
         <View className="w-full  z-10 absolute top-2  justify-center items-center">
           <View className="w-[96%] bg-white rounded-md">
             <CustomSearchingSelectList
-              defaultOption={{
-                key: (Math.random() % 100_000_000).toString(),
-                value: globalMapState.address,
-              }}
+              defaultOption={
+                selectedLocation
+                  ? {
+                      key:
+                        selectedLocation?.place_id ||
+                        (Math.random() % 1_00_000_000).toString(),
+                      value: selectedLocation?.description || "",
+                    }
+                  : {
+                      key: (Math.random() % 100_000_000).toString(),
+                      value: globalMapState.address,
+                    }
+              }
               dropdownShown={globalMapState.id == -1}
               onSearch={(text: string) => getPlacesAutocomplete(text)}
               setSelected={(key: string) =>
