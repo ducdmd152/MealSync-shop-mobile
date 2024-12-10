@@ -147,9 +147,9 @@ const DeliveryPKGDetail = ({
           </View>
           <View className="flex-row">
             <Text className="font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
-              {utilService.formatTime(pkgDetails.startTime || 1000) +
+              {utilService.formatTime(pkgDetails.startTime) +
                 " - " +
-                utilService.formatTime(pkgDetails.endTime || 1030)}
+                utilService.formatTime(pkgDetails.endTime)}
             </Text>
             <Text className="ml-2 bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 text-[12px] rounded">
               {dayjs(pkgDetails.deliveryDate).local().format("DD/MM/YYYY")}
