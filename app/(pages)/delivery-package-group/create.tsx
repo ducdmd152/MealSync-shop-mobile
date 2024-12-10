@@ -37,7 +37,7 @@ import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
 import CustomModal from "@/components/common/CustomModal";
-import OrderDeliveryAutoAssign from "@/components/delivery-package/OrderDeliveryAutoSuggestAssign";
+import OrderDeliveryAutoSuggestAssign from "@/components/delivery-package/OrderDeliveryAutoSuggestAssign";
 import { DeliveryPackageGroupDetailsModel } from "@/types/models/DeliveryPackageModel";
 interface GPKGCreateRequest {
   isConfirm: boolean;
@@ -520,7 +520,7 @@ const DeliveryPackageGroupCreate = () => {
           setIsOpenSuggestAssign(false);
         }}
       >
-        <OrderDeliveryAutoAssign
+        <OrderDeliveryAutoSuggestAssign
           beforeGetSuggestion={() => {
             orderFetchResult?.refetch();
           }}
