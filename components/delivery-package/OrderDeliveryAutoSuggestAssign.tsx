@@ -97,10 +97,10 @@ const OrderDeliveryAutoSuggestAssign = ({
       setMaxWeightOfPackage(
         lastMaxWeightCarryFetcher.data?.value.staffMaxCarryWeight
       );
-    console.log(
-      "lastMaxWeightCarryFetcher.data?.value.staffMaxCarryWeight: ",
-      lastMaxWeightCarryFetcher.data?.value.staffMaxCarryWeight
-    );
+    // console.log(
+    //   "lastMaxWeightCarryFetcher.data?.value.staffMaxCarryWeight: ",
+    //   lastMaxWeightCarryFetcher.data?.value.staffMaxCarryWeight
+    // );
   }, [lastMaxWeightCarryFetcher.data?.value.staffMaxCarryWeight]);
   useEffect(() => {
     setMaxWeightOfPackageText(maxWeightOfPackage.toString());

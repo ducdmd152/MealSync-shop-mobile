@@ -11,7 +11,7 @@ export interface DormitoryGPKGModel {
   successful: number;
   failed: number;
 }
-export interface DeliveryPackageModel {
+export interface DeliveryPackageModel extends DeliveryPackageEstimateInfoModel {
   deliveryPackageId: number;
   status: number;
   total: number;
@@ -24,6 +24,16 @@ export interface DeliveryPackageModel {
   orders: OrderFetchModel[];
 }
 
+export interface DeliveryPackageEstimateInfoModel {
+  // delivery package estimate information
+  suggestStartTimeDelivery: number;
+  totalMinutesHandleDelivery: number;
+  currentDistance: number;
+  currentTaskLoad: number;
+  deliveryPackageWeight: number;
+  totalMinutestToMove: number;
+  totalMinutesToWaitCustomer: number;
+}
 export interface DeliveryPackageGroupModel
   extends DeliveryPackageGroupDetailsModel {}
 
@@ -59,7 +69,7 @@ export const deliveryPackageDescMapping = [
 ];
 
 export const getDeliveryPackageStatusDescription = (
-  status: number,
+  status: number
 ): { value: number; description: string; bgColor: string } | undefined => {
   return deliveryPackageDescMapping.find((item) => item.value === status);
 };
