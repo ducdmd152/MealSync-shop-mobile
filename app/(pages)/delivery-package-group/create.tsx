@@ -348,7 +348,6 @@ const DeliveryPackageGroupCreate = () => {
         </ScrollView>
       </View>
       {ordersOfTargetPerson.length > 0 &&
-        !packageDeliveryEstimateFetcher.isLoading &&
         packageDeliveryEstimateFetcher.isSuccess && (
           <View className="mt-[-2px] mb-[4px]">
             <Text className="italic text-orange-600 text-[10px]">

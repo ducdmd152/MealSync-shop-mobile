@@ -105,7 +105,7 @@ const DeliveryPKGDetail = ({
           }
         )
         .then((response) => response.data),
-    [pkgDetails]
+    []
   );
   useEffect(() => {
     if (!isLoading) {
@@ -119,6 +119,7 @@ const DeliveryPKGDetail = ({
 
   useFocusEffect(
     useCallback(() => {
+      packageDeliveryEstimateFetcher.refetch();
       getPKGDetails(false);
     }, [])
   );
@@ -215,28 +216,26 @@ const DeliveryPKGDetail = ({
           </TouchableOpacity>
         </View>
       )}
-      {!isNotFound &&
-        !packageDeliveryEstimateFetcher.isLoading &&
-        packageDeliveryEstimateFetcher.isSuccess && (
-          <View className="ml-1">
-            <Text className="italic text-orange-600 text-[10px]">
-              Hãy xuất phát trước{" "}
-              {utilService.formatTime(
-                packageDeliveryEstimateFetcher.data?.value
-                  .suggestStartTimeDelivery || 0
-              )}{" "}
-              để hoàn tất gói hàng đúng giờ.
-            </Text>
-            <Text className="italic text-orange-600 text-[10px]">
-              Gói giao này mất khoảng{" "}
-              {
-                packageDeliveryEstimateFetcher.data?.value
-                  .totalMinutesHandleDelivery
-              }{" "}
-              phút để hoàn tất (bao gồm việc di chuyển)
-            </Text>
-          </View>
-        )}
+      {!isNotFound && packageDeliveryEstimateFetcher.isSuccess && (
+        <View className="ml-1">
+          <Text className="italic text-orange-600 text-[10px]">
+            Hãy xuất phát trước{" "}
+            {utilService.formatTime(
+              packageDeliveryEstimateFetcher.data?.value
+                .suggestStartTimeDelivery || 0
+            )}{" "}
+            để hoàn tất gói hàng đúng giờ.
+          </Text>
+          <Text className="italic text-orange-600 text-[10px]">
+            Gói giao này mất khoảng{" "}
+            {
+              packageDeliveryEstimateFetcher.data?.value
+                .totalMinutesHandleDelivery
+            }{" "}
+            phút để hoàn tất (bao gồm việc di chuyển)
+          </Text>
+        </View>
+      )}
       {isNotFound && (
         <Text className="font-semibold bg-gray-100 text-gray-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100 text-[14px] p-4 text-center">
           Gói giao PKG-{globalPKGState.model.deliveryPackageId} không còn tồn
