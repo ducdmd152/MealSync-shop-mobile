@@ -5,6 +5,7 @@ import apiClient from "@/services/api-services/api-client";
 import orderUIService from "@/services/order-ui-service";
 import utilService from "@/services/util-service";
 import {
+  DeliveryPackageEstimateInfoModel,
   DeliveryPackageStatus,
   OwnDeliveryPackageModel,
 } from "@/types/models/DeliveryPackageModel";
@@ -34,6 +35,7 @@ import CompleteDeliveryConfirmModal from "../target-modals/CompleteDeliveryConfi
 import CustomButton from "../custom/CustomButton";
 import OrderMultiSelectToDelivery from "./OrderMultiSelectToDelivery";
 import CustomModal from "../common/CustomModal";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 
 interface Props {
   onNotFound?: () => void;
@@ -85,7 +87,26 @@ const DeliveryPKGDetail = ({
       globalPKGState.onAfterCompleted();
     }
   };
-
+  const packageDeliveryEstimateFetcher = useFetchWithRQWithFetchFunc(
+    ["web/shop-owner/delivery-package/calculate-time-suggest"],
+    async (): Promise<FetchValueResponse<DeliveryPackageEstimateInfoModel>> =>
+      apiClient
+        .get(
+          "web/shop-owner/delivery-package/calculate-time-suggest" +
+            `?${pkgDetails.orders
+              .map((order) => `orderIds=${order.id}`)
+              .join("&")}`,
+          {
+            params: {
+              intendedReceiveDate: pkgDetails.intendedReceiveDate,
+              startTime: pkgDetails.startTime,
+              endTime: pkgDetails.endTime,
+            },
+          }
+        )
+        .then((response) => response.data),
+    [pkgDetails]
+  );
   useEffect(() => {
     if (!isLoading) {
       setOrders(
@@ -135,6 +156,7 @@ const DeliveryPKGDetail = ({
           </View>
         </View>
       )}
+
       {!isNotFound && (
         <View className="mt-3 w-full flex-row items-center justify-between pb-2">
           <TouchableOpacity
@@ -193,7 +215,28 @@ const DeliveryPKGDetail = ({
           </TouchableOpacity>
         </View>
       )}
-
+      {!isNotFound &&
+        !packageDeliveryEstimateFetcher.isLoading &&
+        packageDeliveryEstimateFetcher.isSuccess && (
+          <View className="ml-1">
+            <Text className="italic text-orange-600 text-[10px]">
+              Hãy xuất phát trước{" "}
+              {utilService.formatTime(
+                packageDeliveryEstimateFetcher.data?.value
+                  .suggestStartTimeDelivery || 0
+              )}{" "}
+              để hoàn tất gói hàng đúng giờ.
+            </Text>
+            <Text className="italic text-orange-600 text-[10px]">
+              Gói giao này mất khoảng{" "}
+              {
+                packageDeliveryEstimateFetcher.data?.value
+                  .totalMinutesHandleDelivery
+              }{" "}
+              phút để hoàn tất (bao gồm việc di chuyển)
+            </Text>
+          </View>
+        )}
       {isNotFound && (
         <Text className="font-semibold bg-gray-100 text-gray-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-200 dark:text-dark-100 text-[14px] p-4 text-center">
           Gói giao PKG-{globalPKGState.model.deliveryPackageId} không còn tồn
