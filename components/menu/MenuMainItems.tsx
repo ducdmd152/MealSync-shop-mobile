@@ -32,6 +32,7 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { Switch } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
+import CustomModal from "../common/CustomModal";
 
 const initialCategories = [
   { id: 1, name: "Ăn sáng", items: 2, isCollapsible: true },
@@ -66,6 +67,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
 
   const onRearrange = async (data: ExtendCategoryModel[]) => {
     const prevExtendCategories = extendCategories;
+    setExtendCategories([]);
     setExtendCategories(data);
     try {
       // console.log("Update categories order: ", {
@@ -609,35 +611,47 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
               Không tìm thấy danh mục và sản phẩm tương ứng
             </Text>
           )}
-          <DraggableFlatList
-            style={{ width: "100%", flexGrow: 1 }}
-            data={extendCategories}
-            renderItem={renderCategory}
-            keyExtractor={(item) => `category-${item.id}`}
-            onDragEnd={({ data }) => {
-              onRearrange(data);
-            }}
-            refreshControl={
-              <RefreshControl
-                tintColor={"#FCF450"}
-                onRefresh={() => {
-                  refetch();
-                }}
-                refreshing={isLoading}
-              />
-            }
-          />
+          {extendCategories.length > 0 && (
+            <DraggableFlatList
+              style={{ width: "100%", flexGrow: 1 }}
+              data={extendCategories}
+              renderItem={renderCategory}
+              keyExtractor={(item) => `category-${item.id}`}
+              onDragEnd={({ data }) => {
+                onRearrange(data);
+              }}
+              refreshControl={
+                <RefreshControl
+                  tintColor={"#FCF450"}
+                  onRefresh={() => {
+                    refetch();
+                  }}
+                  refreshing={isLoading}
+                />
+              }
+            />
+          )}
         </View>
       </View>
 
-      <BottomSheet modalProps={{}} isVisible={isBottomSheetVisible}>
-        <View className="p-4 bg-white rounded-t-lg min-h-[120px] ">
-          <TouchableOpacity
+      <CustomModal
+        title=""
+        hasHeader={false}
+        isOpen={isBottomSheetVisible}
+        setIsOpen={(value) => setIsBottomSheetVisible(value)}
+        titleStyleClasses="text-center flex-1"
+        containerStyleClasses="w-72"
+        onBackdropPress={() => {
+          setIsBottomSheetVisible(false);
+        }}
+      >
+        <View className="bg-white rounded-t-lg min-h-[120px] ">
+          {/* <TouchableOpacity
             className="items-center"
             onPress={() => setIsBottomSheetVisible(false)}
           >
             <Ionicons name="chevron-down-outline" size={24} color="gray" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             className="p-4"
             onPress={() => {
@@ -671,7 +685,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
             </Text>
           </TouchableOpacity>
         </View>
-      </BottomSheet>
+      </CustomModal>
     </View>
   );
 };
