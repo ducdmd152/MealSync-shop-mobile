@@ -15,6 +15,7 @@ import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetc
 import REACT_QUERY_CACHE_KEYS from "@/constants/react-query-cache-keys";
 import FetchResponse, {
   FetchOnlyListResponse,
+  FetchValueResponse,
 } from "@/types/responses/FetchResponse";
 import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 import apiClient from "@/services/api-services/api-client";
@@ -37,8 +38,11 @@ import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
 import CustomModal from "@/components/common/CustomModal";
-import OrderDeliveryAutoAssign from "@/components/delivery-package/OrderDeliveryAutoSuggestAssign";
-import { DeliveryPackageGroupDetailsModel } from "@/types/models/DeliveryPackageModel";
+import OrderDeliveryAutoSuggestAssign from "@/components/delivery-package/OrderDeliveryAutoSuggestAssign";
+import {
+  DeliveryPackageEstimateInfoModel,
+  DeliveryPackageGroupDetailsModel,
+} from "@/types/models/DeliveryPackageModel";
 interface GPKGCreateRequest {
   isConfirm: boolean;
   deliveryPackages: {
@@ -65,7 +69,9 @@ const DeliveryPackageGroupCreate = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpenSuggestAssign, setIsOpenSuggestAssign] = useState(false);
   const [personsList, setPersonsList] = useState<FrameStaffInfoModel[]>([]);
-
+  const [ordersOfTargetPerson, setOrderOfTargetPerson] = useState<
+    OrderFetchModel[]
+  >([]);
   const [orderFetchResult, setOrderFetchResult] =
     useState<UseQueryResult<FetchResponse<OrderFetchModel>, Error>>();
   const [gpkgCreateRequest, setGPKGCreateRequest] = useState<GPKGCreateRequest>(
@@ -92,6 +98,26 @@ const DeliveryPackageGroupCreate = () => {
         })
         .then((response) => response.data),
     [query]
+  );
+  const packageDeliveryEstimateFetcher = useFetchWithRQWithFetchFunc(
+    ["web/shop-owner/delivery-package/calculate-time-suggest"],
+    async (): Promise<FetchValueResponse<DeliveryPackageEstimateInfoModel>> =>
+      apiClient
+        .get(
+          "web/shop-owner/delivery-package/calculate-time-suggest" +
+            `?${ordersOfTargetPerson
+              .map((order) => `orderIds=${order.id}`)
+              .join("&")}`,
+          {
+            params: {
+              intendedReceiveDate: query.intendedReceiveDate,
+              startTime: query.startTime,
+              endTime: query.endTime,
+            },
+          }
+        )
+        .then((response) => response.data),
+    [ordersOfTargetPerson, query]
   );
   const onRefresh = () => {
     orderFetchResult?.refetch();
@@ -166,6 +192,13 @@ const DeliveryPackageGroupCreate = () => {
   }
 
   useEffect(() => {
+    setOrderOfTargetPerson(getAssignedOrdersOf(currentDeliveryPersonId));
+  }, [
+    currentDeliveryPersonId,
+    gpkgCreateRequest,
+    orderFetchResult?.data?.value.items,
+  ]);
+  useEffect(() => {
     if (deliveryPersonFetchResult.data?.value)
       setPersonsList(
         sortPersonsList(
@@ -174,6 +207,7 @@ const DeliveryPackageGroupCreate = () => {
         )
       );
   }, [deliveryPersonFetchResult.data?.value]);
+
   const getCurrentPerson = () => {
     return deliveryPersonFetchResult.data?.value.find(
       (person) => person.staffInfor.id == currentDeliveryPersonId
@@ -265,6 +299,15 @@ const DeliveryPackageGroupCreate = () => {
     });
   };
 
+  // console.log(
+  //   "PKG Info: ",
+  //   ordersOfTargetPerson.length,
+  //   !packageDeliveryEstimateFetcher.isLoading,
+  //   packageDeliveryEstimateFetcher.isSuccess,
+  //   ordersOfTargetPerson.length > 0 &&
+  //     !packageDeliveryEstimateFetcher.isLoading &&
+  //     packageDeliveryEstimateFetcher.isSuccess
+  // );
   const deliveryPersonSelectArea = (
     <View>
       {deliveryPersonFetchResult.data?.value && (
@@ -304,13 +347,34 @@ const DeliveryPackageGroupCreate = () => {
           </View>
         </ScrollView>
       </View>
+      {ordersOfTargetPerson.length > 0 &&
+        packageDeliveryEstimateFetcher.isSuccess && (
+          <View className="mt-[-2px] mb-[4px]">
+            <Text className="italic text-orange-600 text-[10px]">
+              Hãy xuất phát trước{" "}
+              {utilService.formatTime(
+                packageDeliveryEstimateFetcher.data?.value
+                  .suggestStartTimeDelivery || 0
+              )}{" "}
+              để hoàn tất gói hàng đúng giờ.
+            </Text>
+            <Text className="italic text-orange-600 text-[10px]">
+              Gói giao này mất khoảng{" "}
+              {
+                packageDeliveryEstimateFetcher.data?.value
+                  .totalMinutesHandleDelivery
+              }{" "}
+              phút để hoàn tất (bao gồm việc di chuyển)
+            </Text>
+          </View>
+        )}
     </View>
   );
   const currentPersonArea = (
     <View className="border-2 border-gray-300 p-2 flex-1">
       <ScrollView>
         <View className="gap-y-[4px]">
-          {getAssignedOrdersOf(currentDeliveryPersonId).map((order) => (
+          {ordersOfTargetPerson.map((order) => (
             <TouchableOpacity
               key={order.id}
               onPress={() => {
@@ -520,7 +584,7 @@ const DeliveryPackageGroupCreate = () => {
           setIsOpenSuggestAssign(false);
         }}
       >
-        <OrderDeliveryAutoAssign
+        <OrderDeliveryAutoSuggestAssign
           beforeGetSuggestion={() => {
             orderFetchResult?.refetch();
           }}
@@ -529,6 +593,7 @@ const DeliveryPackageGroupCreate = () => {
               type: "info",
               duration: 1500,
             });
+
             setGPKGCreateRequest({
               isConfirm: false,
               deliveryPackages:

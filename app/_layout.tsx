@@ -196,7 +196,7 @@ export default function RootLayout() {
             },
           });
         } catch (err) {
-          console.error("Failed to show toastable:", err);
+          // console.error("Failed to show toastable:", err);
         }
       });
 
