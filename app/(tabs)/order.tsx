@@ -119,7 +119,7 @@ const Order = () => {
     refetch: operatingSlotsRefetch,
     isRefetching: isOperatingSlotsRefetching,
   } = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST.concat(["order-list-page"]),
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST,
     (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
