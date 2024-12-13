@@ -262,7 +262,7 @@ const FoodCreate = () => {
           let imageUrl = "";
           if (imageService.isLocalImage(imageURI))
             imageUrl =
-              (await imageService.uploadPreviewImage(imageURI)) ||
+              (await imageService.uploadPreviewImage(imageURI, true)) ||
               CONSTANTS.url.noImageAvailable;
           else imageUrl = imageURI;
           setImageURI(imageUrl);

@@ -17,7 +17,10 @@ export const getExtensionFromMimeType = (mimeType: string) => {
   return mimeToExtension[mimeType] || "unknown";
 };
 
-export const uploadPreviewImage = async (uri: string) => {
+export const uploadPreviewImage = async (
+  uri: string,
+  isCheckFoodDrink = false
+) => {
   if (!uri) {
     Alert.alert("Oops", "Không có ảnh nào được chọn.");
     return;
@@ -30,7 +33,7 @@ export const uploadPreviewImage = async (uri: string) => {
   if (blob.size > CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_BYTE) {
     Alert.alert(
       "Oops",
-      `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`,
+      `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`
     );
     return;
   }
@@ -43,6 +46,7 @@ export const uploadPreviewImage = async (uri: string) => {
     name: fileName,
     type: blob.type,
   } as any);
+  formData.append("isCheckFoodDrink", isCheckFoodDrink ? "true" : "false");
   // Upload the image
   const result = await apiClient.put<ValueResponse<{ url: string }>>(
     endpoints.STORAGE_FILE_UPLOAD,
@@ -52,7 +56,7 @@ export const uploadPreviewImage = async (uri: string) => {
         Authorization: `Bearer ${await sessionService.getAuthToken()}`,
         "Content-Type": "multipart/form-data",
       },
-    },
+    }
   );
   return result.data.value?.url || CONSTANTS.url.noImageAvailable;
 };

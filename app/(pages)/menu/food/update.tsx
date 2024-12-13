@@ -298,7 +298,7 @@ const FoodUpdate = () => {
           let imageUrl = "";
           if (imageURI != foodDetailModel.imageUrl)
             imageUrl =
-              (await imageService.uploadPreviewImage(imageURI)) ||
+              (await imageService.uploadPreviewImage(imageURI, true)) ||
               CONSTANTS.url.noImageAvailable;
           else imageUrl = foodDetailModel.imageUrl;
           setImageURI(imageUrl);
