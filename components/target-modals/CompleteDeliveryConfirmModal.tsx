@@ -425,21 +425,25 @@ const CompleteDeliveryConfirmModal = ({
         title={`Giao thành công`}
         handlePress={() => {
           if (!actionInTimeValidation()) return;
-          Alert.alert("Xác nhận giao thành công", "", [
-            {
-              text: "Xác nhận bằng QR Code",
-              onPress: () => globalCompleteDeliveryConfirm.setStep(1),
-            },
-            {
-              text: "Xác nhận bằng hình ảnh",
-              onPress: () => {
-                setIsSuccessSubmitting(false);
-                setSuccessImageUrls([]);
-                globalCompleteDeliveryConfirm.setStep(3);
+          Alert.alert(
+            "Xác nhận giao thành công",
+            "",
+            [
+              {
+                text: "Xác nhận bằng QR Code",
+                onPress: () => globalCompleteDeliveryConfirm.setStep(1),
               },
-            },
-            { text: "Hủy", style: "cancel" },
-          ]);
+              {
+                text: "Xác nhận bằng hình ảnh",
+                onPress: () => {
+                  setIsSuccessSubmitting(false);
+                  setSuccessImageUrls([]);
+                  globalCompleteDeliveryConfirm.setStep(3);
+                },
+              },
+              { text: "Hủy" },
+            ].reverse()
+          );
         }}
         containerStyleClasses="w-full mt-2 h-[42px]  px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
         textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white text-gray-800"
