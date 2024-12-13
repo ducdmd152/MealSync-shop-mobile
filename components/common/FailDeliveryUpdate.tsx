@@ -118,9 +118,10 @@ const FailDeliveryUpdate = ({
             search={false}
             defaultOption={{
               key: failDeliveryInfo.deliveryFaileEvidence.reasonIndentity,
-              value: failDeliveryInfo.deliveryFaileEvidence.reasonIndentity
-                ? "Do phía cửa hàng"
-                : "Do phía khách hàng",
+              value:
+                failDeliveryInfo.deliveryFaileEvidence.reasonIndentity == 1
+                  ? "Do phía cửa hàng"
+                  : "Do phía khách hàng",
             }}
           />
         </View>

@@ -134,7 +134,7 @@ const OrderDeliveryInfo = ({
             <View className="flex-row items-center justify-between">
               <Text className="text-gray-600 font-medium">
                 {/* Lí do: <Text className="italic"></Text> */}
-                {info?.deliveryFaileEvidence.reasonIndentity
+                {info?.deliveryFaileEvidence.reasonIndentity == 1
                   ? "Do phía cửa hàng"
                   : "Do phía khách hàng"}
               </Text>
