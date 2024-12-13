@@ -44,7 +44,7 @@ const Notifications = () => {
           },
         })
         .then((response) => response.data),
-    [infiniteSize, globalHeaderPage, globalHeaderPage.isNotiPageFocusing]
+    [infiniteSize, globalHeaderPage.isNotiPageFocusing]
   );
   const markAsReadAll = async () => {
     try {
@@ -75,7 +75,7 @@ const Notifications = () => {
           return already || item;
         })
       );
-  }, [notiFetcher.data?.value.items]);
+  }, [notiFetcher.isFetching]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -160,12 +160,12 @@ const Notifications = () => {
     </TouchableOpacity>
   );
 
-  console.log(
-    "Notifications: ",
-    notifications,
-    notiFetcher.data?.value.items,
-    INFINITE_LOAD_SIZE
-  );
+  // console.log(
+  //   "Notifications: ",
+  //   notifications,
+  //   notiFetcher.data?.value.items,
+  //   INFINITE_LOAD_SIZE
+  // );
   return (
     <FlatList
       style={{ flexGrow: 1, backgroundColor: "white" }}
@@ -187,7 +187,7 @@ const Notifications = () => {
       ListFooterComponent={
         <View className="p-3">
           <ActivityIndicator
-            animating={notiFetcher.isFetching || isRendering}
+            animating={notiFetcher.data?.value.hasNext || false}
             color="#FCF450"
             size={40}
           />
