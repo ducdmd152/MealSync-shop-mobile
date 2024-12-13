@@ -356,7 +356,7 @@ const FoodUpdate = () => {
                 setStatus(2);
                 setIsSoldOut(false);
                 toReturn = false;
-                submit();
+                // submit();
               },
             },
           ],
@@ -1009,7 +1009,7 @@ const FoodUpdate = () => {
                 className="border border-gray-300 mt-1 px-3 p-2 pb-3 rounded text-[15px]"
                 value={categoryName}
                 onChangeText={(text) => {
-                  setCategoryName(text.trim());
+                  setCategoryName(text);
                 }}
                 placeholder="Nhập tên danh mục..."
                 placeholderTextColor="#888"

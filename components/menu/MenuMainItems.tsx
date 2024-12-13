@@ -300,9 +300,9 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (!isFetching) {
-        refetch();
-      }
+      // if (!isFetching) {
+      refetch();
+      // }
     }, [])
   );
 

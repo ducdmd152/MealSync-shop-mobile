@@ -285,7 +285,7 @@ const FoodCreate = () => {
             "shop-owner/food/create",
             foodData
           );
-          console.log("RESPONSE : ", response);
+          // console.log("RESPONSE : ", response);
 
           // Handle successful response
           Alert.alert("Hoàn tất", "Món ăn đã được tạo thành công");
@@ -318,7 +318,7 @@ const FoodCreate = () => {
               onPress: () => {
                 setIsAvailable(false);
                 toReturn = false;
-                submit();
+                // submit();
               },
             },
           ],
@@ -353,7 +353,7 @@ const FoodCreate = () => {
       return 0;
     }
   );
-  console.log("Re-render: ", selectedOptionGroups);
+  // console.log("Re-render: ", selectedOptionGroups);
   return (
     <PageLayoutWrapper>
       <View className="p-4 bg-white">
@@ -552,6 +552,7 @@ const FoodCreate = () => {
                 })) || []
               }
               save="key"
+              notFoundText="Chưa có vật đựng và khối lượng quy đổi nào"
               placeholder="Khối lượng quy đổi"
               searchPlaceholder="Tìm kiếm..."
             />
@@ -666,6 +667,7 @@ const FoodCreate = () => {
               placeholder="Lựa chọn khoảng thời gian phục vụ"
               onSelect={() => {}}
               search={false}
+              notFoundText="Chưa cài đặt khoảng thời gian hoạt động nào"
               label="Các khoảng thời gian đã chọn"
               dropdownShown={false}
               closeicon={
@@ -819,7 +821,7 @@ const FoodCreate = () => {
                 className="border border-gray-300 mt-1 px-3 p-2 pb-3 rounded text-[15px]"
                 value={categoryName}
                 onChangeText={(text) => {
-                  setCategoryName(text.trim());
+                  setCategoryName(text);
                 }}
                 placeholder="Nhập tên danh mục..."
                 placeholderTextColor="#888"
