@@ -85,13 +85,13 @@ const EvidencePreviewMultiImagesUpload = ({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
           aspect: aspect,
-          quality: 0.5,
+          quality: 1,
         })
       : await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
           aspect: aspect,
-          quality: 0.5,
+          quality: 1,
         });
     setIsSelectPicking(false);
     if (!result.canceled && result.assets) {

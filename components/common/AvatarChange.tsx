@@ -51,7 +51,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
       apiClient
         .get(endpoints.SHOP_PROFILE_FULL_INFO)
         .then((response) => response.data),
-    [],
+    []
   );
   const [user, setUser] = useState({
     avatarUrl: shopProfile.data?.value.logoUrl || CONSTANTS.url.avatar,
@@ -80,7 +80,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
   useFocusEffect(
     React.useCallback(() => {
       shopProfile.refetch();
-    }, []),
+    }, [])
   );
 
   const pickImage = async (isPickByCam: boolean = false) => {
@@ -90,7 +90,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
       if (libraryStatus !== "granted") {
         Alert.alert(
           "Oops",
-          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!",
+          "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!"
         );
         return;
       }
@@ -108,7 +108,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.5,
+        quality: 1,
       });
 
       if (!result.canceled && result.assets) {
@@ -144,7 +144,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
       if (blob.size > CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_BYTE) {
         Alert.alert(
           "Oops",
-          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`,
+          `Ảnh vượt quá dung lượng cho phép ${CONSTANTS.FILE_CONSTRAINTS.MAX_FILE_SIZE_MB} MB.`
         );
         return;
       }
@@ -188,7 +188,7 @@ const AvatarChange: React.FC<AvatarChangeProps> = () => {
         "Oops!",
         error?.response?.data?.error?.message ||
           error?.response?.data?.value?.File[0] ||
-          "Yêu cầu bị từ chối, vui lòng thử lại sau!",
+          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
       );
     } finally {
       shopProfile.refetch();
