@@ -323,11 +323,7 @@ const Balance = () => {
             }
           />
         }
-        data={
-          transactionsFetcher.data?.value.items.length
-            ? transactionsFetcher.data?.value.items
-            : sampleWalletTransactionList
-        }
+        data={transactionsFetcher.data?.value.items || []}
         renderItem={renderItem}
         keyExtractor={(item, index) => (Math.random() % 1_000_000).toString()}
         onEndReached={() => {
