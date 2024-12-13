@@ -628,7 +628,7 @@ const PromotionUpdate = () => {
               <Text className="font-bold">Banner</Text>
               <PreviewImageUpload
                 className="flex-row w-full justify-center items-center overflow-hidden ml-[2px] border-2 rounded-lg border-gray-300 mt-1"
-                aspect={[1, 1 / (16 / 9)]}
+                aspect={[16, 9]}
                 uri={promotion.bannerUrl || CONSTANTS.url.noImageAvailable}
                 setUri={(uri: string) => {
                   setPromotion({
