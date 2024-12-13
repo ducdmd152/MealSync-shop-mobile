@@ -31,7 +31,7 @@ import Collapsible from "react-native-collapsible";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { Switch } from "react-native-paper";
+import { Modal, Portal, Switch } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
 
 const initialCategories = [
@@ -49,6 +49,10 @@ interface FoodListQuery {
 interface ExtendCategoryModel extends ShopCategoryModel {
   isCollapsible: boolean;
 }
+interface SimpleCategoryModel {
+  id: number;
+  name: string;
+}
 const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   const toast = useToast();
   const [query, setQuery] = useState<FoodListQuery>({
@@ -62,6 +66,10 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   const { setFoodDetailModel, setShopCategoryModel } = useModelState();
   const { notFoundInfo, setNotFoundInfo } = usePathState();
   const [statusingIdList, setStatusingIdList] = useState<number[]>([]);
+  const [isRearrangeCategories, setIsRearrangeCategories] = useState(false);
+  const [simpleCategories, setSimpleCategories] = useState<
+    SimpleCategoryModel[]
+  >([]);
 
   // const [categories, setCategories] = useState(initialCategories);
 
@@ -77,10 +85,10 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
         ids: data.map((category) => category.id),
       });
       const { value, isSuccess, error } = response.data;
-      // toast.show("Cập nhật thứ tự thành công!", {
-      //   type: "success",
-      //   duration: 2000,
-      // });
+      toast.show("Cập nhật thứ tự thành công!", {
+        type: "success",
+        duration: 2000,
+      });
     } catch (error: any) {
       setExtendCategories(prevExtendCategories);
       refetch();
@@ -92,7 +100,43 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
     } finally {
     }
   };
+  const onRearrangeWithSimpleData = async (data: SimpleCategoryModel[]) => {
+    const prevSimpleCategories = simpleCategories;
+    const prevExtendCategories = extendCategories;
+    setSimpleCategories(data);
+    setExtendCategories((prevExtendCategories) => {
+      return prevExtendCategories.sort(
+        (a, b) =>
+          data.findIndex((item) => item.id === a.id) -
+          data.findIndex((item) => item.id === b.id)
+      );
+    });
 
+    try {
+      // console.log("Update categories order: ", {
+      //   ids: extendCategories.map((category) => category.id),
+      // });
+
+      const response = await apiClient.put("shop-owner/category/re-arrange", {
+        ids: data.map((category) => category.id),
+      });
+      const { value, isSuccess, error } = response.data;
+      toast.show("Cập nhật thứ tự thành công!", {
+        type: "success",
+        duration: 2000,
+      });
+    } catch (error: any) {
+      setSimpleCategories(prevSimpleCategories);
+      setExtendCategories(prevExtendCategories);
+      refetch();
+      toast.show("Yêu cầu bị từ chối, vui lòng thử lại.", {
+        type: "danger",
+        duration: 5000,
+      });
+      // Alert.alert("Oops", "Yêu cầu bị từ chối, vui lòng thử lại.");
+    } finally {
+    }
+  };
   const [tmpCategories, setTmpCategories] = useState<ShopCategoryModel[]>([]);
   const {
     data: categories,
@@ -114,6 +158,12 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
   );
   useEffect(() => {
     setTmpCategories(categories?.value || []);
+    setSimpleCategories(
+      (categories?.value || []).map((item) => ({
+        id: item.id,
+        name: item.name,
+      }))
+    );
   }, [categories]);
 
   const onChangeStatus = (food: FoodModel) => {
@@ -610,11 +660,17 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
             </TouchableOpacity>
           </View>
         </ScrollView>
-        <TouchableOpacity onPress={() => {}}>
-          <Text className="text-right text-[12.5px] mt-[-2px] mb-[-4px] text-white text-[#227B94] font-semibold">
-            Thay đổi thứ tự
-          </Text>
-        </TouchableOpacity>
+        {extendCategories.length > 0 && (
+          <TouchableOpacity
+            onPress={() => {
+              setIsRearrangeCategories(true);
+            }}
+          >
+            <Text className="text-right text-[12.5px] mt-[-2px] mb-[-4px] text-white text-[#227B94] font-semibold">
+              Thay đổi thứ tự
+            </Text>
+          </TouchableOpacity>
+        )}
         <View className="gap-y-2 pb-[272px]">
           {isFetching && (
             <ActivityIndicator animating={isFetching} color="#FCF450" />
@@ -922,6 +978,84 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
           </TouchableOpacity>
         </View>
       </BottomSheet>
+
+      <Portal>
+        <Modal
+          visible={isRearrangeCategories}
+          onDismiss={() => setIsRearrangeCategories(false)}
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View className="w-[80%] bg-white p-4 rounded-md">
+            <Text className="text-center text-[12px] font-semibold">
+              Sắp xếp thứ tự hiển thị {"\n"} các nhóm đã chọn trên sản phẩm này
+            </Text>
+            <View
+              className="mt-3"
+              style={
+                {
+                  // height: selectedOptionGroups.length * 120,
+                }
+              }
+            >
+              {!extendCategories.length && (
+                <View className="h-20 w-full items-center justify-center">
+                  <Text className="text-[13.2px] text-center italic gray-700">
+                    Bạn chưa có danh mục nào
+                  </Text>
+                  <CustomButton
+                    title="Thoát"
+                    containerStyleClasses="mt-5 bg-white border-gray-300 border-[2px] h-8"
+                    textStyleClasses="text-white text-[14px] text-gray-500 font-normal"
+                    handlePress={() => {
+                      setIsRearrangeCategories(false);
+                    }}
+                  />
+                </View>
+              )}
+              <DraggableFlatList
+                style={{ width: "100%", flexGrow: 1 }}
+                data={simpleCategories}
+                renderItem={({
+                  item,
+                  drag,
+                }: RenderItemParams<SimpleCategoryModel>) => {
+                  return (
+                    <View key={item.id}>
+                      <TouchableOpacity
+                        className="border-[1px] border-gray-200 flex-row justify-between items-center p-2 mb-2 rounded-lg"
+                        onLongPress={drag}
+                      >
+                        <Text className="w-full text-center text-[#14b8a6] font-semibold">
+                          {item.name}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                }}
+                keyExtractor={(item) => `category-${item.id}`}
+                onDragEnd={({ data }) => {
+                  console.log("data: ", [...data]);
+                  // setExtendCategories([...data]);
+                  onRearrangeWithSimpleData(data);
+                }}
+              />
+              {simpleCategories.length > 0 && (
+                <CustomButton
+                  title="Hoàn tất"
+                  containerStyleClasses="mt-3 bg-secondary h-10"
+                  textStyleClasses="text-white text-[14px]"
+                  handlePress={() => {
+                    setIsRearrangeCategories(false);
+                  }}
+                />
+              )}
+            </View>
+          </View>
+        </Modal>
+      </Portal>
     </View>
   );
 };
