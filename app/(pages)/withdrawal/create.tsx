@@ -425,7 +425,7 @@ const WithdrawalCreate = () => {
                   // readOnly
                   onChangeText={(text) => {
                     // console.log("text: " + text);
-                    handleChange("bankAccountName", text);
+                    handleChange("bankAccountName", text.toUpperCase());
                   }}
                 />
                 {errors.bankAccountName && (
