@@ -81,7 +81,7 @@ interface OrderFetchQuery extends PagingRequestQuery {
   endTime: number;
   intendedReceiveDate: string;
 }
-const INFINITE_LOAD_SIZE = 10;
+const INFINITE_LOAD_SIZE = 25;
 const Order = () => {
   // (async () => {
   //   console.log(await sessionService.getAuthToken());
