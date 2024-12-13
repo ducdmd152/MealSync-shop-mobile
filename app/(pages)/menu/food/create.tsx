@@ -40,7 +40,7 @@ const validationSchema = Yup.object().shape({
   price: Yup.number().min(1, "Giá phải lớn hơn 0").required("Giá là bắt buộc"),
   platformCategoryId: Yup.number().min(0, "Danh mục hệ thống là bắt buộc"),
   shopCategoryId: Yup.number().min(0, "Danh mục cửa hàng là bắt buộc"),
-  foodPackingUnit: Yup.number().min(0, "Khối lượng quy đổi là bắt buộc"),
+  foodPackingUnitId: Yup.number().min(0, "Khối lượng quy đổi là bắt buộc"),
 });
 const formatPrice = (value: number) => {
   // console.log(
@@ -100,18 +100,21 @@ const FoodCreate = () => {
   );
 
   useEffect(() => {
-    formik.setFieldValue("shopCategoryId", Number(selectedShopCategory));
+    formik.setFieldValue("shopCategoryId", Number(selectedShopCategory) || -1);
     // console.log(formik.values);
   }, [selectedShopCategory]);
   useEffect(() => {
     formik.setFieldValue(
       "platformCategoryId",
-      Number(selectedPlatformCategory)
+      Number(selectedPlatformCategory) || -1
     );
     // console.log(formik.values);
   }, [selectedPlatformCategory]);
   useEffect(() => {
-    formik.setFieldValue("foodPackingUnitId", Number(selectedPackingUnitId));
+    formik.setFieldValue(
+      "foodPackingUnitId",
+      Number(selectedPackingUnitId) || -1
+    );
     console.log(formik.values);
   }, [selectedPackingUnitId]);
   const onToggleSwitch = () => setIsAvailable(!isAvailable);
