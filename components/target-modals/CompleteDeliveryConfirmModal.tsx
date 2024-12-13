@@ -639,6 +639,15 @@ const CompleteDeliveryConfirmModal = ({
                   </Text>
                 </TouchableOpacity>
               </View>
+              {order.isCustomerPaid ? (
+                <Text className="text-md font-bold text-green-500 mb-1">
+                  Đã thanh toán
+                </Text>
+              ) : (
+                <Text className="text-md font-bold text-gray-800 mb-1">
+                  Chưa thanh toán
+                </Text>
+              )}
             </View>
             {/* <View className="mt-2 border-gray-300 border-[0.4px]" /> */}
             <View className="py-2 ">

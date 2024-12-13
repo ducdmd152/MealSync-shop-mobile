@@ -40,6 +40,7 @@ export default interface OrderFetchModel {
   shopDeliveryStaff: ShopDeliveryStaff | null;
   orderDetailSummary: string;
   orderDetailSummaryShort: string;
+  isCustomerPaid: boolean;
 }
 
 export enum OrderStatus {
@@ -121,7 +122,7 @@ export const orderStatusDescMapping = [
 ];
 
 export const getOrderStatusDescription = (
-  status: number,
+  status: number
 ): { value: number; description: string; bgColor: string } | undefined => {
   return orderStatusDescMapping.find((item) => item.value === status);
 };
