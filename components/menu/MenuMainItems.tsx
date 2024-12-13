@@ -171,7 +171,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
     } else {
       Alert.alert(
         `Xác nhận`,
-        `Bạn có chắc tạm ẩn hay tạm hết hàng cho ${food.name}?`,
+        `Bạn có chắc tạm ẩn hay tạm hết hàng hôm nay cho ${food.name}?`,
         [
           {
             text: "Tạm hết hàng",
@@ -210,12 +210,20 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
                 // router.replace("/menu/option-group/link");
               } catch (error: any) {
                 setTmpCategories(oldTmpCategories);
-                if (error.response && error.response.status === 500) {
-                  Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
+                if (
+                  error.response &&
+                  error.response.status &&
+                  Number(error.response.status) >= 500
+                ) {
+                  Alert.alert(
+                    "Oops",
+                    "Yêu cầu bị gián đoạn, vui lòng thử lại!"
+                  );
                 } else
                   Alert.alert(
-                    "Xảy ra lỗi",
-                    error?.response?.data?.error?.message || "Vui lòng thử lại!"
+                    "Oops",
+                    error?.response?.data?.error?.message ||
+                      "Yêu cầu bị từ chối, vui lòng thử lại!"
                   );
               } finally {
                 setStatusingIdList(
