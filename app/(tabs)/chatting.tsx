@@ -1,8 +1,8 @@
-import Chats from "@/components/realtime/Chats";
+import Chats2 from "@/components/realtime/Chats2";
 import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
 import { useFocusEffect } from "expo-router";
 import React from "react";
-import { SafeAreaView, Text, View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 
 const Chatting = () => {
   const globalHeaderPage = useGlobalHeaderPage();
@@ -18,7 +18,7 @@ const Chatting = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View className="pt-2 bg-white flex-1">
-        <Chats />
+        <Chats2 />
       </View>
     </SafeAreaView>
   );

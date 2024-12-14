@@ -4,12 +4,12 @@ import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
 import { OrderChannelInfo, SocketChannelInfo } from "@/types/models/ChatModel";
 import dayjs from "dayjs";
+import { router, useFocusEffect } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-paper";
 import apiClient from "../../services/api-services/api-client";
 import { FetchOnlyListResponse } from "../../types/responses/FetchResponse";
-import { router, useFocusEffect } from "expo-router";
 const formatRecentDate = (createdDate: string): string => {
   const date = dayjs(createdDate);
   const now = dayjs();
@@ -35,7 +35,7 @@ const Chats = () => {
   );
   const globalAuthState = useGlobalAuthState();
   const authId = globalAuthState.authDTO?.id || 0;
-
+ 
   const orderChannelInfosFetcher = useFetchWithRQWithFetchFunc(
     ["order/chat-info"],
     async (): Promise<FetchOnlyListResponse<OrderChannelInfo>> =>
@@ -73,8 +73,8 @@ const Chats = () => {
   };
   useEffect(() => {
     if (socket) {
-      socket.on("getListChannel", (channels: SocketChannelInfo[]) => {
-        console.log("Changing....: ", orderChannelList);
+      socket.on("getListChannel", (channels: any) => {
+        console.log("Changing....: ", channels);
         setOrderChannelList(
           [...channels].sort((a: SocketChannelInfo, b: SocketChannelInfo) => {
             return (
@@ -89,7 +89,10 @@ const Chats = () => {
     React.useCallback(() => {
       if (socket) {
         orderChannelInfosFetcher.refetch();
-        socket.emit("regisListChannel", true);
+        socket.emit("regisListChannel",{
+          pageState: null,
+          pageSize: 5
+        });
       }
       // dispatch(globalSlice.actions.setCurrentScreen("chatList"));
       // return () => {
@@ -105,7 +108,7 @@ const Chats = () => {
           key={channel.id}
           onPress={() => {
             // console.log("HEllo");
-            // router.push(`/chats/${channel.id}`);
+            router.push(`/chats/${channel.id}`);
           }}
           className={`p-3 px-4 bg-white border-b-[1px] border-gray-200 flex-row rounded-lg`}
           style={{
@@ -123,11 +126,10 @@ const Chats = () => {
             }}
           />
           <View className="ml-3 gap-y-1">
-            <Text className="font-medium">{`MS-${channel.id} | ${
-              getChannelInfo(channel.id)?.customer
+            <Text className="font-medium">{`MS-${channel.id} | ${getChannelInfo(channel.id)?.customer
                 ? getChannelInfo(channel.id)?.customer?.fullName
                 : ""
-            }`}</Text>
+              }`}</Text>
             <View className="w-72 flex-row items-center justify-between text-[11px]">
               <View className="flex-1">
                 <Text

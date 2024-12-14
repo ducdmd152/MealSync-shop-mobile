@@ -20,10 +20,10 @@ import Toast from "react-native-toast-message";
 import { ToastProvider } from "react-native-toast-notifications";
 import { io } from "socket.io-client";
 // Initialize the timezone plugins
+import Mapbox from "@rnmapbox/maps";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import Mapbox from "@rnmapbox/maps";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 if (Mapbox) {
@@ -165,13 +165,13 @@ export default function RootLayout() {
       }
 
       // Connect to the server with JWT authentication
-      const newSocket = io("http://socketio.mealsync.org/", {
+      const newSocket = io("https://socketio.1wolfalone1.com/", {
         auth: {
           token: token,
         },
         transports: ["websocket", "polling"],
       });
-
+      newSocket.emit("regisGetNotRead", {})
       globalSocketState.setSocket(newSocket);
 
       // Listen for notifications from the server
@@ -217,7 +217,7 @@ export default function RootLayout() {
   useEffect(() => {
     // Function to initialize socket connection with token from AsyncStorage
 
-    // initializeSocket();
+    initializeSocket();
 
     // Cleanup function to disconnect the socket on unmount
     return () => {

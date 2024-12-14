@@ -1,19 +1,23 @@
-import { View, Text, Image, Touchable, TouchableOpacity } from "react-native";
-import React, { useEffect } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import { images } from "@/constants";
-import { router } from "expo-router";
+import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
 import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
 import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
-import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
-import FetchResponse, {
+import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
+import apiClient from "@/services/api-services/api-client";
+import {
   FetchValueResponse,
 } from "@/types/responses/FetchResponse";
-import apiClient from "@/services/api-services/api-client";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React, { useEffect } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 const TabHeader = () => {
   const globalHeaderPage = useGlobalHeaderPage();
   const globalNotiState = useGlobalNotiState();
+  const { socket } = useGlobalSocketState();
+
+  const [notRead, setNotRead] = React.useState(0);
   const numberOfUnreaded = useFetchWithRQWithFetchFunc(
     ["shop-owner-staff/notification/total-unread"],
     async (): Promise<FetchValueResponse<{ totalUnerad: number }>> =>
@@ -25,6 +29,15 @@ const TabHeader = () => {
   useEffect(() => {
     if (globalNotiState.toggleChangingFlag) numberOfUnreaded.refetch();
   }, [globalNotiState.toggleChangingFlag]);
+  useEffect(() => {
+    if (socket) {
+
+      socket.on("getCountNotRead", (msg) => {
+        console.log(msg, "not read")
+        setNotRead(msg);
+      });
+    }
+  }, [socket]);
   return (
     <View className="w-full h-[64px] px-4 bg-white flex-row justify-between border-b-[0.7px] border-gray-300 overflow-hidden">
       <View className="flex-row justify-center items-center">
@@ -86,17 +99,20 @@ const TabHeader = () => {
             size={32}
             color="#DF4830"
           />
-          {!globalHeaderPage.isChattingFocusing &&
-            numberOfUnreaded.data &&
-            numberOfUnreaded.data?.value.totalUnerad > 0 && (
+
+          {
+            notRead > 0 && (
               <View className="items-center justify-center bg-secondary h-[24px] w-[24px] rounded-full absolute top-[-8] right-[-8]">
                 <Text className="text-[9px] font-medium">
-                  {numberOfUnreaded.data.value.totalUnerad < 10
-                    ? numberOfUnreaded.data.value.totalUnerad.toString()
-                    : "9+"}
+                  {notRead == 0 ? ("") : (notRead < 10
+                    ? notRead
+                    : "9+")}
                 </Text>
               </View>
-            )}
+
+            )
+          }
+
         </TouchableOpacity>
       </View>
     </View>

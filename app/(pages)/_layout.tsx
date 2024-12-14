@@ -1,7 +1,6 @@
-import { View, Text } from "react-native";
-import React from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import React from "react";
 
 const PageLayout = () => {
   return (
@@ -117,7 +116,12 @@ const PageLayout = () => {
           name="map/index"
           options={{ headerTitle: "Chọn địa chỉ" }}
         />
-        <Stack.Screen name="chats/chatbox" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="chats/index"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
       <StatusBar backgroundColor="#161622" style="light" />
     </>

@@ -2,19 +2,18 @@ import { Tabs, useFocusEffect, useNavigation } from "expo-router";
 import React, { useEffect } from "react";
 
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/themes/useColorScheme";
 import TabHeader from "@/components/navigation/TabHeader";
-import { SafeAreaView } from "react-native-safe-area-context";
 import useFetchWithRQWithFetchFunc from "@/hooks/fetching/useFetchWithRQWithFetchFunc";
+import { useColorScheme } from "@/hooks/themes/useColorScheme";
+import apiClient from "@/services/api-services/api-client";
 import { endpoints } from "@/services/api-services/api-service-instances";
-import { FetchValueResponse } from "@/types/responses/FetchResponse";
+import sessionService from "@/services/session-service";
 import {
   ShopDeliveryStaffModel,
   ShopDeliveryStaffStatus,
 } from "@/types/models/StaffInfoModel";
-import apiClient from "@/services/api-services/api-client";
-import sessionService from "@/services/session-service";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function DeliveryStaffLayout() {
   const colorScheme = useColorScheme();
