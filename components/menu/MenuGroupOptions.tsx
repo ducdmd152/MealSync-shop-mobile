@@ -30,10 +30,10 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
   const { notFoundInfo, setNotFoundInfo } = usePathState();
   const [refreshing, setRefreshing] = useState(false);
   const setOptionGroupModel = useModelState(
-    (state) => state.setOptionGroupModel,
+    (state) => state.setOptionGroupModel
   );
   const [tmpOptionGroups, setTmpOptionGroups] = useState<OptionGroupModel[]>(
-    [],
+    []
   );
   const [statusingIdList, setStatusingIdList] = useState<number[]>([]);
 
@@ -57,7 +57,7 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
           },
         })
         .then((response) => response.data),
-    [searchQuery],
+    [searchQuery]
   );
   useEffect(() => {
     setTmpOptionGroups(optionGroups?.value?.items || []);
@@ -77,15 +77,15 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                 setStatusingIdList([...statusingIdList, group.id]);
                 setTmpOptionGroups(
                   tmpOptionGroups.map((item) =>
-                    item.id == group.id ? { ...item, status } : item,
-                  ),
+                    item.id == group.id ? { ...item, status } : item
+                  )
                 );
                 try {
-                  const response = await apiClient.post(
+                  const response = await apiClient.put(
                     "shop-owner/option-group/" + group.id + "/status",
                     {
                       status,
-                    },
+                    }
                   );
 
                   toast.show(`Đã bật hiển thị ${group.title}!`, {
@@ -103,11 +103,11 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                     Alert.alert(
                       "Xảy ra lỗi",
                       error?.response?.data?.error?.message ||
-                        "Vui lòng thử lại!",
+                        "Vui lòng thử lại!"
                     );
                 } finally {
                   setStatusingIdList(
-                    statusingIdList.filter((id) => id != group.id),
+                    statusingIdList.filter((id) => id != group.id)
                   );
                 }
               },
@@ -128,18 +128,18 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                 setStatusingIdList([...statusingIdList, group.id]);
                 setTmpOptionGroups(
                   tmpOptionGroups.map((item) =>
-                    item.id == group.id ? { ...item, status } : item,
-                  ),
+                    item.id == group.id ? { ...item, status } : item
+                  )
                 );
                 try {
-                  const response = await apiClient.post(
+                  const response = await apiClient.put(
                     "shop-owner/option-group/" + group.id + "/status",
                     {
                       status,
-                    },
+                    }
                   );
 
-                  toast.show(`Đã bật hiển thị ${group.title}!`, {
+                  toast.show(`Đã tắt hiển thị ${group.title}!`, {
                     type: "success",
                     duration: 2000,
                   });
@@ -147,29 +147,29 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                   // router.replace("/menu/option-group/link");
                 } catch (error: any) {
                   setTmpOptionGroups(oldTmpOptionGroups);
-                  // console.log(error);
+                  // console.log("error.response: ", error.response.data);
                   if (error.response && error.response.status === 500) {
                     Alert.alert("Xảy ra lỗi", "Vui lòng thử lại sau!");
                   } else
                     Alert.alert(
                       "Xảy ra lỗi",
                       error?.response?.data?.error?.message ||
-                        "Vui lòng thử lại!",
+                        "Vui lòng thử lại!"
                     );
                 } finally {
                   setStatusingIdList(
-                    statusingIdList.filter((id) => id != group.id),
+                    statusingIdList.filter((id) => id != group.id)
                   );
                 }
               },
             },
-          ],
+          ]
     );
   };
   useFocusEffect(
     React.useCallback(() => {
       optionGroupsRefetch();
-    }, []),
+    }, [])
   );
 
   return (
@@ -279,7 +279,7 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                           setNotFoundInfo(
                             notFoundInfo.message,
                             "/menu",
-                            notFoundInfo.linkDesc,
+                            notFoundInfo.linkDesc
                           );
                           try {
                             const response = await apiClient.get<
@@ -300,7 +300,7 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                               Alert.alert(
                                 "Oops!",
                                 error?.response?.data?.error?.message ||
-                                  "Hệ thống đang bảo trì, vui lòng thử lại sau!",
+                                  "Hệ thống đang bảo trì, vui lòng thử lại sau!"
                               );
                             }
                           }
@@ -316,7 +316,7 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                           setNotFoundInfo(
                             notFoundInfo.message,
                             "/menu",
-                            notFoundInfo.linkDesc,
+                            notFoundInfo.linkDesc
                           );
                           try {
                             const response = await apiClient.get<
@@ -337,7 +337,7 @@ const MenuGroupOptions = ({ beforeGo }: { beforeGo: () => void }) => {
                               Alert.alert(
                                 "Oops!",
                                 error?.response?.data?.error?.message ||
-                                  "Hệ thống đang bảo trì, vui lòng thử lại sau!",
+                                  "Hệ thống đang bảo trì, vui lòng thử lại sau!"
                               );
                             }
                           }
