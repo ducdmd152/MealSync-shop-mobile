@@ -35,7 +35,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-toast-notifications";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
 import useGPKGState from "@/hooks/states/useGPKGState";
-import { DeliveryPackageGroupDetailsModel } from "@/types/models/DeliveryPackageModel";
+import {
+  DeliveryPackageEstimateInfoModel,
+  DeliveryPackageGroupDetailsModel,
+} from "@/types/models/DeliveryPackageModel";
 import { ActivityIndicator, TouchableRipple } from "react-native-paper";
 import CompleteDeliveryConfirmModal from "@/components/target-modals/CompleteDeliveryConfirmModal";
 import useGlobalCompleteDeliveryConfirm from "@/hooks/states/useGlobalCompleteDeliveryConfirm";
@@ -62,6 +65,33 @@ const DeliveryPackageGroupUpdate = () => {
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [isOpenSuggestAssign, setIsOpenSuggestAssign] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentDeliveryPersonId, setCurrentDeliveryPersonId] = useState(0);
+  const [personsList, setPersonsList] = useState<FrameStaffInfoModel[]>([]);
+  const [ordersOfTargetPerson, setOrderOfTargetPerson] = useState<
+    OrderFetchModel[]
+  >([]);
+  const packageDeliveryEstimateFetcher = useFetchWithRQWithFetchFunc(
+    ["shop-owner-staff/delivery-package/calculate-time-suggest"],
+    async (): Promise<FetchValueResponse<DeliveryPackageEstimateInfoModel>> =>
+      apiClient
+        .get(
+          "shop-owner-staff/delivery-package/calculate-time-suggest" +
+            `?${ordersOfTargetPerson
+              .map((order) => `orderIds=${order.id}`)
+              .join("&")}`,
+          {
+            params: {
+              intendedReceiveDate: query.intendedReceiveDate,
+              startTime: query.startTime,
+              endTime: query.endTime,
+            },
+          }
+        )
+        .then((response) => response.data),
+    [ordersOfTargetPerson, query]
+  );
+
   const [gPKGDetails, setGPKGDetails] =
     useState<DeliveryPackageGroupDetailsModel>(
       {} as DeliveryPackageGroupDetailsModel
@@ -134,6 +164,13 @@ const DeliveryPackageGroupUpdate = () => {
   };
   const checkIsLoading = () =>
     isDetailsLoading || deliveryPersonFetchResult.isFetching;
+  useEffect(() => {
+    setOrderOfTargetPerson(getAssignedOrdersOf(currentDeliveryPersonId));
+  }, [
+    currentDeliveryPersonId,
+    gpkgCreateRequest,
+    gPKGDetails.deliveryPackageGroups,
+  ]);
   useFocusEffect(
     React.useCallback(() => {
       setIsEditable(!utilService.isCurrentTimeGreaterThanEndTime(query));
@@ -150,10 +187,7 @@ const DeliveryPackageGroupUpdate = () => {
       router.back();
     }
   }, [isEditable]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [currentDeliveryPersonId, setCurrentDeliveryPersonId] = useState(0);
-  const [personsList, setPersonsList] = useState<FrameStaffInfoModel[]>([]);
   const sortPersonsList = (
     personsList: FrameStaffInfoModel[]
   ): FrameStaffInfoModel[] => {
@@ -361,13 +395,34 @@ const DeliveryPackageGroupUpdate = () => {
           </View>
         </ScrollView>
       </View>
+      {ordersOfTargetPerson.length > 0 &&
+        packageDeliveryEstimateFetcher.isSuccess && (
+          <View className="mt-[-2px] mb-[4px]">
+            <Text className="italic text-orange-600 text-[10px]">
+              Hãy xuất phát trước{" "}
+              {utilService.formatTime(
+                packageDeliveryEstimateFetcher.data?.value
+                  .suggestStartTimeDelivery || 0
+              )}{" "}
+              để hoàn tất gói hàng đúng giờ.
+            </Text>
+            <Text className="italic text-orange-600 text-[10px]">
+              Gói giao này mất khoảng{" "}
+              {
+                packageDeliveryEstimateFetcher.data?.value
+                  .totalMinutesHandleDelivery
+              }{" "}
+              phút để hoàn tất (bao gồm việc di chuyển)
+            </Text>
+          </View>
+        )}
     </View>
   );
   const currentPersonArea = (
     <View className="border-2 border-gray-300 p-2 flex-1">
       <ScrollView>
         <View className="gap-y-[4px]">
-          {getAssignedOrdersOf(currentDeliveryPersonId).map((order) => (
+          {ordersOfTargetPerson.map((order) => (
             <TouchableOpacity
               key={order.id}
               onPress={() => {

@@ -40,7 +40,7 @@ const validationSchema = Yup.object().shape({
   price: Yup.number().min(1, "Giá phải lớn hơn 0").required("Giá là bắt buộc"),
   platformCategoryId: Yup.number().min(0, "Danh mục hệ thống là bắt buộc"),
   shopCategoryId: Yup.number().min(0, "Danh mục cửa hàng là bắt buộc"),
-  foodPackingUnit: Yup.number().min(0, "Khối lượng quy đổi là bắt buộc"),
+  foodPackingUnitId: Yup.number().min(0, "Khối lượng quy đổi là bắt buộc"),
 });
 const formatPrice = (value: number) => {
   // console.log(
@@ -100,18 +100,21 @@ const FoodCreate = () => {
   );
 
   useEffect(() => {
-    formik.setFieldValue("shopCategoryId", Number(selectedShopCategory));
+    formik.setFieldValue("shopCategoryId", Number(selectedShopCategory) || -1);
     // console.log(formik.values);
   }, [selectedShopCategory]);
   useEffect(() => {
     formik.setFieldValue(
       "platformCategoryId",
-      Number(selectedPlatformCategory)
+      Number(selectedPlatformCategory) || -1
     );
     // console.log(formik.values);
   }, [selectedPlatformCategory]);
   useEffect(() => {
-    formik.setFieldValue("foodPackingUnitId", Number(selectedPackingUnitId));
+    formik.setFieldValue(
+      "foodPackingUnitId",
+      Number(selectedPackingUnitId) || -1
+    );
     console.log(formik.values);
   }, [selectedPackingUnitId]);
   const onToggleSwitch = () => setIsAvailable(!isAvailable);
@@ -259,7 +262,7 @@ const FoodCreate = () => {
           let imageUrl = "";
           if (imageService.isLocalImage(imageURI))
             imageUrl =
-              (await imageService.uploadPreviewImage(imageURI)) ||
+              (await imageService.uploadPreviewImage(imageURI, true)) ||
               CONSTANTS.url.noImageAvailable;
           else imageUrl = imageURI;
           setImageURI(imageUrl);
@@ -282,7 +285,7 @@ const FoodCreate = () => {
             "shop-owner/food/create",
             foodData
           );
-          console.log("RESPONSE : ", response);
+          // console.log("RESPONSE : ", response);
 
           // Handle successful response
           Alert.alert("Hoàn tất", "Món ăn đã được tạo thành công");
@@ -315,7 +318,7 @@ const FoodCreate = () => {
               onPress: () => {
                 setIsAvailable(false);
                 toReturn = false;
-                submit();
+                // submit();
               },
             },
           ],
@@ -350,7 +353,7 @@ const FoodCreate = () => {
       return 0;
     }
   );
-  console.log("Re-render: ", selectedOptionGroups);
+  // console.log("Re-render: ", selectedOptionGroups);
   return (
     <PageLayoutWrapper>
       <View className="p-4 bg-white">
@@ -363,9 +366,23 @@ const FoodCreate = () => {
             }}
             aspect={[1, 1]}
             uri={imageURI}
-            setUri={(uri: string) => {
+            setUri={async (uri: string) => {
+              const prevImage = imageURI;
               setImageURI(uri);
-              // console.log("uri: ", uri);
+              if (!imageService.isLocalImage(uri)) return;
+              try {
+                let imageUrl =
+                  (await imageService.uploadPreviewImage(uri, true)) ||
+                  CONSTANTS.url.noImageAvailable;
+                setImageURI(imageUrl);
+              } catch (error: any) {
+                setImageURI(prevImage);
+                Alert.alert(
+                  "Ảnh không hợp lệ",
+                  error?.response?.data?.error?.message ||
+                    "Xử lí bị gián đoạn, vui lòng thử lại!"
+                );
+              }
             }}
           />
           <Text className="italic text-gray-700 mt-2">
@@ -549,6 +566,7 @@ const FoodCreate = () => {
                 })) || []
               }
               save="key"
+              notFoundText="Chưa có vật đựng và khối lượng quy đổi nào"
               placeholder="Khối lượng quy đổi"
               searchPlaceholder="Tìm kiếm..."
             />
@@ -663,6 +681,7 @@ const FoodCreate = () => {
               placeholder="Lựa chọn khoảng thời gian phục vụ"
               onSelect={() => {}}
               search={false}
+              notFoundText="Chưa cài đặt khoảng thời gian hoạt động nào"
               label="Các khoảng thời gian đã chọn"
               dropdownShown={false}
               closeicon={
@@ -816,7 +835,7 @@ const FoodCreate = () => {
                 className="border border-gray-300 mt-1 px-3 p-2 pb-3 rounded text-[15px]"
                 value={categoryName}
                 onChangeText={(text) => {
-                  setCategoryName(text.trim());
+                  setCategoryName(text);
                 }}
                 placeholder="Nhập tên danh mục..."
                 placeholderTextColor="#888"

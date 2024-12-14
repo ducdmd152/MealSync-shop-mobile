@@ -63,14 +63,12 @@ const DeliveryPackage = () => {
     refetch: operatingSlotsRefetch,
     isRefetching: isOperatingSlotsRefetching,
   } = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST.concat([
-      "delivery-package-page",
-    ]),
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST,
     (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
         .then((response) => response.data),
-    [],
+    []
   );
   const [query, setQuery] = useState<DeliveryPackageFetchQuery>({
     status: [0],
@@ -95,7 +93,7 @@ const DeliveryPackage = () => {
     ) {
       globalTimeRangeState.setMinTime(operatingSlots.value[0].startTime);
       globalTimeRangeState.setMaxTime(
-        operatingSlots.value[operatingSlots.value.length - 1].endTime,
+        operatingSlots.value[operatingSlots.value.length - 1].endTime
       );
     }
   }, [operatingSlots, isOperatingSlotsLoading, isOperatingSlotsRefetching]);
@@ -104,7 +102,7 @@ const DeliveryPackage = () => {
     setQuery({
       ...query,
       intendedReceiveDate: dayjs(globalTimeRangeState.date).format(
-        "YYYY/MM/DD",
+        "YYYY/MM/DD"
       ),
       startTime: globalTimeRangeState.startTime,
       endTime: globalTimeRangeState.endTime,
@@ -113,10 +111,10 @@ const DeliveryPackage = () => {
 
   const [index, setIndex] = useState(0);
   const deliveryPackageIndex = usePathState(
-    (state) => state.deliveryPackageIndex,
+    (state) => state.deliveryPackageIndex
   );
   const setDeliveryPackageIndex = usePathState(
-    (state) => state.setDeliveryPackageIndex,
+    (state) => state.setDeliveryPackageIndex
   );
   useEffect(() => {
     if (index != deliveryPackageIndex) setIndex(deliveryPackageIndex);
@@ -186,7 +184,7 @@ const DeliveryPackage = () => {
                       onChange={(params) => {
                         if (params.date) {
                           globalTimeRangeState.setDate(
-                            dayjs(params.date).toDate(),
+                            dayjs(params.date).toDate()
                           );
                         }
                         setDatePickerVisibility(false);

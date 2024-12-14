@@ -9,7 +9,7 @@ import sessionService from "@/services/session-service";
 import { NotiEntityTypes } from "@/types/models/ChatModel";
 import OrderDetailModel from "@/types/models/OrderDetailModel";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
-import { router, Stack, useFocusEffect } from "expo-router";
+import { router, Stack, useFocusEffect, useNavigation } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, Image, StyleSheet } from "react-native";
@@ -47,6 +47,7 @@ SplashScreen.preventAutoHideAsync();
 // };
 
 export default function RootLayout() {
+  const navigation = useNavigation();
   const [loaded, setLoaded] = useState(false);
   const colorScheme = useColorScheme();
   const [isCheckedAuth, setIsCheckedAuth] = useState(false);
@@ -114,9 +115,26 @@ export default function RootLayout() {
         return;
       }
       const roleId = await sessionService.getAuthRole();
+      const authDTO = await sessionService.getAuthDTO();
 
       globalAuthState.setToken(token);
       globalAuthState.setRoleId(roleId);
+      if (authDTO == null) {
+        // logout
+        sessionService.clear();
+        globalAuthState.clear();
+        if (globalSocketState.socket != null) {
+          globalSocketState.socket.disconnect();
+          globalSocketState.setSocket(null);
+        }
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "index" }],
+        });
+      } else {
+        console.log(authDTO);
+        globalAuthState.setAuthDTO(authDTO);
+      }
       if (roleId == 2) {
         setIsCheckedAuth(true);
         // router.replace("/home");
@@ -178,7 +196,9 @@ export default function RootLayout() {
       newSocket.on("notification", (noti: any) => {
         try {
           globalNotiState.setToggleChangingFlag(false);
-          globalNotiState.setToggleChangingFlag(true);
+          setTimeout(() => {
+            globalNotiState.setToggleChangingFlag(true);
+          }, 500);
           Toast.show({
             type: "info",
             text1: `${noti.Title}${
@@ -196,7 +216,7 @@ export default function RootLayout() {
             },
           });
         } catch (err) {
-          console.error("Failed to show toastable:", err);
+          // console.error("Failed to show toastable:", err);
         }
       });
 

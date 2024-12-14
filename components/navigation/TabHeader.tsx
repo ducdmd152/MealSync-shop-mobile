@@ -4,9 +4,7 @@ import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
 import useGlobalNotiState from "@/hooks/states/useGlobalNotiState";
 import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
 import apiClient from "@/services/api-services/api-client";
-import {
-  FetchValueResponse,
-} from "@/types/responses/FetchResponse";
+import { FetchValueResponse } from "@/types/responses/FetchResponse";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
@@ -24,20 +22,31 @@ const TabHeader = () => {
       apiClient
         .get("shop-owner-staff/notification/total-unread")
         .then((response) => response.data),
-    [globalHeaderPage.isNotiPageFocusing],
+    [globalHeaderPage.isNotiPageFocusing]
   );
   useEffect(() => {
-    if (globalNotiState.toggleChangingFlag) numberOfUnreaded.refetch();
+    // console.log("number of noti refetch: ", globalNotiState.toggleChangingFlag);
+    if (globalNotiState.toggleChangingFlag) {
+      numberOfUnreaded.refetch();
+    }
   }, [globalNotiState.toggleChangingFlag]);
   useEffect(() => {
     if (socket) {
-
       socket.on("getCountNotRead", (msg) => {
-        console.log(msg, "not read")
+        console.log(msg, "not read");
         setNotRead(msg);
       });
     }
   }, [socket]);
+  // useEffect(() => {
+  //   if (numberOfUnreaded.isFetching)
+  //     console.log("numberOfUnreaded.isFetching....");
+  //   else
+  //     console.log(
+  //       "numberOfUnreaded.isFetched: ",
+  //       numberOfUnreaded.data?.value.totalUnerad
+  //     );
+  // }, [numberOfUnreaded.isFetching]);
   return (
     <View className="w-full h-[64px] px-4 bg-white flex-row justify-between border-b-[0.7px] border-gray-300 overflow-hidden">
       <View className="flex-row justify-center items-center">
@@ -100,19 +109,13 @@ const TabHeader = () => {
             color="#DF4830"
           />
 
-          {
-            notRead > 0 && (
-              <View className="items-center justify-center bg-secondary h-[24px] w-[24px] rounded-full absolute top-[-8] right-[-8]">
-                <Text className="text-[9px] font-medium">
-                  {notRead == 0 ? ("") : (notRead < 10
-                    ? notRead
-                    : "9+")}
-                </Text>
-              </View>
-
-            )
-          }
-
+          {notRead > 0 && (
+            <View className="items-center justify-center bg-secondary h-[24px] w-[24px] rounded-full absolute top-[-8] right-[-8]">
+              <Text className="text-[9px] font-medium">
+                {notRead == 0 ? "" : notRead < 10 ? notRead : "9+"}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
     </View>

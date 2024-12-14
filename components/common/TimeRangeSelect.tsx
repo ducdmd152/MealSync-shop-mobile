@@ -170,7 +170,7 @@ const TimeRangeSelect = ({ containerStyleClasses = "", header }: Props) => {
       setTimeout(() => {
         setIsRefreshing(false);
       }, 100);
-    }, [operatingSlots])
+    }, [])
   );
 
   //   useEffect(() => {

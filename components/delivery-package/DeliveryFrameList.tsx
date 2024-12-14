@@ -27,6 +27,7 @@ import {
 } from "react-native";
 import CustomButton from "../custom/CustomButton";
 import DeliveryFrameDetail from "./DeliveryFrameDetail";
+import { OperatingSlotModel } from "@/types/models/OperatingSlotModel";
 
 const detailBottomHeight = Dimensions.get("window").height - 100;
 
@@ -38,11 +39,11 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
   const [detailBottomSheetDisplay, setDetailBottomSheetDisplay] =
     useState(true);
   const [detailQuery, setDetailQuery] = useState<FrameDateTime>(
-    {} as FrameDateTime,
+    {} as FrameDateTime
   );
   const [selectedDetail, setSelectedDetail] =
     useState<DeliveryPackageGroupDetailsModel>(
-      {} as DeliveryPackageGroupDetailsModel,
+      {} as DeliveryPackageGroupDetailsModel
     );
   const gpkgFetchResult = useFetchWithRQWithFetchFunc(
     REACT_QUERY_CACHE_KEYS.DELIVERY_PACKAGE_GROUP_LIST.concat([
@@ -58,21 +59,44 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
             startTime: globalTimeRangeFilter.startTime,
             endTime: globalTimeRangeFilter.endTime,
             intendedReceiveDate: dayjs(globalTimeRangeFilter.date).format(
-              "YYYY/MM/DD",
+              "YYYY/MM/DD"
             ),
           },
         })
         .then((response) => response.data),
-    [],
+    []
+  );
+  const {
+    data: operatingSlots,
+    isLoading: isOperatingSlotsLoading,
+    error: operatingSlotsError,
+    refetch: operatingSlotsRefetch,
+    isRefetching: isOperatingSlotsRefetching,
+  } = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST,
+    (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
+      apiClient
+        .get(endpoints.OPERATING_SLOT_LIST)
+        .then((response) => response.data),
+    []
+  );
+  const operatingSlotsFetcher = useFetchWithRQWithFetchFunc(
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST,
+    (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
+      apiClient
+        .get(endpoints.OPERATING_SLOT_LIST)
+        .then((response) => response.data),
+    []
   );
   useFocusEffect(
     useCallback(() => {
       gpkgFetchResult.refetch();
       isFocused.current = true;
+      operatingSlotsFetcher.refetch();
       return () => {
         isFocused.current = false;
       };
-    }, []),
+    }, [])
   );
   useEffect(() => {
     if (isFocused.current) {
@@ -145,7 +169,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                     startTime: gPKG.startTime,
                     endTime: gPKG.endTime,
                     intendedReceiveDate: utilService.formatDateTimeToYyyyMmDd(
-                      gPKG.intendedReceiveDate,
+                      gPKG.intendedReceiveDate
                     ),
                   });
                   setIsDetailBottomSheetVisible(true);
@@ -190,7 +214,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                       - {pkg.total} đơn (
                       {pkg.dormitories
                         .map(
-                          (dorm) => `${dorm.total}${dorm.id == 1 ? "A" : "B"}`,
+                          (dorm) => `${dorm.total}${dorm.id == 1 ? "A" : "B"}`
                         )
                         .join(", ")}
                       ) - Hoàn tất {pkg.successful + pkg.failed}/{pkg.total}
@@ -230,7 +254,7 @@ const DeliveryFrameList = ({ beforeGo }: { beforeGo: () => void }) => {
                   setDetailBottomSheetDisplay(false);
                   Alert.alert(
                     `Khung phân công vừa chọn không tồn tại.`,
-                    "Vui lòng thử lại!",
+                    "Vui lòng thử lại!"
                   );
                   gpkgFetchResult.refetch();
                   setTimeout(() => {

@@ -394,7 +394,7 @@ const ShopProfileChange = ({ scrollViewRef }: { scrollViewRef: any }) => {
         {isEditMode ? (
           <PreviewImageUpload
             className="flex-row w-full justify-center items-center overflow-hidden ml-[2px] border-2 rounded-lg border-gray-300 mt-1"
-            aspect={[1, 1 / (16 / 9)]}
+            aspect={[16, 9]}
             uri={model.bannerUrl || "string"}
             setUri={(uri: string) => {
               setModel({ ...model, bannerUrl: uri });

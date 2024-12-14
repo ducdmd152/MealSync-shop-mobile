@@ -499,6 +499,15 @@ const OrderDetail = ({
                   {formatPrice(order.totalPrice - order.totalPromotion)} ₫
                 </Text>
               </View>
+              {order.isCustomerPaid ? (
+                <Text className="text-right text-md font-bold text-green-500 mb-1">
+                  Đã thanh toán
+                </Text>
+              ) : (
+                <Text className="text-right text-md font-bold text-gray-800 mb-1">
+                  Chưa thanh toán
+                </Text>
+              )}
             </View>
 
             {order.shopDeliveryStaff && (

@@ -6,7 +6,7 @@ import imageService from "@/services/image-service";
 import { ImageEvidenceModel } from "@/types/models/DeliveryInfoModel";
 import dayjs from "dayjs";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -112,11 +112,15 @@ const EvidencePreviewMultiImagesUpload = ({
       Alert.alert("Oops", `Vui lòng thử lại.`);
     }
   };
-  // console.log("uris: ", uris);
+
+  useEffect(() => {
+    setIsImageHandling(
+      uris.filter((uri) => imageService.isLocalImage(uri.imageUrl)).length > 0
+    );
+  }, [uris]);
+
   const addToList = async (uri: string) => {
     if (uris.map((item) => item.imageUrl).includes(uri)) return;
-    setIsImageHandling(true);
-    console.log("setIsImageHandling(true);");
 
     const beforeAnyUpdate = [...uris];
     setUris(
@@ -135,14 +139,22 @@ const EvidencePreviewMultiImagesUpload = ({
             { imageUrl: url, takePictureDateTime: new Date().toISOString() },
           ])
       );
-      console.log("upload hinh ok setIsImageHandling(false);");
-      setIsImageHandling(false);
     } catch (error: any) {
       // console.log(error?.response?.data);
-      Alert.alert("Oops!", "Xử lí hình ảnh lỗi, vui lòng thử lại!");
       setUris(beforeAnyUpdate);
       setImageHandleError(true);
-      setIsImageHandling(false);
+      if (
+        error.response &&
+        error.response.status &&
+        Number(error.response.status) >= 500
+      ) {
+        Alert.alert("Oops", "Xử lí hình ảnh lỗi, vui lòng thử lại!");
+      } else
+        Alert.alert(
+          "Oops",
+          error?.response?.data?.error?.message ||
+            "Xử lí hình ảnh lỗi, vui lòng thử lại!"
+        );
     }
   };
 

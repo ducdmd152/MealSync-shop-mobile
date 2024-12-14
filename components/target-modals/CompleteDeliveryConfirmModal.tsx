@@ -425,21 +425,25 @@ const CompleteDeliveryConfirmModal = ({
         title={`Giao thành công`}
         handlePress={() => {
           if (!actionInTimeValidation()) return;
-          Alert.alert("Xác nhận giao thành công", "", [
-            {
-              text: "Xác nhận bằng QR Code",
-              onPress: () => globalCompleteDeliveryConfirm.setStep(1),
-            },
-            {
-              text: "Xác nhận bằng hình ảnh",
-              onPress: () => {
-                setIsSuccessSubmitting(false);
-                setSuccessImageUrls([]);
-                globalCompleteDeliveryConfirm.setStep(3);
+          Alert.alert(
+            "Xác nhận giao thành công",
+            "",
+            [
+              {
+                text: "Xác nhận bằng QR Code",
+                onPress: () => globalCompleteDeliveryConfirm.setStep(1),
               },
-            },
-            { text: "Hủy", style: "cancel" },
-          ]);
+              {
+                text: "Xác nhận bằng hình ảnh",
+                onPress: () => {
+                  setIsSuccessSubmitting(false);
+                  setSuccessImageUrls([]);
+                  globalCompleteDeliveryConfirm.setStep(3);
+                },
+              },
+              { text: "Hủy" },
+            ].reverse()
+          );
         }}
         containerStyleClasses="w-full mt-2 h-[42px]  px-2 bg-transparent border-2 border-gray-200 bg-[#4ade80] border-[#86efac] font-semibold z-10"
         textStyleClasses="text-[14px] text-center text-gray-900 ml-1 text-white text-gray-800"
@@ -635,6 +639,15 @@ const CompleteDeliveryConfirmModal = ({
                   </Text>
                 </TouchableOpacity>
               </View>
+              {order.isCustomerPaid ? (
+                <Text className="text-md font-bold text-green-500 mb-1">
+                  Đã thanh toán
+                </Text>
+              ) : (
+                <Text className="text-md font-bold text-gray-800 mb-1">
+                  Chưa thanh toán
+                </Text>
+              )}
             </View>
             {/* <View className="mt-2 border-gray-300 border-[0.4px]" /> */}
             <View className="py-2 ">

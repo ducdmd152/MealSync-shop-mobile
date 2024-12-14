@@ -81,7 +81,7 @@ interface OrderFetchQuery extends PagingRequestQuery {
   endTime: number;
   intendedReceiveDate: string;
 }
-const INFINITE_LOAD_SIZE = 10;
+const INFINITE_LOAD_SIZE = 25;
 const Order = () => {
   // (async () => {
   //   console.log(await sessionService.getAuthToken());
@@ -119,7 +119,7 @@ const Order = () => {
     refetch: operatingSlotsRefetch,
     isRefetching: isOperatingSlotsRefetching,
   } = useFetchWithRQWithFetchFunc(
-    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST.concat(["order-list-page"]),
+    REACT_QUERY_CACHE_KEYS.OPERATING_SLOT_LIST,
     (): Promise<FetchOnlyListResponse<OperatingSlotModel>> =>
       apiClient
         .get(endpoints.OPERATING_SLOT_LIST)
@@ -177,10 +177,10 @@ const Order = () => {
 
   useEffect(() => {
     setCacheOrderList(orderFetchData?.value.items || []);
-    console.log(
-      "ordersFetcher.data?.value.items.length: ",
-      ordersFetcher.data?.value.items.length
-    );
+    // console.log(
+    //   "ordersFetcher.data?.value.items.length: ",
+    //   ordersFetcher.data?.value.items.length
+    // );
   }, [orderFetchData?.value.items]);
   useEffect(() => {
     if (

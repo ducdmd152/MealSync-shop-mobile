@@ -25,7 +25,7 @@ import OrderDetailModel from "@/types/models/OrderDetailModel";
 import { ActivityIndicator } from "react-native";
 import { NotiModel, NotiEntityTypes } from "@/types/models/ChatModel";
 
-const INFINITE_LOAD_SIZE = 10;
+const INFINITE_LOAD_SIZE = 25;
 const Notifications = () => {
   const globalHeaderPage = useGlobalHeaderPage();
   const globalNotiState = useGlobalNotiState();
@@ -44,7 +44,7 @@ const Notifications = () => {
           },
         })
         .then((response) => response.data),
-    [infiniteSize]
+    [infiniteSize, globalHeaderPage.isNotiPageFocusing]
   );
   const markAsReadAll = async () => {
     try {
@@ -55,26 +55,18 @@ const Notifications = () => {
     } finally {
     }
   };
-  useEffect(() => {
-    if (globalHeaderPage.isNotiPageFocusing) setInfitieSize(INFINITE_LOAD_SIZE);
-    else markAsReadAll();
-    // console.log(
-    //   "globalHeaderPage.isChattingFocusing: ",
-    //   globalHeaderPage.isNotiPageFocusing
-    // );
-  }, [globalHeaderPage.isNotiPageFocusing]);
+
   useEffect(() => {
     if (globalHeaderPage.isNotiPageFocusing) notiFetcher.refetch();
   }, [globalNotiState.toggleChangingFlag]);
 
   useEffect(() => {
-    if (notiFetcher.isFetched) {
-      setIsRendering(true);
+    if (!notiFetcher.isFetching) {
       setTimeout(() => {
         setIsRendering(false);
-      }, 1500);
+      }, 2000);
     }
-  }, [notiFetcher.isFetched]);
+  }, [notiFetcher.isFetching]);
   useEffect(() => {
     if (notiFetcher.data?.value.items)
       setNotifications(
@@ -83,11 +75,14 @@ const Notifications = () => {
           return already || item;
         })
       );
-  }, [notiFetcher.data?.value.items]);
+  }, [notiFetcher.isFetching]);
+
   useFocusEffect(
     React.useCallback(() => {
       globalHeaderPage.setIsNotiPageFocusing(true);
+      setInfitieSize(INFINITE_LOAD_SIZE);
       return () => {
+        markAsReadAll();
         setNotifications(
           notifications.map((item) => ({ ...item, isRead: true }))
         );
@@ -165,6 +160,12 @@ const Notifications = () => {
     </TouchableOpacity>
   );
 
+  // console.log(
+  //   "Notifications: ",
+  //   notifications,
+  //   notiFetcher.data?.value.items,
+  //   INFINITE_LOAD_SIZE
+  // );
   return (
     <FlatList
       style={{ flexGrow: 1, backgroundColor: "white" }}
@@ -179,18 +180,26 @@ const Notifications = () => {
           (notiFetcher.data && !notiFetcher.data.value.hasNext)
         )
           return;
+        setIsRendering(true);
         setInfitieSize(infiniteSize + INFINITE_LOAD_SIZE);
       }}
       onEndReachedThreshold={0.5}
       ListFooterComponent={
         <View className="p-3">
           <ActivityIndicator
-            animating={notiFetcher.isFetching || isRendering}
+            animating={notiFetcher.data?.value.hasNext || false}
             color="#FCF450"
             size={40}
           />
         </View>
       }
+      // refreshControl={
+      //   <RefreshControl
+      //     tintColor={"#FCF450"}
+      //     onRefresh={() => {}}
+      //     refreshing={notiFetcher.isFetching}
+      //   />
+      // }
     />
   );
   return (

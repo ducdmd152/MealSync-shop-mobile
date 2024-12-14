@@ -49,7 +49,7 @@ const validationSchema = Yup.object().shape({
   price: Yup.number().min(1, "Giá phải lớn hơn 0").required("Giá là bắt buộc"),
   platformCategoryId: Yup.number().min(0, "Danh mục hệ thống là bắt buộc"),
   shopCategoryId: Yup.number().min(0, "Danh mục cửa hàng là bắt buộc"),
-  foodPackingUnit: Yup.number().min(0, "Khối lượng quy đổi là bắt buộc"),
+  foodPackingUnitId: Yup.number().min(0, "Khối lượng quy đổi là bắt buộc"),
 });
 const formatPrice = (value: number) => {
   // console.log(
@@ -132,18 +132,21 @@ const FoodUpdate = () => {
   }, [foodDetailModel]);
 
   useEffect(() => {
-    formik.setFieldValue("shopCategoryId", Number(selectedShopCategory));
+    formik.setFieldValue("shopCategoryId", Number(selectedShopCategory) || -1);
     console.log(formik.values);
   }, [selectedShopCategory]);
   useEffect(() => {
     formik.setFieldValue(
       "platformCategoryId",
-      Number(selectedPlatformCategory)
+      Number(selectedPlatformCategory) || -1
     );
     console.log(formik.values);
   }, [selectedPlatformCategory]);
   useEffect(() => {
-    formik.setFieldValue("foodPackingUnitId", Number(selectedPackingUnitId));
+    formik.setFieldValue(
+      "foodPackingUnitId",
+      Number(selectedPackingUnitId) || -1
+    );
     console.log(formik.values);
   }, [selectedPackingUnitId]);
 
@@ -295,7 +298,7 @@ const FoodUpdate = () => {
           let imageUrl = "";
           if (imageURI != foodDetailModel.imageUrl)
             imageUrl =
-              (await imageService.uploadPreviewImage(imageURI)) ||
+              (await imageService.uploadPreviewImage(imageURI, true)) ||
               CONSTANTS.url.noImageAvailable;
           else imageUrl = foodDetailModel.imageUrl;
           setImageURI(imageUrl);
@@ -353,7 +356,7 @@ const FoodUpdate = () => {
                 setStatus(2);
                 setIsSoldOut(false);
                 toReturn = false;
-                submit();
+                // submit();
               },
             },
           ],
@@ -443,9 +446,23 @@ const FoodUpdate = () => {
               }}
               aspect={[1, 1]}
               uri={imageURI}
-              setUri={(uri: string) => {
+              setUri={async (uri: string) => {
+                const prevImage = imageURI;
                 setImageURI(uri);
-                // console.log("uri: ", uri);
+                if (!imageService.isLocalImage(uri)) return;
+                try {
+                  let imageUrl =
+                    (await imageService.uploadPreviewImage(uri, true)) ||
+                    CONSTANTS.url.noImageAvailable;
+                  setImageURI(imageUrl);
+                } catch (error: any) {
+                  setImageURI(prevImage);
+                  Alert.alert(
+                    "Ảnh không hợp lệ",
+                    error?.response?.data?.error?.message ||
+                      "Xử lí bị gián đoạn, vui lòng thử lại!"
+                  );
+                }
               }}
             />
             {/* <ImageUpload
@@ -1006,7 +1023,7 @@ const FoodUpdate = () => {
                 className="border border-gray-300 mt-1 px-3 p-2 pb-3 rounded text-[15px]"
                 value={categoryName}
                 onChangeText={(text) => {
-                  setCategoryName(text.trim());
+                  setCategoryName(text);
                 }}
                 placeholder="Nhập tên danh mục..."
                 placeholderTextColor="#888"

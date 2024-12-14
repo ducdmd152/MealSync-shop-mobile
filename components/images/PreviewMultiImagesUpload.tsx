@@ -127,9 +127,20 @@ const PreviewMultiImagesUpload = ({
       setUris(uris.filter((item) => item != uri).concat([url]));
     } catch (error: any) {
       // console.log(error?.response?.data);
-      Alert.alert("Oops!", "Xử lí hình ảnh lỗi, vui lòng thử lại!");
       setUris(beforeAnyUpdate);
       setImageHandleError(true);
+      if (
+        error.response &&
+        error.response.status &&
+        Number(error.response.status) >= 500
+      ) {
+        Alert.alert("Oops", "Xử lí hình ảnh lỗi, vui lòng thử lại!");
+      } else
+        Alert.alert(
+          "Oops",
+          error?.response?.data?.error?.message ||
+            "Xử lí hình ảnh lỗi, vui lòng thử lại!"
+        );
     } finally {
       // setIsImageHandling(false);
     }
