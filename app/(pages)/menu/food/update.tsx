@@ -446,9 +446,23 @@ const FoodUpdate = () => {
               }}
               aspect={[1, 1]}
               uri={imageURI}
-              setUri={(uri: string) => {
+              setUri={async (uri: string) => {
+                const prevImage = imageURI;
                 setImageURI(uri);
-                // console.log("uri: ", uri);
+                if (!imageService.isLocalImage(uri)) return;
+                try {
+                  let imageUrl =
+                    (await imageService.uploadPreviewImage(uri, true)) ||
+                    CONSTANTS.url.noImageAvailable;
+                  setImageURI(imageUrl);
+                } catch (error: any) {
+                  setImageURI(prevImage);
+                  Alert.alert(
+                    "Ảnh không hợp lệ",
+                    error?.response?.data?.error?.message ||
+                      "Xử lí bị gián đoạn, vui lòng thử lại!"
+                  );
+                }
               }}
             />
             {/* <ImageUpload
