@@ -990,7 +990,7 @@ const MenuMainItems = ({ beforeGo }: { beforeGo: () => void }) => {
         >
           <View className="w-[80%] bg-white p-4 rounded-md">
             <Text className="text-center text-[12px] font-semibold">
-              Sắp xếp thứ tự hiển thị {"\n"} các nhóm đã chọn trên sản phẩm này
+              Sắp xếp thứ tự hiển thị {"\n"} danh mục trong cửa hàng
             </Text>
             <View
               className="mt-3"
