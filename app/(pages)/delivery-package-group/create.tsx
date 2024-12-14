@@ -100,11 +100,11 @@ const DeliveryPackageGroupCreate = () => {
     [query]
   );
   const packageDeliveryEstimateFetcher = useFetchWithRQWithFetchFunc(
-    ["web/shop-owner/delivery-package/calculate-time-suggest"],
+    ["shop-owner-staff/delivery-package/calculate-time-suggest"],
     async (): Promise<FetchValueResponse<DeliveryPackageEstimateInfoModel>> =>
       apiClient
         .get(
-          "web/shop-owner/delivery-package/calculate-time-suggest" +
+          "shop-owner-staff/delivery-package/calculate-time-suggest" +
             `?${ordersOfTargetPerson
               .map((order) => `orderIds=${order.id}`)
               .join("&")}`,

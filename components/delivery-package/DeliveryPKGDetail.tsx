@@ -88,11 +88,11 @@ const DeliveryPKGDetail = ({
     }
   };
   const packageDeliveryEstimateFetcher = useFetchWithRQWithFetchFunc(
-    ["web/shop-owner/delivery-package/calculate-time-suggest"],
+    ["shop-owner-staff/delivery-package/calculate-time-suggest"],
     async (): Promise<FetchValueResponse<DeliveryPackageEstimateInfoModel>> =>
       apiClient
         .get(
-          "web/shop-owner/delivery-package/calculate-time-suggest" +
+          "shop-owner-staff/delivery-package/calculate-time-suggest" +
             `?${pkgDetails.orders
               .map((order) => `orderIds=${order.id}`)
               .join("&")}`,
