@@ -178,7 +178,9 @@ export default function RootLayout() {
       newSocket.on("notification", (noti: any) => {
         try {
           globalNotiState.setToggleChangingFlag(false);
-          globalNotiState.setToggleChangingFlag(true);
+          setTimeout(() => {
+            globalNotiState.setToggleChangingFlag(true);
+          }, 500);
           Toast.show({
             type: "info",
             text1: `${noti.Title}${

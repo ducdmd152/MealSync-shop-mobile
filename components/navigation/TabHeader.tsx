@@ -20,11 +20,23 @@ const TabHeader = () => {
       apiClient
         .get("shop-owner-staff/notification/total-unread")
         .then((response) => response.data),
-    [globalHeaderPage.isNotiPageFocusing],
+    [globalHeaderPage.isNotiPageFocusing]
   );
   useEffect(() => {
-    if (globalNotiState.toggleChangingFlag) numberOfUnreaded.refetch();
+    // console.log("number of noti refetch: ", globalNotiState.toggleChangingFlag);
+    if (globalNotiState.toggleChangingFlag) {
+      numberOfUnreaded.refetch();
+    }
   }, [globalNotiState.toggleChangingFlag]);
+  // useEffect(() => {
+  //   if (numberOfUnreaded.isFetching)
+  //     console.log("numberOfUnreaded.isFetching....");
+  //   else
+  //     console.log(
+  //       "numberOfUnreaded.isFetched: ",
+  //       numberOfUnreaded.data?.value.totalUnerad
+  //     );
+  // }, [numberOfUnreaded.isFetching]);
   return (
     <View className="w-full h-[64px] px-4 bg-white flex-row justify-between border-b-[0.7px] border-gray-300 overflow-hidden">
       <View className="flex-row justify-center items-center">
