@@ -372,7 +372,7 @@ const OrderDetail = ({
               </Text>
               <View className="mt-3 border-gray-300 border-[0.5px]" />
               <View className="py-2">
-                <View className="w-80 flex-row items-between justify-center">
+                <View className="flex-row items-between justify-center">
                   <Text className="flex-1 text-[14px] text-gray-700 font-semibold">
                     {order.customer.fullName}
                   </Text>

@@ -39,6 +39,10 @@ import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 import EvidencePreviewMultiImagesUpload from "../images/EvidencePreviewMultiImagesUpload";
 import PreviewMultiTakeImagesUpload from "../images/PreviewMultiTakeImagesUpload";
 import OrderDetail from "../order/OrderDetail";
+import { router } from "expo-router";
+import useGlobalChattingState from "@/hooks/states/useChattingState";
+import Chatbox from "../realtime/Chatbox";
+import { SafeAreaView } from "react-native";
 interface Props {
   containerStyleClasses?: string;
   titleStyleClasses?: string;
@@ -88,6 +92,11 @@ const CompleteDeliveryConfirmModal = ({
   const [isOrderDetailViewMode, setIsOrderDetailViewMode] = useState(false);
   const [isReloading, setIsReloading] = useState(false);
   const [isViewOrderFoodDetail, setIsViewOrderFoodDetail] = useState(false);
+  const [isChatBoxShow, setIsChatBoxShow] = useState(false);
+  const setGlobalChannelId = useGlobalChattingState(
+    (state) => state.setChannelId
+  );
+  const [inChatTime, setInChatTime] = useState(false);
   const getOrderDetail = async (isRefetching = false) => {
     setIsLoading(true);
     if (isRefetching) setIsReloading(true);
@@ -128,6 +137,18 @@ const CompleteDeliveryConfirmModal = ({
       setIsReloading(false);
     }
   };
+  useEffect(() => {
+    if (order && order?.id) {
+      setInChatTime(
+        order.status >= OrderStatus.Preparing &&
+          utilService.getInChatTime(
+            order.startTime,
+            order.endTime,
+            order.intendedReceiveDate
+          )
+      );
+    }
+  }, [order]);
   const onRefresh = () => {
     getOrderDetail();
     globalCompleteDeliveryConfirm.onAfterCompleted();
@@ -566,9 +587,40 @@ const CompleteDeliveryConfirmModal = ({
 
             <View className="mt-3 border-gray-300 border-[0.5px]" />
             <View className="py-2">
-              <Text className="text-[14px] text-gray-700 font-semibold">
-                {order.customer?.fullName}
-              </Text>
+              <View className="flex-row items-between justify-center">
+                <Text className="flex-1 text-[14px] text-gray-700 font-semibold">
+                  {order.customer.fullName}
+                </Text>
+                {inChatTime && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (
+                        !utilService.getInChatTime(
+                          order.startTime,
+                          order.endTime,
+                          order.intendedReceiveDate
+                        )
+                      ) {
+                        Alert.alert("Oops", "Đã quá thời gian để nhắn tin.");
+                        setInChatTime(false);
+                        return;
+                      }
+                      setGlobalChannelId(order.id);
+                      setIsChatBoxShow(true);
+                    }}
+                    className="flex-row gap-x-1 mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
+                  >
+                    <Ionicons
+                      name="chatbubble-ellipses-outline"
+                      size={17}
+                      color="#227B94"
+                    />
+                    <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
+                      Nhắn tin
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
               {order.status >= OrderStatus.Preparing &&
               order.status <= OrderStatus.Completed ? (
                 <TouchableOpacity
@@ -837,200 +889,217 @@ const CompleteDeliveryConfirmModal = ({
     confirmByImageStep,
   ];
   return (
-    <Modal
-      isVisible={globalCompleteDeliveryConfirm.isModalVisible}
-      backdropOpacity={0.25}
-      onBackdropPress={() => {
-        globalCompleteDeliveryConfirm.setIsModalVisible(false);
-        // globalCompleteDeliveryConfirm.onAfterCompleted();
-      }}
-    >
-      <View
-        // onTouchEnd={() => Keyboard.dismiss()}
-        style={{ zIndex: 100 }}
-        className="justify-center items-center "
+    <>
+      <Modal
+        isVisible={globalCompleteDeliveryConfirm.isModalVisible}
+        backdropOpacity={0.25}
+        onBackdropPress={() => {
+          globalCompleteDeliveryConfirm.setIsModalVisible(false);
+          // globalCompleteDeliveryConfirm.onAfterCompleted();
+        }}
       >
         <View
-          className={`w-80 bg-white p-1 rounded-lg p-4 ${containerStyleClasses}`}
+          // onTouchEnd={() => Keyboard.dismiss()}
+          style={{ zIndex: 100 }}
+          className="justify-center items-center "
         >
-          <View className="flex-row items-center justify-between">
-            {order && (
-              <Text
-                className={`flex-1 text-center font-semibold ${titleStyleClasses}`}
-              >
-                {order.status == OrderStatus.Delivering
-                  ? `MS-${order.id} | Xác nhận đơn giao`
-                  : `MS-${order.id} | Chi tiết đơn giao`}
-              </Text>
-            )}
+          <View
+            className={`w-80 bg-white p-1 rounded-lg p-4 ${containerStyleClasses}`}
+          >
+            <View className="flex-row items-center justify-between">
+              {order && (
+                <Text
+                  className={`flex-1 text-center font-semibold ${titleStyleClasses}`}
+                >
+                  {order.status == OrderStatus.Delivering
+                    ? `MS-${order.id} | Xác nhận đơn giao`
+                    : `MS-${order.id} | Chi tiết đơn giao`}
+                </Text>
+              )}
 
-            {/* <TouchableOpacity
+              {/* <TouchableOpacity
               onPress={() => {
                 globalCompleteDeliveryConfirm.setIsModalVisible(false);
               }}
             >
               <Ionicons name="close-outline" size={24} color="gray" />
             </TouchableOpacity> */}
-          </View>
-
-          {step == 0 && (
-            <View className="flex-row items-center justify-center">
-              <View className="mt-2 justify-center items-center">
-                {order != undefined && (
-                  <Text
-                    className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
-                      getOrderStatusDescription(order.status)?.bgColor
-                    }`}
-                    style={{
-                      backgroundColor: getOrderStatusDescription(order.status)
-                        ?.bgColor,
-                    }}
-                  >
-                    {getOrderStatusDescription(order.status)?.description}
-                  </Text>
-                )}
-              </View>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsOrderDetailViewMode(!isOrderDetailViewMode);
-                  // globalOrderDetailPageState.setOrder(order);
-                  // globalCompleteDeliveryConfirm.setIsModalVisible(false);
-                  // onParentClose();
-                  // globalOrderDetailPageState.setOnBeforeBack(() => {
-                  //   onParentOpen();
-                  //   getOrderDetail();
-                  //   globalCompleteDeliveryConfirm.setIsModalVisible(true);
-                  // });
-                  // router.push("/order/details");
-                }}
-                className="mt-2 justify-center items-center ml-2 rounded-sm overflow-hidden"
-              >
-                {order != undefined && authRole == 2 && (
-                  <Text
-                    className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded`}
-                    style={{
-                      backgroundColor: getOrderStatusDescription(order.status)
-                        ?.bgColor,
-                    }}
-                  >
-                    {!isOrderDetailViewMode
-                      ? "Xem chi tiết đơn"
-                      : "Rút gọn thông tin"}
-                  </Text>
-                )}
-              </TouchableOpacity>
             </View>
-          )}
-          {stepComponents[step]}
-        </View>
-      </View>
-      {order.id != undefined && (
-        <CustomModal
-          title={`MS-${order.id} | Chi tiết đặt món`}
-          hasHeader={false}
-          isOpen={isViewOrderFoodDetail}
-          setIsOpen={(value) => setIsViewOrderFoodDetail(value)}
-          titleStyleClasses="text-center flex-1 text-[14px] text-gray-600 font-semibold"
-          containerStyleClasses="w-72"
-          onBackdropPress={() => {
-            setIsViewOrderFoodDetail(false);
-          }}
-        >
-          <View className="bg-white p-2">
-            <Text className="text-[14px] text-gray-600 font-semibold text-center mt-[-8px]">
-              {`MS-${order.id} | Chi tiết đặt món`}
-            </Text>
-            <View className="mt-3 border-gray-300 border-[0.5px]" />
-            <View className="pt-4 gap-y-2">
-              {order.orderDetails.map((detail) => (
-                <View key={detail.id}>
-                  <View className="flex-row justify-between">
-                    <View className="flex-row gap-x-2">
-                      <Text className="font-semibold ">{detail.name}</Text>
-                      <Text className="font-semibold w-[28px]">
-                        x{detail.quantity}
-                      </Text>
-                    </View>
-                    <View>
-                      <Text className="font-semibold">
-                        {utilService.formatPrice(detail.totalPrice)}₫
-                      </Text>
-                    </View>
-                  </View>
 
-                  {detail.optionGroups.length > 0 && (
-                    <View className="flex-row gap-x-2">
-                      <Text className="w-[28px]"></Text>
-                      {detail.optionGroups.map((option) => (
-                        <Text
-                          className="italic font-gray-500 text-[12px]"
-                          key={detail.id + option.optionGroupTitle}
-                        >
-                          {option.optionGroupTitle}:{" "}
-                          {option.options
-                            .map((item) => item.optionTitle)
-                            .join(", ")}
-                          {" ; "}
-                        </Text>
-                      ))}
-                    </View>
-                  )}
-
-                  {detail.note && (
-                    <View className="flex-row gap-x-2 mt-[2px]">
-                      <Text className="italic font-gray-500 text-[13.2px]">
-                        Ghi chú: {detail.note}
-                      </Text>
-                    </View>
+            {step == 0 && (
+              <View className="flex-row items-center justify-center">
+                <View className="mt-2 justify-center items-center">
+                  {order != undefined && (
+                    <Text
+                      className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded ${
+                        getOrderStatusDescription(order.status)?.bgColor
+                      }`}
+                      style={{
+                        backgroundColor: getOrderStatusDescription(order.status)
+                          ?.bgColor,
+                      }}
+                    >
+                      {getOrderStatusDescription(order.status)?.description}
+                    </Text>
                   )}
                 </View>
-              ))}
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsOrderDetailViewMode(!isOrderDetailViewMode);
+                    // globalOrderDetailPageState.setOrder(order);
+                    // globalCompleteDeliveryConfirm.setIsModalVisible(false);
+                    // onParentClose();
+                    // globalOrderDetailPageState.setOnBeforeBack(() => {
+                    //   onParentOpen();
+                    //   getOrderDetail();
+                    //   globalCompleteDeliveryConfirm.setIsModalVisible(true);
+                    // });
+                    // router.push("/order/details");
+                  }}
+                  className="mt-2 justify-center items-center ml-2 rounded-sm overflow-hidden"
+                >
+                  {order != undefined && authRole == 2 && (
+                    <Text
+                      className={`text-[10px] font-medium me-2 px-2.5 py-0.5 rounded`}
+                      style={{
+                        backgroundColor: getOrderStatusDescription(order.status)
+                          ?.bgColor,
+                      }}
+                    >
+                      {!isOrderDetailViewMode
+                        ? "Xem chi tiết đơn"
+                        : "Rút gọn thông tin"}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
+            {stepComponents[step]}
+          </View>
+        </View>
+        {order.id != undefined && (
+          <CustomModal
+            title={`MS-${order.id} | Chi tiết đặt món`}
+            hasHeader={false}
+            isOpen={isViewOrderFoodDetail}
+            setIsOpen={(value) => setIsViewOrderFoodDetail(value)}
+            titleStyleClasses="text-center flex-1 text-[14px] text-gray-600 font-semibold"
+            containerStyleClasses="w-72"
+            onBackdropPress={() => {
+              setIsViewOrderFoodDetail(false);
+            }}
+          >
+            <View className="bg-white p-2">
+              <Text className="text-[14px] text-gray-600 font-semibold text-center mt-[-8px]">
+                {`MS-${order.id} | Chi tiết đặt món`}
+              </Text>
+              <View className="mt-3 border-gray-300 border-[0.5px]" />
+              <View className="pt-4 gap-y-2">
+                {order.orderDetails.map((detail) => (
+                  <View key={detail.id}>
+                    <View className="flex-row justify-between">
+                      <View className="flex-row gap-x-2">
+                        <Text className="font-semibold ">{detail.name}</Text>
+                        <Text className="font-semibold w-[28px]">
+                          x{detail.quantity}
+                        </Text>
+                      </View>
+                      <View>
+                        <Text className="font-semibold">
+                          {utilService.formatPrice(detail.totalPrice)}₫
+                        </Text>
+                      </View>
+                    </View>
+
+                    {detail.optionGroups.length > 0 && (
+                      <View className="flex-row gap-x-2">
+                        <Text className="w-[28px]"></Text>
+                        {detail.optionGroups.map((option) => (
+                          <Text
+                            className="italic font-gray-500 text-[12px]"
+                            key={detail.id + option.optionGroupTitle}
+                          >
+                            {option.optionGroupTitle}:{" "}
+                            {option.options
+                              .map((item) => item.optionTitle)
+                              .join(", ")}
+                            {" ; "}
+                          </Text>
+                        ))}
+                      </View>
+                    )}
+
+                    {detail.note && (
+                      <View className="flex-row gap-x-2 mt-[2px]">
+                        <Text className="italic font-gray-500 text-[13.2px]">
+                          Ghi chú: {detail.note}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                ))}
+              </View>
             </View>
-          </View>
-          <View className="mt-1 bg-white p-2">
-            <Text className="text-[14px] text-gray-500 font-medium italic">
-              Ghi chú cho toàn đơn hàng
-            </Text>
-            <View className="mt-2 border-gray-300 border-[0.5px]" />
-            <Text className="mt-2 italic text-gray-5\600  text-[14px]">
-              {order.note || "Không có"}
-            </Text>
-          </View>
+            <View className="mt-1 bg-white p-2">
+              <Text className="text-[14px] text-gray-500 font-medium italic">
+                Ghi chú cho toàn đơn hàng
+              </Text>
+              <View className="mt-2 border-gray-300 border-[0.5px]" />
+              <Text className="mt-2 italic text-gray-5\600  text-[14px]">
+                {order.note || "Không có"}
+              </Text>
+            </View>
+          </CustomModal>
+        )}
+        <CustomModal
+          title={``}
+          hasHeader={false}
+          isOpen={isOpenOrderAssign}
+          setIsOpen={(value) => setIsOpenOrderAssign(value)}
+          titleStyleClasses="text-center flex-1"
+          containerStyleClasses="w-[98%]"
+          onBackdropPress={() => {
+            setIsOpenOrderAssign(false);
+          }}
+        >
+          <OrderDeliveryAssign
+            onComplete={(shopDeliveryStaff) => {
+              setIsOpenOrderAssign(false);
+              onRefresh();
+              if (shopDeliveryStaff === null) {
+                return;
+              }
+              Toast.show({
+                type: "info",
+                text1: "Hoàn tất",
+                text2: `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+                  shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
+                }!`,
+                // time: 15000
+              });
+            }}
+            order={order}
+            isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
+          />
         </CustomModal>
-      )}
+      </Modal>
+      {/* <SafeAreaView> */}
       <CustomModal
         title={``}
         hasHeader={false}
-        isOpen={isOpenOrderAssign}
-        setIsOpen={(value) => setIsOpenOrderAssign(value)}
+        isOpen={isChatBoxShow}
+        setIsOpen={(value) => setIsChatBoxShow(value)}
         titleStyleClasses="text-center flex-1"
-        containerStyleClasses="w-[98%]"
+        containerStyleClasses="h-screen w-screen p-0 pt-3"
         onBackdropPress={() => {
-          setIsOpenOrderAssign(false);
+          setIsChatBoxShow(false);
         }}
       >
-        <OrderDeliveryAssign
-          onComplete={(shopDeliveryStaff) => {
-            setIsOpenOrderAssign(false);
-            onRefresh();
-            if (shopDeliveryStaff === null) {
-              return;
-            }
-            Toast.show({
-              type: "info",
-              text1: "Hoàn tất",
-              text2: `Đơn hàng MS-${order.id} sẽ được giao bởi ${
-                shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
-              }!`,
-              // time: 15000
-            });
-          }}
-          order={order}
-          isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
-        />
+        <Chatbox onBack={() => setIsChatBoxShow(false)} />
       </CustomModal>
+      {/* </SafeAreaView> */}
       <Toast position="bottom" bottomOffset={-20} />
-    </Modal>
+    </>
   );
 };
 

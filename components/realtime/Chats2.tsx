@@ -176,58 +176,58 @@ const ListChatChannelPage: React.FC = () => {
   const listRef = useRef<Channel[] | null>(null);
   const hasNext2 = useRef(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (socket) {
-        socket.on("getListChannel", (msg: SocketMessage) => {
-          setOnRequest(true);
-          console.log(msg, " mesage neeeeeee");
-          if (msg) {
-            hasNext2.current = msg.hasNext;
-          }
-          if (msg?.data?.length > 0) {
-            const listRoomIds = msg.data.map((i) => i.id);
-            setListChannelSocket(msg.data);
-            handleGetListChannelInfo(listRoomIds);
-            setPageState(msg.pageState);
-          } else {
-            setHasNext(false);
-          }
-        });
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (socket) {
+  //       socket.on("getListChannel", (msg: SocketMessage) => {
+  //         setOnRequest(true);
+  //         console.log(msg, " mesage neeeeeee");
+  //         if (msg) {
+  //           hasNext2.current = msg.hasNext;
+  //         }
+  //         if (msg?.data?.length > 0) {
+  //           const listRoomIds = msg.data.map((i) => i.id);
+  //           setListChannelSocket(msg.data);
+  //           handleGetListChannelInfo(listRoomIds);
+  //           setPageState(msg.pageState);
+  //         } else {
+  //           setHasNext(false);
+  //         }
+  //       });
 
-        socket.on("getNewMessage", async (msg: Channel) => {
-          if (msg) {
-            await handleGetNewMessage(msg);
-          }
-        });
-      }
-    }, [])
-  );
-  // useEffect(() => {
-  //   if (socket) {
-  //     socket.on("getListChannel", (msg: SocketMessage) => {
-  //       setOnRequest(true);
-  //       console.log(msg, " mesage neeeeeee");
-  //       if (msg) {
-  //         hasNext2.current = msg.hasNext;
-  //       }
-  //       if (msg?.data?.length > 0) {
-  //         const listRoomIds = msg.data.map((i) => i.id);
-  //         setListChannelSocket(msg.data);
-  //         handleGetListChannelInfo(listRoomIds);
-  //         setPageState(msg.pageState);
-  //       } else {
-  //         setHasNext(false);
-  //       }
-  //     });
+  //       socket.on("getNewMessage", async (msg: Channel) => {
+  //         if (msg) {
+  //           await handleGetNewMessage(msg);
+  //         }
+  //       });
+  //     }
+  //   }, [])
+  // );
+  useEffect(() => {
+    if (socket) {
+      socket.on("getListChannel", (msg: SocketMessage) => {
+        setOnRequest(true);
+        console.log(msg, " mesage neeeeeee");
+        if (msg) {
+          hasNext2.current = msg.hasNext;
+        }
+        if (msg?.data?.length > 0) {
+          const listRoomIds = msg.data.map((i) => i.id);
+          setListChannelSocket(msg.data);
+          handleGetListChannelInfo(listRoomIds);
+          setPageState(msg.pageState);
+        } else {
+          setHasNext(false);
+        }
+      });
 
-  //     socket.on("getNewMessage", async (msg: Channel) => {
-  //       if (msg) {
-  //         await handleGetNewMessage(msg);
-  //       }
-  //     });
-  //   }
-  // }, []);
+      socket.on("getNewMessage", async (msg: Channel) => {
+        if (msg) {
+          await handleGetNewMessage(msg);
+        }
+      });
+    }
+  }, []);
 
   const handleGetListChannelInfo = async (listRoomIds: string[]) => {
     setIsLoadError(false);
