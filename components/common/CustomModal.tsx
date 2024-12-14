@@ -35,7 +35,7 @@ const CustomModal = ({
           className={`bg-white p-4 rounded-lg w-80 ${containerStyleClasses}`}
         >
           {hasHeader && (
-            <View className="flex-row items-center justify-between">
+            <View className="flex-row items-between justify-center">
               <Text className={`${titleStyleClasses}`}>{title}</Text>
               <TouchableOpacity
                 className="p-[1px]"

@@ -90,10 +90,34 @@ const getInDeliveryTime = (
   if (current > endFrameDate.toDate()) return 1;
   return 0;
 };
+const getInChatTime = (
+  startTime: number,
+  endTime: number,
+  intendedReceiveDate: string
+) => {
+  const startFrameDate = dayjs(
+    dayjs(intendedReceiveDate)
+      .local()
+      .set("hour", Math.floor(startTime / 100))
+      .set("minute", startTime % 100)
+      .toDate()
+  );
+  const endFrameDate = dayjs(
+    dayjs(intendedReceiveDate)
+      .local()
+      .set("hour", Math.floor(endTime / 100))
+      .set("minute", endTime % 100)
+      .add(2, "hour")
+      .toDate()
+  );
+  const current = new Date();
+  return current <= endFrameDate.toDate();
+};
 const utilService = {
   maskPhoneNumber,
   getInFrameTime,
   getInDeliveryTime,
+  getInChatTime,
   formatTime: (time: number): string => {
     const hours = Math.floor(time / 100)
       .toString()

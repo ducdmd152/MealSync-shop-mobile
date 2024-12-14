@@ -203,10 +203,17 @@ export default function RootLayout() {
           setTimeout(() => {
             globalNotiState.setToggleChangingFlag(true);
           }, 500);
+          // console.log(
+          //   "Noti",
+          //   noti,
+          //   globalHeaderPage.isChattingFocusing,
+          //   chattingChannelId,
+          //   chattingChannelId != 0 && noti.ReferenceId != chattingChannelId
+          // );
           if (
-            !globalHeaderPage.isChattingFocusing ||
             noti.EntityType != NotiEntityTypes.Chat ||
-            noti.ReferenceId != chattingChannelId
+            !globalHeaderPage.isChattingFocusing ||
+            (chattingChannelId != 0 && noti.ReferenceId != chattingChannelId)
           )
             Toast.show({
               type: "info",

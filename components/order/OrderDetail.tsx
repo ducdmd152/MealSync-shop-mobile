@@ -34,6 +34,9 @@ import OrderReviewInfo from "../common/OrderReviewInfo";
 import dayjs from "dayjs";
 import ReviewReplyModal from "../target-modals/ReviewReplyModal";
 import ImageViewingModal from "../target-modals/ImageViewingModal";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import useGlobalChattingState from "@/hooks/states/useChattingState";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -89,6 +92,10 @@ const OrderDetail = ({
   const [isReloading, setIsReloading] = useState(false);
   const [isCancelModal, setIsCancelModal] = useState(false);
   const [isCancelOrReject, setIsCancelOrReject] = useState(false);
+  const setGlobalChannelId = useGlobalChattingState(
+    (state) => state.setChannelId
+  );
+  const [inChatTime, setInChatTime] = useState(false);
 
   const [request, setRequest] = useState<
     (reason: string, setIsSubmitting: (value: boolean) => void) => void
@@ -114,6 +121,18 @@ const OrderDetail = ({
   useEffect(() => {
     getOrderDetail();
   }, []);
+  useEffect(() => {
+    if (order?.id) {
+      setInChatTime(
+        order.status >= OrderStatus.Preparing &&
+          utilService.getInChatTime(
+            order.startTime,
+            order.endTime,
+            order.intendedReceiveDate
+          )
+      );
+    }
+  }, [order]);
   const handleCancel = (orderId: number) => {
     const inTime = utilService.getInFrameTime(
       order.startTime,
@@ -353,9 +372,40 @@ const OrderDetail = ({
               </Text>
               <View className="mt-3 border-gray-300 border-[0.5px]" />
               <View className="py-2">
-                <Text className="text-[14px] text-gray-700 font-semibold">
-                  {order.customer.fullName}
-                </Text>
+                <View className="w-80 flex-row items-between justify-center">
+                  <Text className="flex-1 text-[14px] text-gray-700 font-semibold">
+                    {order.customer.fullName}
+                  </Text>
+                  {inChatTime && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (
+                          !utilService.getInChatTime(
+                            order.startTime,
+                            order.endTime,
+                            order.intendedReceiveDate
+                          )
+                        ) {
+                          Alert.alert("Oops", "Đã quá thời gian để nhắn tin.");
+                          setInChatTime(false);
+                          return;
+                        }
+                        setGlobalChannelId(order.id);
+                        router.push(`/chats/${order.id}`);
+                      }}
+                      className="flex-row gap-x-1 mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
+                    >
+                      <Ionicons
+                        name="chatbubble-ellipses-outline"
+                        size={17}
+                        color="#227B94"
+                      />
+                      <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
+                        Nhắn tin
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
                 {order.status >= OrderStatus.Preparing &&
                 order.status <= OrderStatus.Completed ? (
                   <TouchableOpacity
