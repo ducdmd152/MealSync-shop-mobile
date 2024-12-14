@@ -94,7 +94,7 @@ const CompleteDeliveryConfirmModal = ({
   const [isViewOrderFoodDetail, setIsViewOrderFoodDetail] = useState(false);
   const globalChattingState = useGlobalChattingState();
   const { isChatBoxShow, setIsChatBoxShow } = globalChattingState;
-  const [inChatTime, setInChatTime] = useState(false);
+  // const [inChatTime, setInChatTime] = useState(false);
   const getOrderDetail = async (isRefetching = false) => {
     setIsLoading(true);
     if (isRefetching) setIsReloading(true);
@@ -135,18 +135,18 @@ const CompleteDeliveryConfirmModal = ({
       setIsReloading(false);
     }
   };
-  useEffect(() => {
-    if (order && order?.id) {
-      setInChatTime(
-        order.status >= OrderStatus.Preparing &&
-          utilService.getInChatTime(
-            order.startTime,
-            order.endTime,
-            order.intendedReceiveDate
-          )
-      );
-    }
-  }, [order]);
+  // useEffect(() => {
+  //   if (order && order?.id) {
+  //     setInChatTime(
+  //       order.status >= OrderStatus.Preparing &&
+  //         utilService.getInChatTime(
+  //           order.startTime,
+  //           order.endTime,
+  //           order.intendedReceiveDate
+  //         )
+  //     );
+  //   }
+  // }, [order]);
   const onRefresh = () => {
     getOrderDetail();
     globalCompleteDeliveryConfirm.onAfterCompleted();
@@ -590,20 +590,20 @@ const CompleteDeliveryConfirmModal = ({
                 <Text className="flex-1 text-[14px] text-gray-700 font-semibold">
                   {order.customer.fullName}
                 </Text>
-                {inChatTime && (
+                {order.status >= OrderStatus.Preparing && (
                   <TouchableOpacity
                     onPress={() => {
-                      if (
-                        !utilService.getInChatTime(
-                          order.startTime,
-                          order.endTime,
-                          order.intendedReceiveDate
-                        )
-                      ) {
-                        Alert.alert("Oops", "Đã quá thời gian để nhắn tin.");
-                        setInChatTime(false);
-                        return;
-                      }
+                      // if (
+                      //   !utilService.getInChatTime(
+                      //     order.startTime,
+                      //     order.endTime,
+                      //     order.intendedReceiveDate
+                      //   )
+                      // ) {
+                      //   Alert.alert("Oops", "Đã quá thời gian để nhắn tin.");
+                      //   setInChatTime(false);
+                      //   return;
+                      // }
                       globalChattingState.setChannelId(order.id);
                       setIsChatBoxShow(true);
                     }}

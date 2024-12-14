@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import Chatbox from "@/components/realtime/Chatbox";
 const ChatBoxPage = () => {
   return (
-    <View className="h-full w-full">
+    <View className="flex-1">
       <Chatbox
         onBack={() => {
           router.back();

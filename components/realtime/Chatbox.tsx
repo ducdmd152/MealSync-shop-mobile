@@ -217,7 +217,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
   const userInfo = globalAuthState?.authDTO;
   const { socket } = useGlobalSocketState();
   const [channelData, setChannelData] = useState<Channel>();
-
+  console.log("channelData: ", channelData);
   const authId = globalAuthState.authDTO?.id || 0;
   const pickMedia = async () => {
     try {
@@ -335,7 +335,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
   }, []);
 
   const [dataHeader, setDataHeader] = useState<any | null>(null);
-  console.log("globalChattingState.channelId: ", globalChattingState.channelId);
+  // console.log("globalChattingState.channelId: ", globalChattingState.channelId);
 
   useEffect(() => {
     console.log(socket, " socket ne ", chatData);
@@ -536,7 +536,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
           renderInputToolbar={(props) => (
             <CustomInputToolbar
               {...props}
-              isClose={channelData?.is_close == 1 ? false : true}
+              isClose={channelData?.is_close == 2}
               selectedMedia={selectedMedia}
               onRemoveMedia={async () => {
                 setSelectedMedia(null);

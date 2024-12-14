@@ -37,6 +37,7 @@ import ImageViewingModal from "../target-modals/ImageViewingModal";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import useGlobalChattingState from "@/hooks/states/useChattingState";
+import Chatbox from "../realtime/Chatbox";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
@@ -96,7 +97,7 @@ const OrderDetail = ({
   const [isReloading, setIsReloading] = useState(false);
   const [isCancelModal, setIsCancelModal] = useState(false);
   const [isCancelOrReject, setIsCancelOrReject] = useState(false);
-  const [inChatTime, setInChatTime] = useState(false);
+  // const [inChatTime, setInChatTime] = useState(false);
 
   const [request, setRequest] = useState<
     (reason: string, setIsSubmitting: (value: boolean) => void) => void
@@ -122,18 +123,18 @@ const OrderDetail = ({
   useEffect(() => {
     getOrderDetail();
   }, []);
-  useEffect(() => {
-    if (order?.id) {
-      setInChatTime(
-        order.status >= OrderStatus.Preparing &&
-          utilService.getInChatTime(
-            order.startTime,
-            order.endTime,
-            order.intendedReceiveDate
-          )
-      );
-    }
-  }, [order]);
+  // useEffect(() => {
+  //   if (order?.id) {
+  //     setInChatTime(
+  //       order.status >= OrderStatus.Preparing &&
+  //         utilService.getInChatTime(
+  //           order.startTime,
+  //           order.endTime,
+  //           order.intendedReceiveDate
+  //         )
+  //     );
+  //   }
+  // }, [order]);
   const handleCancel = (orderId: number) => {
     const inTime = utilService.getInFrameTime(
       order.startTime,
@@ -313,574 +314,585 @@ const OrderDetail = ({
     setIsCancelOrReject(false);
   };
   return (
-    <View
-      className={`flex-1 items-center justify-center w-full bg-[#f4f4f5] ${containerStyleClasses}`}
-      style={{ backgroundColor: order?.id ? "#f4f4f5" : "#fff" }}
-    >
-      {order?.id == undefined && (
-        <ActivityIndicator animating={true} color="#FCF450" />
-      )}
-      {order?.id != undefined && (
-        <View className="w-full h-full">
-          {hasHeaderInfo && (
-            <View className="pt-4 px-2 gap-y-1 pb-1 mb-2">
-              <View className="flex-row items-center justify-between">
-                <Text className="text-[12.5px] text-gray-800 font-semibold mt-1">
-                  Đơn hàng MS-{order.id}
+    <>
+      <View
+        className={`flex-1 items-center justify-center w-full bg-[#f4f4f5] ${containerStyleClasses}`}
+        style={{ backgroundColor: order?.id ? "#f4f4f5" : "#fff" }}
+      >
+        {order?.id == undefined && (
+          <ActivityIndicator animating={true} color="#FCF450" />
+        )}
+        {order?.id != undefined && (
+          <View className="w-full h-full">
+            {hasHeaderInfo && (
+              <View className="pt-4 px-2 gap-y-1 pb-1 mb-2">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-[12.5px] text-gray-800 font-semibold mt-1">
+                    Đơn hàng MS-{order.id}
+                  </Text>
+                  <View className="flex-row gap-x-1 items-center">
+                    <Text className="ml-2 text-[11px]  font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 rounded">
+                      {formatTime(order.startTime) +
+                        " - " +
+                        formatTime(order.endTime)}
+                    </Text>
+                    <Text
+                      className={`text-[11px] font-medium me-2 px-2.5 py-[2px] rounded ${
+                        getOrderStatusDescription(order.status)?.bgColor
+                      }`}
+                      style={{
+                        backgroundColor: getOrderStatusDescription(order.status)
+                          ?.bgColor,
+                      }}
+                    >
+                      {getOrderStatusDescription(order.status)?.description}
+                    </Text>
+                  </View>
+                </View>
+                <View>
+                  <Text className="text-[10px] text-gray-500 italic text-right">
+                    Được đặt vào{" "}
+                    {dayjs(order.orderDate).local().format("HH:mm DD/MM/YYYY")}
+                  </Text>
+                </View>
+              </View>
+            )}
+            <ScrollView
+              className={`flex-1 ${innerContainerStyleClasses}`}
+              refreshControl={
+                <RefreshControl
+                  tintColor={"#FCF450"}
+                  refreshing={isReloading}
+                  onRefresh={() => {
+                    getOrderDetail(true);
+                  }}
+                />
+              }
+            >
+              <View className="bg-white p-2">
+                <Text className="text-[15px] text-gray-600 font-semibold text-[#0891b2]">
+                  Thông tin nhận hàng
                 </Text>
-                <View className="flex-row gap-x-1 items-center">
-                  <Text className="ml-2 text-[11px]  font-semibold bg-blue-100 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-500 rounded">
-                    {formatTime(order.startTime) +
+                <View className="mt-3 border-gray-300 border-[0.5px]" />
+                <View className="py-2">
+                  <View className="flex-row items-between justify-center">
+                    <Text className="flex-1 text-[14px] text-gray-700 font-semibold">
+                      {order.customer.fullName}
+                    </Text>
+                    {order.status >= OrderStatus.Preparing && (
+                      <TouchableOpacity
+                        onPress={() => {
+                          // if (
+                          //   !utilService.getInChatTime(
+                          //     order.startTime,
+                          //     order.endTime,
+                          //     order.intendedReceiveDate
+                          //   )
+                          // ) {
+                          //   Alert.alert(
+                          //     "Oops",
+                          //     "Đã quá thời gian để nhắn tin."
+                          //   );
+                          //   setInChatTime(false);
+                          //   return;
+                          // }
+                          // if (isModal) {
+                          //   globalChattingState.setChannelId(order.id);
+                          //   setIsChatBoxShow(true);
+                          // } else {
+                          //   globalChattingState.setChannelId(order.id);
+                          //   router.push(`/chats/${order.id}`);
+                          // }
+                          globalChattingState.setChannelId(order.id);
+                          setIsChatBoxShow(true);
+                        }}
+                        className="flex-row gap-x-1 mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
+                      >
+                        <Ionicons
+                          name="chatbubble-ellipses-outline"
+                          size={17}
+                          color="#227B94"
+                        />
+                        <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
+                          Nhắn tin
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  {order.status >= OrderStatus.Preparing &&
+                  order.status <= OrderStatus.Completed ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        Alert.alert(
+                          "Số điện thoại",
+                          undefined,
+                          [
+                            {
+                              text: "Gọi " + order.customer?.phoneNumber,
+                              onPress: () =>
+                                Linking.openURL(
+                                  `tel:${order.customer?.phoneNumber}`
+                                ),
+                            },
+                            {
+                              text: "Sao chép",
+                              onPress: () =>
+                                Clipboard.setString(
+                                  order.customer?.phoneNumber || ""
+                                ),
+                            },
+                            { text: "Hủy" },
+                          ].reverse()
+                        );
+                      }}
+                    >
+                      <Text className="text-[14px] text-gray-700 font-semibold text-[#0e7490]">
+                        {order.customer?.phoneNumber}
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <Text className="text-[14px] text-gray-700 font-semibold">
+                      {utilService.maskPhoneNumber(order.customer.phoneNumber)}
+                    </Text>
+                  )}
+
+                  <Text className="text-[14px] text-gray-700 font-semibold italic">
+                    {order.buildingName}
+                  </Text>
+                </View>
+                <View className="mt-1 border-gray-300 border-[0.3px]" />
+                <View className="py-2 ">
+                  <Text className="text-[14px] text-gray-700">
+                    Khung nhận hàng:
+                  </Text>
+                  <Text className="text-[14px] text-gray-700 font-semibold">
+                    {utilService.formatDateDdMmYyyy(order.intendedReceiveDate) +
+                      " | " +
+                      formatTime(order.startTime) +
                       " - " +
                       formatTime(order.endTime)}
                   </Text>
-                  <Text
-                    className={`text-[11px] font-medium me-2 px-2.5 py-[2px] rounded ${
-                      getOrderStatusDescription(order.status)?.bgColor
-                    }`}
-                    style={{
-                      backgroundColor: getOrderStatusDescription(order.status)
-                        ?.bgColor,
-                    }}
-                  >
-                    {getOrderStatusDescription(order.status)?.description}
-                  </Text>
                 </View>
               </View>
-              <View>
-                <Text className="text-[10px] text-gray-500 italic text-right">
-                  Được đặt vào{" "}
-                  {dayjs(order.orderDate).local().format("HH:mm DD/MM/YYYY")}
+              <View className="mt-4 bg-white p-2">
+                <Text className="text-[15px] text-gray-600 font-semibold text-[#0891b2]">
+                  Chi tiết đơn hàng
+                </Text>
+                <View className="mt-3 border-gray-300 border-[0.5px]" />
+                <View className="pt-4 gap-y-2">
+                  {order.orderDetails.map((detail) => (
+                    <View key={detail.id}>
+                      <View className="flex-row justify-between">
+                        <View className="flex-row gap-x-2">
+                          <Text className="font-semibold w-[28px]">
+                            x{detail.quantity}
+                          </Text>
+                          <Text className="font-semibold">{detail.name}</Text>
+                        </View>
+                        <View>
+                          <Text className="font-semibold">
+                            {formatPrice(detail.totalPrice)}₫
+                          </Text>
+                        </View>
+                      </View>
+
+                      {detail.optionGroups.length > 0 && (
+                        <View className="flex-row gap-x-2">
+                          <Text className="w-[28px]"></Text>
+                          {detail.optionGroups.map((option) => (
+                            <Text
+                              className="italic font-gray-500 text-[12.5px]"
+                              key={detail.id + option.optionGroupTitle}
+                            >
+                              {option.optionGroupTitle}:{" "}
+                              {option.options
+                                .map((item) => item.optionTitle)
+                                .join(", ")}
+                              {" ; "}
+                            </Text>
+                          ))}
+                        </View>
+                      )}
+
+                      {detail.note && (
+                        <View className="flex-row gap-x-2 mt-[2px]">
+                          <Text className="w-[28px]"></Text>
+                          <Text className="italic font-gray-500 text-[12.5px]">
+                            Ghi chú: {detail.note}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <View className="mt-1 bg-white p-2">
+                <Text className="text-[14px] text-gray-500 font-semibold">
+                  Ghi chú cho toàn đơn hàng
+                </Text>
+                <View className="mt-2 border-gray-300 border-[0.5px]" />
+                <Text className="mt-2 italic text-gray-5\600  text-[14px]">
+                  {order.note || "Không có"}
                 </Text>
               </View>
-            </View>
-          )}
-          <ScrollView
-            className={`flex-1 ${innerContainerStyleClasses}`}
-            refreshControl={
-              <RefreshControl
-                tintColor={"#FCF450"}
-                refreshing={isReloading}
-                onRefresh={() => {
-                  getOrderDetail(true);
-                }}
-              />
-            }
-          >
-            <View className="bg-white p-2">
-              <Text className="text-[15px] text-gray-600 font-semibold text-[#0891b2]">
-                Thông tin nhận hàng
-              </Text>
-              <View className="mt-3 border-gray-300 border-[0.5px]" />
-              <View className="py-2">
-                <View className="flex-row items-between justify-center">
-                  <Text className="flex-1 text-[14px] text-gray-700 font-semibold">
-                    {order.customer.fullName}
+              <View className="mt-2 bg-white p-2 bg-[#fffbeb]">
+                <View className="py-2 gap-y-1">
+                  <View className="flex-row items-center justify-between">
+                    <Text className="text-[14px] text-gray-700 ">
+                      Tổng tạm tính
+                    </Text>
+                    <Text className="text-[14px] text-gray-700 font-semibold">
+                      {formatPrice(order.totalPrice)} ₫
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center justify-between ">
+                    <Text className="text-[14px] text-gray-700 ">
+                      Khuyến mãi
+                    </Text>
+                    <Text className="text-[14px] text-gray-700 font-semibold">
+                      {order.totalPromotion > 0 && "-"}
+                      {formatPrice(order.totalPromotion)} ₫
+                    </Text>
+                  </View>
+                </View>
+                <View className="mt-1 border-gray-300 border-[0.3px]" />
+                <View className="py-2 flex-row items-center justify-between ">
+                  <Text className="text-[15px] text-gray-700 font-semibold">
+                    Tổng tiền:
                   </Text>
-                  {!isModal && inChatTime && (
-                    <TouchableOpacity
-                      onPress={() => {
-                        if (
-                          !utilService.getInChatTime(
+                  <Text className="text-[15px] text-gray-700 font-semibold">
+                    {formatPrice(order.totalPrice - order.totalPromotion)} ₫
+                  </Text>
+                </View>
+                {order.isCustomerPaid ? (
+                  <Text className="text-right text-md font-bold text-green-500 mb-1">
+                    Đã thanh toán
+                  </Text>
+                ) : (
+                  <Text className="text-right text-md font-bold text-gray-800 mb-1">
+                    Chưa thanh toán
+                  </Text>
+                )}
+              </View>
+
+              {order.shopDeliveryStaff && (
+                <View className="mt-2 bg-white p-2">
+                  <OrderDeliveryInfo
+                    order={order}
+                    containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
+                    textNameStyleClasses={`text-[13.5px]`}
+                    avatarStyleClasses={`h-[17px] w-[17px] mr-[2px]`}
+                    assignNode={
+                      // order.shopDeliveryStaff != null &&
+                      // globalCompleteDeliveryConfirm.isShowActionale &&
+                      // order.status <= OrderStatus.Delivering &&
+                      // authRole == 2 &&
+                      // inFrameTime == 0 ? (
+                      //   <TouchableOpacity
+                      //     onPress={() => {
+                      //       if (!actionInTimeValidation(true)) return;
+                      //       setIsOpenOrderAssign(true);
+                      //     }}
+                      //   >
+                      //     <Text className="p-[0.5] my-[-1] text-[11px] font-medium text-[#0891b2]">
+                      //       Thay đổi
+                      //     </Text>
+                      //   </TouchableOpacity>
+                      // ) : (
+                      <View></View>
+                      // )
+                    }
+                  />
+                </View>
+              )}
+
+              {(order.status == OrderStatus.IssueReported ||
+                order.status == OrderStatus.UnderReview ||
+                order.status == OrderStatus.Resolved) && (
+                <OrderReportInfo order={order} isLoading={isLoading} />
+              )}
+              {order.status >= OrderStatus.Delivered && (
+                <OrderReviewInfo order={order} isLoading={isLoading} />
+              )}
+            </ScrollView>
+            {showActionButtons && (
+              <View
+                className={`items-center justify-center bg-white pt-2 ${innerContainerStyleClasses}`}
+              >
+                {order.status == OrderStatus.Pending &&
+                  utilService.getInFrameTime(
+                    order.startTime,
+                    order.endTime,
+                    order.intendedReceiveDate
+                  ) <= 0 && (
+                    <View className="flex-row items-center gap-x-1">
+                      <TouchableOpacity
+                        className="flex-1 bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
+                        onPress={() => {
+                          const inTime = utilService.getInFrameTime(
                             order.startTime,
                             order.endTime,
                             order.intendedReceiveDate
-                          )
-                        ) {
-                          Alert.alert("Oops", "Đã quá thời gian để nhắn tin.");
-                          setInChatTime(false);
-                          return;
-                        }
-                        if (isModal) {
-                          globalChattingState.setChannelId(order.id);
-                          setIsChatBoxShow(true);
-                        } else {
-                          globalChattingState.setChannelId(order.id);
-                          router.push(`/chats/${order.id}`);
-                        }
-                      }}
-                      className="flex-row gap-x-1 mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
-                    >
-                      <Ionicons
-                        name="chatbubble-ellipses-outline"
-                        size={17}
-                        color="#227B94"
-                      />
-                      <Text className="text-[12.5px] text-white text-[#227B94] font-semibold">
-                        Nhắn tin
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-                {order.status >= OrderStatus.Preparing &&
-                order.status <= OrderStatus.Completed ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      Alert.alert(
-                        "Số điện thoại",
-                        undefined,
-                        [
-                          {
-                            text: "Gọi " + order.customer?.phoneNumber,
-                            onPress: () =>
-                              Linking.openURL(
-                                `tel:${order.customer?.phoneNumber}`
-                              ),
-                          },
-                          {
-                            text: "Sao chép",
-                            onPress: () =>
-                              Clipboard.setString(
-                                order.customer?.phoneNumber || ""
-                              ),
-                          },
-                          { text: "Hủy" },
-                        ].reverse()
-                      );
-                    }}
-                  >
-                    <Text className="text-[14px] text-gray-700 font-semibold text-[#0e7490]">
-                      {order.customer?.phoneNumber}
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  <Text className="text-[14px] text-gray-700 font-semibold">
-                    {utilService.maskPhoneNumber(order.customer.phoneNumber)}
-                  </Text>
-                )}
-
-                <Text className="text-[14px] text-gray-700 font-semibold italic">
-                  {order.buildingName}
-                </Text>
-              </View>
-              <View className="mt-1 border-gray-300 border-[0.3px]" />
-              <View className="py-2 ">
-                <Text className="text-[14px] text-gray-700">
-                  Khung nhận hàng:
-                </Text>
-                <Text className="text-[14px] text-gray-700 font-semibold">
-                  {utilService.formatDateDdMmYyyy(order.intendedReceiveDate) +
-                    " | " +
-                    formatTime(order.startTime) +
-                    " - " +
-                    formatTime(order.endTime)}
-                </Text>
-              </View>
-            </View>
-            <View className="mt-4 bg-white p-2">
-              <Text className="text-[15px] text-gray-600 font-semibold text-[#0891b2]">
-                Chi tiết đơn hàng
-              </Text>
-              <View className="mt-3 border-gray-300 border-[0.5px]" />
-              <View className="pt-4 gap-y-2">
-                {order.orderDetails.map((detail) => (
-                  <View key={detail.id}>
-                    <View className="flex-row justify-between">
-                      <View className="flex-row gap-x-2">
-                        <Text className="font-semibold w-[28px]">
-                          x{detail.quantity}
+                          );
+                          if (inTime > 0) {
+                            getOrderDetail();
+                            Alert.alert(
+                              "Oops!",
+                              "Đã quá thời gian để thực hiện thao tác này!"
+                            );
+                            return false;
+                          }
+                          Alert.alert(
+                            "Xác nhận",
+                            `Xác nhận đơn hàng MS-${order.id}?`,
+                            [
+                              {
+                                text: "Đồng ý",
+                                onPress: async () => {
+                                  orderAPIService.confirm(
+                                    order.id,
+                                    () => {
+                                      const toast = Toast.show({
+                                        type: "info",
+                                        text1: `MS-${order.id}`,
+                                        text2: `Đơn hàng MS-${order.id} đã được xác nhận!`,
+                                      });
+                                      // toast.show(
+                                      //   `Đơn hàng MS-${order.id} đã được xác nhận!`,
+                                      //   {
+                                      //     type: "info",
+                                      //     duration: 1500,
+                                      //   }
+                                      // );
+                                      // Alert.alert(
+                                      //   "Hoàn tất",
+                                      //   `Đơn hàng MS-${order.id} đã được xác nhận!`
+                                      // );
+                                      setOrder({
+                                        ...order,
+                                        status: OrderStatus.Confirmed,
+                                      });
+                                      getOrderDetail();
+                                    },
+                                    (warningInfo: WarningMessageValue) => {},
+                                    (error: any) => {
+                                      Alert.alert(
+                                        "Oops!",
+                                        error?.response?.data?.error?.message ||
+                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                      );
+                                    }
+                                  );
+                                },
+                              },
+                              {
+                                text: "Hủy",
+                              },
+                            ]
+                          );
+                        }}
+                      >
+                        <Text className="text-[16px] font-semibold">
+                          Nhận đơn
                         </Text>
-                        <Text className="font-semibold">{detail.name}</Text>
-                      </View>
-                      <View>
-                        <Text className="font-semibold">
-                          {formatPrice(detail.totalPrice)}₫
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        className="flex-1 bg-white border-[#fda4af] bg-[#fda4af] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
+                        onPress={() => handleReject(order.id)}
+                      >
+                        <Text className="text-[16px] font-semibold">
+                          Từ chối
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                     </View>
-
-                    {detail.optionGroups.length > 0 && (
-                      <View className="flex-row gap-x-2">
-                        <Text className="w-[28px]"></Text>
-                        {detail.optionGroups.map((option) => (
-                          <Text
-                            className="italic font-gray-500 text-[12.5px]"
-                            key={detail.id + option.optionGroupTitle}
-                          >
-                            {option.optionGroupTitle}:{" "}
-                            {option.options
-                              .map((item) => item.optionTitle)
-                              .join(", ")}
-                            {" ; "}
-                          </Text>
-                        ))}
-                      </View>
-                    )}
-
-                    {detail.note && (
-                      <View className="flex-row gap-x-2 mt-[2px]">
-                        <Text className="w-[28px]"></Text>
-                        <Text className="italic font-gray-500 text-[12.5px]">
-                          Ghi chú: {detail.note}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                ))}
-              </View>
-            </View>
-            <View className="mt-1 bg-white p-2">
-              <Text className="text-[14px] text-gray-500 font-semibold">
-                Ghi chú cho toàn đơn hàng
-              </Text>
-              <View className="mt-2 border-gray-300 border-[0.5px]" />
-              <Text className="mt-2 italic text-gray-5\600  text-[14px]">
-                {order.note || "Không có"}
-              </Text>
-            </View>
-            <View className="mt-2 bg-white p-2 bg-[#fffbeb]">
-              <View className="py-2 gap-y-1">
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-[14px] text-gray-700 ">
-                    Tổng tạm tính
-                  </Text>
-                  <Text className="text-[14px] text-gray-700 font-semibold">
-                    {formatPrice(order.totalPrice)} ₫
-                  </Text>
-                </View>
-                <View className="flex-row items-center justify-between ">
-                  <Text className="text-[14px] text-gray-700 ">Khuyến mãi</Text>
-                  <Text className="text-[14px] text-gray-700 font-semibold">
-                    {order.totalPromotion > 0 && "-"}
-                    {formatPrice(order.totalPromotion)} ₫
-                  </Text>
-                </View>
-              </View>
-              <View className="mt-1 border-gray-300 border-[0.3px]" />
-              <View className="py-2 flex-row items-center justify-between ">
-                <Text className="text-[15px] text-gray-700 font-semibold">
-                  Tổng tiền:
-                </Text>
-                <Text className="text-[15px] text-gray-700 font-semibold">
-                  {formatPrice(order.totalPrice - order.totalPromotion)} ₫
-                </Text>
-              </View>
-              {order.isCustomerPaid ? (
-                <Text className="text-right text-md font-bold text-green-500 mb-1">
-                  Đã thanh toán
-                </Text>
-              ) : (
-                <Text className="text-right text-md font-bold text-gray-800 mb-1">
-                  Chưa thanh toán
-                </Text>
-              )}
-            </View>
-
-            {order.shopDeliveryStaff && (
-              <View className="mt-2 bg-white p-2">
-                <OrderDeliveryInfo
-                  order={order}
-                  containerStyleClasses={"py-2 bg-blue-100 p-2 mx-[-8px] "}
-                  textNameStyleClasses={`text-[13.5px]`}
-                  avatarStyleClasses={`h-[17px] w-[17px] mr-[2px]`}
-                  assignNode={
-                    // order.shopDeliveryStaff != null &&
-                    // globalCompleteDeliveryConfirm.isShowActionale &&
-                    // order.status <= OrderStatus.Delivering &&
-                    // authRole == 2 &&
-                    // inFrameTime == 0 ? (
-                    //   <TouchableOpacity
-                    //     onPress={() => {
-                    //       if (!actionInTimeValidation(true)) return;
-                    //       setIsOpenOrderAssign(true);
-                    //     }}
-                    //   >
-                    //     <Text className="p-[0.5] my-[-1] text-[11px] font-medium text-[#0891b2]">
-                    //       Thay đổi
-                    //     </Text>
-                    //   </TouchableOpacity>
-                    // ) : (
-                    <View></View>
-                    // )
-                  }
-                />
-              </View>
-            )}
-
-            {(order.status == OrderStatus.IssueReported ||
-              order.status == OrderStatus.UnderReview ||
-              order.status == OrderStatus.Resolved) && (
-              <OrderReportInfo order={order} isLoading={isLoading} />
-            )}
-            {order.status >= OrderStatus.Delivered && (
-              <OrderReviewInfo order={order} isLoading={isLoading} />
-            )}
-          </ScrollView>
-          {showActionButtons && (
-            <View
-              className={`items-center justify-center bg-white pt-2 ${innerContainerStyleClasses}`}
-            >
-              {order.status == OrderStatus.Pending &&
-                utilService.getInFrameTime(
-                  order.startTime,
-                  order.endTime,
-                  order.intendedReceiveDate
-                ) <= 0 && (
-                  <View className="flex-row items-center gap-x-1">
-                    <TouchableOpacity
-                      className="flex-1 bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
-                      onPress={() => {
-                        const inTime = utilService.getInFrameTime(
-                          order.startTime,
-                          order.endTime,
-                          order.intendedReceiveDate
-                        );
-                        if (inTime > 0) {
-                          getOrderDetail();
-                          Alert.alert(
-                            "Oops!",
-                            "Đã quá thời gian để thực hiện thao tác này!"
+                  )}
+                {order.status == OrderStatus.Confirmed &&
+                  utilService.getInFrameTime(
+                    order.startTime,
+                    order.endTime,
+                    order.intendedReceiveDate
+                  ) <= 0 && (
+                    <View className="flex-row items-center gap-x-1">
+                      <TouchableOpacity
+                        className="flex-1 bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
+                        onPress={() => {
+                          const inTime = utilService.getInFrameTime(
+                            order.startTime,
+                            order.endTime,
+                            order.intendedReceiveDate
                           );
-                          return false;
-                        }
-                        Alert.alert(
-                          "Xác nhận",
-                          `Xác nhận đơn hàng MS-${order.id}?`,
-                          [
-                            {
-                              text: "Đồng ý",
-                              onPress: async () => {
-                                orderAPIService.confirm(
-                                  order.id,
-                                  () => {
-                                    const toast = Toast.show({
-                                      type: "info",
-                                      text1: `MS-${order.id}`,
-                                      text2: `Đơn hàng MS-${order.id} đã được xác nhận!`,
-                                    });
-                                    // toast.show(
-                                    //   `Đơn hàng MS-${order.id} đã được xác nhận!`,
-                                    //   {
-                                    //     type: "info",
-                                    //     duration: 1500,
-                                    //   }
-                                    // );
-                                    // Alert.alert(
-                                    //   "Hoàn tất",
-                                    //   `Đơn hàng MS-${order.id} đã được xác nhận!`
-                                    // );
-                                    setOrder({
-                                      ...order,
-                                      status: OrderStatus.Confirmed,
-                                    });
-                                    getOrderDetail();
-                                  },
-                                  (warningInfo: WarningMessageValue) => {},
-                                  (error: any) => {
-                                    Alert.alert(
-                                      "Oops!",
-                                      error?.response?.data?.error?.message ||
-                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                    );
-                                  }
-                                );
-                              },
-                            },
-                            {
-                              text: "Hủy",
-                            },
-                          ]
-                        );
-                      }}
-                    >
-                      <Text className="text-[16px] font-semibold">
-                        Nhận đơn
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      className="flex-1 bg-white border-[#fda4af] bg-[#fda4af] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
-                      onPress={() => handleReject(order.id)}
-                    >
-                      <Text className="text-[16px] font-semibold">Từ chối</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              {order.status == OrderStatus.Confirmed &&
-                utilService.getInFrameTime(
-                  order.startTime,
-                  order.endTime,
-                  order.intendedReceiveDate
-                ) <= 0 && (
-                  <View className="flex-row items-center gap-x-1">
-                    <TouchableOpacity
-                      className="flex-1 bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
-                      onPress={() => {
-                        const inTime = utilService.getInFrameTime(
-                          order.startTime,
-                          order.endTime,
-                          order.intendedReceiveDate
-                        );
-                        if (inTime > 0) {
-                          getOrderDetail();
+                          if (inTime > 0) {
+                            getOrderDetail();
+                            Alert.alert(
+                              "Oops!",
+                              "Đã quá thời gian để thực hiện thao tác này!"
+                            );
+                            return false;
+                          }
                           Alert.alert(
-                            "Oops!",
-                            "Đã quá thời gian để thực hiện thao tác này!"
-                          );
-                          return false;
-                        }
-                        Alert.alert(
-                          "Xác nhận",
-                          `Bắt đầu chuẩn bị đơn hàng MS-${order.id}?`,
-                          [
-                            {
-                              text: "Đồng ý",
-                              onPress: async () => {
-                                orderAPIService.prepare(
-                                  order.id,
-                                  () => {
-                                    const toast = Toast.show({
-                                      type: "info",
-                                      text1: `MS-${order.id}`,
-                                      text2: `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
-                                    });
-                                    // toast.show(
-                                    //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
-                                    //   {
-                                    //     type: "info",
-                                    //     duration: 1500,
-                                    //   }
-                                    // );
-                                    // Alert.alert(
-                                    //   "Hoàn tất",
-                                    //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
-                                    // );
-                                    setOrder({
-                                      ...order,
-                                      status: OrderStatus.Preparing,
-                                    });
-                                    getOrderDetail();
-                                  },
-                                  (warningInfo: WarningMessageValue) => {
-                                    Alert.alert(
-                                      "Xác nhận",
-                                      warningInfo.message,
-                                      [
-                                        {
-                                          text: "Đồng ý",
-                                          onPress: async () => {
-                                            orderAPIService.prepare(
-                                              order.id,
-                                              () => {
-                                                const toast = Toast.show({
-                                                  type: "info",
-                                                  text1: `MS-${order.id}`,
-                                                  text2: `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
-                                                });
-                                                // toast.show(
-                                                //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
-                                                //   {
-                                                //     type: "info",
-                                                //     duration: 1500,
-                                                //   }
-                                                // );
-                                                // Alert.alert(
-                                                //   "Hoàn tất",
-                                                //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
-                                                // );
-                                                setOrder({
-                                                  ...order,
-                                                  status: OrderStatus.Preparing,
-                                                });
-                                                getOrderDetail();
-                                              },
-                                              (
-                                                warningInfo: WarningMessageValue
-                                              ) => {},
-                                              (error: any) => {
-                                                Alert.alert(
-                                                  "Oops!",
-                                                  error?.response?.data?.error
-                                                    ?.message ||
-                                                    "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                                );
-                                              },
-                                              true
-                                            );
+                            "Xác nhận",
+                            `Bắt đầu chuẩn bị đơn hàng MS-${order.id}?`,
+                            [
+                              {
+                                text: "Đồng ý",
+                                onPress: async () => {
+                                  orderAPIService.prepare(
+                                    order.id,
+                                    () => {
+                                      const toast = Toast.show({
+                                        type: "info",
+                                        text1: `MS-${order.id}`,
+                                        text2: `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
+                                      });
+                                      // toast.show(
+                                      //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
+                                      //   {
+                                      //     type: "info",
+                                      //     duration: 1500,
+                                      //   }
+                                      // );
+                                      // Alert.alert(
+                                      //   "Hoàn tất",
+                                      //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
+                                      // );
+                                      setOrder({
+                                        ...order,
+                                        status: OrderStatus.Preparing,
+                                      });
+                                      getOrderDetail();
+                                    },
+                                    (warningInfo: WarningMessageValue) => {
+                                      Alert.alert(
+                                        "Xác nhận",
+                                        warningInfo.message,
+                                        [
+                                          {
+                                            text: "Đồng ý",
+                                            onPress: async () => {
+                                              orderAPIService.prepare(
+                                                order.id,
+                                                () => {
+                                                  const toast = Toast.show({
+                                                    type: "info",
+                                                    text1: `MS-${order.id}`,
+                                                    text2: `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
+                                                  });
+                                                  // toast.show(
+                                                  //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`,
+                                                  //   {
+                                                  //     type: "info",
+                                                  //     duration: 1500,
+                                                  //   }
+                                                  // );
+                                                  // Alert.alert(
+                                                  //   "Hoàn tất",
+                                                  //   `Đơn hàng MS-${order.id} bắt đầu được chuẩn bị!`
+                                                  // );
+                                                  setOrder({
+                                                    ...order,
+                                                    status:
+                                                      OrderStatus.Preparing,
+                                                  });
+                                                  getOrderDetail();
+                                                },
+                                                (
+                                                  warningInfo: WarningMessageValue
+                                                ) => {},
+                                                (error: any) => {
+                                                  Alert.alert(
+                                                    "Oops!",
+                                                    error?.response?.data?.error
+                                                      ?.message ||
+                                                      "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                                  );
+                                                },
+                                                true
+                                              );
+                                            },
                                           },
-                                        },
-                                        {
-                                          text: "Hủy",
-                                        },
-                                      ]
-                                    );
-                                  },
-                                  (error: any) => {
-                                    Alert.alert(
-                                      "Oops!",
-                                      error?.response?.data?.error?.message ||
-                                        "Yêu cầu bị từ chối, vui lòng thử lại sau!"
-                                    );
-                                  },
-                                  false
-                                );
+                                          {
+                                            text: "Hủy",
+                                          },
+                                        ]
+                                      );
+                                    },
+                                    (error: any) => {
+                                      Alert.alert(
+                                        "Oops!",
+                                        error?.response?.data?.error?.message ||
+                                          "Yêu cầu bị từ chối, vui lòng thử lại sau!"
+                                      );
+                                    },
+                                    false
+                                  );
+                                },
                               },
-                            },
-                            {
-                              text: "Hủy",
-                            },
-                          ]
-                        );
-                      }}
-                    >
-                      <Text className="text-[15px] font-semibold">
-                        Chuẩn bị
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => handleCancel(order.id)}
-                      className="flex-1 bg-white border-[#e2e8f0] bg-[#e2e8f0] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
-                    >
-                      <Text className="text-[15px] font-medium">Hủy</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              {order.status == OrderStatus.Preparing &&
-                utilService.getInFrameTime(
-                  order.startTime,
-                  order.endTime,
-                  order.intendedReceiveDate
-                ) <= 0 && (
-                  <View className="flex-row items-center gap-x-1">
-                    <TouchableOpacity
-                      onPress={() => {
-                        const inTime = utilService.getInFrameTime(
-                          order.startTime,
-                          order.endTime,
-                          order.intendedReceiveDate
-                        );
-                        if (inTime > 0) {
-                          getOrderDetail();
-                          Alert.alert(
-                            "Oops!",
-                            "Đã quá thời gian để thực hiện thao tác này!"
+                              {
+                                text: "Hủy",
+                              },
+                            ]
                           );
-                          return false;
-                        }
-                        // globalOrderDetailState.setId(order.id);
-                        // globalOrderDetailState.setIsActionsShowing(true);
-                        setOrder(order);
-                        setIsOpenOrderAssign(true);
-                      }}
-                      // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                      // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
-                      className="flex-1 bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
-                    >
-                      <Text className="text-[15px] font-semibold">
-                        {order.shopDeliveryStaff
-                          ? "Thay đổi người giao"
-                          : "Chọn người giao hàng"}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              {/* <TouchableOpacity
+                        }}
+                      >
+                        <Text className="text-[15px] font-semibold">
+                          Chuẩn bị
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => handleCancel(order.id)}
+                        className="flex-1 bg-white border-[#e2e8f0] bg-[#e2e8f0] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
+                      >
+                        <Text className="text-[15px] font-medium">Hủy</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                {order.status == OrderStatus.Preparing &&
+                  utilService.getInFrameTime(
+                    order.startTime,
+                    order.endTime,
+                    order.intendedReceiveDate
+                  ) <= 0 && (
+                    <View className="flex-row items-center gap-x-1">
+                      <TouchableOpacity
+                        onPress={() => {
+                          const inTime = utilService.getInFrameTime(
+                            order.startTime,
+                            order.endTime,
+                            order.intendedReceiveDate
+                          );
+                          if (inTime > 0) {
+                            getOrderDetail();
+                            Alert.alert(
+                              "Oops!",
+                              "Đã quá thời gian để thực hiện thao tác này!"
+                            );
+                            return false;
+                          }
+                          // globalOrderDetailState.setId(order.id);
+                          // globalOrderDetailState.setIsActionsShowing(true);
+                          setOrder(order);
+                          setIsOpenOrderAssign(true);
+                        }}
+                        // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                        // className="bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-md items-center justify-center px-[6px] py-[2.2px]"
+                        className="flex-1 bg-white border-[#7dd3fc] bg-[#7dd3fc] border-2 rounded-lg items-center justify-center px-[6px] py-[10px]"
+                      >
+                        <Text className="text-[15px] font-semibold">
+                          {order.shopDeliveryStaff
+                            ? "Thay đổi người giao"
+                            : "Chọn người giao hàng"}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                {/* <TouchableOpacity
                     onPress={() => {}}
                     className="bg-white border-[#227B94] border-[1px] rounded-md items-center justify-center px-[6px] py-[0px]"
                   >
                     <Text className="text-[13.5px]">Chi tiết</Text>
                   </TouchableOpacity> */}
 
-              {/* {order.status == OrderStatus.Delivering && (
+                {/* {order.status == OrderStatus.Delivering && (
                 <View className="w-full flex-row gap-x-2 items-center justify-between pt-3 px-2 bg-white mr-[-8px]">
                   <CustomButton
                     title="Giao thành công"
@@ -899,60 +911,74 @@ const OrderDetail = ({
                   />
                 </View>
               )} */}
-            </View>
-          )}
-        </View>
-      )}
+              </View>
+            )}
+          </View>
+        )}
+        <CustomModal
+          title={``}
+          hasHeader={false}
+          isOpen={isOpenOrderAssign}
+          setIsOpen={(value) => setIsOpenOrderAssign(value)}
+          titleStyleClasses="text-center flex-1"
+          containerStyleClasses="w-[98%]"
+          onBackdropPress={() => {
+            setIsOpenOrderAssign(false);
+          }}
+        >
+          <OrderDeliveryAssign
+            onComplete={(shopDeliveryStaff) => {
+              setIsOpenOrderAssign(false);
+              getOrderDetail();
+              if (shopDeliveryStaff === null) {
+                return;
+              }
+              Toast.show({
+                type: "info",
+                text1: `MS-${order.id}`,
+                text2: `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+                  shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
+                }!`,
+              });
+              // toast.show(
+              //   `Đơn hàng MS-${order.id} sẽ được giao bởi ${
+              //     shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
+              //   }!`,
+              //   {
+              //     type: "success",
+              //     duration: 3000,
+              //   }
+              // );
+            }}
+            order={order}
+            isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
+          />
+        </CustomModal>
+        <OrderCancelModal
+          isCancelOrReject={isCancelOrReject}
+          orderId={order.id}
+          request={request}
+          isOpen={isCancelModal}
+          setIsOpen={setIsCancelModal}
+        />
+        <ReviewReplyModal />
+        <ImageViewingModal />
+        <Toast topOffset={-20} />
+      </View>
       <CustomModal
         title={``}
         hasHeader={false}
-        isOpen={isOpenOrderAssign}
-        setIsOpen={(value) => setIsOpenOrderAssign(value)}
+        isOpen={isChatBoxShow}
+        setIsOpen={(value) => setIsChatBoxShow(value)}
         titleStyleClasses="text-center flex-1"
-        containerStyleClasses="w-[98%]"
+        containerStyleClasses="h-screen w-screen p-0 pt-3"
         onBackdropPress={() => {
-          setIsOpenOrderAssign(false);
+          setIsChatBoxShow(false);
         }}
       >
-        <OrderDeliveryAssign
-          onComplete={(shopDeliveryStaff) => {
-            setIsOpenOrderAssign(false);
-            getOrderDetail();
-            if (shopDeliveryStaff === null) {
-              return;
-            }
-            Toast.show({
-              type: "info",
-              text1: `MS-${order.id}`,
-              text2: `Đơn hàng MS-${order.id} sẽ được giao bởi ${
-                shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
-              }!`,
-            });
-            // toast.show(
-            //   `Đơn hàng MS-${order.id} sẽ được giao bởi ${
-            //     shopDeliveryStaff.id == 0 ? "bạn" : shopDeliveryStaff.fullName
-            //   }!`,
-            //   {
-            //     type: "success",
-            //     duration: 3000,
-            //   }
-            // );
-          }}
-          order={order}
-          isNeedForReconfimation={order.shopDeliveryStaff ? false : true}
-        />
+        <Chatbox onBack={() => setIsChatBoxShow(false)} />
       </CustomModal>
-      <OrderCancelModal
-        isCancelOrReject={isCancelOrReject}
-        orderId={order.id}
-        request={request}
-        isOpen={isCancelModal}
-        setIsOpen={setIsCancelModal}
-      />
-      <ReviewReplyModal />
-      <ImageViewingModal />
-      <Toast topOffset={-20} />
-    </View>
+    </>
   );
 };
 
