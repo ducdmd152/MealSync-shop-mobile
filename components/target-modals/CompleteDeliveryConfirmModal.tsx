@@ -566,6 +566,7 @@ const CompleteDeliveryConfirmModal = ({
               }}
             /> */}
             <OrderDetail
+              isModal={true}
               order={order}
               showActionButtons={false}
               setOrder={setOrder}

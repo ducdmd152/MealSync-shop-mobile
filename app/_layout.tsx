@@ -58,7 +58,8 @@ export default function RootLayout() {
   const globalAuthState = useGlobalAuthState();
   const globalSocketState = useGlobalSocketState();
   const globalNotiState = useGlobalNotiState();
-  const chattingChannelId = useGlobalChattingState((state) => state.channelId);
+  const globalChattingState = useGlobalChattingState();
+  const chattingChannelId = globalChattingState.channelId;
   const [isReady, setIsReady] = useState(false);
   const globalHeaderPage = useGlobalHeaderPage();
   const globalOrderDetailPageState = useOrderDetailPageState();
@@ -230,6 +231,7 @@ export default function RootLayout() {
                   router.push("/order/details");
                 }
                 if (noti.EntityType == NotiEntityTypes.Chat) {
+                  globalChattingState.setChannelId(noti.ReferenceId);
                   router.push(`/chats/${noti.ReferenceId}`);
                 }
               },

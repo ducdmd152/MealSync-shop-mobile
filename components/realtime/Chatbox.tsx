@@ -53,7 +53,16 @@ interface ChatData {
     roleId: number;
   };
 }
-
+interface Channel {
+  id: string;
+  last_message: string;
+  last_update_id: string;
+  updated_at: string;
+  is_close: number;
+  map_user_is_read: {
+    [key: string]: boolean;
+  };
+}
 const MediaPreview = ({
   media,
   onRemove,
@@ -127,11 +136,21 @@ const MediaPreview = ({
 const CustomInputToolbar = ({
   selectedMedia,
   onRemoveMedia,
+  isClose,
   ...props
 }: {
+  isClose: boolean;
   selectedMedia: Media | null;
   onRemoveMedia: () => void;
 }) => {
+  if (isClose)
+    return (
+      <View className="h-20 justify-center items-center">
+        <Text className="text-gray-600">
+          Đã quá thời gian nhắn tin cho đơn này.
+        </Text>
+      </View>
+    );
   return (
     <View style={styles.inputContainer} className="">
       {selectedMedia && (
@@ -197,6 +216,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
   const globalAuthState = useGlobalAuthState();
   const userInfo = globalAuthState?.authDTO;
   const { socket } = useGlobalSocketState();
+  const [channelData, setChannelData] = useState<Channel>();
 
   const authId = globalAuthState.authDTO?.id || 0;
   const pickMedia = async () => {
@@ -414,6 +434,11 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
               })
             );
           });
+          socket.on("receivedRoomData", (msg) => {
+            console.log(msg, "receivedRoomData neeeeeeeee");
+            setChannelData(msg);
+          });
+          socket.emit("getRoomDataById", globalChattingState.channelId);
         }
       } catch (error) {
         console.log("Error:", error);
@@ -423,7 +448,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
 
   const onSend = async (newMessages: any = []) => {
     try {
-      if (!socket) return;
+      if (!socket || channelData?.is_close == 2) return;
 
       const [message] = newMessages;
       console.log(message, " new messages");
@@ -484,7 +509,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
     );
   };
   return (
-    <View className="h-full">
+    <View className="h-full w-full">
       <SafeAreaView className="bg-primary p-2" edges={["top"]}>
         <View className="flex-row items-center gap-4 pl-2">
           <TouchableRipple
@@ -511,6 +536,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
           renderInputToolbar={(props) => (
             <CustomInputToolbar
               {...props}
+              isClose={channelData?.is_close == 1 ? false : true}
               selectedMedia={selectedMedia}
               onRemoveMedia={async () => {
                 setSelectedMedia(null);
