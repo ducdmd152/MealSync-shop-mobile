@@ -3,18 +3,21 @@ import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
 import apiClient from "@/services/api-services/api-client";
 import { ResizeMode, Video } from "expo-av";
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { ArrowLeft, Camera, Play, Send, X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
+import useGlobalChattingState from "@/hooks/states/useChattingState";
 import {
   Alert,
   Dimensions,
   Image,
   Platform,
   Pressable,
-  StyleSheet, Text, View
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import {
   Bubble,
@@ -51,7 +54,13 @@ interface ChatData {
   };
 }
 
-const MediaPreview = ({ media, onRemove }: { media: Media | null; onRemove: () => void }) => {
+const MediaPreview = ({
+  media,
+  onRemove,
+}: {
+  media: Media | null;
+  onRemove: () => void;
+}) => {
   const videoRef = useRef<Video | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -115,7 +124,14 @@ const MediaPreview = ({ media, onRemove }: { media: Media | null; onRemove: () =
   );
 };
 
-const CustomInputToolbar = ({ selectedMedia, onRemoveMedia, ...props }: { selectedMedia: Media | null; onRemoveMedia: () => void }) => {
+const CustomInputToolbar = ({
+  selectedMedia,
+  onRemoveMedia,
+  ...props
+}: {
+  selectedMedia: Media | null;
+  onRemoveMedia: () => void;
+}) => {
   return (
     <View style={styles.inputContainer} className="">
       {selectedMedia && (
@@ -184,18 +200,30 @@ const ChatChannel = () => {
   const { socket } = useGlobalSocketState();
 
   const authId = globalAuthState.authDTO?.id || 0;
-  console.log(userInfo, authId, " asdjkfasjdfklasdfjklasdfja;lksdfja;lsdfjk;asdfja;lskfjasdljas;")
+  console.log(
+    userInfo,
+    authId,
+    " asdjkfasjdfklasdfjklasdfja;lksdfja;lsdfjk;asdfja;lskfjasdljas;"
+  );
   const pickMedia = async () => {
     try {
       if (Platform.OS !== "web") {
-        const libraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const libraryStatus =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (libraryStatus.status !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!");
+          Alert.alert(
+            "Oops",
+            "Ứng dụng cần truy cập thư viện để hoàn tất tác vụ!"
+          );
         }
 
         const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
         if (cameraStatus.status !== "granted") {
-          alert("Sorry, we need camera permissions to make this work!");
+          Alert.alert(
+            "Oops",
+            "Ứng dụng cần truy cập camera để hoàn tất tác vụ!"
+          );
+          return;
         }
       }
 
@@ -203,9 +231,9 @@ const ChatChannel = () => {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
-        quality: 1,
+        quality: 0.5,
         videoMaxDuration: 60,
-        aspect: [1, 1]
+        aspect: [1, 1],
       });
       console.log(result);
       if (!result.canceled) {
@@ -216,16 +244,17 @@ const ChatChannel = () => {
           Alert.alert("Error", "Không tìm thấy file!!!");
           return;
         }
-        if ((fileInfo.size / (1024 * 1024) > 5)) {
+        if (fileInfo.size / (1024 * 1024) > 5) {
           Alert.alert("Error", "File size exceeds 5MB.");
-          console.log("File")
+          console.log("File");
           return;
         }
         const mediaUrl = await uploadMedia(asset.uri, asset.type);
         if (mediaUrl) {
           setSelectedMedia({
             uri: asset.uri,
-            type: asset.type || (asset.uri.endsWith(".mp4") ? "video" : "image"),
+            type:
+              asset.type || (asset.uri.endsWith(".mp4") ? "video" : "image"),
             preview: true,
           });
           console.log(mediaUrl, "uploadMedia");
@@ -250,8 +279,6 @@ const ChatChannel = () => {
       } as any); // This is used to bypass the type mismatch temporarily
 
       // Alternatively, using File constructor for better type safety (if running in a browser environment or similar)
-
-      ;
 
       const res = await apiClient.put(`storage/file/upload`, formData, {
         headers: {
@@ -286,27 +313,35 @@ const ChatChannel = () => {
       if (socket) {
         socket.emit("leaveRoomsChat", { chatRoomId: Number(params.id) });
       }
-    }
+    };
   }, []);
 
   const [dataHeader, setDataHeader] = useState<any | null>(null);
+  const setGlobalChannelId = useGlobalChattingState(
+    (state) => state.setChannelId
+  );
+  useFocusEffect(
+    React.useCallback(() => {
+      return setGlobalChannelId(0);
+    }, [])
+  );
   useEffect(() => {
     console.log(socket, " socket ne ", chatData);
     if (chatData) {
       try {
         if (socket) {
-          Object.keys(chatData).forEach(key => {
+          Object.keys(chatData).forEach((key) => {
             if (chatData[key].roleId === 1) {
               setDataHeader(chatData[key]);
             }
-          })
+          });
           socket.emit("joinRoomsChat", {
             chatRoomId: Number(params.id),
             chatData,
           });
           socket.on("errorChat", (msg) => {
             if (msg) {
-              console.log(msg, " Error chat message")
+              console.log(msg, " Error chat message");
             }
           });
           socket.on("chatMessage", (msg: any) => {
@@ -437,7 +472,6 @@ const ChatChannel = () => {
     return (
       <Bubble
         {...props}
-
         wrapperStyle={{
           left: {
             backgroundColor: "#f0f0f0",
@@ -446,7 +480,6 @@ const ChatChannel = () => {
             backgroundColor: Colors.primaryBackgroundColor,
           },
         }}
-
         renderMessageImage={(messageImageProps: any) => (
           <Image
             source={{ uri: messageImageProps.currentMessage.image }}
@@ -459,7 +492,7 @@ const ChatChannel = () => {
         )}
       />
     );
-  }
+  };
   return (
     <>
       <SafeAreaView className="bg-primary p-2" edges={["top"]}>
@@ -480,7 +513,7 @@ const ChatChannel = () => {
         </View>
       </SafeAreaView>
 
-      <SafeAreaView className="flex-1 bg-white" >
+      <SafeAreaView className="flex-1 bg-white">
         <GiftedChat
           messages={messages}
           onSend={onSend}
@@ -525,7 +558,6 @@ const ChatChannel = () => {
             name: userInfo?.fullName,
             avatar: userInfo?.avatarUrl,
           }}
-
           minInputToolbarHeight={selectedMedia ? 150 : 60}
         />
       </SafeAreaView>
@@ -583,13 +615,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
   },
   previewImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
   previewVideo: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   removeButton: {
     position: "absolute",
@@ -600,20 +632,19 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   playButton: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
     transform: [{ translateX: -15 }, { translateY: -15 }],
     zIndex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 30,
     padding: 10,
   },
   playButtonHidden: {
-    display: 'none',
+    display: "none",
   },
-  inputContainer: {
-  },
+  inputContainer: {},
   mediaPreviewContainer: {
     height: PREVIEW_HEIGHT - 16,
     width: "100%",
@@ -633,21 +664,21 @@ const styles = StyleSheet.create({
   },
   messageVideo: {
     position: "absolute",
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   messagePlayButton: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
     transform: [{ translateX: -15 }, { translateY: -15 }],
     zIndex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 30,
     padding: 10,
   },
   shadow: {
-    shadowColor: 'black',
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,

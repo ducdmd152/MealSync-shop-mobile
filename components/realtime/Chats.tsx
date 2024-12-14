@@ -10,12 +10,13 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-paper";
 import apiClient from "../../services/api-services/api-client";
 import { FetchOnlyListResponse } from "../../types/responses/FetchResponse";
+import useGlobalChattingState from "@/hooks/states/useChattingState";
 const formatRecentDate = (createdDate: string): string => {
   const date = dayjs(createdDate);
   const now = dayjs();
   const daysDiff = dayjs(now.local().format("YYYY-MM-DD")).diff(
     dayjs(date.local().format("YYYY-MM-DD")).local(),
-    "day",
+    "day"
   );
   if (daysDiff < 1) {
     return date.local().format("HH:mm");
@@ -31,11 +32,14 @@ const Chats = () => {
   const globalSocketState = useGlobalSocketState();
   const { socket, setSocket } = globalSocketState;
   const [orderChannelList, setOrderChannelList] = useState<SocketChannelInfo[]>(
-    [],
+    []
+  );
+  const setGlobalChannelId = useGlobalChattingState(
+    (state) => state.setChannelId
   );
   const globalAuthState = useGlobalAuthState();
   const authId = globalAuthState.authDTO?.id || 0;
- 
+
   const orderChannelInfosFetcher = useFetchWithRQWithFetchFunc(
     ["order/chat-info"],
     async (): Promise<FetchOnlyListResponse<OrderChannelInfo>> =>
@@ -43,10 +47,10 @@ const Chats = () => {
         .get(
           `order/chat-info?${orderChannelList
             .map((channel) => `ids=${channel.id}`)
-            .join("&")}`,
+            .join("&")}`
         )
         .then((response) => response.data),
-    [orderChannelList],
+    [orderChannelList]
   );
   // useEffect(() => {
   //   console.log(
@@ -61,7 +65,7 @@ const Chats = () => {
       orderChannelInfosFetcher.data?.value.find((info) => info.id == orderId)
     ) {
       return orderChannelInfosFetcher.data?.value.find(
-        (info) => info.id == orderId,
+        (info) => info.id == orderId
       );
     }
     return {
@@ -80,7 +84,7 @@ const Chats = () => {
             return (
               dayjs(b.updated_at).valueOf() - dayjs(a.updated_at).valueOf()
             );
-          }),
+          })
         );
       });
     }
@@ -89,16 +93,16 @@ const Chats = () => {
     React.useCallback(() => {
       if (socket) {
         orderChannelInfosFetcher.refetch();
-        socket.emit("regisListChannel",{
+        socket.emit("regisListChannel", {
           pageState: null,
-          pageSize: 5
+          pageSize: 5,
         });
       }
       // dispatch(globalSlice.actions.setCurrentScreen("chatList"));
       // return () => {
       //   dispatch(globalSlice.actions.setCurrentScreen(""));
       // };
-    }, []),
+    }, [])
   );
 
   return (
@@ -108,6 +112,7 @@ const Chats = () => {
           key={channel.id}
           onPress={() => {
             // console.log("HEllo");
+            setGlobalChannelId(channel.id);
             router.push(`/chats/${channel.id}`);
           }}
           className={`p-3 px-4 bg-white border-b-[1px] border-gray-200 flex-row rounded-lg`}
@@ -126,10 +131,11 @@ const Chats = () => {
             }}
           />
           <View className="ml-3 gap-y-1">
-            <Text className="font-medium">{`MS-${channel.id} | ${getChannelInfo(channel.id)?.customer
+            <Text className="font-medium">{`MS-${channel.id} | ${
+              getChannelInfo(channel.id)?.customer
                 ? getChannelInfo(channel.id)?.customer?.fullName
                 : ""
-              }`}</Text>
+            }`}</Text>
             <View className="w-72 flex-row items-center justify-between text-[11px]">
               <View className="flex-1">
                 <Text

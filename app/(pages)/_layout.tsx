@@ -117,7 +117,7 @@ const PageLayout = () => {
           options={{ headerTitle: "Chọn địa chỉ" }}
         />
         <Stack.Screen
-          name="chats/index"
+          name="chats"
           options={{
             headerShown: false,
           }}

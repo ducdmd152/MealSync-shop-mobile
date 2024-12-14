@@ -1,8 +1,10 @@
 import { Colors } from "@/constants/Colors";
+import useGlobalChattingState from "@/hooks/states/useChattingState";
 import useGlobalAuthState from "@/hooks/states/useGlobalAuthState";
 import useGlobalSocketState from "@/hooks/states/useGlobalSocketState";
 import apiClient from "@/services/api-services/api-client";
 import { useIsFocused } from "@react-navigation/native";
+import dayjs from "dayjs";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -82,18 +84,20 @@ export function formatDateTime(dateString: string): string {
 }
 const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
   const { width } = Dimensions.get("window");
-  const widthImage = (width * 20) / 100;
+  const widthImage = (width * 15) / 100;
   const widthItem = (width * 90) / 100;
 
   const globalAuthState = useGlobalAuthState();
   const userInfo = globalAuthState?.authDTO;
   if (!item) return null;
-
+  const setGlobalChannelId = useGlobalChattingState(
+    (state) => state.setChannelId
+  );
   return (
     <View
       style={{
         borderRadius: 16,
-        backgroundColor: item.map_user_is_read[`${userInfo?.id}`]
+        backgroundColor: !item.map_user_is_read[`${userInfo?.id}`]
           ? "#dffff3"
           : "white",
         ...styles.shadow,
@@ -102,6 +106,7 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
       <TouchableRipple
         borderless={true}
         onPress={() => {
+          setGlobalChannelId(Number(item.id) || 0);
           router.push(`/chats/${item.id}`);
         }}
         style={{ borderRadius: 16 }}
@@ -121,14 +126,13 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
               borderRadius: 16,
             }}
           />
-          <View className="pl-4 gap-2 pr-3 pt-1 flex-1">
+          <View className="pl-4 pr-3 pt-1 flex-1">
             <View className="flex-row justify-between items-start">
               <Text className="text-base font-bold text-blue-800">
-                {item.info.fullName}
-                <Text className="text-lg text-gray-400">#{item.id}</Text>
+                <Text className="text-md text-gray-400">MS-{item.id}</Text>
               </Text>
             </View>
-            <View className="flex-1 pr-2 flex-row">
+            <View className="pr-2 flex-row">
               <Text
                 numberOfLines={1}
                 className="flex-wrap flex-1 text-xs text-gray-600 text-ellipsis"
@@ -138,12 +142,10 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
                     : "bold",
                 }}
               >
-                {item.last_message}
+                {item.info.fullName} : {item.last_message}
               </Text>
-            </View>
-            <View className="items-end">
               <Text className="text-xs text-gray-500">
-                {formatDateTime(item.updated_at)}
+                {dayjs(item.updated_at).local().format("HH:mm")}
               </Text>
             </View>
           </View>
