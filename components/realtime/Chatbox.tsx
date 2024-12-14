@@ -199,11 +199,6 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
   const { socket } = useGlobalSocketState();
 
   const authId = globalAuthState.authDTO?.id || 0;
-  console.log(
-    userInfo,
-    authId,
-    " asdjkfasjdfklasdfjklasdfja;lksdfja;lsdfjk;asdfja;lskfjasdljas;"
-  );
   const pickMedia = async () => {
     try {
       if (Platform.OS !== "web") {

@@ -30,6 +30,7 @@ interface Channel {
   last_message: string;
   last_update_id: string;
   updated_at: string;
+  is_close: number;
   map_user_is_read: {
     [key: string]: boolean;
   };

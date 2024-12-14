@@ -72,6 +72,7 @@ interface Props {
   showActionButtons?: boolean;
   order: OrderDetailModel;
   setOrder: (order: OrderDetailModel) => void;
+  isModal?: boolean;
 }
 const OrderDetail = ({
   orderId,
@@ -83,18 +84,18 @@ const OrderDetail = ({
   showActionButtons = true,
   order,
   setOrder,
+  isModal = false,
 }: Props) => {
   const toast = useToast();
   // const globalOrderDetailState = useGlobalOrderDetailState();
   const [isOpenOrderAssign, setIsOpenOrderAssign] = React.useState(false);
+  const globalChattingState = useGlobalChattingState();
+  const { isChatBoxShow, setIsChatBoxShow } = globalChattingState;
   // const [order, setOrder] = useState<OrderDetailModel>({} as OrderDetailModel);
   const [isLoading, setIsLoading] = useState(true);
   const [isReloading, setIsReloading] = useState(false);
   const [isCancelModal, setIsCancelModal] = useState(false);
   const [isCancelOrReject, setIsCancelOrReject] = useState(false);
-  const setGlobalChannelId = useGlobalChattingState(
-    (state) => state.setChannelId
-  );
   const [inChatTime, setInChatTime] = useState(false);
 
   const [request, setRequest] = useState<
@@ -376,7 +377,7 @@ const OrderDetail = ({
                   <Text className="flex-1 text-[14px] text-gray-700 font-semibold">
                     {order.customer.fullName}
                   </Text>
-                  {inChatTime && (
+                  {!isModal && inChatTime && (
                     <TouchableOpacity
                       onPress={() => {
                         if (
@@ -390,8 +391,13 @@ const OrderDetail = ({
                           setInChatTime(false);
                           return;
                         }
-                        setGlobalChannelId(order.id);
-                        router.push(`/chats/${order.id}`);
+                        if (isModal) {
+                          globalChattingState.setChannelId(order.id);
+                          setIsChatBoxShow(true);
+                        } else {
+                          globalChattingState.setChannelId(order.id);
+                          router.push(`/chats/${order.id}`);
+                        }
                       }}
                       className="flex-row gap-x-1 mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
                     >

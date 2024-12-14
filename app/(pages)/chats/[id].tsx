@@ -53,6 +53,16 @@ interface ChatData {
     roleId: number;
   };
 }
+interface Channel {
+  id: string;
+  last_message: string;
+  last_update_id: string;
+  updated_at: string;
+  is_close: number;
+  map_user_is_read: {
+    [key: string]: boolean;
+  };
+}
 
 const MediaPreview = ({
   media,
@@ -127,11 +137,22 @@ const MediaPreview = ({
 const CustomInputToolbar = ({
   selectedMedia,
   onRemoveMedia,
+  isClose,
   ...props
 }: {
+  isClose: boolean;
   selectedMedia: Media | null;
   onRemoveMedia: () => void;
 }) => {
+  if (isClose)
+    return (
+      <View className="h-20 justify-center items-center">
+        <Text className="text-gray-600">
+          {" "}
+          Phòng nhắn tin đã đóng, hiện tại không thể nhắn tin!!!
+        </Text>
+      </View>
+    );
   return (
     <View style={styles.inputContainer} className="">
       {selectedMedia && (
@@ -198,13 +219,9 @@ const ChatChannel = () => {
   const globalAuthState = useGlobalAuthState();
   const userInfo = globalAuthState?.authDTO;
   const { socket } = useGlobalSocketState();
+  const [channelData, setChannelData] = useState<Channel>();
 
   const authId = globalAuthState.authDTO?.id || 0;
-  console.log(
-    userInfo,
-    authId,
-    " asdjkfasjdfklasdfjklasdfja;lksdfja;lsdfjk;asdfja;lskfjasdljas;"
-  );
   const pickMedia = async () => {
     try {
       if (Platform.OS !== "web") {
@@ -309,6 +326,7 @@ const ChatChannel = () => {
 
   useEffect(() => {
     handleGetChatData();
+    // socket.emit("getRoomDataById", Number(params.id));
     return () => {
       if (socket) {
         socket.emit("leaveRoomsChat", { chatRoomId: Number(params.id) });
@@ -422,7 +440,11 @@ const ChatChannel = () => {
               })
             );
           });
-
+          socket.on("receivedRoomData", (msg) => {
+            console.log(msg, "receivedRoomData neeeeeeeee");
+            setChannelData(msg);
+          });
+          socket.emit("getRoomDataById", Number(params.id));
           setChatRoomId(params.id as string);
         }
       } catch (error) {
@@ -433,7 +455,7 @@ const ChatChannel = () => {
 
   const onSend = async (newMessages: any = []) => {
     try {
-      if (!socket) return;
+      if (!socket || channelData?.is_close == 2) return;
 
       const [message] = newMessages;
       console.log(message, " new messages");
@@ -521,6 +543,7 @@ const ChatChannel = () => {
           renderInputToolbar={(props) => (
             <CustomInputToolbar
               {...props}
+              isClose={channelData?.is_close == 1 ? false : true}
               selectedMedia={selectedMedia}
               onRemoveMedia={async () => {
                 setSelectedMedia(null);

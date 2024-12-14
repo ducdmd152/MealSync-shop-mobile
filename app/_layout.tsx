@@ -229,6 +229,9 @@ export default function RootLayout() {
                   globalOrderDetailPageState.setId(noti.ReferenceId);
                   router.push("/order/details");
                 }
+                if (noti.EntityType == NotiEntityTypes.Chat) {
+                  router.push(`/chats/${noti.ReferenceId}`);
+                }
               },
             });
         } catch (err) {

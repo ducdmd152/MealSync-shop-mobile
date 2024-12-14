@@ -92,10 +92,8 @@ const CompleteDeliveryConfirmModal = ({
   const [isOrderDetailViewMode, setIsOrderDetailViewMode] = useState(false);
   const [isReloading, setIsReloading] = useState(false);
   const [isViewOrderFoodDetail, setIsViewOrderFoodDetail] = useState(false);
-  const [isChatBoxShow, setIsChatBoxShow] = useState(false);
-  const setGlobalChannelId = useGlobalChattingState(
-    (state) => state.setChannelId
-  );
+  const globalChattingState = useGlobalChattingState();
+  const { isChatBoxShow, setIsChatBoxShow } = globalChattingState;
   const [inChatTime, setInChatTime] = useState(false);
   const getOrderDetail = async (isRefetching = false) => {
     setIsLoading(true);
@@ -605,7 +603,7 @@ const CompleteDeliveryConfirmModal = ({
                         setInChatTime(false);
                         return;
                       }
-                      setGlobalChannelId(order.id);
+                      globalChattingState.setChannelId(order.id);
                       setIsChatBoxShow(true);
                     }}
                     className="flex-row gap-x-1 mt-1 bg-[#227B94] border-[#227B94] border-0 rounded-md items-start justify-center px-[6px] bg-white "
