@@ -15,7 +15,7 @@ const TabHeader = () => {
   const globalNotiState = useGlobalNotiState();
   const { socket } = useGlobalSocketState();
 
-  const [notRead, setNotRead] = React.useState(0);
+  // const [notRead, setNotRead] = React.useState(0);
   const numberOfUnreaded = useFetchWithRQWithFetchFunc(
     ["shop-owner-staff/notification/total-unread"],
     async (): Promise<FetchValueResponse<{ totalUnerad: number }>> =>
@@ -34,7 +34,8 @@ const TabHeader = () => {
     if (socket) {
       socket.on("getCountNotRead", (msg) => {
         console.log(msg, "not read");
-        setNotRead(msg);
+        globalHeaderPage.setNumberOfMsg(msg);
+        // setNotRead(msg);
       });
     }
   }, [socket]);
@@ -109,13 +110,18 @@ const TabHeader = () => {
             color="#DF4830"
           />
 
-          {notRead > 0 && (
-            <View className="items-center justify-center bg-secondary h-[24px] w-[24px] rounded-full absolute top-[-8] right-[-8]">
-              <Text className="text-[9px] font-medium">
-                {notRead == 0 ? "" : notRead < 10 ? notRead : "9+"}
-              </Text>
-            </View>
-          )}
+          {!globalHeaderPage.isChattingFocusing &&
+            globalHeaderPage.numberOfMsg > 0 && (
+              <View className="items-center justify-center bg-secondary h-[24px] w-[24px] rounded-full absolute top-[-8] right-[-8]">
+                <Text className="text-[9px] font-medium">
+                  {globalHeaderPage.numberOfMsg == 0
+                    ? ""
+                    : globalHeaderPage.numberOfMsg < 10
+                    ? globalHeaderPage.numberOfMsg
+                    : "9+"}
+                </Text>
+              </View>
+            )}
         </TouchableOpacity>
       </View>
     </View>

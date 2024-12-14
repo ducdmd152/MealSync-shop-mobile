@@ -5,6 +5,8 @@ interface State {
   setIsNotiPageFocusing: (value: boolean) => void;
   isChattingFocusing: boolean;
   setIsChattingFocusing: (value: boolean) => void;
+  numberOfMsg: number;
+  setNumberOfMsg: (value: number) => void;
 }
 
 const useGlobalHeaderPage = create<State>((set) => ({
@@ -12,6 +14,8 @@ const useGlobalHeaderPage = create<State>((set) => ({
   setIsNotiPageFocusing: (value: boolean) => set({ isNotiPageFocusing: value }),
   isChattingFocusing: false,
   setIsChattingFocusing: (value: boolean) => set({ isChattingFocusing: value }),
+  numberOfMsg: 0,
+  setNumberOfMsg: (value: number) => set({ numberOfMsg: value }),
 }));
 
 export default useGlobalHeaderPage;

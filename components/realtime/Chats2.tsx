@@ -5,7 +5,14 @@ import apiClient from "@/services/api-services/api-client";
 import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { Dimensions, FlatList, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Button, Divider, TouchableRipple } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -86,14 +93,15 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
     <View
       style={{
         borderRadius: 16,
-        backgroundColor: item.map_user_is_read[`${userInfo?.id}`] ? "#dffff3" : "white",
+        backgroundColor: item.map_user_is_read[`${userInfo?.id}`]
+          ? "#dffff3"
+          : "white",
         ...styles.shadow,
       }}
     >
       <TouchableRipple
         borderless={true}
         onPress={() => {
-
           router.push(`/chats/${item.id}`);
         }}
         style={{ borderRadius: 16 }}
@@ -125,7 +133,9 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
                 numberOfLines={1}
                 className="flex-wrap flex-1 text-xs text-gray-600 text-ellipsis"
                 style={{
-                  fontWeight: item.map_user_is_read[`${userInfo?.id}`] ? 400 : "bold",
+                  fontWeight: item.map_user_is_read[`${userInfo?.id}`]
+                    ? 400
+                    : "bold",
                 }}
               >
                 {item.last_message}
@@ -139,7 +149,7 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
           </View>
         </View>
       </TouchableRipple>
-    </View >
+    </View>
   );
 };
 
@@ -147,11 +157,16 @@ const emptyList = Array(5).fill(null);
 
 const ListChatChannelPage: React.FC = () => {
   const isFocus = useIsFocused();
+  const [isLoadError, setIsLoadError] = useState(false);
 
   const { socket } = useGlobalSocketState();
   const [listChannel, setListChannel] = useState<any[] | null>(null);
-  const [listChannelSocket, setListChannelSocket] = useState<Channel[] | null>(null);
-  const [listChannelMerge, setListChannelMerge] = useState<Channel[] | null>(null);
+  const [listChannelSocket, setListChannelSocket] = useState<Channel[] | null>(
+    null
+  );
+  const [listChannelMerge, setListChannelMerge] = useState<Channel[] | null>(
+    null
+  );
   const [pageState, setPageState] = useState<string | null>(null);
   const [hasNext, setHasNext] = useState(false);
   const [onRequest, setOnRequest] = useState(false);
@@ -163,7 +178,7 @@ const ListChatChannelPage: React.FC = () => {
     if (socket) {
       socket.on("getListChannel", (msg: SocketMessage) => {
         setOnRequest(true);
-        console.log(msg, " mesage neeeeeee")
+        console.log(msg, " mesage neeeeeee");
         if (msg) {
           hasNext2.current = msg.hasNext;
         }
@@ -186,10 +201,11 @@ const ListChatChannelPage: React.FC = () => {
   }, []);
 
   const handleGetListChannelInfo = async (listRoomIds: string[]) => {
+    setIsLoadError(false);
     try {
       const queryString = listRoomIds
-        .map(id => `ids=${encodeURIComponent(id)}`)
-        .join('&');
+        .map((id) => `ids=${encodeURIComponent(id)}`)
+        .join("&");
 
       const res = await apiClient.get(`order/chat-info?${queryString}`);
       setHasNext(hasNext2.current);
@@ -197,9 +213,12 @@ const ListChatChannelPage: React.FC = () => {
       setListChannel(data.value);
     } catch (e) {
       setOnRequest(false);
+      setIsLoadError(true);
       console.log("Get list all chat channel error: ", e);
     }
-  }; const handleGetNewMessage = async (msg: Channel) => {
+  };
+  const handleGetNewMessage = async (msg: Channel) => {
+    setIsLoadError(false);
     try {
       const res = await apiClient.get("order/chat-info?ids=" + msg.id);
 
@@ -211,7 +230,9 @@ const ListChatChannelPage: React.FC = () => {
         };
 
         if (listRef.current) {
-          const newListMergeData = listRef.current.filter((i) => i.id !== msg.id);
+          const newListMergeData = listRef.current.filter(
+            (i) => i.id !== msg.id
+          );
           const newList = [newMergeData, ...newListMergeData];
 
           setListChannelMerge(newList);
@@ -220,6 +241,7 @@ const ListChatChannelPage: React.FC = () => {
       }
     } catch (e) {
       console.log("Get list all chat channel error: ", e);
+      setIsLoadError(true);
     }
   };
 
@@ -227,12 +249,11 @@ const ListChatChannelPage: React.FC = () => {
     if (socket) {
       socket.emit("regisListChannel", {
         pageState: null,
-        pageSize: 5,
+        pageSize: 10,
       });
-
     }
     return () => {
-      setListChannelMerge([])
+      setListChannelMerge([]);
     };
   }, [isFocus]);
 
@@ -249,16 +270,22 @@ const ListChatChannelPage: React.FC = () => {
       }));
 
       if (listChannelMerge) {
-        const existingIds = new Set(listChannelMergeInfo.map((item) => item.id));
+        const existingIds = new Set(
+          listChannelMergeInfo.map((item) => item.id)
+        );
         const filteredListChannelMerge = listChannelMerge.filter(
           (item) => !existingIds.has(item.id)
         );
 
-        listChannelMergeInfo = [...listChannelMergeInfo, ...filteredListChannelMerge];
+        listChannelMergeInfo = [
+          ...listChannelMergeInfo,
+          ...filteredListChannelMerge,
+        ];
       }
 
       listChannelMergeInfo.sort(
-        (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        (a, b) =>
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       );
 
       setListChannelMerge(listChannelMergeInfo);
@@ -274,6 +301,7 @@ const ListChatChannelPage: React.FC = () => {
       style={{ backgroundColor: "#fffafa" }}
     >
       <View>
+        {isLoadError && <Text>Hệ thống bị gián đoạn, vui lòng thử lại</Text>}
         {listChannelMerge && (
           <FlatList
             data={listChannelMerge || emptyList}
@@ -282,7 +310,7 @@ const ListChatChannelPage: React.FC = () => {
               marginTop: 20,
               paddingBottom: 40,
             }}
-            ListFooterComponent={() => (
+            ListFooterComponent={() =>
               hasNext ? (
                 <View className="items-center mb-100">
                   <Button
@@ -302,7 +330,7 @@ const ListChatChannelPage: React.FC = () => {
                   </Button>
                 </View>
               ) : null
-            )}
+            }
             keyExtractor={(item) => `${item?.id}`}
             renderItem={({ item }) => <PreviewCardChat item={item} />}
             ItemSeparatorComponent={() => (

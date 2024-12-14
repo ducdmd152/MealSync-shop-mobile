@@ -24,6 +24,8 @@ import Mapbox from "@rnmapbox/maps";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
+import useGlobalChattingState from "@/hooks/states/useChattingState";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 if (Mapbox) {
@@ -56,7 +58,9 @@ export default function RootLayout() {
   const globalAuthState = useGlobalAuthState();
   const globalSocketState = useGlobalSocketState();
   const globalNotiState = useGlobalNotiState();
+  const chattingChannelId = useGlobalChattingState((state) => state.channelId);
   const [isReady, setIsReady] = useState(false);
+  const globalHeaderPage = useGlobalHeaderPage();
   const globalOrderDetailPageState = useOrderDetailPageState();
   const [isFocusing, setIsFocusing] = useState(false);
   useFocusEffect(
@@ -189,7 +193,7 @@ export default function RootLayout() {
         },
         transports: ["websocket", "polling"],
       });
-      newSocket.emit("regisGetNotRead", {})
+      newSocket.emit("regisGetNotRead", {});
       globalSocketState.setSocket(newSocket);
 
       // Listen for notifications from the server
@@ -199,22 +203,27 @@ export default function RootLayout() {
           setTimeout(() => {
             globalNotiState.setToggleChangingFlag(true);
           }, 500);
-          Toast.show({
-            type: "info",
-            text1: `${noti.Title}${
-              noti.EntityType == NotiEntityTypes.Order
-                ? ` MS-${noti.ReferenceId}`
-                : ""
-            }`,
-            text2: noti.Content,
-            onPress() {
-              if (noti.EntityType == NotiEntityTypes.Order) {
-                globalOrderDetailPageState.setOrder({} as OrderDetailModel);
-                globalOrderDetailPageState.setId(noti.ReferenceId);
-                router.push("/order/details");
-              }
-            },
-          });
+          if (
+            !globalHeaderPage.isChattingFocusing ||
+            noti.EntityType != NotiEntityTypes.Chat ||
+            noti.ReferenceId != chattingChannelId
+          )
+            Toast.show({
+              type: "info",
+              text1: `${noti.Title}${
+                noti.EntityType == NotiEntityTypes.Order
+                  ? ` MS-${noti.ReferenceId}`
+                  : ""
+              }`,
+              text2: noti.Content,
+              onPress() {
+                if (noti.EntityType == NotiEntityTypes.Order) {
+                  globalOrderDetailPageState.setOrder({} as OrderDetailModel);
+                  globalOrderDetailPageState.setId(noti.ReferenceId);
+                  router.push("/order/details");
+                }
+              },
+            });
         } catch (err) {
           // console.error("Failed to show toastable:", err);
         }
