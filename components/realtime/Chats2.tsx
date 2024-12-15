@@ -127,28 +127,28 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
               borderRadius: 16,
             }}
           />
-          <View className="pl-4 pr-3 pt-1 flex-1">
-            <View className="flex-row justify-between items-start">
-              <Text className="text-base font-bold text-blue-800">
-                <Text className="text-md text-gray-400">MS-{item.id}</Text>
+          <View className="pl-4 pr-3 pt-1 flex-1 gy-1">
+            <View className="flex-row">
+              <Text className="flex-1 text-md text-gray-400 font-bold flex-1">
+                Đơn hàng MS-{item.id}
               </Text>
+              {item.is_close && <Text className="text-red-800">Đã đóng</Text>}
             </View>
-            <View className="pr-2 flex-row">
-              <Text
-                numberOfLines={1}
-                className="flex-wrap flex-1 text-xs text-gray-600 text-ellipsis"
-                style={{
-                  fontWeight: item.map_user_is_read[`${userInfo?.id}`]
-                    ? 400
-                    : "bold",
-                }}
-              >
-                {item.info.fullName} : {item.last_message}
-              </Text>
-              <Text className="text-xs text-gray-500">
-                {dayjs(item.updated_at).local().format("HH:mm")}
-              </Text>
-            </View>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className=" text-xs text-gray-600 text-ellipsis"
+              style={{
+                fontWeight: item.map_user_is_read[`${userInfo?.id}`]
+                  ? 400
+                  : "bold",
+              }}
+            >
+              {item.info.fullName} : {item.last_message}
+            </Text>
+            <Text className="w-20 text-xs text-gray-500">
+              {dayjs(item.updated_at).local().format("DD/MM/YYYY HH:mm")}
+            </Text>
           </View>
         </View>
       </TouchableRipple>
