@@ -6,7 +6,6 @@ import apiClient from "@/services/api-services/api-client";
 import { ResizeMode, Video } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import { router, useFocusEffect } from "expo-router";
 import { ArrowLeft, Camera, Play, Send, X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -152,29 +151,31 @@ const CustomInputToolbar = ({
       </View>
     );
   return (
-    <View style={styles.inputContainer} className="">
-      {selectedMedia && (
-        <View style={styles.mediaPreviewContainer}>
-          <MediaPreview media={selectedMedia} onRemove={onRemoveMedia} />
-        </View>
-      )}
-      <InputToolbar
-        {...props}
-        containerStyle={{
-          backgroundColor: "white",
-          alignContent: "center",
-          justifyContent: "center",
-          padding: 6,
-          height: 50,
-          borderRadius: 30,
-          borderWidth: 1,
-          borderColor: Colors.primaryBackgroundColor,
-          marginHorizontal: 15,
-          marginBottom: 4,
-          ...styles.shadow,
-        }}
-      />
-    </View>
+
+      <View style={styles.inputContainer}>
+        {selectedMedia && (
+          <View style={styles.mediaPreviewContainer}>
+            <MediaPreview media={selectedMedia} onRemove={onRemoveMedia} />
+          </View>
+        )}
+        <InputToolbar
+          {...props}
+          containerStyle={{
+            backgroundColor: "white",
+            alignContent: "center",
+            justifyContent: "center",
+            padding: 6,
+            height: 50,
+            borderRadius: 30,
+            borderWidth: 1,
+            borderColor: Colors.primaryBackgroundColor,
+            marginHorizontal: 15,
+            marginBottom: 4,
+            ...styles.shadow,
+          }}
+        />
+      </View>
+
   );
 };
 
@@ -207,7 +208,7 @@ const MessageVideo = ({ currentMessage }: { currentMessage: any }) => {
   );
 };
 
-const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
+const Chatbox = ({ onBack = () => { } }: { onBack?: () => void }) => {
   const globalChattingState = useGlobalChattingState();
   const [messages, setMessages] = useState<any[]>([]);
   const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
@@ -509,8 +510,8 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
     );
   };
   return (
-    <View className="h-full w-full">
-      <SafeAreaView className="bg-primary p-2" edges={["top"]}>
+    <>
+      <SafeAreaView className="bg-primary p-2" edges={["top", "bottom"]}>
         <View className="flex-row items-center gap-4 pl-2">
           <TouchableRipple
             className="rounded-full p-2"
@@ -528,7 +529,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
         </View>
       </SafeAreaView>
 
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className="flex-1 bg-white" edges={["bottom"]}>
         <GiftedChat
           messages={messages}
           onSend={onSend}
@@ -577,7 +578,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
           minInputToolbarHeight={selectedMedia ? 150 : 60}
         />
       </SafeAreaView>
-    </View>
+    </>
   );
 };
 
