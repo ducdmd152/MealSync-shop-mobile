@@ -1094,7 +1094,10 @@ const CompleteDeliveryConfirmModal = ({
           setIsChatBoxShow(false);
         }}
       >
-        <Chatbox onBack={() => setIsChatBoxShow(false)} />
+        <Chatbox
+          channelId={globalChattingState.channelId}
+          onBack={() => setIsChatBoxShow(false)}
+        />
       </CustomModal>
       {/* </SafeAreaView> */}
       <Toast position="bottom" bottomOffset={-20} />

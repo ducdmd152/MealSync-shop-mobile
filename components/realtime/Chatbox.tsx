@@ -14,6 +14,7 @@ import {
   Dimensions,
   Image,
   Platform,
+  KeyboardAvoidingView,
   Pressable,
   StyleSheet,
   Text,
@@ -139,11 +140,12 @@ const CustomInputToolbar = ({
   isClose,
   ...props
 }: {
-  isClose: boolean;
+  isClose: number | undefined;
   selectedMedia: Media | null;
   onRemoveMedia: () => void;
 }) => {
-  if (isClose)
+  if (!isClose) return null;
+  if (isClose == 2)
     return (
       <View className="h-20 justify-center items-center">
         <Text className="text-gray-600">
@@ -207,8 +209,14 @@ const MessageVideo = ({ currentMessage }: { currentMessage: any }) => {
   );
 };
 
-const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
-  const globalChattingState = useGlobalChattingState();
+const Chatbox = ({
+  channelId,
+  onBack = () => {},
+}: {
+  channelId: number;
+  onBack?: () => void;
+}) => {
+  // const globalChattingState = useGlobalChattingState();
   const [messages, setMessages] = useState<any[]>([]);
   const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
   const [selectedMediaUrl, setSelectedMediaUrl] = useState<string | null>(null);
@@ -311,15 +319,13 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
 
   const handleGetChatData = async () => {
     try {
-      const res = await apiClient.get(
-        `order/${globalChattingState.channelId}/chat-info`
-      );
+      const res = await apiClient.get(`order/${channelId}/chat-info`);
       const data = await res.data;
       if (data.isSuccess) {
         setChatData(data.value);
       }
     } catch (error) {
-      console.error(error, " error", globalChattingState.channelId);
+      console.error(error, " error", channelId);
     }
   };
 
@@ -328,14 +334,14 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
     return () => {
       if (socket) {
         socket.emit("leaveRoomsChat", {
-          chatRoomId: globalChattingState.channelId,
+          chatRoomId: channelId,
         });
       }
     };
   }, []);
 
   const [dataHeader, setDataHeader] = useState<any | null>(null);
-  // console.log("globalChattingState.channelId: ", globalChattingState.channelId);
+  // console.log("channelId: ", channelId);
 
   useEffect(() => {
     console.log(socket, " socket ne ", chatData);
@@ -348,7 +354,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
             }
           });
           socket.emit("joinRoomsChat", {
-            chatRoomId: globalChattingState.channelId,
+            chatRoomId: channelId,
             chatData,
           });
           socket.on("errorChat", (msg) => {
@@ -438,7 +444,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
             console.log(msg, "receivedRoomData neeeeeeeee");
             setChannelData(msg);
           });
-          socket.emit("getRoomDataById", globalChattingState.channelId);
+          socket.emit("getRoomDataById", channelId);
         }
       } catch (error) {
         console.log("Error:", error);
@@ -454,7 +460,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
       console.log(message, " new messages");
       const messageToSend = {
         text: message.text,
-        chatRoomId: globalChattingState.channelId,
+        chatRoomId: channelId,
         image: selectedMedia?.type === "image" ? selectedMediaUrl : null,
         video: selectedMedia?.type === "video" ? selectedMediaUrl : null,
         userId: userInfo?.id,
@@ -509,8 +515,8 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
     );
   };
   return (
-    <View className="h-full w-full">
-      <SafeAreaView className="bg-primary p-2" edges={["top"]}>
+    <SafeAreaView className="flex-1 w-full">
+      <View className="bg-primary p-2">
         <View className="flex-row items-center gap-4 pl-2">
           <TouchableRipple
             className="rounded-full p-2"
@@ -526,17 +532,18 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
             </Text>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
 
-      <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 bg-white">
         <GiftedChat
+          keyboardShouldPersistTaps="handled"
           messages={messages}
           onSend={onSend}
           renderBubble={renderBubble}
           renderInputToolbar={(props) => (
             <CustomInputToolbar
               {...props}
-              isClose={channelData?.is_close == 2}
+              isClose={channelData?.is_close}
               selectedMedia={selectedMedia}
               onRemoveMedia={async () => {
                 setSelectedMedia(null);
@@ -576,8 +583,8 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
           }}
           minInputToolbarHeight={selectedMedia ? 150 : 60}
         />
-      </SafeAreaView>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 };
 

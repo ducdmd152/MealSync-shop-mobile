@@ -136,11 +136,11 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
                 <Text className="text-red-800">Đã đóng</Text>
               )}
             </View>
-            <View className="flex-row">
+            <View className="pr-2 flex-row">
               <Text
-                className="flex-1 text-xs text-gray-600"
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                className="flex-wrap flex-1 text-xs text-gray-600 text-ellipsis"
                 style={{
                   fontWeight: item.map_user_is_read[`${userInfo?.id}`]
                     ? 400
@@ -149,12 +149,8 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
               >
                 {item.info.fullName} : {item.last_message}
               </Text>
-              <Text className="text-xs italic text-gray-400">
-                {"'" +
-                  dayjs(item.updated_at)
-                    .local()
-                    .format("HH:mm DD/MM")
-                    .toString()}
+              <Text className="text-xs text-gray-500">
+                {dayjs(item.updated_at).local().format("HH:mm DD/MM")}
               </Text>
             </View>
           </View>

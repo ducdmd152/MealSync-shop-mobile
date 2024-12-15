@@ -976,7 +976,10 @@ const OrderDetail = ({
           setIsChatBoxShow(false);
         }}
       >
-        <Chatbox onBack={() => setIsChatBoxShow(false)} />
+        <Chatbox
+          channelId={globalChattingState.channelId}
+          onBack={() => setIsChatBoxShow(false)}
+        />
       </CustomModal>
     </>
   );
