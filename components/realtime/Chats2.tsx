@@ -132,23 +132,31 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
               <Text className="flex-1 text-md text-gray-400 font-bold flex-1">
                 Đơn hàng MS-{item.id}
               </Text>
-              {item.is_close && <Text className="text-red-800">Đã đóng</Text>}
+              {item.is_close == 2 && (
+                <Text className="text-red-800">Đã đóng</Text>
+              )}
             </View>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              className=" text-xs text-gray-600 text-ellipsis"
-              style={{
-                fontWeight: item.map_user_is_read[`${userInfo?.id}`]
-                  ? 400
-                  : "bold",
-              }}
-            >
-              {item.info.fullName} : {item.last_message}
-            </Text>
-            <Text className="w-20 text-xs text-gray-500">
-              {dayjs(item.updated_at).local().format("DD/MM/YYYY HH:mm")}
-            </Text>
+            <View className="flex-row">
+              <Text
+                className="flex-1 text-xs text-gray-600"
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  fontWeight: item.map_user_is_read[`${userInfo?.id}`]
+                    ? 400
+                    : "bold",
+                }}
+              >
+                {item.info.fullName} : {item.last_message}
+              </Text>
+              <Text className="text-xs italic text-gray-400">
+                {"'" +
+                  dayjs(item.updated_at)
+                    .local()
+                    .format("HH:mm DD/MM")
+                    .toString()}
+              </Text>
+            </View>
           </View>
         </View>
       </TouchableRipple>
