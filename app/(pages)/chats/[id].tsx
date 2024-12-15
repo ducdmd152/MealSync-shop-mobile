@@ -2,15 +2,16 @@ import { View, Text } from "react-native";
 import React from "react";
 import { router } from "expo-router";
 import Chatbox from "@/components/realtime/Chatbox";
+import { SafeAreaView } from "react-native-safe-area-context";
 const ChatBoxPage = () => {
   return (
-    <View className="flex-1">
+    <SafeAreaView className="flex-1">
       <Chatbox
         onBack={() => {
           router.back();
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

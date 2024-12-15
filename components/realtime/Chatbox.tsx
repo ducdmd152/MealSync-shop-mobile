@@ -8,11 +8,13 @@ import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { router, useFocusEffect } from "expo-router";
 import { ArrowLeft, Camera, Play, Send, X } from "lucide-react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Dimensions,
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
   StyleSheet,
@@ -277,7 +279,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
       }
     } catch (error) {
       console.log(error, " error pick media in chat");
-      Alert.alert("Error", "Failed to pick media");
+      Alert.alert("Oops", "Xử lí hình lỗi!");
     }
   };
 
@@ -304,8 +306,20 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
       if (data.isSuccess) {
         return data?.value?.url;
       }
-    } catch (error) {
-      console.error("Upload error:", error);
+    } catch (error: any) {
+      if (
+        error.response &&
+        error.response.status &&
+        Number(error.response.status) >= 500
+      ) {
+        Alert.alert("Oops", "Xử lí hình ảnh lỗi, vui lòng thử lại!");
+      } else
+        Alert.alert(
+          "Oops",
+          error?.response?.data?.error?.message ||
+            "Xử lí hình ảnh lỗi, vui lòng thử lại!"
+        );
+        console.error("Upload error:", error);
     }
   };
 
@@ -318,8 +332,21 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
       if (data.isSuccess) {
         setChatData(data.value);
       }
-    } catch (error) {
-      console.error(error, " error", globalChattingState.channelId);
+    } catch (error: any) {
+      if (
+        error.response &&
+        error.response.status &&
+        Number(error.response.status) >= 500
+      ) {
+        Alert.alert("Oops", "Xử lí hình ảnh lỗi, vui lòng thử lại!");
+      } else
+        Alert.alert(
+          "Oops",
+          error?.response?.data?.error?.message ||
+            "Xử lí hình ảnh lỗi, vui lòng thử lại!"
+        );
+        // console.error(error, " error", globalChattingState.channelId);
+    } finally {
     }
   };
 
@@ -374,8 +401,8 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
             }
             console.log(user, " user for chatg");
             if (user._id === userInfo?.id) return;
-            let imageUrl = null;
-            let videoUrl = null;
+            let imageUrl = null as any;
+            let videoUrl = null as any;
             if (msg.file_url) {
               if (msg.file_url.includes("video")) {
                 videoUrl = msg.file_url;
@@ -447,6 +474,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
   }, [chatData]);
 
   const onSend = async (newMessages: any = []) => {
+    console.log("newMessages: ", newMessages)
     try {
       if (!socket || channelData?.is_close == 2) return;
 
@@ -475,6 +503,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
         ])
       );
     } catch (error) {
+      Alert.alert("Oops", "Xử lí tin nhắn lỗi, vui lòng thử lại.");
       console.error("Error sending message:", error);
     }
   };
@@ -508,14 +537,20 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
       />
     );
   };
+  // useEffect(() => {console.log("messages: ", messages);}, [messages])
   return (
-    <View className="h-full w-full">
-      <SafeAreaView className="bg-primary p-2" edges={["top"]}>
+    <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : undefined}
+    style={{ flex: 1 }}
+  >
+    <View className="flex-1 w-full">
+      <View className="bg-primary p-2">
         <View className="flex-row items-center gap-4 pl-2">
           <TouchableRipple
             className="rounded-full p-2"
             borderless
-            onPress={() => onBack()}
+            onPress={() => {Keyboard.dismiss(); onBack(); }
+  }
           >
             <ArrowLeft size={25} color={"white"} strokeWidth={2} />
           </TouchableRipple>
@@ -526,13 +561,14 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
             </Text>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
 
-      <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 bg-white">
         <GiftedChat
           messages={messages}
           onSend={onSend}
           renderBubble={renderBubble}
+          keyboardShouldPersistTaps="always"
           renderInputToolbar={(props) => (
             <CustomInputToolbar
               {...props}
@@ -576,8 +612,9 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
           }}
           minInputToolbarHeight={selectedMedia ? 150 : 60}
         />
-      </SafeAreaView>
+      </View>
     </View>
+  </KeyboardAvoidingView>
   );
 };
 

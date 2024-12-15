@@ -1089,7 +1089,7 @@ const CompleteDeliveryConfirmModal = ({
         isOpen={isChatBoxShow}
         setIsOpen={(value) => setIsChatBoxShow(value)}
         titleStyleClasses="text-center flex-1"
-        containerStyleClasses="h-screen w-screen p-0 pt-3"
+        containerStyleClasses="h-full w-full"
         onBackdropPress={() => {
           setIsChatBoxShow(false);
         }}

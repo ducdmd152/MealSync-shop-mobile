@@ -1,3 +1,4 @@
+import useGlobalChattingState from "@/hooks/states/useChattingState";
 import apiClient from "@/services/api-services/api-client";
 import orderAPIService from "@/services/api-services/order-api-service";
 import utilService from "@/services/util-service";
@@ -6,38 +7,34 @@ import {
   getOrderStatusDescription,
   OrderStatus,
 } from "@/types/models/OrderFetchModel";
-import { ShopDeliveryStaff } from "@/types/models/StaffInfoModel";
 import ValueResponse from "@/types/responses/ValueReponse";
 import { WarningMessageValue } from "@/types/responses/WarningMessageResponse";
+import { Ionicons } from "@expo/vector-icons";
+import dayjs from "dayjs";
 import * as Clipboard from "expo-clipboard";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   Linking,
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
-  RefreshControl,
-  ActivityIndicator,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { useToast } from "react-native-toast-notifications";
 import CustomModal from "../common/CustomModal";
 import OrderDeliveryInfo from "../common/OrderDeliveryInfo";
-import CustomButton from "../custom/CustomButton";
-import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
-import OrderCancelModal from "../target-modals/OrderCancelModal";
 import OrderReportInfo from "../common/OrderReportInfo";
 import OrderReviewInfo from "../common/OrderReviewInfo";
-import dayjs from "dayjs";
-import ReviewReplyModal from "../target-modals/ReviewReplyModal";
-import ImageViewingModal from "../target-modals/ImageViewingModal";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import useGlobalChattingState from "@/hooks/states/useChattingState";
+import OrderDeliveryAssign from "../delivery-package/OrderDeliveryAssign";
 import Chatbox from "../realtime/Chatbox";
+import ImageViewingModal from "../target-modals/ImageViewingModal";
+import OrderCancelModal from "../target-modals/OrderCancelModal";
+import ReviewReplyModal from "../target-modals/ReviewReplyModal";
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 100)
     .toString()
