@@ -27,7 +27,7 @@ const formatRecentDate = (createdDate: string): string => {
   if (daysDiff < 1) {
     return date.local().format("HH:mm");
   } else if (daysDiff === 1) {
-    return date.local().format("HH:mm") + " hôm qua";
+    return "Hôm qua " + date.local().format("HH:mm");
   } else if (daysDiff <= 30) {
     return `${daysDiff} ngày trước`;
   } else {
