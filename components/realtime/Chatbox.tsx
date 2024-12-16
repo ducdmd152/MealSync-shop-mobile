@@ -319,7 +319,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
           error?.response?.data?.error?.message ||
             "Xử lí hình ảnh lỗi, vui lòng thử lại!"
         );
-        console.error("Upload error:", error);
+      console.error("Upload error:", error);
     }
   };
 
@@ -345,7 +345,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
           error?.response?.data?.error?.message ||
             "Xử lí hình ảnh lỗi, vui lòng thử lại!"
         );
-        // console.error(error, " error", globalChattingState.channelId);
+      // console.error(error, " error", globalChattingState.channelId);
     } finally {
     }
   };
@@ -474,7 +474,7 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
   }, [chatData]);
 
   const onSend = async (newMessages: any = []) => {
-    console.log("newMessages: ", newMessages)
+    console.log("newMessages: ", newMessages);
     try {
       if (!socket || channelData?.is_close == 2) return;
 
@@ -540,81 +540,83 @@ const Chatbox = ({ onBack = () => {} }: { onBack?: () => void }) => {
   // useEffect(() => {console.log("messages: ", messages);}, [messages])
   return (
     <KeyboardAvoidingView
-    behavior={Platform.OS === "ios" ? "padding" : undefined}
-    style={{ flex: 1 }}
-  >
-    <View className="flex-1 w-full">
-      <View className="bg-primary p-2">
-        <View className="flex-row items-center gap-4 pl-2">
-          <TouchableRipple
-            className="rounded-full p-2"
-            borderless
-            onPress={() => {Keyboard.dismiss(); onBack(); }
-  }
-          >
-            <ArrowLeft size={25} color={"white"} strokeWidth={2} />
-          </TouchableRipple>
-          <View className="flex-row items-center ">
-            <Avatar.Image source={{ uri: dataHeader?.avatarUrl }} size={50} />
-            <Text className="text-white font-semibold text-lg ml-4">
-              {dataHeader?.fullName}
-            </Text>
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={{ flex: 1 }}
+    >
+      <View className="flex-1 w-full">
+        <View className="bg-primary p-2">
+          <View className="flex-row items-center gap-4 pl-2">
+            <TouchableRipple
+              className="rounded-full p-2"
+              borderless
+              onPress={() => {
+                Keyboard.dismiss();
+                setTimeout(() => onBack(), 500);
+              }}
+            >
+              <ArrowLeft size={25} color={"white"} strokeWidth={2} />
+            </TouchableRipple>
+            <View className="flex-row items-center ">
+              <Avatar.Image source={{ uri: dataHeader?.avatarUrl }} size={46} />
+              <Text className="text-white font-semibold text-lg ml-4">
+                {dataHeader?.fullName}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <View className="flex-1 bg-white">
-        <GiftedChat
-          messages={messages}
-          onSend={onSend}
-          renderBubble={renderBubble}
-          keyboardShouldPersistTaps="always"
-          renderInputToolbar={(props) => (
-            <CustomInputToolbar
-              {...props}
-              isClose={channelData?.is_close == 2}
-              selectedMedia={selectedMedia}
-              onRemoveMedia={async () => {
-                setSelectedMedia(null);
-                try {
-                  const res = await apiClient.delete(
-                    `storage/file/delete?url=${selectedMediaUrl}`
-                  );
-                  const data = await res.data;
-                  console.log(data, " result after delete image");
-                  setSelectedMediaUrl(null);
-                } catch (e) {
-                  console.log("Error remove media:", e);
-                }
-              }}
-            />
-          )}
-          renderUsernameOnMessage={true}
-          renderComposer={(props) => (
-            <View style={styles.composerContainer}>
-              <TouchableRipple onPress={pickMedia} style={styles.mediaButton}>
-                <Camera size={24} color={Colors.primaryBackgroundColor} />
-              </TouchableRipple>
-              <Composer {...props} textInputStyle={styles.textInput} />
-            </View>
-          )}
-          renderSend={(props) => (
-            <SendMess {...props} containerStyle={styles.sendButton}>
-              <TouchableRipple className="rounded-full p-2" borderless>
-                <Send color={Colors.primaryBackgroundColor} size={24} />
-              </TouchableRipple>
-            </SendMess>
-          )}
-          user={{
-            _id: userInfo?.id ? userInfo.id : "",
-            name: userInfo?.fullName,
-            avatar: userInfo?.avatarUrl,
-          }}
-          minInputToolbarHeight={selectedMedia ? 150 : 60}
-        />
+        <View className="flex-1 bg-white">
+          <GiftedChat
+            messages={messages}
+            onSend={onSend}
+            renderBubble={renderBubble}
+            keyboardShouldPersistTaps="always"
+            renderInputToolbar={(props) => (
+              <CustomInputToolbar
+                {...props}
+                isClose={channelData?.is_close == 2}
+                selectedMedia={selectedMedia}
+                onRemoveMedia={async () => {
+                  setSelectedMedia(null);
+                  try {
+                    const res = await apiClient.delete(
+                      `storage/file/delete?url=${selectedMediaUrl}`
+                    );
+                    const data = await res.data;
+                    console.log(data, " result after delete image");
+                    setSelectedMediaUrl(null);
+                  } catch (e) {
+                    console.log("Error remove media:", e);
+                  }
+                }}
+              />
+            )}
+            renderUsernameOnMessage={true}
+            renderComposer={(props) => (
+              <View style={styles.composerContainer}>
+                <TouchableRipple onPress={pickMedia} style={styles.mediaButton}>
+                  <Camera size={24} color={Colors.primaryBackgroundColor} />
+                </TouchableRipple>
+                <Composer {...props} textInputStyle={styles.textInput} />
+              </View>
+            )}
+            renderSend={(props) => (
+              <SendMess {...props} containerStyle={styles.sendButton}>
+                <TouchableRipple className="rounded-full p-2" borderless>
+                  <Send color={Colors.primaryBackgroundColor} size={24} />
+                </TouchableRipple>
+              </SendMess>
+            )}
+            user={{
+              _id: userInfo?.id ? userInfo.id : "",
+              name: userInfo?.fullName,
+              avatar: userInfo?.avatarUrl,
+            }}
+            minInputToolbarHeight={selectedMedia ? 150 : 60}
+          />
+        </View>
       </View>
-    </View>
-  </KeyboardAvoidingView>
+    </KeyboardAvoidingView>
   );
 };
 

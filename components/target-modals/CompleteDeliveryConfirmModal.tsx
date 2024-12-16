@@ -590,20 +590,9 @@ const CompleteDeliveryConfirmModal = ({
                 <Text className="flex-1 text-[14px] text-gray-700 font-semibold">
                   {order.customer.fullName}
                 </Text>
-                {order.status >= OrderStatus.Preparing && (
+                {/* {order.status >= OrderStatus.Preparing && (
                   <TouchableOpacity
-                    onPress={() => {
-                      // if (
-                      //   !utilService.getInChatTime(
-                      //     order.startTime,
-                      //     order.endTime,
-                      //     order.intendedReceiveDate
-                      //   )
-                      // ) {
-                      //   Alert.alert("Oops", "Đã quá thời gian để nhắn tin.");
-                      //   setInChatTime(false);
-                      //   return;
-                      // }
+                    onPress={() => {                      
                       globalChattingState.setChannelId(order.id);
                       setIsChatBoxShow(true);
                     }}
@@ -618,7 +607,7 @@ const CompleteDeliveryConfirmModal = ({
                       Nhắn tin
                     </Text>
                   </TouchableOpacity>
-                )}
+                )} */}
               </View>
               {order.status >= OrderStatus.Preparing &&
               order.status <= OrderStatus.Completed ? (

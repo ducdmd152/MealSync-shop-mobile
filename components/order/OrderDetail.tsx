@@ -376,30 +376,10 @@ const OrderDetail = ({
                     <Text className="flex-1 text-[14px] text-gray-700 font-semibold">
                       {order.customer.fullName}
                     </Text>
-                    {order.status >= OrderStatus.Preparing && (
+                    {/* {order.status >= OrderStatus.Preparing && (
                       <TouchableOpacity
                         onPress={() => {
-                          // if (
-                          //   !utilService.getInChatTime(
-                          //     order.startTime,
-                          //     order.endTime,
-                          //     order.intendedReceiveDate
-                          //   )
-                          // ) {
-                          //   Alert.alert(
-                          //     "Oops",
-                          //     "Đã quá thời gian để nhắn tin."
-                          //   );
-                          //   setInChatTime(false);
-                          //   return;
-                          // }
-                          // if (isModal) {
-                          //   globalChattingState.setChannelId(order.id);
-                          //   setIsChatBoxShow(true);
-                          // } else {
-                          //   globalChattingState.setChannelId(order.id);
-                          //   router.push(`/chats/${order.id}`);
-                          // }
+                         
                           globalChattingState.setChannelId(order.id);
                           setIsChatBoxShow(true);
                         }}
@@ -414,7 +394,7 @@ const OrderDetail = ({
                           Nhắn tin
                         </Text>
                       </TouchableOpacity>
-                    )}
+                    )} */}
                   </View>
                   {order.status >= OrderStatus.Preparing &&
                   order.status <= OrderStatus.Completed ? (
