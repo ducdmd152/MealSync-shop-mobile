@@ -684,6 +684,7 @@ const OrderDetail = ({
                     </View>
                   )}
                 {order.status == OrderStatus.Confirmed &&
+                  utilService.isNotTomorrowInLocal(order.intendedReceiveDate) &&
                   utilService.getInFrameTime(
                     order.startTime,
                     order.endTime,

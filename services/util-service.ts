@@ -113,7 +113,14 @@ const getInChatTime = (
   const current = new Date();
   return current <= endFrameDate.toDate();
 };
+const isNotTomorrowInLocal = (intendedReceiveDate: string) => {
+  const intendedDate = dayjs(intendedReceiveDate).local().startOf("day"); // Chuyển đổi sang local timezone và chỉ lấy phần ngày
+  const tomorrow = dayjs().local().add(1, "day").startOf("day"); // Ngày mai ở local timezone
+
+  return !intendedDate.isSame(tomorrow, "day"); // Trả về true nếu không phải ngày mai
+};
 const utilService = {
+  isNotTomorrowInLocal,
   maskPhoneNumber,
   getInFrameTime,
   getInDeliveryTime,
