@@ -144,10 +144,13 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
             }}
           />
           <View className="pl-4 pr-3 pt-1 flex-1">
-            <View className="flex-row justify-between items-start">
-              <Text className="text-base font-bold text-blue-800">
+            <View className="flex-row justify-between items-center">
+              <Text className="flex-1 text-base font-bold text-blue-800">
                 <Text className="text-md text-gray-400">MS-{item.id}</Text>
               </Text>
+              {item.is_close == 2 && (
+                <Text className="text-xs text-red-600 mr-2">Đã đóng</Text>
+              )}
             </View>
             <View className="pr-2 flex-row">
               <Text
@@ -161,7 +164,7 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
               >
                 {item.info.fullName} : {item.last_message}
               </Text>
-              <Text className="text-xs text-gray-500">
+              <Text className="ml-1 text-xs text-gray-500">
                 {formatRecentDate(item.updated_at)}
               </Text>
             </View>
