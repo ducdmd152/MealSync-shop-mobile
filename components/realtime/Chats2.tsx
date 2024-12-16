@@ -17,7 +17,23 @@ import {
 } from "react-native";
 import { Button, Divider, TouchableRipple } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+const formatRecentDate = (createdDate: string): string => {
+  const date = dayjs(createdDate);
+  const now = dayjs();
+  const daysDiff = dayjs(now.local().format("YYYY-MM-DD")).diff(
+    dayjs(date.local().format("YYYY-MM-DD")).local(),
+    "day"
+  );
+  if (daysDiff < 1) {
+    return date.local().format("HH:mm");
+  } else if (daysDiff === 1) {
+    return date.local().format("HH:mm") + " hôm qua";
+  } else if (daysDiff <= 30) {
+    return `${daysDiff} ngày trước`;
+  } else {
+    return date.local().format("YYYY-MM-DD HH:mm");
+  }
+};
 interface ChannelInfo {
   avatarUrl: string;
   fullName: string;
@@ -146,7 +162,7 @@ const PreviewCardChat: React.FC<{ item: Channel | null }> = ({ item }) => {
                 {item.info.fullName} : {item.last_message}
               </Text>
               <Text className="text-xs text-gray-500">
-                {dayjs(item.updated_at).local().format("HH:mm")}
+                {formatRecentDate(item.updated_at)}
               </Text>
             </View>
           </View>
