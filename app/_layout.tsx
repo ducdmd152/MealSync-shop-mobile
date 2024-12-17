@@ -26,6 +26,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import useGlobalHeaderPage from "@/hooks/states/useGlobalHeaderPage";
 import useGlobalChattingState from "@/hooks/states/useChattingState";
+import messaging from "@react-native-firebase/messaging";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 if (Mapbox) {
@@ -84,22 +85,22 @@ export default function RootLayout() {
   //   "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
   // });
 
-  // useEffect(() => {
-  //   // FIREBASE NOTIFICATION
-  //   messaging()
-  //     .getInitialNotification()
-  //     .then((notification) => {
-  //       console.log(notification);
-  //     });
-  //   messaging().onNotificationOpenedApp((remoteMessage) => {
-  //     console.log(remoteMessage, "on open");
-  //   });
-  //   messaging().setBackgroundMessageHandler(async (msg) => {
-  //     console.log(msg, "in background");
-  //   });
-  //   const unsubscribe = messaging().onMessage(async (msg) => {});
-  //   return unsubscribe;
-  // }, []);
+  useEffect(() => {
+    // FIREBASE NOTIFICATION
+    messaging()
+      .getInitialNotification()
+      .then((notification) => {
+        console.log(notification);
+      });
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(remoteMessage, "on open");
+    });
+    messaging().setBackgroundMessageHandler(async (msg) => {
+      console.log(msg, "in background");
+    });
+    const unsubscribe = messaging().onMessage(async (msg) => {});
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     setLoaded(fontsLoaded && isCheckedAuth); // list of loaded statuses
@@ -153,20 +154,20 @@ export default function RootLayout() {
 
     checkAuth();
   }, []);
-  // useEffect(() => {
-  //   if (!isReady || !globalAuthState.token) return;
-  //   requestUserPermissions();
-  //   messaging()
-  //     .getToken()
-  //     .then((token) => {
-  //       console.log(token, " device tokenn");
-  //       if (globalAuthState.token)
-  //         sessionService.handleRegistrationDevice(token);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err, " cannot register device in message()");
-  //     });
-  // }, [isReady, globalAuthState.token]);
+  useEffect(() => {
+    if (!isReady || !globalAuthState.token) return;
+    requestUserPermissions();
+    messaging()
+      .getToken()
+      .then((token) => {
+        console.log(token, " device tokenn");
+        if (globalAuthState.token)
+          sessionService.handleRegistrationDevice(token);
+      })
+      .catch((err) => {
+        console.log(err, " cannot register device in message()");
+      });
+  }, [isReady, globalAuthState.token]);
 
   useEffect(() => {
     setIsReady(true); // all provider ready
