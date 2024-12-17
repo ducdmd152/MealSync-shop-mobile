@@ -1,0 +1,137 @@
+{
+  "project_info": {
+    "project_number": "165787317331",
+    "project_id": "mealsync-9b124",
+    "storage_bucket": "mealsync-9b124.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165787317331:android:373624954e65b8e15782a6",
+        "android_client_info": {
+          "package_name": "com.anonymous.MealSyncshopmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "165787317331-i7s5ou98r4svh2ked31t39ekqgo58he5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anonymous.MealSyncshopmobile",
+            "certificate_hash": "0f567e382ae9266abecc5005397ccc8df69b6aef"
+          }
+        },
+        {
+          "client_id": "165787317331-1ic454psf9ne9d6rkuiksmmn4kroson2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOEvdA508s9iAkmjAhHyfq2fUrY906LoE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "165787317331-1ic454psf9ne9d6rkuiksmmn4kroson2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165787317331:android:fe4edec98c0190905782a6",
+        "android_client_info": {
+          "package_name": "com.anonymous.mealsyncshopmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "165787317331-kaqi40gg275p8m0g4jl3o6m32lbrak4k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anonymous.mealsyncshopmobile",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "165787317331-1ic454psf9ne9d6rkuiksmmn4kroson2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOEvdA508s9iAkmjAhHyfq2fUrY906LoE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "165787317331-1ic454psf9ne9d6rkuiksmmn4kroson2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165787317331:android:6d07209dfca7bd655782a6",
+        "android_client_info": {
+          "package_name": "org.mealsync.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "165787317331-6kmqub04r3i4al950o55cp0g9hds921c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.mealsync.mobile",
+            "certificate_hash": "8e860dc561204cf382a6bdc38fa5323933e00c19"
+          }
+        },
+        {
+          "client_id": "165787317331-a6d3ei2mbne94r9sjbergiglngdlef4g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.mealsync.mobile",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "165787317331-v5f76hbq1odta10qkb7jjtfpgvfvjd02.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.mealsync.mobile",
+            "certificate_hash": "0693ce16984c6b6b0ce26d01f1707c06b39567fb"
+          }
+        },
+        {
+          "client_id": "165787317331-1ic454psf9ne9d6rkuiksmmn4kroson2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOEvdA508s9iAkmjAhHyfq2fUrY906LoE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "165787317331-1ic454psf9ne9d6rkuiksmmn4kroson2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

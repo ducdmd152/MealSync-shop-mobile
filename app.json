@@ -17,6 +17,7 @@
     },
     "android": {
       "package": "com.anonymous.mealsyncshopmobile",
+      "googleServicesFile": "./google-services.json",
       "newArchEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
@@ -39,6 +40,9 @@
     "plugins": [
       "expo-router",
       "expo-font",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/messaging",
       [
         "expo-image-picker",
         {

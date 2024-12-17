@@ -12,7 +12,7 @@ import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { router, Stack, useFocusEffect, useNavigation } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, Image, StyleSheet } from "react-native";
+import { Alert, Image, PermissionsAndroid, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
@@ -36,17 +36,17 @@ if (Mapbox) {
 }
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
-// const requestUserPermissions = async () => {
-//   const authStatus = await messaging().requestPermission();
-//   const enabled =
-//     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-//     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+const requestUserPermissions = async () => {
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-//   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-//   if (enabled) {
-//     console.log("Authorization status:", authStatus);
-//   }
-// };
+  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+  if (enabled) {
+    console.log("Authorization status:", authStatus);
+  }
+};
 
 export default function RootLayout() {
   const navigation = useNavigation();
